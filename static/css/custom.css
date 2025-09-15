@@ -1,0 +1,22 @@
+/* Custom Kenya styles for static usage */
+:root {
+  --kenya-green: #006600;
+  --kenya-red: #ff0000;
+  --kenya-black: #000000;
+  --kenya-white: #ffffff;
+}
+body {
+  font-family: "Arial", sans-serif;
+  background-color: #f8f9fa;
+}
+.navbar {
+  background-color: var(--kenya-green);
+}
+.footer {
+  background-color: var(--kenya-black);
+  color: var(--kenya-white);
+}
+.kenya-flag-colors {
+  height: 5px;
+  background: linear-gradient(to right, var(--kenya-black) 33%, var(--kenya-red) 33%, var(--kenya-red) 66%, var(--kenya-green) 66%);
+}

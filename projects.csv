@@ -1,0 +1,1001 @@
+Project ID,Project Name,Sector,Status,Project Manager,Person Responsible,Latitude,Longitude,County,Start Date,End Date,Budget (KES)
+P0001,Mombasa Digital Hub,ICT,Ongoing,Chebet Toroitich,Samuel Ekidor,-4.045862639,39.66517502,Mombasa,19/04/2025,27/08/2026,2917313284
+P0002,Uasin Gishu Water Pipeline,Water,Ongoing,Ahmed Noor,Francis Kiprotich,0.51830528,35.27875106,Uasin Gishu,21/11/2024,02/05/2026,259729599
+P0003,Garissa Eco-Tourism Project,Tourism,Design,Fatma Hassan,Grace Achieng,-0.447721083,39.64482177,Garissa,25/12/2025,26/03/2027,515666271
+P0004,Nakuru Resort Development,Tourism,Ongoing,Mercy Hussein,Mercy Onyango,-0.298347771,36.08928443,Nakuru,10/07/2025,30/03/2026,2877103926
+P0005,Nairobi Highway Upgrade,Transport,Completed,David Kiprotich,Samuel Ekal,-1.286437263,36.80999516,Nairobi,04/04/2024,13/11/2024,819670683
+P0006,Machakos E-Government System,ICT,Design,Joseph Abdalla,Mercy Ekidor,-1.518133232,37.25839425,Machakos,16/11/2025,17/06/2028,817115278
+P0007,Mombasa Agro-Processing Plant,Agriculture,Design,James Mutua,David Ekal,-4.041355509,39.67135287,Mombasa,01/12/2025,06/07/2026,1780140697
+P0008,Nakuru Biogas Initiative,Energy,Design,Abdi Chebet,Abdi Noor,-0.294221255,36.08543044,Nakuru,12/04/2026,25/01/2027,1447143608
+P0009,Nairobi Cultural Center,Tourism,Ongoing,Daniel Abdalla,James Ekal,-1.280662071,36.81253191,Nairobi,22/07/2024,28/09/2026,2666810843
+P0010,Mombasa Wind Farm,Energy,Design,Rebecca Nduku,Joseph Adan,-4.037198538,39.6677272,Mombasa,28/12/2025,25/12/2026,729372036
+P0011,Machakos Bypass Road,Transport,Design,Joseph Chepngeno,David Mutua,-1.517301222,37.27025732,Machakos,22/02/2026,09/09/2026,1319895594
+P0012,Turkana Agro-Processing Plant,Agriculture,Design,Hassan Kiprotich,Peter Adan,3.124035634,35.60171147,Turkana,01/01/2026,18/03/2028,1556864727
+P0013,Garissa Solar Power Plant,Energy,Completed,Janet Kibet,Rose Onyango,-0.459020334,39.6459051,Garissa,05/11/2022,19/10/2023,2643917579
+P0014,Nakuru Affordable Housing,Housing,Completed,Rose Otieno,James Kibet,-0.300845784,36.08754286,Nakuru,07/04/2021,28/09/2023,461835466
+P0015,Machakos Affordable Housing,Housing,Completed,Fatma Cherono,Peter Chepngeno,-1.508714778,37.26479275,Machakos,26/08/2022,26/07/2023,160925425
+P0016,Garissa Greenhouse Project,Agriculture,Ongoing,Grace Otieno,James Achieng,-0.446798419,39.65565778,Garissa,22/05/2025,23/02/2028,2779672093
+P0017,Kisumu Cultural Center,Tourism,Design,Rebecca Mwangi,Halima Adan,-0.089102113,34.7707294,Kisumu,08/12/2025,17/04/2028,1950864987
+P0018,Nairobi Resort Development,Tourism,Completed,Peter Hussein,Ali Kiprotich,-1.288129482,36.82201502,Nairobi,22/03/2021,26/02/2023,2265800801
+P0019,Mandera E-Government System,ICT,Completed,Sarah Hussein,Chebet Kibet,3.947932964,41.86010037,Mandera,28/11/2022,10/03/2024,2936571044
+P0020,Nairobi Digital Hub,ICT,Completed,Francis Adan,Peter Toroitich,-1.282251471,36.82275832,Nairobi,21/11/2022,07/05/2024,2652182699
+P0021,Turkana Smart City Project,ICT,Ongoing,Francis Mutua,Mercy Chebet,3.115843976,35.60685383,Turkana,31/01/2025,28/03/2026,955553730
+P0022,Mombasa Sanitation Project,Water,Ongoing,Fatma Kibet,James Hassan,-4.052499765,39.66063633,Mombasa,10/01/2025,26/09/2027,2752563785
+P0023,Mandera Solar Power Plant,Energy,Design,Abdi Chepngeno,Peter Achieng,3.933531503,41.87228805,Mandera,27/05/2026,01/04/2028,2321233337
+P0024,Kisumu Water Pipeline,Water,Ongoing,Grace Achieng,Hassan Onyango,-0.095741086,34.77266734,Kisumu,16/07/2025,02/10/2026,2409993706
+P0025,Mombasa Bypass Road,Transport,Design,Samuel Toroitich,Samuel Hussein,-4.044932001,39.67154983,Mombasa,25/10/2025,12/12/2027,2404910210
+P0026,Garissa Resort Development,Tourism,Design,Peter Cherono,Hassan Ekal,-0.452455613,39.64591022,Garissa,04/01/2026,06/08/2028,593727898
+P0027,Nairobi Digital Learning Center,Education,Design,Rose Kibet,Janet Hassan,-1.276491485,36.80797087,Nairobi,19/10/2025,24/02/2028,1830105956
+P0028,Nakuru Farm Input Program,Agriculture,Design,Mercy Onyango,Grace Onyango,-0.30909226,36.0883807,Nakuru,02/02/2026,30/05/2027,2003411114
+P0029,Mandera Digital Hub,ICT,Ongoing,Abdi Hussein,Grace Ekal,3.937391171,41.85981379,Mandera,05/09/2024,22/04/2026,416713213
+P0030,Mandera Referral Hospital,Health,Design,Rebecca Ekidor,Mercy Ekidor,3.93038418,41.87197402,Mandera,06/11/2025,02/07/2027,1271012887
+P0031,Mandera Bridge Construction,Transport,Ongoing,Rose Mohamed,Grace Achieng,3.93350784,41.86312001,Mandera,01/02/2024,21/04/2027,2490935750
+P0032,Nakuru Irrigation Scheme,Agriculture,Ongoing,Grace Mutua,Daniel Mutua,-0.312047429,36.08272463,Nakuru,12/05/2024,26/03/2027,1046335194
+P0033,Uasin Gishu Library Project,Education,Ongoing,Hassan Noor,Hassan Abdalla,0.522592777,35.27710489,Uasin Gishu,09/06/2025,02/08/2027,46339584
+P0034,Mombasa Mini Hydro Project,Energy,Completed,Grace Ekidor,Chebet Chebet,-4.051733577,39.66798938,Mombasa,28/04/2023,07/12/2023,1011148403
+P0035,Kisumu Wind Farm,Energy,Ongoing,Abdi Kibet,Chebet Toroitich,-0.088268841,34.7657696,Kisumu,06/05/2025,23/12/2025,1148384310
+P0036,Nakuru Innovation Center,ICT,Design,James Toroitich,Halima Cherono,-0.305534105,36.08096969,Nakuru,19/02/2027,17/10/2027,665622849
+P0037,Turkana Mini Hydro Project,Energy,Completed,Francis Chebet,Sarah Otieno,3.123728313,35.59628574,Turkana,21/06/2021,02/01/2023,2502760183
+P0038,Mombasa School Construction,Education,Completed,Hassan Toroitich,Mercy Noor,-4.038017957,39.66412847,Mombasa,17/11/2023,02/06/2024,452197081
+P0039,Mandera Digital Hub,ICT,Design,Fatma Noor,Mercy Chebet,3.94881065,41.86896976,Mandera,22/11/2025,25/09/2026,1207781598
+P0040,Baringo Urban Renewal Project,Housing,Ongoing,Mercy Achieng,Chebet Ekidor,0.47059375,35.96918331,Baringo,11/05/2025,24/09/2027,2376197264
+P0041,Machakos Resort Development,Tourism,Design,Daniel Hussein,Janet Noor,-1.513057627,37.25548676,Machakos,15/08/2026,24/12/2028,2781058239
+P0042,Nairobi Greenhouse Project,Agriculture,Ongoing,Daniel Ekidor,James Noor,-1.285846084,36.8178635,Nairobi,11/04/2025,29/01/2028,2390828340
+P0043,Mandera Bypass Road,Transport,Ongoing,Sarah Kibet,Francis Noor,3.934918025,41.85538979,Mandera,19/07/2024,21/07/2027,655327545
+P0044,Baringo Clinic Construction,Health,Completed,Peter Toroitich,Janet Toroitich,0.458595004,35.96442195,Baringo,17/02/2023,07/09/2024,1848457986
+P0045,Nakuru Wind Farm,Energy,Design,Francis Otieno,Janet Onyango,-0.301954058,36.07221167,Nakuru,01/07/2026,01/12/2027,461744986
+P0046,Nakuru Agro-Processing Plant,Agriculture,Design,Mercy Hassan,Ahmed Hassan,-0.310928228,36.07938701,Nakuru,06/07/2026,16/07/2028,2702228754
+P0047,Mombasa School Construction,Education,Ongoing,Daniel Toroitich,Halima Kiprotich,-4.036875129,39.66481373,Mombasa,23/02/2024,06/03/2026,1362225079
+P0048,Mombasa Irrigation Scheme,Agriculture,Design,Ali Chebet,Ahmed Ekal,-4.037538153,39.67135197,Mombasa,22/12/2026,12/03/2028,566953572
+P0049,Turkana Borehole Drilling,Water,Ongoing,Abdi Toroitich,Joseph Mohamed,3.107240006,35.60456078,Turkana,13/01/2024,08/04/2026,2979240990
+P0050,Nairobi Eco-Tourism Project,Tourism,Design,Abdi Onyango,Halima Mwangi,-1.294809902,36.82118064,Nairobi,01/09/2026,17/05/2027,1698002544
+P0051,Mombasa Smart City Project,ICT,Completed,Ali Ekidor,Grace Onyango,-4.045388408,39.67330018,Mombasa,07/11/2023,27/05/2025,1744375985
+P0052,Nairobi Irrigation Scheme,Agriculture,Ongoing,Ahmed Adan,Ahmed Ekidor,-1.295463514,36.80848409,Nairobi,23/05/2025,23/02/2027,1627846518
+P0053,Mandera Resettlement Housing,Housing,Ongoing,Peter Abdalla,James Kiprotich,3.93274585,41.86507534,Mandera,07/03/2024,04/03/2026,2370178008
+P0054,Machakos Water Pipeline,Water,Completed,Chebet Mwangi,Hassan Achieng,-1.520829027,37.25770576,Machakos,08/12/2022,13/12/2024,2961713834
+P0055,Turkana Wildlife Conservancy,Tourism,Design,Peter Mutua,Sarah Hussein,3.119827771,35.61056372,Turkana,06/02/2026,26/09/2028,2260759164
+P0056,Kisumu School Construction,Education,Completed,Samuel Kibet,Ali Cherono,-0.087358333,34.76364301,Kisumu,02/06/2021,01/10/2023,1455402466
+P0057,Baringo Bridge Construction,Transport,Design,Samuel Chebet,Chebet Kibet,0.472905847,35.96610228,Baringo,28/09/2026,25/04/2029,967980798
+P0058,Kisumu Cultural Center,Tourism,Completed,Halima Ekidor,Ali Mohamed,-0.094798488,34.76940703,Kisumu,08/10/2021,20/12/2022,1549989166
+P0059,Mombasa Medical Supply Chain,Health,Completed,Joseph Nduku,Rebecca Nduku,-4.046511047,39.67563185,Mombasa,03/05/2022,09/03/2023,1844475883
+P0060,Mombasa Smart City Project,ICT,Design,Abdi Ekidor,Sarah Chebet,-4.046609531,39.66048263,Mombasa,16/09/2026,29/10/2027,1533320988
+P0061,Mandera Irrigation Scheme,Agriculture,Ongoing,Chebet Cherono,Janet Hassan,3.942203705,41.85938821,Mandera,15/03/2025,01/02/2027,2973616785
+P0062,Machakos Innovation Center,ICT,Design,Joseph Abdalla,Peter Onyango,-1.522261678,37.26661046,Machakos,29/03/2027,03/07/2029,1998590062
+P0063,Machakos Urban Renewal Project,Housing,Design,Mercy Kibet,Rose Mwangi,-1.519771339,37.26986571,Machakos,13/10/2025,19/06/2027,1919344158
+P0064,Baringo Highway Upgrade,Transport,Design,David Noor,James Nduku,0.469107809,35.95686531,Baringo,16/10/2026,27/08/2028,65849558
+P0065,Nairobi Farm Input Program,Agriculture,Completed,Ali Achieng,Sarah Abdalla,-1.285232017,36.82048475,Nairobi,06/02/2022,30/07/2023,1206251508
+P0066,Turkana Affordable Housing,Housing,Design,Abdi Abdalla,Halima Onyango,3.106537909,35.61092145,Turkana,14/04/2026,10/12/2026,1098384157
+P0067,Garissa School Construction,Education,Ongoing,Peter Ekal,Ali Chepngeno,-0.461079399,39.65236297,Garissa,09/06/2025,06/12/2026,2081611934
+P0068,Mandera Technical Institute,Education,Ongoing,Samuel Achieng,Rebecca Mutua,3.947713706,41.86929279,Mandera,29/03/2024,22/09/2026,1796194943
+P0069,Machakos Sanitation Project,Water,Ongoing,Daniel Ekal,Francis Toroitich,-1.518588779,37.25480241,Machakos,23/05/2024,21/03/2026,2824472162
+P0070,Nakuru Solar Power Plant,Energy,Design,Peter Cherono,Grace Achieng,-0.307891053,36.08255152,Nakuru,29/05/2026,10/10/2028,375372439
+P0071,Kisumu Medical Supply Chain,Health,Ongoing,Joseph Abdalla,Samuel Otieno,-0.084217746,34.76247901,Kisumu,30/04/2025,30/11/2026,500869802
+P0072,Garissa Highway Upgrade,Transport,Design,Joseph Toroitich,Janet Mutua,-0.451951637,39.65216897,Garissa,02/11/2025,07/02/2028,527214016
+P0073,Nairobi Biogas Initiative,Energy,Ongoing,Ali Adan,Francis Chepngeno,-1.280353975,36.81471737,Nairobi,29/01/2024,02/10/2027,1846596819
+P0074,Nakuru Irrigation Scheme,Agriculture,Ongoing,Mercy Kibet,Daniel Mohamed,-0.295778801,36.08294549,Nakuru,10/02/2025,27/12/2027,2637830593
+P0075,Nakuru Cultural Center,Tourism,Completed,Rebecca Adan,Mercy Mutua,-0.300287726,36.08462867,Nakuru,21/01/2022,10/06/2024,1315902233
+P0076,Mombasa Greenhouse Project,Agriculture,Completed,James Cherono,Joseph Abdalla,-4.03506193,39.66064457,Mombasa,08/12/2022,08/06/2023,1539589434
+P0077,Nakuru School Construction,Education,Design,Grace Nduku,Joseph Nduku,-0.298419115,36.08160355,Nakuru,15/02/2026,06/09/2027,2788312472
+P0078,Mandera Highway Upgrade,Transport,Completed,Halima Noor,Ahmed Otieno,3.933121796,41.86867171,Mandera,27/09/2020,22/02/2023,2749599402
+P0079,Garissa Smart City Project,ICT,Design,Mercy Ekal,Samuel Hussein,-0.448367675,39.63955039,Garissa,26/01/2027,31/07/2029,60267267
+P0080,Kisumu Library Project,Education,Ongoing,Daniel Mutua,Sarah Hassan,-0.095979555,34.77267299,Kisumu,11/03/2024,01/09/2027,1592999726
+P0081,Baringo Estate Development,Housing,Design,Peter Toroitich,Halima Otieno,0.470873416,35.95919062,Baringo,30/03/2026,21/11/2028,1786596675
+P0082,Uasin Gishu Mini Hydro Project,Energy,Design,Rose Achieng,Janet Noor,0.529363639,35.26490083,Uasin Gishu,30/07/2026,10/01/2029,1088560584
+P0083,Mandera Resort Development,Tourism,Completed,Rose Hassan,Grace Nduku,3.944452892,41.86150974,Mandera,31/12/2021,25/06/2023,1945303054
+P0084,Uasin Gishu Referral Hospital,Health,Ongoing,Samuel Chepngeno,Rebecca Ekidor,0.512990505,35.26680814,Uasin Gishu,05/10/2024,20/11/2026,2811826837
+P0085,Uasin Gishu Cultural Center,Tourism,Completed,Sarah Mutua,Samuel Mohamed,0.529267599,35.26769729,Uasin Gishu,09/10/2021,26/05/2023,1509450849
+P0086,Nakuru Medical Supply Chain,Health,Design,Ali Noor,Francis Hussein,-0.296002117,36.07600169,Nakuru,22/05/2026,11/09/2028,86318994
+P0087,Kisumu School Construction,Education,Design,Samuel Mutua,James Hussein,-0.09998069,34.77740202,Kisumu,29/03/2026,01/11/2027,2221030004
+P0088,Mandera E-Government System,ICT,Ongoing,Francis Kibet,Sarah Abdalla,3.944756369,41.85620687,Mandera,28/01/2025,10/09/2026,1752965792
+P0089,Uasin Gishu Agro-Processing Plant,Agriculture,Ongoing,Hassan Toroitich,Ali Hussein,0.511557747,35.26236279,Uasin Gishu,29/05/2025,19/06/2027,569858720
+P0090,Uasin Gishu Urban Renewal Project,Housing,Completed,Daniel Hassan,Janet Onyango,0.529485095,35.27608767,Uasin Gishu,04/07/2022,08/04/2023,1830855148
+P0091,Mandera Cultural Center,Tourism,Design,Joseph Hassan,Sarah Abdalla,3.935137452,41.85494328,Mandera,08/11/2026,25/12/2027,2766394120
+P0092,Garissa Mini Hydro Project,Energy,Ongoing,Halima Chepngeno,James Mohamed,-0.450069035,39.64341767,Garissa,25/11/2024,03/12/2025,2658549279
+P0093,Nakuru Eco-Tourism Project,Tourism,Completed,Francis Adan,James Chebet,-0.30056619,36.07424113,Nakuru,10/06/2022,17/12/2024,1103915477
+P0094,Uasin Gishu Smart City Project,ICT,Ongoing,Joseph Hussein,Grace Achieng,0.514650841,35.26954332,Uasin Gishu,09/11/2024,12/11/2025,669122939
+P0095,Mombasa Smart City Project,ICT,Ongoing,Hassan Mutua,Ahmed Chepngeno,-4.043291078,39.66334758,Mombasa,16/01/2025,17/12/2026,2672205010
+P0096,Nakuru Resort Development,Tourism,Design,Chebet Otieno,Ahmed Adan,-0.310431852,36.08528432,Nakuru,08/11/2025,20/02/2028,2879117418
+P0097,Nakuru Wildlife Conservancy,Tourism,Design,Grace Kibet,Joseph Cherono,-0.30771615,36.0810597,Nakuru,21/12/2026,18/07/2027,2320692918
+P0098,Mombasa Agro-Processing Plant,Agriculture,Ongoing,Rebecca Hussein,Janet Kibet,-4.03359265,39.67660286,Mombasa,18/01/2024,21/04/2027,1951216359
+P0099,Nakuru Bridge Construction,Transport,Completed,Janet Achieng,Abdi Otieno,-0.298708375,36.08723025,Nakuru,26/03/2022,01/01/2024,1344137990
+P0100,Garissa Water Pipeline,Water,Design,Abdi Onyango,Sarah Achieng,-0.454329239,39.64242205,Garissa,27/04/2026,26/02/2027,1569050510
+P0101,Garissa Mini Hydro Project,Energy,Design,Samuel Chebet,David Ekal,-0.447935586,39.65499863,Garissa,31/03/2026,23/12/2026,2412782397
+P0102,Turkana Affordable Housing,Housing,Completed,Daniel Onyango,Fatma Noor,3.12485615,35.61350601,Turkana,16/11/2020,23/05/2023,549710264
+P0103,Nakuru Innovation Center,ICT,Design,Francis Noor,James Ekidor,-0.303082768,36.07785726,Nakuru,11/07/2026,07/11/2027,623308412
+P0104,Nairobi Medical Supply Chain,Health,Completed,Chebet Kiprotich,Daniel Ekidor,-1.281899023,36.82680474,Nairobi,06/03/2021,05/05/2023,1087599065
+P0105,Garissa Wildlife Conservancy,Tourism,Ongoing,Rose Mwangi,Daniel Onyango,-0.457626116,39.63746458,Garissa,07/05/2024,15/09/2027,1944161413
+P0106,Garissa Estate Development,Housing,Completed,Ahmed Ekal,Rebecca Hussein,-0.457552537,39.63777429,Garissa,15/03/2024,22/03/2025,117962526
+P0107,Baringo Water Pipeline,Water,Design,Rebecca Mohamed,Rose Kiprotich,0.463306642,35.95856415,Baringo,03/03/2026,28/11/2026,2362522637
+P0108,Baringo Technical Institute,Education,Ongoing,Francis Otieno,Sarah Mohamed,0.476112365,35.973946,Baringo,26/07/2024,22/04/2028,1633421919
+P0109,Mombasa Agro-Processing Plant,Agriculture,Ongoing,Abdi Hussein,Francis Cherono,-4.038906093,39.66519841,Mombasa,07/02/2024,27/09/2026,38497263
+P0110,Kisumu Wind Farm,Energy,Ongoing,Joseph Mwangi,Mercy Hassan,-0.100147122,34.76985413,Kisumu,14/11/2024,05/08/2027,1711187753
+P0111,Nakuru Wildlife Conservancy,Tourism,Ongoing,Peter Toroitich,James Ekal,-0.307901357,36.0787491,Nakuru,01/04/2024,26/03/2027,841262521
+P0112,Kisumu Water Pipeline,Water,Design,David Chebet,Fatma Abdalla,-0.091291689,34.7661851,Kisumu,16/11/2025,30/01/2027,147278214
+P0113,Mandera Clinic Construction,Health,Completed,Abdi Chepngeno,Mercy Nduku,3.934359095,41.8703139,Mandera,02/08/2022,29/06/2024,2737817338
+P0114,Mombasa Smart City Project,ICT,Completed,Ali Toroitich,Sarah Achieng,-4.053185272,39.65891761,Mombasa,23/12/2022,05/10/2024,2338070135
+P0115,Mombasa Wildlife Conservancy,Tourism,Completed,Francis Kiprotich,Samuel Chepngeno,-4.052277748,39.66547563,Mombasa,14/05/2024,24/03/2025,2941164414
+P0116,Garissa Borehole Drilling,Water,Completed,Abdi Noor,Abdi Chepngeno,-0.45917222,39.65328951,Garissa,24/07/2021,08/07/2023,657782328
+P0117,Uasin Gishu Medical Supply Chain,Health,Completed,Ahmed Chebet,David Mutua,0.528899547,35.27383444,Uasin Gishu,02/02/2021,10/01/2023,805314402
+P0118,Nairobi Borehole Drilling,Water,Ongoing,Rose Hassan,James Kibet,-1.278531717,36.80895659,Nairobi,13/02/2024,22/12/2025,2197629764
+P0119,Kisumu Wind Farm,Energy,Completed,Halima Nduku,Joseph Mohamed,-0.08280561,34.77215151,Kisumu,01/07/2022,16/03/2023,1426328971
+P0120,Mombasa Wind Farm,Energy,Ongoing,Ali Chebet,Halima Kiprotich,-4.050283768,39.67569094,Mombasa,13/01/2024,01/06/2026,1278533472
+P0121,Nairobi Bus Rapid Transit,Transport,Design,Rose Ekidor,Francis Adan,-1.279548088,36.82686127,Nairobi,07/01/2027,27/01/2028,445229707
+P0122,Baringo Smart City Project,ICT,Ongoing,Hassan Mohamed,Rose Cherono,0.475397373,35.97268415,Baringo,21/01/2025,28/12/2025,239500250
+P0123,Turkana Affordable Housing,Housing,Ongoing,Francis Hassan,Abdi Kiprotich,3.120332085,35.61101474,Turkana,22/07/2025,23/10/2026,1785033246
+P0124,Kisumu Wind Farm,Energy,Design,Joseph Mwangi,Joseph Onyango,-0.096759096,34.7777564,Kisumu,11/12/2026,22/05/2029,2164175223
+P0125,Machakos Mini Hydro Project,Energy,Ongoing,Hassan Adan,Sarah Ekal,-1.519105297,37.25752494,Machakos,13/04/2024,21/04/2027,2320551331
+P0126,Baringo Wind Farm,Energy,Design,Francis Achieng,Chebet Kiprotich,0.458406295,35.97391915,Baringo,10/12/2025,20/06/2028,2964265401
+P0127,Nairobi Estate Development,Housing,Design,Francis Hussein,Janet Cherono,-1.288050129,36.82520001,Nairobi,05/02/2026,30/05/2027,606129222
+P0128,Kisumu School Construction,Education,Design,Peter Adan,David Onyango,-0.101537235,34.76298527,Kisumu,26/06/2026,03/03/2028,873713670
+P0129,Mombasa Farm Input Program,Agriculture,Ongoing,Rebecca Abdalla,Janet Mwangi,-4.037379377,39.6683291,Mombasa,18/05/2024,10/12/2025,2878445746
+P0130,Uasin Gishu Bypass Road,Transport,Design,Sarah Achieng,Abdi Noor,0.517448732,35.26762206,Uasin Gishu,09/12/2026,30/08/2029,376312527
+P0131,Mandera Biogas Initiative,Energy,Completed,Janet Hussein,Fatma Noor,3.949687998,41.86708713,Mandera,30/08/2022,25/01/2025,190947495
+P0132,Mombasa Bridge Construction,Transport,Completed,Francis Abdalla,Rebecca Ekal,-4.044277042,39.67284443,Mombasa,21/05/2022,26/04/2023,1511189837
+P0133,Kisumu Health Center Upgrade,Health,Completed,Sarah Ekal,Rebecca Kibet,-0.09036035,34.76332007,Kisumu,05/05/2022,14/08/2024,1427714898
+P0134,Nakuru Innovation Center,ICT,Completed,Samuel Hassan,Janet Noor,-0.301736254,36.08662052,Nakuru,03/08/2022,09/07/2024,2199215367
+P0135,Baringo E-Government System,ICT,Ongoing,Peter Noor,Ahmed Hussein,0.475754232,35.95691201,Baringo,28/04/2024,12/09/2026,594867149
+P0136,Machakos E-Government System,ICT,Completed,David Hassan,David Mutua,-1.524412193,37.26121126,Machakos,08/05/2023,17/04/2024,1284078884
+P0137,Turkana Irrigation Scheme,Agriculture,Ongoing,Mercy Cherono,Daniel Mohamed,3.125431934,35.60787039,Turkana,12/04/2025,25/12/2027,2807262140
+P0138,Baringo Water Pipeline,Water,Design,David Kibet,Sarah Mohamed,0.460611869,35.96208304,Baringo,06/07/2026,24/02/2028,282529114
+P0139,Kisumu Agro-Processing Plant,Agriculture,Completed,Ahmed Chebet,Rebecca Onyango,-0.092357276,34.77000158,Kisumu,20/09/2021,11/04/2024,1025684715
+P0140,Uasin Gishu Wildlife Conservancy,Tourism,Completed,David Chebet,Abdi Kibet,0.525675673,35.2606069,Uasin Gishu,02/08/2023,05/04/2025,2086391286
+P0141,Nairobi Wind Farm,Energy,Completed,Ahmed Ekidor,Daniel Nduku,-1.289815918,36.81983593,Nairobi,15/10/2022,16/04/2023,1673331867
+P0142,Machakos Solar Power Plant,Energy,Design,Rose Hussein,Janet Kiprotich,-1.524382868,37.26099205,Machakos,05/10/2025,14/11/2027,1841673052
+P0143,Machakos Smart City Project,ICT,Completed,Daniel Achieng,Ali Cherono,-1.515522118,37.26383285,Machakos,04/04/2021,28/08/2023,1154137742
+P0144,Turkana Digital Hub,ICT,Completed,Abdi Chebet,Hassan Mwangi,3.1167745,35.60106931,Turkana,23/10/2023,26/05/2025,2281271190
+P0145,Mandera Mini Hydro Project,Energy,Completed,Sarah Mwangi,Mercy Mohamed,3.937630682,41.86996777,Mandera,21/11/2021,01/07/2024,1953379431
+P0146,Garissa Health Center Upgrade,Health,Ongoing,Hassan Ekidor,Peter Chebet,-0.450290887,39.64355435,Garissa,16/05/2025,20/02/2027,340662781
+P0147,Mombasa Sanitation Project,Water,Completed,Grace Ekidor,Peter Kiprotich,-4.049614484,39.6756943,Mombasa,10/06/2023,04/03/2024,415342765
+P0148,Mandera Referral Hospital,Health,Ongoing,Grace Adan,Peter Otieno,3.940782138,41.86006431,Mandera,13/05/2025,25/07/2026,1282654076
+P0149,Machakos Health Center Upgrade,Health,Design,Sarah Noor,Samuel Kibet,-1.526536141,37.27209704,Machakos,10/12/2025,16/07/2027,1640764111
+P0150,Baringo Innovation Center,ICT,Design,Halima Ekidor,Chebet Mwangi,0.474517474,35.965689,Baringo,06/04/2026,14/02/2027,2747073661
+P0151,Uasin Gishu Biogas Initiative,Energy,Design,Abdi Adan,Samuel Ekal,0.513491852,35.27091063,Uasin Gishu,07/11/2026,13/06/2029,1961980421
+P0152,Machakos Mini Hydro Project,Energy,Completed,James Kiprotich,Peter Ekidor,-1.509637323,37.2629941,Machakos,14/08/2022,22/04/2023,66042126
+P0153,Nairobi Wind Farm,Energy,Completed,Ahmed Hussein,Ali Kibet,-1.287073074,36.82449278,Nairobi,04/01/2023,08/05/2024,1952920985
+P0154,Nairobi Clinic Construction,Health,Ongoing,Halima Adan,Sarah Kibet,-1.294607558,36.82125358,Nairobi,22/06/2025,12/06/2027,357800381
+P0155,Nairobi Library Project,Education,Design,Halima Kibet,Samuel Ekal,-1.277014265,36.80791105,Nairobi,14/03/2026,19/01/2028,181849877
+P0156,Machakos Estate Development,Housing,Ongoing,Hassan Hussein,Chebet Chepngeno,-1.510457577,37.26745188,Machakos,03/12/2024,23/12/2027,2932944081
+P0157,Kisumu School Construction,Education,Ongoing,Ahmed Achieng,James Mohamed,-0.082413225,34.77127812,Kisumu,07/02/2024,08/02/2027,284957389
+P0158,Baringo Highway Upgrade,Transport,Design,Chebet Achieng,Fatma Toroitich,0.468472251,35.96185717,Baringo,27/12/2025,18/08/2027,1344266594
+P0159,Nakuru Library Project,Education,Ongoing,Grace Hassan,Ali Kibet,-0.306744368,36.08571678,Nakuru,30/04/2025,16/07/2026,1687985379
+P0160,Mandera Library Project,Education,Completed,Hassan Toroitich,James Chepngeno,3.936510645,41.86817112,Mandera,25/07/2024,02/03/2025,2826570636
+P0161,Mombasa Cultural Center,Tourism,Design,Mercy Kibet,Chebet Chebet,-4.03888609,39.6751391,Mombasa,03/11/2025,09/11/2026,634152626
+P0162,Uasin Gishu Health Center Upgrade,Health,Completed,Fatma Toroitich,Mercy Hussein,0.527459324,35.27854949,Uasin Gishu,27/07/2022,14/10/2023,1047499882
+P0163,Mombasa Digital Learning Center,Education,Design,Ahmed Achieng,Joseph Chebet,-4.048218447,39.66438637,Mombasa,06/12/2026,06/08/2028,97522644
+P0164,Machakos Solar Power Plant,Energy,Ongoing,Janet Noor,Chebet Kiprotich,-1.512550834,37.26487123,Machakos,19/01/2024,05/09/2026,352248698
+P0165,Kisumu Digital Hub,ICT,Ongoing,Abdi Abdalla,Joseph Nduku,-0.094429716,34.77175553,Kisumu,02/06/2025,07/07/2026,682582496
+P0166,Machakos Wildlife Conservancy,Tourism,Ongoing,Fatma Ekidor,Sarah Chepngeno,-1.516336798,37.26048825,Machakos,01/03/2025,28/08/2026,761919668
+P0167,Nairobi Wildlife Conservancy,Tourism,Ongoing,Francis Kiprotich,Daniel Hussein,-1.284246002,36.82475909,Nairobi,25/09/2024,18/09/2026,1578797717
+P0168,Nakuru Resettlement Housing,Housing,Ongoing,Peter Mutua,Samuel Kiprotich,-0.294572789,36.08103835,Nakuru,13/05/2024,06/06/2027,1263318815
+P0169,Kisumu Affordable Housing,Housing,Design,Fatma Hassan,Sarah Onyango,-0.095221965,34.76973439,Kisumu,06/11/2025,10/01/2028,25206772
+P0170,Mandera Irrigation Scheme,Agriculture,Ongoing,Francis Mutua,Ahmed Chebet,3.945624987,41.86774024,Mandera,01/06/2025,13/02/2026,1895228877
+P0171,Kisumu Bridge Construction,Transport,Design,Sarah Chebet,Peter Ekidor,-0.094583342,34.75909273,Kisumu,30/12/2025,24/05/2028,2922108044
+P0172,Machakos Irrigation Scheme,Agriculture,Completed,Chebet Kibet,Ahmed Nduku,-1.521204342,37.26450493,Machakos,06/11/2023,13/09/2024,1441145965
+P0173,Nairobi E-Government System,ICT,Design,Samuel Chepngeno,Janet Achieng,-1.284471026,36.81024861,Nairobi,27/11/2026,02/09/2028,888971036
+P0174,Machakos Health Center Upgrade,Health,Completed,Fatma Otieno,Abdi Mutua,-1.50984098,37.27245713,Machakos,25/04/2021,22/11/2023,2370095193
+P0175,Baringo Smart City Project,ICT,Completed,Mercy Otieno,Halima Adan,0.458155717,35.96236903,Baringo,06/11/2020,31/07/2023,2599560465
+P0176,Baringo Library Project,Education,Completed,Mercy Mwangi,Halima Mwangi,0.466892128,35.96816913,Baringo,12/09/2022,15/09/2023,33997183
+P0177,Nakuru Cultural Center,Tourism,Completed,Daniel Mwangi,Janet Abdalla,-0.299366538,36.08521056,Nakuru,14/06/2024,14/12/2024,1535052368
+P0178,Kisumu Irrigation Scheme,Agriculture,Design,Hassan Adan,Rose Kibet,-0.086646653,34.77461249,Kisumu,01/02/2027,02/09/2029,1646175281
+P0179,Nakuru Wind Farm,Energy,Design,James Onyango,Samuel Nduku,-0.293759632,36.07853449,Nakuru,29/07/2026,25/02/2029,2599839940
+P0180,Machakos Wildlife Conservancy,Tourism,Design,Janet Ekal,Mercy Chebet,-1.51357641,37.27228345,Machakos,03/05/2026,20/10/2028,271696134
+P0181,Machakos Mini Hydro Project,Energy,Design,Abdi Ekal,Ali Mutua,-1.517734133,37.26160625,Machakos,04/05/2026,25/05/2028,1107409917
+P0182,Kisumu Estate Development,Housing,Design,David Mohamed,Rose Kiprotich,-0.095118528,34.76037338,Kisumu,28/09/2026,25/04/2029,827567318
+P0183,Nairobi Water Pipeline,Water,Design,Ali Otieno,Peter Mwangi,-1.281049072,36.8160006,Nairobi,20/02/2027,21/01/2029,265124619
+P0184,Garissa Referral Hospital,Health,Completed,David Cherono,Joseph Adan,-0.457801077,39.64230417,Garissa,20/01/2022,07/08/2023,1482712956
+P0185,Mandera Innovation Center,ICT,Completed,Sarah Noor,David Toroitich,3.931092402,41.86389033,Mandera,20/12/2023,23/12/2024,2266193468
+P0186,Kisumu Smart City Project,ICT,Ongoing,Sarah Onyango,Hassan Mutua,-0.087842953,34.77708931,Kisumu,02/04/2024,06/07/2027,1322216181
+P0187,Mombasa Cultural Center,Tourism,Design,James Mutua,James Chepngeno,-4.049436737,39.66062759,Mombasa,11/02/2027,11/05/2028,2544250125
+P0188,Mandera Estate Development,Housing,Design,Janet Noor,Chebet Otieno,3.93917489,41.85782306,Mandera,28/05/2026,18/02/2028,1934908456
+P0189,Nakuru Digital Learning Center,Education,Ongoing,David Hussein,Fatma Nduku,-0.306251927,36.07925238,Nakuru,20/03/2024,08/12/2026,1137519414
+P0190,Kisumu Farm Input Program,Agriculture,Ongoing,Ali Toroitich,Rose Kiprotich,-0.099420057,34.7761606,Kisumu,08/08/2024,17/09/2026,360389695
+P0191,Baringo Sanitation Project,Water,Design,Grace Mutua,Sarah Mutua,0.458797736,35.9590909,Baringo,11/02/2026,19/11/2027,1214431550
+P0192,Baringo Digital Hub,ICT,Ongoing,Abdi Hussein,David Kibet,0.474434885,35.97006956,Baringo,25/04/2025,06/04/2027,2371706006
+P0193,Garissa Smart City Project,ICT,Completed,Ali Kiprotich,James Cherono,-0.456385877,39.65361529,Garissa,05/06/2022,09/02/2025,194918729
+P0194,Nakuru Irrigation Scheme,Agriculture,Ongoing,Francis Abdalla,David Onyango,-0.296829927,36.07438594,Nakuru,03/12/2024,28/12/2026,2283689856
+P0195,Machakos Cultural Center,Tourism,Completed,Sarah Nduku,Abdi Ekidor,-1.527445572,37.26668034,Machakos,04/01/2023,31/07/2024,1341826790
+P0196,Nairobi Eco-Tourism Project,Tourism,Design,Joseph Toroitich,Joseph Toroitich,-1.290233678,36.81939922,Nairobi,12/01/2027,07/12/2027,2789172425
+P0197,Turkana Agro-Processing Plant,Agriculture,Design,Peter Mutua,David Ekidor,3.122903542,35.60211385,Turkana,15/04/2027,06/02/2029,80237040
+P0198,Nakuru Resettlement Housing,Housing,Design,Rose Toroitich,Daniel Otieno,-0.299591902,36.07707476,Nakuru,12/03/2027,31/10/2027,1263881550
+P0199,Kisumu Affordable Housing,Housing,Ongoing,Mercy Kibet,Chebet Mohamed,-0.093753012,34.76780857,Kisumu,21/01/2024,02/05/2026,964462700
+P0200,Turkana Library Project,Education,Design,Peter Toroitich,Fatma Kibet,3.111173117,35.59643858,Turkana,31/12/2025,28/05/2027,1736399395
+P0201,Mombasa Clinic Construction,Health,Ongoing,Fatma Nduku,Abdi Onyango,-4.047753126,39.66642014,Mombasa,18/06/2024,11/05/2028,888195870
+P0202,Kisumu Clinic Construction,Health,Design,Daniel Achieng,Francis Mutua,-0.089128182,34.77241053,Kisumu,29/01/2026,05/08/2027,1297137989
+P0203,Baringo Library Project,Education,Design,Ahmed Mutua,Francis Adan,0.462524776,35.97333161,Baringo,02/06/2026,11/09/2027,2671665908
+P0204,Nairobi Irrigation Scheme,Agriculture,Ongoing,Janet Hussein,Rose Chebet,-1.284535969,36.826976,Nairobi,29/04/2025,19/01/2028,2376093886
+P0205,Garissa Water Pipeline,Water,Design,Rose Noor,Peter Ekal,-0.445414051,39.64736795,Garissa,16/08/2026,02/09/2028,2619371029
+P0206,Nakuru Smart City Project,ICT,Completed,Francis Chebet,Ali Onyango,-0.306985813,36.07700735,Nakuru,21/03/2021,04/03/2023,130194587
+P0207,Nairobi Bridge Construction,Transport,Design,David Toroitich,Ali Onyango,-1.285957859,36.80986276,Nairobi,28/12/2025,23/07/2026,631478634
+P0208,Nakuru Irrigation Scheme,Agriculture,Ongoing,Ali Onyango,Sarah Achieng,-0.301483969,36.0779574,Nakuru,12/04/2024,02/05/2027,1217770816
+P0209,Garissa Biogas Initiative,Energy,Design,Mercy Noor,Grace Achieng,-0.460197603,39.63964792,Garissa,02/02/2027,20/03/2029,2935131968
+P0210,Turkana Bus Rapid Transit,Transport,Design,Ali Ekal,Mercy Toroitich,3.124798548,35.61108771,Turkana,09/11/2025,10/02/2028,741152069
+P0211,Machakos Cultural Center,Tourism,Completed,David Hassan,Hassan Mwangi,-1.510397438,37.268193,Machakos,17/01/2023,10/04/2025,1078607203
+P0212,Kisumu Mini Hydro Project,Energy,Design,James Otieno,Rose Onyango,-0.095505237,34.77742567,Kisumu,30/11/2026,21/02/2029,1451015083
+P0213,Nakuru Wildlife Conservancy,Tourism,Ongoing,Rebecca Kiprotich,Abdi Mohamed,-0.300162574,36.07927775,Nakuru,02/09/2024,03/03/2026,379331507
+P0214,Baringo Affordable Housing,Housing,Ongoing,Grace Mohamed,Francis Hassan,0.462247056,35.97485928,Baringo,24/12/2024,15/04/2026,327666353
+P0215,Turkana Affordable Housing,Housing,Design,Fatma Onyango,Rose Ekal,3.112390054,35.60276066,Turkana,16/05/2026,01/06/2028,2947464732
+P0216,Garissa Urban Renewal Project,Housing,Ongoing,Rose Chepngeno,Joseph Achieng,-0.456631474,39.64129664,Garissa,11/08/2024,29/07/2027,1100790008
+P0217,Machakos Water Pipeline,Water,Design,Grace Abdalla,James Kibet,-1.520737794,37.26777244,Machakos,18/01/2026,22/07/2028,2079897255
+P0218,Uasin Gishu Eco-Tourism Project,Tourism,Ongoing,Abdi Toroitich,Joseph Mwangi,0.517615734,35.27427538,Uasin Gishu,30/01/2024,28/03/2026,2425031265
+P0219,Mandera Affordable Housing,Housing,Design,Grace Ekidor,Mercy Abdalla,3.94631362,41.86731278,Mandera,22/01/2026,28/04/2028,624252217
+P0220,Mombasa Library Project,Education,Ongoing,Samuel Chepngeno,Mercy Ekal,-4.034029818,39.67061484,Mombasa,24/03/2024,12/03/2027,2593365252
+P0221,Mombasa Technical Institute,Education,Ongoing,Francis Cherono,Sarah Adan,-4.046908122,39.66381088,Mombasa,14/01/2025,12/03/2028,1387084660
+P0222,Garissa Greenhouse Project,Agriculture,Ongoing,Mercy Mutua,Chebet Hassan,-0.461544752,39.64507745,Garissa,14/05/2024,16/11/2027,1161947601
+P0223,Mandera Medical Supply Chain,Health,Ongoing,Samuel Nduku,Peter Noor,3.930217974,41.8537977,Mandera,04/04/2025,24/08/2027,1967548328
+P0224,Machakos Estate Development,Housing,Design,Rose Ekal,James Ekidor,-1.523700045,37.25854521,Machakos,28/05/2026,18/05/2027,2464474252
+P0225,Machakos Dam Construction,Water,Completed,Rebecca Chebet,James Nduku,-1.516327098,37.25992123,Machakos,03/09/2023,28/04/2025,1233518193
+P0226,Mombasa Dam Construction,Water,Design,Chebet Ekal,Rose Abdalla,-4.048341848,39.67496365,Mombasa,06/08/2026,02/02/2027,1731710768
+P0227,Garissa Biogas Initiative,Energy,Design,Fatma Chebet,Janet Kiprotich,-0.456134588,39.64894425,Garissa,30/10/2025,14/11/2026,2743982157
+P0228,Kisumu Resort Development,Tourism,Completed,Francis Mwangi,Grace Kiprotich,-0.085896722,34.76908449,Kisumu,27/10/2022,23/01/2025,1314469555
+P0229,Machakos Highway Upgrade,Transport,Design,Fatma Mutua,Peter Cherono,-1.512269195,37.27254192,Machakos,22/11/2026,20/05/2028,27270729
+P0230,Mombasa Resettlement Housing,Housing,Completed,Peter Mohamed,Chebet Mutua,-4.050508189,39.67708305,Mombasa,09/08/2021,29/11/2023,1361444316
+P0231,Nairobi Library Project,Education,Design,Sarah Cherono,Samuel Ekidor,-1.291950904,36.81365983,Nairobi,11/09/2026,21/12/2027,395650731
+P0232,Machakos Digital Hub,ICT,Completed,Janet Adan,Ali Chebet,-1.509867416,37.26117446,Machakos,09/11/2021,11/07/2024,2281435177
+P0233,Nairobi Library Project,Education,Completed,Rebecca Chebet,Mercy Kiprotich,-1.288991116,36.81939824,Nairobi,08/02/2024,03/06/2025,1395677108
+P0234,Mombasa Cultural Center,Tourism,Completed,Sarah Onyango,James Ekal,-4.047255189,39.66763071,Mombasa,31/05/2023,07/06/2024,2965783656
+P0235,Nairobi Library Project,Education,Design,Abdi Ekidor,Rebecca Achieng,-1.28725621,36.81364612,Nairobi,23/03/2027,06/04/2029,2640527160
+P0236,Baringo Biogas Initiative,Energy,Completed,Mercy Kibet,Peter Mwangi,0.46598912,35.97031839,Baringo,03/10/2023,15/09/2024,1774880233
+P0237,Nakuru School Construction,Education,Completed,Hassan Chepngeno,Grace Toroitich,-0.29567699,36.08277297,Nakuru,21/03/2024,15/04/2025,441449519
+P0238,Mombasa Digital Learning Center,Education,Completed,Chebet Nduku,Hassan Chebet,-4.046064776,39.67635688,Mombasa,08/06/2022,19/02/2023,2544454681
+P0239,Kisumu Sanitation Project,Water,Completed,Daniel Abdalla,Joseph Adan,-0.088215535,34.75926424,Kisumu,02/03/2021,18/07/2023,493582468
+P0240,Turkana Resettlement Housing,Housing,Completed,James Kiprotich,Sarah Nduku,3.120450989,35.60363081,Turkana,29/08/2021,11/03/2024,923193097
+P0241,Kisumu Digital Learning Center,Education,Ongoing,Hassan Cherono,Daniel Achieng,-0.100312242,34.76608625,Kisumu,28/06/2025,09/01/2027,2156069676
+P0242,Mombasa Irrigation Scheme,Agriculture,Completed,Rebecca Hassan,Chebet Adan,-4.043082786,39.67488803,Mombasa,09/10/2021,15/01/2024,966886762
+P0243,Nairobi Smart City Project,ICT,Completed,Janet Mohamed,Samuel Abdalla,-1.281438221,36.82588858,Nairobi,17/05/2022,03/01/2023,1264213770
+P0244,Baringo Wind Farm,Energy,Ongoing,Rose Mwangi,Mercy Toroitich,0.471891584,35.96308522,Baringo,04/12/2024,07/08/2026,2653784306
+P0245,Kisumu Urban Renewal Project,Housing,Ongoing,Chebet Ekal,Sarah Ekidor,-0.093227777,34.77481832,Kisumu,01/02/2024,06/06/2027,840112692
+P0246,Baringo Solar Power Plant,Energy,Completed,Mercy Cherono,Halima Mohamed,0.462266239,35.97112572,Baringo,31/10/2022,24/03/2024,929313740
+P0247,Nairobi Farm Input Program,Agriculture,Ongoing,Joseph Noor,Hassan Mutua,-1.28417676,36.8207375,Nairobi,01/08/2024,18/05/2026,2118681941
+P0248,Kisumu Bus Rapid Transit,Transport,Design,Mercy Otieno,Rose Ekidor,-0.084902423,34.76440491,Kisumu,03/02/2027,09/07/2028,236216381
+P0249,Garissa Health Center Upgrade,Health,Design,Sarah Adan,Rose Adan,-0.461686636,39.64838561,Garissa,03/10/2026,10/10/2028,1420841110
+P0250,Turkana Bus Rapid Transit,Transport,Ongoing,Janet Ekal,Abdi Ekidor,3.117507087,35.60882409,Turkana,26/03/2025,02/07/2026,1112437685
+P0251,Machakos Cultural Center,Tourism,Completed,Samuel Mwangi,Mercy Cherono,-1.508353198,37.25703194,Machakos,13/09/2021,22/07/2023,1139891149
+P0252,Mandera E-Government System,ICT,Completed,Hassan Nduku,Chebet Kiprotich,3.937461346,41.85454457,Mandera,01/10/2022,20/05/2023,2683327303
+P0253,Uasin Gishu Biogas Initiative,Energy,Ongoing,Mercy Chepngeno,Halima Abdalla,0.518532544,35.27776187,Uasin Gishu,04/02/2024,28/06/2026,1720635430
+P0254,Garissa Borehole Drilling,Water,Completed,Grace Chepngeno,Chebet Chepngeno,-0.450844859,39.64819226,Garissa,08/07/2023,02/02/2024,1949155470
+P0255,Kisumu Farm Input Program,Agriculture,Design,Rebecca Mutua,Grace Noor,-0.081896438,34.77479009,Kisumu,08/04/2027,03/06/2029,2234921616
+P0256,Baringo Estate Development,Housing,Completed,Ahmed Abdalla,Hassan Onyango,0.476510514,35.97489474,Baringo,24/07/2020,25/03/2023,715476425
+P0257,Turkana Referral Hospital,Health,Design,Abdi Adan,Hassan Hassan,3.112506934,35.60241181,Turkana,30/09/2026,11/02/2028,1973696890
+P0258,Uasin Gishu Resort Development,Tourism,Design,Fatma Hussein,Hassan Noor,0.522223964,35.26839622,Uasin Gishu,30/01/2026,27/06/2027,485661549
+P0259,Nairobi Affordable Housing,Housing,Design,James Chebet,Fatma Nduku,-1.282519368,36.81085667,Nairobi,02/11/2026,11/06/2029,568729756
+P0260,Kisumu Wildlife Conservancy,Tourism,Design,Joseph Abdalla,Rose Abdalla,-0.086006778,34.76451009,Kisumu,26/10/2026,31/07/2028,1212835889
+P0261,Mandera Innovation Center,ICT,Ongoing,Fatma Abdalla,Mercy Hassan,3.94801568,41.86880762,Mandera,14/06/2024,05/04/2028,1540524961
+P0262,Baringo School Construction,Education,Ongoing,Sarah Toroitich,Janet Ekidor,0.470101916,35.97307697,Baringo,04/02/2024,15/05/2027,1280853695
+P0263,Uasin Gishu School Construction,Education,Completed,Grace Chepngeno,James Ekidor,0.511265441,35.26061753,Uasin Gishu,15/06/2021,17/09/2023,2418448209
+P0264,Mombasa Health Center Upgrade,Health,Design,Hassan Cherono,Fatma Achieng,-4.039280828,39.6777336,Mombasa,10/11/2026,21/07/2029,783099914
+P0265,Nakuru Cultural Center,Tourism,Ongoing,Sarah Cherono,Janet Chebet,-0.299154263,36.08857111,Nakuru,22/04/2025,19/07/2027,181807842
+P0266,Uasin Gishu Technical Institute,Education,Design,Abdi Cherono,Joseph Nduku,0.514498659,35.27965753,Uasin Gishu,23/11/2025,31/05/2028,638943909
+P0267,Baringo E-Government System,ICT,Completed,Sarah Chebet,Rebecca Onyango,0.464207667,35.97068764,Baringo,07/06/2022,19/01/2023,2941114041
+P0268,Garissa Innovation Center,ICT,Design,Francis Cherono,Halima Kibet,-0.462337332,39.65227895,Garissa,06/02/2026,18/09/2027,548009658
+P0269,Baringo Resettlement Housing,Housing,Ongoing,Ali Ekal,Ali Mwangi,0.475258564,35.96291523,Baringo,12/01/2025,28/11/2027,139239336
+P0270,Mombasa Urban Renewal Project,Housing,Ongoing,Hassan Ekal,Rose Mohamed,-4.040530411,39.67015781,Mombasa,18/02/2024,03/02/2026,157717477
+P0271,Machakos Highway Upgrade,Transport,Completed,Peter Hassan,James Hussein,-1.518053198,37.26570244,Machakos,09/12/2022,17/05/2024,2467687033
+P0272,Mandera Resort Development,Tourism,Design,Grace Cherono,Francis Hussein,3.940638297,41.86022081,Mandera,17/11/2025,28/02/2027,1686696339
+P0273,Garissa Health Center Upgrade,Health,Ongoing,Francis Chepngeno,Ahmed Chepngeno,-0.44584802,39.65492153,Garissa,20/05/2024,28/01/2027,1139413335
+P0274,Mandera Estate Development,Housing,Completed,Hassan Toroitich,Janet Hussein,3.945076301,41.87112702,Mandera,01/04/2023,18/06/2024,2958826281
+P0275,Baringo Referral Hospital,Health,Ongoing,Grace Hassan,James Ekal,0.467058459,35.96534223,Baringo,07/10/2024,25/06/2027,500956200
+P0276,Mandera Bus Rapid Transit,Transport,Design,Fatma Chepngeno,Grace Onyango,3.935312993,41.86506322,Mandera,20/06/2026,30/11/2028,2663841972
+P0277,Machakos Greenhouse Project,Agriculture,Design,Mercy Kibet,Samuel Ekal,-1.516280927,37.26555152,Machakos,05/07/2026,12/07/2028,2347784074
+P0278,Turkana Urban Renewal Project,Housing,Completed,David Otieno,David Adan,3.111323357,35.61223294,Turkana,14/08/2022,01/10/2024,1583144127
+P0279,Nakuru School Construction,Education,Design,Ahmed Achieng,Halima Achieng,-0.307221471,36.08384967,Nakuru,18/02/2027,24/11/2028,2619198143
+P0280,Uasin Gishu Water Pipeline,Water,Completed,Daniel Mutua,James Nduku,0.51686683,35.27209439,Uasin Gishu,29/07/2021,12/04/2024,779566279
+P0281,Nairobi Agro-Processing Plant,Agriculture,Design,Janet Toroitich,Janet Hassan,-1.279680598,36.81758317,Nairobi,29/11/2026,08/07/2028,1723384116
+P0282,Mombasa Library Project,Education,Completed,Chebet Cherono,David Ekidor,-4.044176496,39.66060627,Mombasa,30/09/2022,20/04/2024,2060354528
+P0283,Uasin Gishu Digital Hub,ICT,Design,Fatma Toroitich,Fatma Chepngeno,0.529936017,35.27558484,Uasin Gishu,02/10/2025,13/08/2027,1736271725
+P0284,Garissa Wildlife Conservancy,Tourism,Design,Janet Achieng,Daniel Abdalla,-0.444302303,39.65077031,Garissa,06/08/2026,15/07/2028,1296834124
+P0285,Uasin Gishu Resort Development,Tourism,Design,Abdi Adan,Sarah Mutua,0.528686615,35.27927001,Uasin Gishu,08/04/2026,13/11/2026,1729270066
+P0286,Kisumu Bypass Road,Transport,Design,Abdi Otieno,David Ekal,-0.097039295,34.76330665,Kisumu,16/04/2026,13/09/2027,1928772210
+P0287,Mandera Innovation Center,ICT,Design,Halima Onyango,Abdi Mwangi,3.944279508,41.86973108,Mandera,06/04/2027,28/12/2027,1724136395
+P0288,Kisumu Health Center Upgrade,Health,Ongoing,Peter Ekidor,Ahmed Ekal,-0.088710226,34.77101144,Kisumu,29/06/2025,15/07/2027,2209737180
+P0289,Turkana Dam Construction,Water,Design,Ahmed Mwangi,Francis Abdalla,3.120050894,35.60272765,Turkana,22/08/2026,19/02/2029,2034380338
+P0290,Nairobi School Construction,Education,Completed,Fatma Ekal,Peter Adan,-1.276671569,36.81416217,Nairobi,15/01/2024,08/02/2025,1668691856
+P0291,Garissa Dam Construction,Water,Design,Mercy Noor,Janet Otieno,-0.449324626,39.64016364,Garissa,11/12/2025,28/12/2026,2039028752
+P0292,Baringo Biogas Initiative,Energy,Completed,Ali Kiprotich,Samuel Toroitich,0.474344425,35.97545189,Baringo,23/02/2022,09/04/2024,1570292744
+P0293,Nakuru Greenhouse Project,Agriculture,Completed,Samuel Hussein,Rebecca Mohamed,-0.293494815,36.07497187,Nakuru,29/11/2023,04/02/2025,654479614
+P0294,Machakos Water Pipeline,Water,Ongoing,Francis Mwangi,Rose Hassan,-1.508134865,37.2671123,Machakos,10/05/2024,03/07/2026,497568538
+P0295,Garissa Urban Renewal Project,Housing,Completed,Peter Otieno,Janet Toroitich,-0.444001629,39.65063287,Garissa,15/10/2023,10/02/2025,978168961
+P0296,Baringo Eco-Tourism Project,Tourism,Completed,Francis Mohamed,Rebecca Achieng,0.467450919,35.96573879,Baringo,10/05/2024,26/12/2024,2978830858
+P0297,Nakuru Medical Supply Chain,Health,Design,Sarah Otieno,Sarah Ekidor,-0.309831762,36.07327271,Nakuru,02/04/2026,30/08/2028,2693749478
+P0298,Machakos Dam Construction,Water,Design,David Kibet,Joseph Noor,-1.519236687,37.26437693,Machakos,02/01/2027,10/07/2029,613710790
+P0299,Nakuru Bridge Construction,Transport,Ongoing,Halima Kiprotich,James Onyango,-0.309863867,36.07383243,Nakuru,27/01/2024,24/02/2026,945709592
+P0300,Garissa Agro-Processing Plant,Agriculture,Design,Janet Noor,Halima Ekal,-0.463030127,39.64091341,Garissa,22/03/2026,31/12/2027,899810833
+P0301,Nairobi Medical Supply Chain,Health,Completed,Janet Onyango,Abdi Abdalla,-1.276439456,36.82582675,Nairobi,31/05/2022,21/06/2024,2007344561
+P0302,Machakos Borehole Drilling,Water,Ongoing,Fatma Mwangi,Sarah Onyango,-1.514900023,37.2573,Machakos,11/05/2024,10/06/2027,2696652992
+P0303,Nairobi School Construction,Education,Design,James Kiprotich,James Adan,-1.292485546,36.81434903,Nairobi,21/06/2026,17/07/2028,2483492322
+P0304,Machakos Health Center Upgrade,Health,Ongoing,Francis Chebet,Rose Kiprotich,-1.520319755,37.26879006,Machakos,30/01/2024,08/02/2028,135454518
+P0305,Baringo Solar Power Plant,Energy,Design,Janet Ekal,Francis Mwangi,0.457065804,35.96743682,Baringo,02/12/2026,24/01/2029,1508693880
+P0306,Turkana Greenhouse Project,Agriculture,Completed,Peter Abdalla,Sarah Chebet,3.119330307,35.60925167,Turkana,31/10/2020,14/04/2023,333516706
+P0307,Turkana Digital Hub,ICT,Completed,James Ekidor,Fatma Ekidor,3.118270352,35.60310826,Turkana,20/08/2023,09/07/2025,2637809165
+P0308,Machakos Medical Supply Chain,Health,Design,Ali Chebet,Peter Toroitich,-1.524081345,37.26367046,Machakos,02/10/2026,11/10/2028,1275181101
+P0309,Machakos Library Project,Education,Design,Fatma Hussein,Peter Mwangi,-1.526292221,37.26218841,Machakos,13/12/2025,18/05/2028,1916816306
+P0310,Uasin Gishu Library Project,Education,Completed,Ahmed Toroitich,Francis Mutua,0.52579521,35.2767998,Uasin Gishu,22/09/2021,18/09/2023,1751300479
+P0311,Machakos Estate Development,Housing,Design,Peter Hussein,Francis Abdalla,-1.515529681,37.2546829,Machakos,13/11/2025,30/04/2027,434202018
+P0312,Nairobi Bridge Construction,Transport,Ongoing,Rebecca Mutua,Sarah Onyango,-1.290687207,36.82021426,Nairobi,18/01/2025,03/10/2025,2644225404
+P0313,Turkana Farm Input Program,Agriculture,Completed,Samuel Toroitich,Sarah Hussein,3.106338711,35.61228842,Turkana,05/04/2023,22/10/2024,2728631735
+P0314,Nairobi Digital Hub,ICT,Completed,Janet Mwangi,Janet Abdalla,-1.278917583,36.81682839,Nairobi,15/06/2022,24/06/2023,1981561226
+P0315,Kisumu Irrigation Scheme,Agriculture,Design,James Onyango,Fatma Ekal,-0.099537696,34.76358476,Kisumu,05/05/2026,24/02/2027,2815038271
+P0316,Machakos Clinic Construction,Health,Completed,Grace Kibet,Mercy Cherono,-1.508116324,37.2550113,Machakos,28/01/2021,27/05/2023,263229724
+P0317,Uasin Gishu Borehole Drilling,Water,Design,Samuel Mutua,Grace Ekidor,0.523758314,35.26827258,Uasin Gishu,13/07/2026,08/01/2029,2688126970
+P0318,Mombasa Highway Upgrade,Transport,Ongoing,David Mutua,Abdi Kibet,-4.043327107,39.66730328,Mombasa,02/04/2024,30/08/2027,1957158684
+P0319,Mandera Library Project,Education,Design,Ali Chebet,Halima Noor,3.93544398,41.86727549,Mandera,23/11/2026,08/09/2027,258866837
+P0320,Mandera Digital Hub,ICT,Ongoing,Sarah Kiprotich,Daniel Chebet,3.948588848,41.85775971,Mandera,01/03/2024,21/06/2027,2572824244
+P0321,Mombasa Farm Input Program,Agriculture,Design,Ali Kiprotich,Mercy Adan,-4.044492448,39.67177842,Mombasa,26/05/2026,24/11/2027,2038641144
+P0322,Mombasa Borehole Drilling,Water,Completed,Joseph Hussein,Grace Kibet,-4.039390191,39.66320469,Mombasa,10/01/2024,01/02/2025,283666849
+P0323,Baringo Sanitation Project,Water,Completed,Rose Chebet,Rose Noor,0.466020979,35.96825421,Baringo,09/04/2023,17/05/2024,2703295599
+P0324,Machakos Medical Supply Chain,Health,Design,Rose Mutua,Halima Mutua,-1.520147474,37.25858354,Machakos,23/10/2025,23/05/2027,1246918973
+P0325,Kisumu Library Project,Education,Ongoing,Ahmed Hassan,Mercy Cherono,-0.088053531,34.76834505,Kisumu,07/05/2025,30/03/2027,1854550184
+P0326,Mombasa Eco-Tourism Project,Tourism,Ongoing,Francis Chepngeno,David Toroitich,-4.035406444,39.66357942,Mombasa,17/03/2024,15/01/2026,1120311171
+P0327,Mombasa Bypass Road,Transport,Ongoing,Abdi Mwangi,Grace Mohamed,-4.035773544,39.67409487,Mombasa,04/08/2024,05/02/2026,1387967036
+P0328,Baringo Medical Supply Chain,Health,Ongoing,Samuel Abdalla,Chebet Hussein,0.469878903,35.96994344,Baringo,08/05/2025,15/02/2026,1960255665
+P0329,Uasin Gishu Urban Renewal Project,Housing,Design,Grace Nduku,Sarah Hussein,0.519218338,35.27896289,Uasin Gishu,27/03/2027,14/07/2028,1120014799
+P0330,Kisumu Cultural Center,Tourism,Completed,Rebecca Nduku,Rebecca Ekal,-0.082185799,34.77737834,Kisumu,04/06/2022,14/07/2024,242360818
+P0331,Nairobi Sanitation Project,Water,Ongoing,Janet Mwangi,Rose Kibet,-1.295012848,36.81582157,Nairobi,08/08/2024,01/01/2027,2860594587
+P0332,Machakos Affordable Housing,Housing,Design,Abdi Kibet,Fatma Hussein,-1.523181982,37.2535316,Machakos,04/06/2026,23/06/2028,110240226
+P0333,Nairobi Highway Upgrade,Transport,Completed,Abdi Mohamed,Rebecca Cherono,-1.290959255,36.80994387,Nairobi,06/06/2023,29/12/2023,1733678313
+P0334,Mandera Referral Hospital,Health,Ongoing,Fatma Ekal,Ahmed Achieng,3.938502414,41.86505199,Mandera,20/07/2024,10/03/2026,648056946
+P0335,Turkana Innovation Center,ICT,Ongoing,Ali Achieng,Francis Adan,3.113757771,35.60620125,Turkana,29/05/2024,15/01/2028,2854422613
+P0336,Kisumu Referral Hospital,Health,Completed,Halima Onyango,Daniel Hussein,-0.098307693,34.76252396,Kisumu,02/05/2022,21/06/2024,909945390
+P0337,Kisumu Referral Hospital,Health,Design,David Kiprotich,Rebecca Nduku,-0.084189506,34.7701529,Kisumu,22/09/2026,10/10/2027,691580428
+P0338,Nakuru Urban Renewal Project,Housing,Ongoing,Abdi Ekidor,Peter Mohamed,-0.301601696,36.07274455,Nakuru,09/04/2024,18/05/2026,1666829664
+P0339,Mandera Digital Hub,ICT,Ongoing,Halima Kibet,Hassan Otieno,3.948104606,41.86220071,Mandera,06/09/2024,30/06/2027,2930155424
+P0340,Kisumu Resettlement Housing,Housing,Ongoing,Hassan Achieng,Grace Onyango,-0.094988988,34.76577871,Kisumu,10/10/2024,12/04/2026,460946355
+P0341,Machakos Bus Rapid Transit,Transport,Ongoing,Hassan Cherono,Sarah Noor,-1.523308482,37.26823429,Machakos,19/04/2025,15/12/2025,261246120
+P0342,Mombasa Farm Input Program,Agriculture,Ongoing,Grace Abdalla,Grace Otieno,-4.045210934,39.67436793,Mombasa,02/05/2025,30/07/2026,1656158462
+P0343,Kisumu E-Government System,ICT,Completed,Hassan Hussein,Fatma Ekal,-0.087317304,34.7737025,Kisumu,01/09/2022,18/03/2023,1062678092
+P0344,Mombasa Resettlement Housing,Housing,Completed,Hassan Cherono,Ali Mwangi,-4.050922268,39.66869586,Mombasa,14/11/2021,05/06/2023,196749641
+P0345,Garissa Biogas Initiative,Energy,Completed,Ali Otieno,Halima Kibet,-0.450700051,39.64711935,Garissa,23/10/2020,24/02/2023,156094041
+P0346,Machakos Digital Hub,ICT,Completed,James Cherono,Ahmed Abdalla,-1.517798622,37.270005,Machakos,22/11/2020,11/02/2023,2810734822
+P0347,Mandera Farm Input Program,Agriculture,Design,Rose Otieno,Abdi Hussein,3.947021511,41.86953239,Mandera,25/11/2025,28/03/2028,1876797862
+P0348,Turkana Bus Rapid Transit,Transport,Ongoing,Rose Achieng,Ahmed Mwangi,3.114021748,35.59678865,Turkana,10/08/2024,07/03/2026,2815956715
+P0349,Baringo Biogas Initiative,Energy,Ongoing,Sarah Hussein,Joseph Abdalla,0.471248816,35.96135268,Baringo,28/12/2024,11/10/2026,1684050109
+P0350,Nairobi Innovation Center,ICT,Design,Grace Noor,Samuel Ekidor,-1.287883145,36.81486097,Nairobi,14/03/2026,02/02/2028,2399877848
+P0351,Machakos Wind Farm,Energy,Design,Peter Chebet,Ahmed Mwangi,-1.524074577,37.27163331,Machakos,23/02/2027,14/04/2028,2058843449
+P0352,Nakuru Library Project,Education,Completed,Fatma Noor,Mercy Achieng,-0.307106626,36.08196739,Nakuru,24/04/2023,04/05/2024,1513816212
+P0353,Nakuru Affordable Housing,Housing,Design,Fatma Mohamed,Francis Mwangi,-0.308481487,36.08499007,Nakuru,01/04/2027,11/01/2028,1396507169
+P0354,Kisumu Borehole Drilling,Water,Completed,Ali Ekidor,Abdi Ekal,-0.092275231,34.75826252,Kisumu,08/08/2021,17/04/2023,1726753275
+P0355,Kisumu Innovation Center,ICT,Design,Francis Onyango,Peter Kibet,-0.082986521,34.77005904,Kisumu,14/09/2026,24/01/2029,2660203172
+P0356,Nairobi Wildlife Conservancy,Tourism,Design,Janet Noor,James Kiprotich,-1.290913919,36.82450071,Nairobi,18/04/2027,02/06/2028,2528424962
+P0357,Turkana E-Government System,ICT,Ongoing,David Nduku,Chebet Chepngeno,3.113748817,35.61228258,Turkana,21/04/2025,13/03/2028,2687876025
+P0358,Mandera Highway Upgrade,Transport,Completed,Rose Toroitich,Sarah Nduku,3.946251529,41.86967963,Mandera,15/04/2023,13/04/2025,2228249449
+P0359,Machakos Resettlement Housing,Housing,Completed,Daniel Kibet,Janet Cherono,-1.510418125,37.26648251,Machakos,29/08/2020,10/05/2023,1803813846
+P0360,Nakuru Sanitation Project,Water,Design,Abdi Ekidor,James Kiprotich,-0.311904006,36.08853865,Nakuru,07/02/2026,13/09/2028,1699928979
+P0361,Mandera Highway Upgrade,Transport,Ongoing,Mercy Chebet,Mercy Mwangi,3.939595496,41.85424857,Mandera,16/07/2025,01/06/2026,2664702081
+P0362,Mandera Bridge Construction,Transport,Ongoing,Joseph Abdalla,Halima Nduku,3.932911619,41.85953517,Mandera,26/01/2024,18/07/2026,66566509
+P0363,Nakuru Smart City Project,ICT,Completed,James Cherono,Halima Cherono,-0.312493894,36.08005022,Nakuru,05/06/2022,11/04/2024,537603644
+P0364,Kisumu Biogas Initiative,Energy,Ongoing,Peter Chepngeno,Samuel Abdalla,-0.086590038,34.7666929,Kisumu,29/07/2025,28/07/2027,1153537292
+P0365,Mandera Greenhouse Project,Agriculture,Completed,Francis Onyango,Rebecca Adan,3.945534056,41.86437584,Mandera,22/08/2020,08/02/2023,698517502
+P0366,Uasin Gishu Clinic Construction,Health,Design,James Noor,Daniel Nduku,0.523986732,35.26009671,Uasin Gishu,30/05/2026,12/12/2028,1900319930
+P0367,Kisumu Cultural Center,Tourism,Ongoing,James Hussein,Halima Hassan,-0.082829467,34.76158361,Kisumu,10/04/2025,18/09/2026,2746804088
+P0368,Mandera Mini Hydro Project,Energy,Completed,Abdi Nduku,Grace Mohamed,3.935977831,41.86365672,Mandera,10/11/2021,05/12/2022,1875618364
+P0369,Mombasa Bridge Construction,Transport,Design,Peter Otieno,Fatma Mwangi,-4.048144992,39.6778991,Mombasa,03/08/2026,22/03/2028,1926021661
+P0370,Turkana Smart City Project,ICT,Completed,Joseph Chepngeno,David Cherono,3.11635714,35.59899338,Turkana,21/12/2021,30/01/2023,845111713
+P0371,Uasin Gishu Farm Input Program,Agriculture,Completed,Joseph Onyango,Janet Ekidor,0.522165,35.2604735,Uasin Gishu,01/05/2021,22/09/2023,290241787
+P0372,Garissa Medical Supply Chain,Health,Design,Halima Chebet,Ali Cherono,-0.444931135,39.64128598,Garissa,12/11/2026,29/05/2027,665640061
+P0373,Mandera Health Center Upgrade,Health,Design,Rose Hussein,Grace Ekal,3.938714386,41.86339025,Mandera,13/09/2026,04/10/2027,2539481264
+P0374,Nairobi Smart City Project,ICT,Completed,Francis Otieno,Fatma Mwangi,-1.28797861,36.80914369,Nairobi,11/11/2022,29/11/2023,480286736
+P0375,Kisumu Digital Hub,ICT,Completed,Mercy Hassan,Ahmed Cherono,-0.095533192,34.7726401,Kisumu,16/11/2022,02/11/2023,1747470971
+P0376,Kisumu Resort Development,Tourism,Design,Joseph Cherono,Fatma Adan,-0.100472795,34.77133024,Kisumu,18/02/2026,25/02/2027,2089302153
+P0377,Mandera Wind Farm,Energy,Completed,Sarah Ekidor,Grace Kiprotich,3.940541152,41.85875404,Mandera,08/03/2024,02/06/2025,1880349520
+P0378,Baringo Medical Supply Chain,Health,Completed,Janet Hussein,Hassan Otieno,0.475351564,35.97463576,Baringo,15/04/2023,14/04/2024,2840982897
+P0379,Turkana Borehole Drilling,Water,Ongoing,Fatma Kibet,James Hussein,3.108970981,35.60347668,Turkana,19/11/2024,01/08/2027,2717362599
+P0380,Garissa Library Project,Education,Ongoing,Chebet Toroitich,David Mohamed,-0.463048021,39.64147202,Garissa,29/09/2024,09/02/2027,1733997973
+P0381,Nairobi Agro-Processing Plant,Agriculture,Design,Sarah Kiprotich,Sarah Kibet,-1.29331918,36.8148186,Nairobi,29/06/2026,16/04/2028,2174759388
+P0382,Machakos Estate Development,Housing,Completed,Chebet Ekal,Hassan Onyango,-1.526874969,37.26783709,Machakos,10/10/2021,21/03/2024,712384460
+P0383,Garissa Bridge Construction,Transport,Design,Ali Hussein,Halima Mohamed,-0.446739491,39.65548915,Garissa,29/03/2026,15/06/2028,2082329210
+P0384,Nakuru Affordable Housing,Housing,Design,Ali Achieng,Sarah Abdalla,-0.300953692,36.08097728,Nakuru,25/02/2027,08/12/2027,205733401
+P0385,Mombasa E-Government System,ICT,Design,Ahmed Chebet,Rose Mwangi,-4.039104473,39.67196541,Mombasa,28/03/2026,07/09/2027,142724653
+P0386,Nakuru Clinic Construction,Health,Design,Sarah Noor,Chebet Abdalla,-0.298026784,36.07847775,Nakuru,04/04/2027,15/10/2028,511554213
+P0387,Turkana Digital Learning Center,Education,Ongoing,Mercy Nduku,Hassan Onyango,3.117618203,35.59539402,Turkana,24/01/2024,03/10/2027,1825184568
+P0388,Nairobi Innovation Center,ICT,Completed,Grace Mwangi,Ali Ekal,-1.292624865,36.82647433,Nairobi,21/10/2021,24/07/2023,2158492639
+P0389,Garissa Resettlement Housing,Housing,Design,Grace Onyango,Mercy Adan,-0.458304101,39.6486698,Garissa,22/06/2026,05/12/2028,1388539722
+P0390,Mombasa Digital Learning Center,Education,Ongoing,Rebecca Cherono,James Chepngeno,-4.050554357,39.66702492,Mombasa,14/10/2024,07/01/2028,2119186284
+P0391,Garissa Bridge Construction,Transport,Design,Grace Mutua,Daniel Mutua,-0.451799942,39.64602797,Garissa,22/11/2025,03/12/2027,232239453
+P0392,Mandera Biogas Initiative,Energy,Ongoing,Rebecca Kibet,Samuel Abdalla,3.935933386,41.86411397,Mandera,17/05/2025,15/11/2025,1752640814
+P0393,Uasin Gishu Highway Upgrade,Transport,Completed,Daniel Ekidor,Janet Kibet,0.527116679,35.27067819,Uasin Gishu,15/08/2023,22/02/2024,957069075
+P0394,Nairobi Water Pipeline,Water,Design,Fatma Cherono,Francis Nduku,-1.277123701,36.81816541,Nairobi,02/11/2025,26/12/2027,1670378535
+P0395,Turkana Clinic Construction,Health,Ongoing,Rebecca Abdalla,Ahmed Onyango,3.123469236,35.60396086,Turkana,19/01/2025,19/01/2027,1996207768
+P0396,Machakos Digital Hub,ICT,Ongoing,Fatma Cherono,Samuel Noor,-1.517271609,37.27243181,Machakos,26/03/2024,22/10/2025,1798592169
+P0397,Mandera Library Project,Education,Completed,James Chebet,Daniel Mwangi,3.948316149,41.8713851,Mandera,12/01/2022,21/05/2024,470082810
+P0398,Baringo Digital Learning Center,Education,Completed,Ahmed Ekal,Janet Mohamed,0.460170638,35.96406414,Baringo,27/05/2024,25/05/2025,1096748227
+P0399,Uasin Gishu Clinic Construction,Health,Ongoing,Rose Ekidor,James Mutua,0.511796067,35.27760569,Uasin Gishu,08/03/2025,08/04/2028,865772118
+P0400,Turkana Bridge Construction,Transport,Ongoing,Francis Abdalla,James Toroitich,3.115166051,35.60245406,Turkana,04/01/2025,04/05/2026,1949370093
+P0401,Garissa Clinic Construction,Health,Ongoing,Rebecca Mohamed,Hassan Otieno,-0.463076336,39.65463516,Garissa,22/06/2024,29/03/2027,68669712
+P0402,Garissa Innovation Center,ICT,Completed,Chebet Nduku,Mercy Achieng,-0.443373639,39.65314996,Garissa,09/12/2023,27/07/2025,2111260556
+P0403,Nakuru Irrigation Scheme,Agriculture,Design,Janet Ekidor,Fatma Ekal,-0.303650775,36.08729703,Nakuru,01/10/2025,05/09/2027,259000154
+P0404,Machakos Borehole Drilling,Water,Design,Chebet Chebet,Chebet Nduku,-1.518798413,37.26830364,Machakos,31/08/2026,26/09/2028,1691096470
+P0405,Turkana Agro-Processing Plant,Agriculture,Completed,Janet Toroitich,David Achieng,3.115586232,35.60745333,Turkana,08/04/2023,14/02/2025,1709714747
+P0406,Uasin Gishu Water Pipeline,Water,Completed,Halima Chebet,Joseph Cherono,0.52347295,35.2678524,Uasin Gishu,17/05/2024,22/04/2025,2351728771
+P0407,Kisumu Cultural Center,Tourism,Completed,Grace Kiprotich,Ali Mutua,-0.100844299,34.77634434,Kisumu,07/10/2023,04/08/2024,858333761
+P0408,Uasin Gishu Technical Institute,Education,Ongoing,Halima Ekidor,Samuel Chebet,0.527256267,35.2728843,Uasin Gishu,22/04/2025,03/09/2026,2337625328
+P0409,Nakuru E-Government System,ICT,Ongoing,Fatma Kibet,Sarah Hussein,-0.312024197,36.07395625,Nakuru,05/09/2024,30/05/2027,2393099970
+P0410,Nakuru Eco-Tourism Project,Tourism,Completed,Francis Kibet,Fatma Adan,-0.295169964,36.08633532,Nakuru,30/07/2022,17/05/2023,1862375167
+P0411,Garissa Greenhouse Project,Agriculture,Completed,Hassan Chebet,David Kiprotich,-0.457429205,39.64314805,Garissa,02/09/2022,17/02/2025,1668829642
+P0412,Mombasa Solar Power Plant,Energy,Completed,Ali Achieng,Ahmed Hussein,-4.043877575,39.66425429,Mombasa,20/07/2022,19/07/2023,725270878
+P0413,Nakuru E-Government System,ICT,Design,Ali Achieng,Sarah Hussein,-0.300480789,36.07044198,Nakuru,02/11/2026,19/04/2029,997856024
+P0414,Baringo Biogas Initiative,Energy,Ongoing,Daniel Hassan,Janet Abdalla,0.475619627,35.97386322,Baringo,11/12/2024,01/04/2026,973408437
+P0415,Mandera Clinic Construction,Health,Ongoing,Mercy Onyango,Hassan Noor,3.94948087,41.86259477,Mandera,09/03/2024,15/12/2025,567363583
+P0416,Nairobi Bypass Road,Transport,Ongoing,Halima Ekal,Janet Otieno,-1.291297954,36.81447908,Nairobi,12/12/2024,31/12/2025,976119542
+P0417,Baringo Farm Input Program,Agriculture,Completed,Rose Adan,Halima Cherono,0.468913975,35.95674889,Baringo,12/07/2023,30/01/2025,1864818716
+P0418,Nakuru Medical Supply Chain,Health,Design,Joseph Kibet,Joseph Hassan,-0.295288088,36.07793801,Nakuru,29/09/2025,02/05/2027,2554613626
+P0419,Nakuru Wind Farm,Energy,Ongoing,Joseph Hassan,Halima Hussein,-0.309320571,36.07113076,Nakuru,01/07/2025,18/03/2026,1680030670
+P0420,Baringo Technical Institute,Education,Completed,Hassan Toroitich,Joseph Achieng,0.464692129,35.9661606,Baringo,03/04/2023,18/05/2025,1292076914
+P0421,Uasin Gishu Solar Power Plant,Energy,Completed,Rose Chepngeno,Chebet Abdalla,0.517349909,35.26357046,Uasin Gishu,15/11/2021,11/12/2023,2444309112
+P0422,Baringo Eco-Tourism Project,Tourism,Design,Grace Toroitich,Joseph Abdalla,0.475573109,35.97224594,Baringo,05/07/2026,05/10/2028,1247896447
+P0423,Kisumu Estate Development,Housing,Completed,Janet Ekal,Mercy Kibet,-0.085773825,34.7606414,Kisumu,01/05/2023,27/11/2023,79883140
+P0424,Uasin Gishu Greenhouse Project,Agriculture,Ongoing,Chebet Adan,Ali Chebet,0.517813435,35.26214214,Uasin Gishu,13/09/2024,01/05/2026,2317403151
+P0425,Uasin Gishu Wind Farm,Energy,Design,Fatma Ekidor,Chebet Otieno,0.520601442,35.26645784,Uasin Gishu,23/03/2027,08/11/2029,2555765926
+P0426,Garissa Solar Power Plant,Energy,Completed,Joseph Toroitich,Sarah Abdalla,-0.461458696,39.63854382,Garissa,24/01/2021,19/05/2023,2611457989
+P0427,Mandera Mini Hydro Project,Energy,Completed,Daniel Adan,James Mohamed,3.9330932,41.85699387,Mandera,06/05/2022,15/01/2024,928381410
+P0428,Turkana Farm Input Program,Agriculture,Design,James Mwangi,James Chebet,3.109055261,35.59728297,Turkana,16/03/2027,25/07/2028,1775847173
+P0429,Turkana Affordable Housing,Housing,Ongoing,Ahmed Adan,Grace Kibet,3.120091956,35.59583836,Turkana,27/11/2024,09/04/2028,2493474125
+P0430,Nairobi Eco-Tourism Project,Tourism,Completed,Rebecca Onyango,Janet Chebet,-1.290378746,36.8176222,Nairobi,23/04/2021,13/10/2023,1971445112
+P0431,Machakos Resettlement Housing,Housing,Design,David Toroitich,Rebecca Adan,-1.519646311,37.26540255,Machakos,01/03/2026,20/10/2026,2366360995
+P0432,Nairobi Resettlement Housing,Housing,Completed,Francis Adan,Grace Ekal,-1.287788924,36.81158608,Nairobi,18/08/2022,31/07/2024,457531233
+P0433,Uasin Gishu Digital Hub,ICT,Design,Rebecca Mwangi,Chebet Kiprotich,0.515189056,35.27709183,Uasin Gishu,22/11/2026,28/06/2028,735706594
+P0434,Turkana Bypass Road,Transport,Completed,Peter Noor,Peter Ekal,3.108385475,35.59958483,Turkana,21/04/2023,24/05/2025,639727206
+P0435,Mandera Health Center Upgrade,Health,Completed,Peter Ekidor,Chebet Mutua,3.938864025,41.85884027,Mandera,26/08/2024,01/04/2025,2482178866
+P0436,Machakos Eco-Tourism Project,Tourism,Ongoing,Peter Ekidor,Daniel Mwangi,-1.514570533,37.26021543,Machakos,13/07/2024,15/08/2027,1498507515
+P0437,Nairobi Bus Rapid Transit,Transport,Ongoing,Joseph Otieno,Joseph Abdalla,-1.286547529,36.81668184,Nairobi,08/03/2024,22/06/2026,2467791199
+P0438,Nakuru Clinic Construction,Health,Design,James Onyango,Chebet Kiprotich,-0.30151637,36.08943029,Nakuru,16/04/2026,04/11/2026,253821568
+P0439,Machakos Wildlife Conservancy,Tourism,Ongoing,Hassan Toroitich,Halima Otieno,-1.517352426,37.2585266,Machakos,16/02/2024,02/11/2026,842146680
+P0440,Mombasa Water Pipeline,Water,Completed,Halima Adan,Peter Onyango,-4.04434809,39.65877902,Mombasa,16/07/2021,02/05/2023,2731534810
+P0441,Baringo Digital Learning Center,Education,Ongoing,Rebecca Toroitich,Joseph Ekal,0.468053467,35.97132991,Baringo,01/12/2024,14/11/2025,466068107
+P0442,Turkana Resettlement Housing,Housing,Completed,Halima Ekidor,Rose Onyango,3.125777031,35.59940643,Turkana,24/08/2024,02/07/2025,289596868
+P0443,Uasin Gishu Biogas Initiative,Energy,Design,Abdi Adan,Halima Otieno,0.519540406,35.27149849,Uasin Gishu,11/01/2027,16/03/2029,448785658
+P0444,Mombasa Farm Input Program,Agriculture,Ongoing,Ali Nduku,Mercy Cherono,-4.04802486,39.66330726,Mombasa,03/01/2025,05/03/2028,2977523470
+P0445,Nairobi Water Pipeline,Water,Design,Chebet Toroitich,Abdi Toroitich,-1.278572176,36.81598934,Nairobi,16/08/2026,16/04/2028,2824251002
+P0446,Uasin Gishu Smart City Project,ICT,Completed,Peter Cherono,Samuel Onyango,0.527158464,35.26369769,Uasin Gishu,04/06/2020,22/01/2023,444335364
+P0447,Nairobi Farm Input Program,Agriculture,Ongoing,Abdi Adan,Samuel Chebet,-1.278670482,36.82571975,Nairobi,09/07/2025,23/11/2027,995776524
+P0448,Nakuru E-Government System,ICT,Completed,Fatma Mutua,David Cherono,-0.295279679,36.07218809,Nakuru,16/03/2023,03/11/2023,294090518
+P0449,Machakos Affordable Housing,Housing,Ongoing,Janet Noor,Chebet Onyango,-1.521820217,37.26603016,Machakos,03/11/2024,22/01/2028,2880010928
+P0450,Nakuru Bus Rapid Transit,Transport,Completed,Grace Mohamed,Francis Onyango,-0.297383233,36.07678026,Nakuru,30/01/2023,17/09/2024,683517966
+P0451,Garissa Solar Power Plant,Energy,Design,Grace Cherono,Ali Mutua,-0.454422371,39.6421602,Garissa,14/10/2026,15/10/2028,2765246633
+P0452,Uasin Gishu Technical Institute,Education,Completed,Hassan Abdalla,Daniel Chebet,0.511575509,35.27601026,Uasin Gishu,16/06/2023,20/07/2024,774452751
+P0453,Nakuru Affordable Housing,Housing,Completed,James Achieng,Francis Chebet,-0.300498333,36.07917966,Nakuru,16/05/2022,29/09/2023,540462147
+P0454,Mombasa Technical Institute,Education,Ongoing,David Ekidor,Samuel Mohamed,-4.040727922,39.6644394,Mombasa,21/12/2024,27/12/2026,1462366416
+P0455,Nairobi Resettlement Housing,Housing,Design,Rebecca Toroitich,Chebet Toroitich,-1.290667371,36.81208007,Nairobi,28/08/2026,14/02/2029,2025000659
+P0456,Kisumu Clinic Construction,Health,Design,Grace Ekidor,Grace Otieno,-0.092092687,34.77323876,Kisumu,18/03/2026,11/01/2028,244986885
+P0457,Baringo Mini Hydro Project,Energy,Ongoing,Francis Mohamed,Joseph Mohamed,0.462358652,35.96498754,Baringo,19/03/2024,29/12/2027,2643087803
+P0458,Mombasa Digital Hub,ICT,Completed,David Adan,Mercy Nduku,-4.051585879,39.66047307,Mombasa,23/05/2021,25/08/2023,2240543780
+P0459,Nakuru Solar Power Plant,Energy,Completed,Janet Cherono,Fatma Chebet,-0.311245054,36.08428297,Nakuru,21/06/2022,19/12/2022,1314662465
+P0460,Nakuru Wind Farm,Energy,Design,Sarah Noor,Fatma Mutua,-0.301764038,36.08459879,Nakuru,17/12/2026,19/07/2029,489046039
+P0461,Nakuru Mini Hydro Project,Energy,Design,Joseph Otieno,Abdi Kibet,-0.29399531,36.08056189,Nakuru,09/04/2027,24/10/2028,2259284219
+P0462,Baringo E-Government System,ICT,Ongoing,Mercy Kiprotich,Sarah Kibet,0.471781827,35.97147097,Baringo,04/07/2024,12/05/2027,1080725349
+P0463,Nairobi Irrigation Scheme,Agriculture,Ongoing,Grace Hussein,Chebet Kibet,-1.279726929,36.81583638,Nairobi,22/06/2024,09/01/2026,2015584556
+P0464,Nakuru Bypass Road,Transport,Ongoing,Samuel Chepngeno,Grace Otieno,-0.307799283,36.07081221,Nakuru,07/04/2024,05/06/2026,2722413888
+P0465,Uasin Gishu Borehole Drilling,Water,Completed,Joseph Ekal,Grace Mwangi,0.517010483,35.27655429,Uasin Gishu,23/12/2022,10/03/2024,2394938255
+P0466,Garissa Library Project,Education,Ongoing,Abdi Adan,Rose Kiprotich,-0.454472725,39.64272998,Garissa,10/04/2024,13/09/2026,1761224268
+P0467,Turkana Solar Power Plant,Energy,Ongoing,Francis Chebet,Joseph Mutua,3.114430176,35.60147891,Turkana,08/02/2024,05/01/2027,2356749653
+P0468,Garissa Digital Learning Center,Education,Completed,Ali Kiprotich,Ali Adan,-0.453014768,39.65494356,Garissa,25/10/2022,24/08/2023,1758847671
+P0469,Baringo Digital Learning Center,Education,Design,Sarah Chepngeno,Hassan Achieng,0.457836699,35.9695821,Baringo,21/05/2026,26/08/2027,2767035155
+P0470,Nairobi Wind Farm,Energy,Completed,Halima Adan,Francis Ekal,-1.283724379,36.81009251,Nairobi,02/08/2021,16/12/2022,1253470721
+P0471,Garissa School Construction,Education,Completed,Abdi Mwangi,Fatma Kiprotich,-0.453206015,39.63999316,Garissa,10/08/2022,02/02/2025,2787010245
+P0472,Baringo Health Center Upgrade,Health,Design,Daniel Ekidor,Rebecca Mutua,0.467352264,35.97354731,Baringo,25/04/2026,10/04/2027,916571245
+P0473,Nairobi Bypass Road,Transport,Ongoing,Peter Nduku,Grace Otieno,-1.280229572,36.8082522,Nairobi,24/04/2025,11/08/2026,1563397085
+P0474,Mandera Biogas Initiative,Energy,Completed,Francis Nduku,Samuel Nduku,3.930763107,41.85759073,Mandera,11/08/2023,23/05/2025,2042013881
+P0475,Garissa Clinic Construction,Health,Completed,James Chepngeno,Abdi Kiprotich,-0.452075234,39.65424435,Garissa,28/12/2021,24/04/2024,2565357043
+P0476,Nakuru Resort Development,Tourism,Ongoing,Mercy Ekidor,Hassan Chepngeno,-0.305142971,36.07376751,Nakuru,24/03/2025,10/03/2028,367170145
+P0477,Uasin Gishu Solar Power Plant,Energy,Ongoing,Ali Nduku,Sarah Mutua,0.520288339,35.26232396,Uasin Gishu,02/02/2024,29/11/2026,1783240825
+P0478,Turkana Urban Renewal Project,Housing,Completed,Grace Kiprotich,David Mutua,3.119172488,35.5988621,Turkana,20/08/2024,23/02/2025,867251462
+P0479,Uasin Gishu Solar Power Plant,Energy,Ongoing,Halima Mohamed,Joseph Chebet,0.516209307,35.26663249,Uasin Gishu,03/03/2024,20/03/2026,417967388
+P0480,Baringo Sanitation Project,Water,Completed,Francis Chebet,Chebet Toroitich,0.462233064,35.95803389,Baringo,17/01/2024,18/11/2024,2716724182
+P0481,Mandera Sanitation Project,Water,Completed,Samuel Ekidor,Chebet Onyango,3.94178359,41.85739146,Mandera,07/05/2023,13/11/2024,2368783813
+P0482,Turkana Clinic Construction,Health,Design,Rebecca Ekal,Rebecca Chepngeno,3.124956694,35.61073284,Turkana,03/05/2026,04/06/2028,2426071763
+P0483,Baringo Biogas Initiative,Energy,Design,Chebet Mohamed,Rebecca Achieng,0.463429049,35.96699249,Baringo,16/11/2026,14/12/2027,99546575
+P0484,Garissa Innovation Center,ICT,Design,Abdi Adan,Janet Noor,-0.456421546,39.65274992,Garissa,04/04/2027,04/10/2028,1071164601
+P0485,Mandera E-Government System,ICT,Design,Fatma Chebet,Chebet Chepngeno,3.930149377,41.87084469,Mandera,06/11/2025,20/08/2027,575517473
+P0486,Kisumu School Construction,Education,Completed,Sarah Noor,Chebet Ekidor,-0.086221454,34.76358035,Kisumu,13/12/2023,01/05/2025,2203989322
+P0487,Mombasa Sanitation Project,Water,Design,Grace Toroitich,Fatma Kibet,-4.048559315,39.66363843,Mombasa,25/02/2026,21/06/2028,1702274816
+P0488,Machakos Health Center Upgrade,Health,Design,Chebet Chepngeno,Ahmed Mwangi,-1.508350227,37.25615971,Machakos,19/01/2026,01/09/2027,2742238916
+P0489,Mombasa Biogas Initiative,Energy,Design,Peter Otieno,Sarah Hassan,-4.033827477,39.67457438,Mombasa,22/11/2026,10/08/2029,2518511989
+P0490,Garissa Mini Hydro Project,Energy,Design,Halima Ekidor,Mercy Onyango,-0.443707805,39.63778566,Garissa,05/04/2026,07/12/2028,2914071635
+P0491,Mombasa Mini Hydro Project,Energy,Ongoing,Joseph Chepngeno,Rose Otieno,-4.038862518,39.66199814,Mombasa,04/03/2024,09/02/2027,835381235
+P0492,Machakos Eco-Tourism Project,Tourism,Design,Rebecca Noor,Hassan Toroitich,-1.510712539,37.26078531,Machakos,22/09/2026,22/11/2028,1962752728
+P0493,Nakuru Affordable Housing,Housing,Ongoing,Abdi Mutua,Samuel Toroitich,-0.302182927,36.07771882,Nakuru,07/06/2024,15/09/2027,1368977268
+P0494,Uasin Gishu Wildlife Conservancy,Tourism,Design,Ali Achieng,Joseph Hassan,0.524411068,35.27727951,Uasin Gishu,26/02/2026,11/02/2028,1607993800
+P0495,Machakos Greenhouse Project,Agriculture,Design,Ali Chebet,Daniel Mohamed,-1.527155155,37.2693418,Machakos,13/03/2027,12/01/2029,138345552
+P0496,Kisumu Digital Learning Center,Education,Completed,Sarah Kibet,Daniel Kibet,-0.097952788,34.77307832,Kisumu,16/05/2020,13/01/2023,154508072
+P0497,Baringo Borehole Drilling,Water,Completed,Chebet Chebet,Joseph Cherono,0.47300664,35.95828188,Baringo,11/04/2022,22/06/2024,1894303554
+P0498,Baringo Dam Construction,Water,Ongoing,Halima Mutua,Ali Adan,0.458511282,35.95868344,Baringo,13/04/2024,17/07/2027,712177375
+P0499,Mandera Referral Hospital,Health,Design,Peter Abdalla,Sarah Achieng,3.938400184,41.86770424,Mandera,25/02/2026,17/06/2028,156899525
+P0500,Mandera Dam Construction,Water,Completed,Sarah Onyango,Mercy Noor,3.930110775,41.8586009,Mandera,18/03/2023,05/04/2025,567982965
+P0501,Machakos Affordable Housing,Housing,Ongoing,Abdi Mohamed,Hassan Mwangi,-1.525549395,37.26647126,Machakos,13/06/2025,01/12/2027,1991459840
+P0502,Nakuru Cultural Center,Tourism,Completed,Mercy Chepngeno,Ahmed Chepngeno,-0.305075931,36.07299798,Nakuru,25/09/2022,17/09/2023,2269392716
+P0503,Turkana Affordable Housing,Housing,Ongoing,Rebecca Chebet,Grace Mutua,3.117170181,35.60721648,Turkana,28/02/2024,10/03/2026,886803474
+P0504,Mombasa Library Project,Education,Ongoing,Janet Noor,Rebecca Abdalla,-4.034948418,39.67453032,Mombasa,01/04/2025,08/01/2026,909560185
+P0505,Mandera Innovation Center,ICT,Design,Hassan Mwangi,Abdi Mohamed,3.940623961,41.85292765,Mandera,30/12/2025,27/08/2027,2901645580
+P0506,Uasin Gishu Agro-Processing Plant,Agriculture,Ongoing,Chebet Chepngeno,Grace Mohamed,0.527721469,35.26057516,Uasin Gishu,19/07/2024,29/12/2027,321293345
+P0507,Turkana Medical Supply Chain,Health,Design,Rebecca Hassan,Fatma Otieno,3.120012634,35.60827427,Turkana,15/03/2026,15/06/2027,2003321678
+P0508,Turkana Digital Learning Center,Education,Design,James Kiprotich,Ahmed Onyango,3.121351454,35.60392627,Turkana,27/03/2026,08/02/2027,1380537874
+P0509,Turkana Urban Renewal Project,Housing,Ongoing,Ahmed Noor,Joseph Onyango,3.110557323,35.61184091,Turkana,21/05/2024,12/12/2027,2093960711
+P0510,Baringo Resettlement Housing,Housing,Completed,Ahmed Adan,Hassan Toroitich,0.465463818,35.96175654,Baringo,13/02/2022,16/08/2023,602069954
+P0511,Kisumu Farm Input Program,Agriculture,Completed,Samuel Achieng,Peter Kiprotich,-0.093816426,34.75865686,Kisumu,30/01/2024,30/08/2024,1403182340
+P0512,Mandera Health Center Upgrade,Health,Design,Janet Ekal,Fatma Adan,3.93337508,41.87153921,Mandera,07/02/2026,29/03/2027,1570362044
+P0513,Kisumu Bypass Road,Transport,Design,Sarah Mohamed,David Otieno,-0.098288923,34.76581827,Kisumu,24/02/2026,03/01/2028,2501670497
+P0514,Nairobi Medical Supply Chain,Health,Completed,Rose Chepngeno,Daniel Hussein,-1.294710635,36.80835426,Nairobi,21/06/2021,28/12/2023,65905987
+P0515,Nakuru Urban Renewal Project,Housing,Ongoing,Hassan Mutua,Mercy Adan,-0.298068656,36.08219533,Nakuru,02/01/2025,23/02/2028,1156221188
+P0516,Nakuru Clinic Construction,Health,Completed,Joseph Kiprotich,Hassan Mutua,-0.30155038,36.07580065,Nakuru,07/01/2022,11/07/2023,2549308600
+P0517,Kisumu Solar Power Plant,Energy,Completed,Ahmed Otieno,Rebecca Hussein,-0.098222945,34.75906435,Kisumu,18/03/2022,20/03/2024,2820879415
+P0518,Nakuru Sanitation Project,Water,Ongoing,Rose Kibet,Rebecca Abdalla,-0.300491042,36.0804091,Nakuru,17/08/2024,22/08/2027,1108459269
+P0519,Nairobi Water Pipeline,Water,Completed,Daniel Achieng,James Mohamed,-1.283227534,36.81641728,Nairobi,18/10/2020,12/12/2022,679079628
+P0520,Nairobi Farm Input Program,Agriculture,Design,Halima Hassan,Halima Kiprotich,-1.284371053,36.82322439,Nairobi,04/07/2026,11/11/2027,1610260015
+P0521,Garissa Irrigation Scheme,Agriculture,Ongoing,Mercy Toroitich,Hassan Kiprotich,-0.454011965,39.64986238,Garissa,30/01/2024,07/06/2027,2162051512
+P0522,Nakuru E-Government System,ICT,Completed,Hassan Mohamed,Ahmed Hussein,-0.298573163,36.07572841,Nakuru,08/09/2022,19/05/2025,722323586
+P0523,Garissa Technical Institute,Education,Completed,Chebet Hassan,Sarah Ekal,-0.457261273,39.6418826,Garissa,03/04/2022,07/04/2023,962412457
+P0524,Nakuru Greenhouse Project,Agriculture,Design,Rebecca Ekal,Sarah Mwangi,-0.296409061,36.07330055,Nakuru,23/04/2026,24/06/2027,1879236590
+P0525,Kisumu Resettlement Housing,Housing,Design,Janet Otieno,Daniel Chepngeno,-0.098244285,34.7752791,Kisumu,05/07/2026,14/02/2027,938732383
+P0526,Baringo Dam Construction,Water,Design,Samuel Achieng,Abdi Mohamed,0.471535312,35.97469675,Baringo,17/10/2025,02/02/2028,2432896366
+P0527,Turkana Clinic Construction,Health,Completed,Peter Otieno,Joseph Hassan,3.119665987,35.61025313,Turkana,22/09/2022,29/06/2024,1421974290
+P0528,Turkana Library Project,Education,Design,Joseph Hassan,Joseph Mutua,3.111407878,35.59696642,Turkana,01/08/2026,20/01/2029,238226200
+P0529,Kisumu Sanitation Project,Water,Completed,Rose Chepngeno,Rose Mohamed,-0.094757858,34.77572203,Kisumu,20/08/2022,10/05/2025,286582171
+P0530,Machakos Greenhouse Project,Agriculture,Design,Fatma Ekidor,James Chepngeno,-1.515851856,37.26177866,Machakos,10/04/2027,07/12/2027,70840655
+P0531,Kisumu Bridge Construction,Transport,Design,Fatma Mwangi,Peter Ekidor,-0.099752396,34.75955803,Kisumu,16/10/2026,31/08/2027,2945153546
+P0532,Garissa Digital Hub,ICT,Design,Sarah Ekal,Rebecca Cherono,-0.449036252,39.65151072,Garissa,13/11/2025,13/05/2026,1520362419
+P0533,Nairobi Wind Farm,Energy,Ongoing,Sarah Otieno,Mercy Otieno,-1.28928547,36.82452006,Nairobi,31/05/2025,23/07/2026,1834950770
+P0534,Nairobi Library Project,Education,Completed,Janet Ekal,Fatma Abdalla,-1.290524292,36.82071983,Nairobi,15/08/2023,25/07/2024,119610292
+P0535,Baringo Resettlement Housing,Housing,Design,Ali Nduku,Ali Kibet,0.471880466,35.97607426,Baringo,23/11/2026,18/02/2029,657678766
+P0536,Mombasa Cultural Center,Tourism,Ongoing,Francis Abdalla,David Chebet,-4.042893655,39.67673966,Mombasa,08/03/2024,18/12/2027,753448860
+P0537,Turkana Solar Power Plant,Energy,Ongoing,Grace Mutua,Fatma Chebet,3.10913571,35.61297798,Turkana,29/03/2024,30/08/2026,43198980
+P0538,Mombasa Digital Hub,ICT,Ongoing,Janet Kiprotich,Abdi Cherono,-4.040491438,39.66831222,Mombasa,20/01/2025,14/01/2026,2999200416
+P0539,Turkana Dam Construction,Water,Completed,Ali Abdalla,James Adan,3.122429032,35.60841862,Turkana,29/12/2023,02/04/2025,2273280971
+P0540,Machakos Library Project,Education,Ongoing,Abdi Nduku,Halima Ekidor,-1.510460696,37.26314715,Machakos,29/06/2025,05/04/2027,2328400090
+P0541,Baringo Health Center Upgrade,Health,Ongoing,Janet Kiprotich,Ali Hassan,0.467485536,35.96906372,Baringo,02/10/2024,20/08/2027,2555510441
+P0542,Nairobi Sanitation Project,Water,Design,Hassan Abdalla,Francis Toroitich,-1.295009204,36.82239434,Nairobi,14/10/2025,21/06/2028,2419977633
+P0543,Baringo Referral Hospital,Health,Completed,David Kibet,Francis Kiprotich,0.46293213,35.97349645,Baringo,14/12/2021,23/12/2022,2091393123
+P0544,Uasin Gishu E-Government System,ICT,Completed,Halima Cherono,Sarah Abdalla,0.524375591,35.26155365,Uasin Gishu,26/07/2021,28/04/2023,1870715499
+P0545,Mombasa Biogas Initiative,Energy,Completed,Grace Cherono,Daniel Nduku,-4.040386555,39.67533836,Mombasa,09/05/2024,02/04/2025,933313183
+P0546,Garissa Bus Rapid Transit,Transport,Completed,Rebecca Ekidor,Ahmed Mutua,-0.45501715,39.64832973,Garissa,04/06/2022,01/05/2024,1196204476
+P0547,Turkana Wind Farm,Energy,Completed,Samuel Mohamed,Joseph Chebet,3.122166631,35.59845419,Turkana,06/03/2021,18/09/2023,2694951540
+P0548,Kisumu Technical Institute,Education,Completed,Hassan Toroitich,Samuel Kiprotich,-0.094719551,34.75804847,Kisumu,06/12/2023,13/12/2024,1864668678
+P0549,Machakos Digital Hub,ICT,Ongoing,Samuel Hassan,Peter Ekidor,-1.508314273,37.2551952,Machakos,15/04/2024,07/09/2027,2658285220
+P0550,Nakuru Smart City Project,ICT,Ongoing,Peter Onyango,Mercy Chebet,-0.298034894,36.07388163,Nakuru,28/06/2024,11/05/2028,230331193
+P0551,Uasin Gishu Referral Hospital,Health,Design,Ali Ekidor,Halima Ekal,0.517695347,35.27805339,Uasin Gishu,12/02/2026,21/08/2028,2762256530
+P0552,Machakos Agro-Processing Plant,Agriculture,Ongoing,Chebet Mohamed,Janet Cherono,-1.508777311,37.27172514,Machakos,21/01/2024,03/07/2026,1521677177
+P0553,Uasin Gishu Digital Hub,ICT,Ongoing,Ali Mohamed,Sarah Chepngeno,0.529945401,35.27753102,Uasin Gishu,18/03/2025,06/02/2027,1362627079
+P0554,Machakos Bridge Construction,Transport,Completed,Janet Nduku,Daniel Kibet,-1.517875069,37.27130039,Machakos,03/08/2021,19/08/2023,473605289
+P0555,Nairobi Digital Learning Center,Education,Completed,Rose Cherono,Daniel Mwangi,-1.286128756,36.81162374,Nairobi,17/09/2023,06/12/2024,1996683522
+P0556,Turkana Bus Rapid Transit,Transport,Ongoing,Janet Kiprotich,Halima Hussein,3.111788105,35.59767509,Turkana,10/06/2024,26/06/2026,1798327003
+P0557,Turkana E-Government System,ICT,Design,Joseph Hassan,Francis Ekidor,3.118966274,35.59877059,Turkana,19/10/2025,06/10/2027,1694031513
+P0558,Mandera Innovation Center,ICT,Completed,Francis Abdalla,Peter Noor,3.939610175,41.85500265,Mandera,20/07/2023,10/04/2024,1924145594
+P0559,Baringo Dam Construction,Water,Completed,Janet Adan,Abdi Ekidor,0.466963352,35.96364281,Baringo,27/01/2022,19/09/2023,1311944907
+P0560,Machakos Mini Hydro Project,Energy,Completed,Ali Adan,Joseph Toroitich,-1.522201301,37.26822364,Machakos,12/08/2022,23/02/2023,2518397470
+P0561,Mandera Affordable Housing,Housing,Design,Samuel Mohamed,Mercy Mohamed,3.944106082,41.86926694,Mandera,02/12/2025,18/11/2026,2464565467
+P0562,Nakuru Estate Development,Housing,Ongoing,Halima Nduku,David Onyango,-0.306355244,36.07623813,Nakuru,23/06/2024,06/03/2028,1461529438
+P0563,Nakuru Borehole Drilling,Water,Completed,Mercy Mohamed,Halima Abdalla,-0.297124475,36.08997115,Nakuru,11/04/2021,05/01/2024,821827413
+P0564,Nairobi Library Project,Education,Completed,Ali Chebet,Ahmed Kibet,-1.281799078,36.80962985,Nairobi,17/10/2023,09/10/2024,927782506
+P0565,Kisumu Clinic Construction,Health,Design,David Ekal,Sarah Ekidor,-0.090773402,34.76914214,Kisumu,12/12/2026,24/07/2027,1909228599
+P0566,Baringo Clinic Construction,Health,Completed,Mercy Ekal,Chebet Adan,0.45725025,35.97380539,Baringo,10/12/2023,28/06/2024,123082964
+P0567,Baringo Bypass Road,Transport,Completed,Joseph Toroitich,Hassan Chepngeno,0.467457207,35.97490566,Baringo,12/05/2022,31/10/2023,96791216
+P0568,Garissa Smart City Project,ICT,Completed,Daniel Achieng,Sarah Kibet,-0.446189665,39.65249827,Garissa,02/10/2022,24/05/2024,271148488
+P0569,Garissa Health Center Upgrade,Health,Completed,Hassan Kiprotich,James Ekal,-0.451783609,39.65125374,Garissa,30/10/2020,22/02/2023,1160918484
+P0570,Machakos Referral Hospital,Health,Design,Rebecca Otieno,Grace Nduku,-1.521000136,37.25974342,Machakos,18/10/2026,28/05/2027,2325346885
+P0571,Machakos Wind Farm,Energy,Completed,Rebecca Kiprotich,Janet Onyango,-1.522928178,37.2713258,Machakos,25/02/2022,13/12/2022,2979494902
+P0572,Kisumu Medical Supply Chain,Health,Completed,Sarah Abdalla,Ahmed Nduku,-0.086106996,34.76864306,Kisumu,26/02/2023,15/01/2024,1044667888
+P0573,Kisumu Solar Power Plant,Energy,Completed,Rose Toroitich,Joseph Achieng,-0.090910847,34.77600564,Kisumu,18/02/2024,17/08/2024,2734178151
+P0574,Nairobi Biogas Initiative,Energy,Ongoing,Grace Adan,Rose Kiprotich,-1.279647552,36.80758233,Nairobi,26/07/2024,15/02/2027,1611595657
+P0575,Nakuru Affordable Housing,Housing,Completed,Chebet Mwangi,Hassan Mwangi,-0.297723029,36.08068973,Nakuru,27/11/2022,05/11/2024,58863084
+P0576,Garissa Innovation Center,ICT,Completed,Samuel Cherono,James Mutua,-0.462489802,39.65319125,Garissa,13/02/2023,29/11/2024,158923093
+P0577,Garissa Urban Renewal Project,Housing,Design,Samuel Kibet,Samuel Hassan,-0.455500014,39.64151032,Garissa,14/01/2027,14/02/2028,1649757238
+P0578,Mombasa Sanitation Project,Water,Ongoing,Rose Cherono,Daniel Nduku,-4.045913569,39.66852966,Mombasa,13/02/2025,04/08/2026,1195893123
+P0579,Baringo Digital Hub,ICT,Completed,James Chebet,Ahmed Chebet,0.456723053,35.96413196,Baringo,14/07/2022,15/05/2023,685005108
+P0580,Nairobi Dam Construction,Water,Ongoing,James Otieno,Mercy Toroitich,-1.292768941,36.80960085,Nairobi,20/03/2025,08/05/2027,830188397
+P0581,Baringo Eco-Tourism Project,Tourism,Design,David Noor,Janet Mutua,0.460074164,35.95839828,Baringo,05/11/2026,25/10/2028,2587403431
+P0582,Kisumu Resort Development,Tourism,Ongoing,Ahmed Mwangi,Janet Chepngeno,-0.09358666,34.7770939,Kisumu,14/04/2024,24/03/2028,1695322575
+P0583,Nairobi Greenhouse Project,Agriculture,Design,Samuel Chepngeno,Fatma Mohamed,-1.278477825,36.80943757,Nairobi,23/10/2026,19/09/2027,360471361
+P0584,Mombasa Estate Development,Housing,Design,Rebecca Chepngeno,Rose Mutua,-4.042272426,39.66587796,Mombasa,02/01/2026,05/01/2027,2367177714
+P0585,Kisumu Digital Hub,ICT,Ongoing,Samuel Nduku,Mercy Chepngeno,-0.099029017,34.75850998,Kisumu,18/03/2024,26/08/2026,198505369
+P0586,Mandera Greenhouse Project,Agriculture,Design,Peter Mohamed,Peter Mwangi,3.94446568,41.85292278,Mandera,17/02/2026,26/06/2027,1263346027
+P0587,Nairobi Borehole Drilling,Water,Design,Joseph Hussein,Janet Hussein,-1.293960591,36.82431964,Nairobi,26/03/2027,17/10/2027,106587191
+P0588,Uasin Gishu Bridge Construction,Transport,Completed,Mercy Toroitich,Sarah Cherono,0.522940959,35.27845198,Uasin Gishu,28/04/2022,04/10/2023,2028971012
+P0589,Uasin Gishu Highway Upgrade,Transport,Design,Fatma Otieno,Fatma Hassan,0.52057659,35.26311222,Uasin Gishu,07/02/2027,16/03/2029,1252556715
+P0590,Uasin Gishu Library Project,Education,Completed,Fatma Ekal,Fatma Ekidor,0.519233961,35.26433901,Uasin Gishu,15/11/2023,24/11/2024,801002706
+P0591,Uasin Gishu Farm Input Program,Agriculture,Ongoing,Daniel Mohamed,Peter Adan,0.515695901,35.27336822,Uasin Gishu,06/06/2025,17/12/2025,2951038605
+P0592,Mombasa Farm Input Program,Agriculture,Design,Daniel Cherono,Chebet Otieno,-4.045446693,39.67156943,Mombasa,22/02/2027,10/12/2027,2752388589
+P0593,Kisumu Water Pipeline,Water,Ongoing,Francis Abdalla,Ahmed Adan,-0.095596161,34.77706422,Kisumu,19/01/2025,02/08/2027,2793808927
+P0594,Mombasa Solar Power Plant,Energy,Completed,Daniel Mutua,Peter Hussein,-4.047588481,39.67597381,Mombasa,30/08/2021,04/07/2023,2795510423
+P0595,Machakos Wildlife Conservancy,Tourism,Completed,Fatma Ekidor,Halima Ekidor,-1.527032911,37.2718102,Machakos,06/02/2023,20/08/2024,56500808
+P0596,Turkana Referral Hospital,Health,Ongoing,Chebet Chepngeno,Rose Mutua,3.121723421,35.59904377,Turkana,25/01/2024,04/11/2026,1389175953
+P0597,Garissa Medical Supply Chain,Health,Design,David Abdalla,Rose Kibet,-0.46287052,39.65536707,Garissa,23/10/2026,05/03/2028,301023601
+P0598,Mandera Library Project,Education,Completed,James Mutua,Samuel Kiprotich,3.931681682,41.85486378,Mandera,22/08/2021,29/01/2023,628420039
+P0599,Kisumu Library Project,Education,Ongoing,Sarah Ekal,Halima Ekal,-0.095177175,34.76845253,Kisumu,30/04/2025,10/03/2027,2450568405
+P0600,Turkana Medical Supply Chain,Health,Completed,Ali Ekal,Ahmed Toroitich,3.110061681,35.6136694,Turkana,11/04/2021,25/11/2023,2182017106
+P0601,Mombasa Biogas Initiative,Energy,Ongoing,Ali Ekal,Chebet Kiprotich,-4.043783082,39.66952051,Mombasa,28/06/2025,18/12/2027,2514253898
+P0602,Turkana Bypass Road,Transport,Design,Halima Otieno,Halima Chepngeno,3.111273437,35.59777086,Turkana,18/02/2027,18/09/2029,2268560842
+P0603,Mandera Library Project,Education,Ongoing,Janet Noor,Rebecca Adan,3.940383636,41.86965782,Mandera,13/02/2025,21/05/2026,962362426
+P0604,Nakuru E-Government System,ICT,Design,Rose Noor,Samuel Chepngeno,-0.311500049,36.07783227,Nakuru,06/02/2026,05/11/2026,2931562048
+P0605,Baringo Resettlement Housing,Housing,Design,Daniel Hassan,Sarah Onyango,0.458734177,35.96929698,Baringo,24/08/2026,30/10/2028,620215913
+P0606,Machakos Greenhouse Project,Agriculture,Completed,Rebecca Ekidor,Ahmed Mutua,-1.522622995,37.2712223,Machakos,27/01/2023,23/11/2023,2624321697
+P0607,Baringo Agro-Processing Plant,Agriculture,Ongoing,Janet Hassan,Samuel Ekidor,0.464250733,35.96225993,Baringo,06/05/2025,25/09/2027,2748795646
+P0608,Mombasa Technical Institute,Education,Completed,Hassan Kibet,Fatma Hassan,-4.039703427,39.66325886,Mombasa,21/01/2023,24/01/2024,2149297312
+P0609,Machakos Referral Hospital,Health,Ongoing,Fatma Ekidor,Daniel Mohamed,-1.520173797,37.26726226,Machakos,22/07/2025,05/01/2027,453976717
+P0610,Baringo Smart City Project,ICT,Ongoing,James Nduku,Rebecca Adan,0.464699288,35.97073717,Baringo,03/04/2025,31/08/2026,2135198223
+P0611,Nairobi Referral Hospital,Health,Ongoing,Ahmed Mutua,David Ekal,-1.295335736,36.8165165,Nairobi,05/02/2024,17/10/2026,2292364906
+P0612,Turkana Bypass Road,Transport,Design,Joseph Mutua,Sarah Chepngeno,3.106998714,35.59954993,Turkana,06/07/2026,01/12/2027,2823710096
+P0613,Garissa Resettlement Housing,Housing,Ongoing,Abdi Chebet,Mercy Chepngeno,-0.460337413,39.64439711,Garissa,23/06/2025,03/10/2026,1924156187
+P0614,Garissa Health Center Upgrade,Health,Completed,Grace Toroitich,Janet Toroitich,-0.462894649,39.63967304,Garissa,15/12/2024,24/06/2025,1158733402
+P0615,Nakuru Digital Learning Center,Education,Ongoing,Peter Cherono,Mercy Otieno,-0.301515981,36.08335771,Nakuru,02/03/2025,10/01/2026,404410419
+P0616,Kisumu Solar Power Plant,Energy,Design,David Hassan,Rose Mwangi,-0.083491087,34.77478936,Kisumu,19/02/2027,11/07/2029,2481092957
+P0617,Turkana Library Project,Education,Completed,Joseph Mohamed,Janet Kiprotich,3.107694911,35.60157288,Turkana,13/10/2021,26/04/2024,2484584970
+P0618,Nakuru Water Pipeline,Water,Design,Mercy Chepngeno,Rebecca Nduku,-0.303939596,36.08663946,Nakuru,13/01/2026,16/03/2028,2864229543
+P0619,Nakuru Irrigation Scheme,Agriculture,Completed,Janet Ekal,Fatma Abdalla,-0.310093968,36.08799886,Nakuru,08/04/2022,04/12/2023,142957492
+P0620,Garissa Biogas Initiative,Energy,Completed,Chebet Hussein,Samuel Mutua,-0.459927425,39.64191363,Garissa,11/07/2023,18/10/2024,2503347384
+P0621,Nakuru Biogas Initiative,Energy,Design,Janet Abdalla,Grace Achieng,-0.299730465,36.07994247,Nakuru,27/10/2025,09/12/2027,879402272
+P0622,Mombasa Water Pipeline,Water,Design,Fatma Otieno,Francis Kiprotich,-4.05050382,39.65889178,Mombasa,29/03/2027,29/03/2029,493352827
+P0623,Machakos Cultural Center,Tourism,Completed,Rebecca Adan,Mercy Mutua,-1.525526557,37.25661532,Machakos,22/09/2022,28/09/2024,2845093624
+P0624,Baringo Technical Institute,Education,Ongoing,Rose Ekal,Janet Adan,0.470648929,35.95689275,Baringo,07/06/2024,16/08/2027,632804322
+P0625,Baringo E-Government System,ICT,Ongoing,Abdi Mutua,Rebecca Chebet,0.473384671,35.9723969,Baringo,01/09/2024,08/11/2025,2529893681
+P0626,Machakos Bus Rapid Transit,Transport,Design,Ahmed Mohamed,Ali Mwangi,-1.512987864,37.26889262,Machakos,13/01/2026,10/10/2026,1882353726
+P0627,Machakos Affordable Housing,Housing,Ongoing,Hassan Mutua,Hassan Toroitich,-1.514551756,37.2638381,Machakos,28/02/2024,22/03/2027,465163067
+P0628,Mombasa Library Project,Education,Design,Joseph Chepngeno,Chebet Otieno,-4.05006498,39.6599673,Mombasa,30/01/2027,16/08/2028,646233533
+P0629,Garissa Estate Development,Housing,Completed,Fatma Ekidor,Hassan Kiprotich,-0.44902158,39.63971573,Garissa,09/12/2022,28/09/2024,1712717712
+P0630,Turkana E-Government System,ICT,Ongoing,Ahmed Kiprotich,Fatma Mohamed,3.117913208,35.61118038,Turkana,31/10/2024,01/08/2026,865659455
+P0631,Nairobi Biogas Initiative,Energy,Ongoing,David Chepngeno,Sarah Kibet,-1.289699002,36.81552359,Nairobi,27/02/2024,14/03/2027,2058075281
+P0632,Mombasa Biogas Initiative,Energy,Completed,Hassan Otieno,Mercy Noor,-4.051334607,39.66174552,Mombasa,24/06/2022,06/12/2024,629853180
+P0633,Kisumu Bypass Road,Transport,Design,Hassan Otieno,Daniel Nduku,-0.083742407,34.77766974,Kisumu,24/09/2026,21/09/2027,524135979
+P0634,Garissa Sanitation Project,Water,Design,David Nduku,Francis Kiprotich,-0.461823848,39.6525312,Garissa,23/12/2026,30/10/2028,2723358119
+P0635,Kisumu Digital Learning Center,Education,Ongoing,Sarah Onyango,Rose Ekidor,-0.090731936,34.7682172,Kisumu,01/04/2024,28/05/2027,489690619
+P0636,Kisumu Bridge Construction,Transport,Ongoing,David Toroitich,Ahmed Ekal,-0.08260149,34.76768324,Kisumu,24/08/2024,10/04/2026,1520337446
+P0637,Garissa Affordable Housing,Housing,Ongoing,Mercy Hussein,Janet Mohamed,-0.451308629,39.64713505,Garissa,04/07/2025,23/10/2025,2319340516
+P0638,Mombasa Medical Supply Chain,Health,Design,Sarah Kibet,James Adan,-4.039314361,39.65990065,Mombasa,02/01/2026,08/12/2027,1864532401
+P0639,Mombasa Urban Renewal Project,Housing,Ongoing,Janet Onyango,Rebecca Onyango,-4.052769067,39.66670618,Mombasa,04/08/2024,15/12/2027,1280237182
+P0640,Nairobi Solar Power Plant,Energy,Completed,Sarah Noor,Grace Noor,-1.29406094,36.82297176,Nairobi,07/05/2021,15/01/2024,2199897853
+P0641,Nakuru Dam Construction,Water,Completed,Rebecca Mwangi,Grace Mohamed,-0.303840185,36.08177793,Nakuru,11/10/2021,15/03/2024,348370384
+P0642,Baringo Solar Power Plant,Energy,Design,Samuel Toroitich,Daniel Noor,0.474843608,35.96597596,Baringo,03/09/2026,17/09/2028,1182432330
+P0643,Mandera Farm Input Program,Agriculture,Ongoing,David Ekidor,Abdi Adan,3.940281767,41.85447761,Mandera,28/01/2024,05/03/2028,2531362034
+P0644,Mombasa School Construction,Education,Completed,Mercy Otieno,Hassan Chepngeno,-4.052375828,39.66355425,Mombasa,14/05/2022,20/02/2024,2469454678
+P0645,Kisumu Mini Hydro Project,Energy,Design,Janet Otieno,Samuel Mwangi,-0.08647824,34.77453061,Kisumu,27/07/2026,08/01/2029,2097164917
+P0646,Uasin Gishu Biogas Initiative,Energy,Completed,Rebecca Toroitich,Peter Achieng,0.510988181,35.27661008,Uasin Gishu,15/07/2020,27/02/2023,760477189
+P0647,Kisumu Farm Input Program,Agriculture,Design,Ahmed Onyango,Ahmed Otieno,-0.099492922,34.76436093,Kisumu,02/12/2025,16/07/2028,1070365508
+P0648,Mombasa Digital Hub,ICT,Design,Fatma Achieng,Fatma Kiprotich,-4.050517649,39.65958927,Mombasa,27/06/2026,21/05/2027,168826583
+P0649,Mandera Wind Farm,Energy,Design,Peter Nduku,Ahmed Hassan,3.948974507,41.86404483,Mandera,14/09/2026,09/07/2028,1653145062
+P0650,Turkana Health Center Upgrade,Health,Ongoing,Daniel Chepngeno,Hassan Ekidor,3.116313924,35.60626823,Turkana,06/07/2024,26/01/2027,957195795
+P0651,Uasin Gishu Borehole Drilling,Water,Design,Ali Otieno,Halima Otieno,0.519508691,35.26472074,Uasin Gishu,12/04/2026,25/07/2027,1031394035
+P0652,Mandera Smart City Project,ICT,Design,Grace Achieng,Abdi Nduku,3.93431548,41.86128107,Mandera,04/12/2025,12/11/2027,1626985329
+P0653,Kisumu Referral Hospital,Health,Design,Janet Abdalla,Ali Abdalla,-0.095258619,34.75835369,Kisumu,03/04/2026,02/11/2028,1649728966
+P0654,Mandera Sanitation Project,Water,Design,Daniel Abdalla,Abdi Abdalla,3.93540289,41.8688359,Mandera,04/12/2026,25/06/2029,2884261179
+P0655,Mombasa Digital Learning Center,Education,Design,Rose Chepngeno,Halima Kibet,-4.04844286,39.65984896,Mombasa,17/03/2026,12/09/2027,1232978651
+P0656,Baringo Urban Renewal Project,Housing,Ongoing,James Abdalla,Rebecca Toroitich,0.470394217,35.96681543,Baringo,08/09/2024,14/08/2026,481998409
+P0657,Nairobi Innovation Center,ICT,Ongoing,Chebet Toroitich,Samuel Ekal,-1.281658464,36.80925566,Nairobi,11/05/2025,23/01/2026,2832291654
+P0658,Garissa Farm Input Program,Agriculture,Completed,Grace Kibet,Sarah Mutua,-0.450842868,39.6442599,Garissa,21/08/2021,29/02/2024,549803481
+P0659,Kisumu Wind Farm,Energy,Ongoing,Mercy Nduku,Abdi Mohamed,-0.092034832,34.76977739,Kisumu,24/07/2024,22/01/2027,38397654
+P0660,Nakuru Referral Hospital,Health,Ongoing,Ahmed Chebet,David Achieng,-0.2972161,36.08963162,Nakuru,11/09/2024,24/07/2026,1263283189
+P0661,Machakos Borehole Drilling,Water,Completed,Hassan Noor,Peter Hassan,-1.516972394,37.26551784,Machakos,29/01/2022,25/06/2023,1199583984
+P0662,Machakos Health Center Upgrade,Health,Design,Fatma Achieng,Fatma Ekal,-1.513503346,37.26466393,Machakos,10/03/2027,11/05/2028,1386755970
+P0663,Uasin Gishu Clinic Construction,Health,Design,Janet Nduku,Joseph Hussein,0.524546229,35.26483982,Uasin Gishu,04/01/2027,18/09/2027,2562371951
+P0664,Turkana Wildlife Conservancy,Tourism,Design,Joseph Ekal,Grace Mutua,3.105958349,35.60649298,Turkana,08/02/2026,31/07/2028,1349351491
+P0665,Mandera Affordable Housing,Housing,Ongoing,Ali Otieno,Peter Kibet,3.941071283,41.85470208,Mandera,16/05/2025,15/07/2027,733513768
+P0666,Kisumu Resort Development,Tourism,Ongoing,James Onyango,Sarah Mutua,-0.083089555,34.7593227,Kisumu,10/02/2024,04/10/2027,2337736821
+P0667,Mandera Wind Farm,Energy,Completed,Hassan Mohamed,Mercy Achieng,3.933628668,41.85292971,Mandera,16/10/2022,25/04/2025,2700931438
+P0668,Mandera Wildlife Conservancy,Tourism,Ongoing,Francis Onyango,Sarah Mutua,3.939652401,41.86211983,Mandera,17/06/2024,10/10/2025,163533536
+P0669,Garissa Wildlife Conservancy,Tourism,Design,Mercy Mwangi,Peter Cherono,-0.451140078,39.65172223,Garissa,27/11/2026,26/02/2029,689203742
+P0670,Mandera Urban Renewal Project,Housing,Design,James Mutua,Daniel Mutua,3.950030107,41.85958321,Mandera,16/10/2026,08/01/2028,2010074419
+P0671,Turkana Urban Renewal Project,Housing,Design,Ali Kibet,Halima Ekidor,3.115045206,35.6136854,Turkana,04/08/2026,14/06/2028,2499107589
+P0672,Mandera Farm Input Program,Agriculture,Completed,Rose Cherono,Grace Onyango,3.944484027,41.86895478,Mandera,02/07/2023,22/02/2025,2980971466
+P0673,Uasin Gishu Greenhouse Project,Agriculture,Completed,Ahmed Otieno,Grace Adan,0.524220771,35.26346599,Uasin Gishu,26/09/2024,11/05/2025,2194231609
+P0674,Mandera Greenhouse Project,Agriculture,Design,Peter Cherono,Daniel Mohamed,3.941653295,41.85961336,Mandera,23/08/2026,30/04/2028,2111563686
+P0675,Machakos Innovation Center,ICT,Completed,Sarah Hassan,Janet Ekal,-1.51360017,37.25463565,Machakos,18/08/2023,05/04/2025,1010949620
+P0676,Machakos Sanitation Project,Water,Design,Rose Mutua,Sarah Mohamed,-1.522991616,37.27242518,Machakos,02/09/2026,10/01/2029,2940459969
+P0677,Nairobi Agro-Processing Plant,Agriculture,Completed,Grace Otieno,David Chepngeno,-1.282450032,36.81464651,Nairobi,18/10/2022,12/06/2024,420898467
+P0678,Machakos Digital Learning Center,Education,Ongoing,Rose Onyango,James Toroitich,-1.519408449,37.25912538,Machakos,01/04/2025,20/11/2026,842275100
+P0679,Nakuru Farm Input Program,Agriculture,Ongoing,Hassan Kiprotich,Sarah Mutua,-0.310523698,36.07029003,Nakuru,30/06/2024,26/07/2027,552333560
+P0680,Turkana Estate Development,Housing,Design,Samuel Nduku,David Mohamed,3.117521775,35.59493568,Turkana,26/12/2025,17/07/2028,2829823235
+P0681,Kisumu Digital Hub,ICT,Ongoing,James Ekidor,Fatma Otieno,-0.090332286,34.7654719,Kisumu,02/08/2024,19/05/2026,2890796739
+P0682,Machakos Medical Supply Chain,Health,Design,David Achieng,Daniel Mwangi,-1.509520114,37.27165636,Machakos,14/04/2026,21/03/2028,2498498253
+P0683,Uasin Gishu Biogas Initiative,Energy,Ongoing,Rebecca Onyango,Rebecca Ekal,0.523031094,35.25986382,Uasin Gishu,17/03/2025,03/03/2027,709206473
+P0684,Baringo Estate Development,Housing,Ongoing,Ali Chepngeno,Ali Nduku,0.473643753,35.9611517,Baringo,26/04/2025,02/10/2027,2187093812
+P0685,Mombasa Solar Power Plant,Energy,Design,Francis Kibet,Samuel Onyango,-4.050944833,39.67649236,Mombasa,21/03/2027,05/07/2028,2115145108
+P0686,Garissa Dam Construction,Water,Design,Sarah Noor,Rose Chebet,-0.463172822,39.65444961,Garissa,21/04/2027,20/08/2029,1238721216
+P0687,Nairobi Digital Hub,ICT,Completed,Peter Abdalla,Peter Kibet,-1.281180314,36.82036124,Nairobi,20/05/2021,19/10/2023,1134901044
+P0688,Nairobi Bridge Construction,Transport,Ongoing,Grace Hassan,Mercy Onyango,-1.295054308,36.82326472,Nairobi,14/03/2024,21/03/2028,795193434
+P0689,Mandera Digital Learning Center,Education,Ongoing,David Hassan,Daniel Mwangi,3.934538375,41.86432295,Mandera,15/05/2024,19/08/2026,2343729461
+P0690,Uasin Gishu Wildlife Conservancy,Tourism,Ongoing,Abdi Ekal,Ahmed Chepngeno,0.522797775,35.27859861,Uasin Gishu,28/06/2025,26/11/2027,1559134278
+P0691,Uasin Gishu Mini Hydro Project,Energy,Ongoing,Mercy Nduku,Daniel Ekal,0.525578556,35.27843152,Uasin Gishu,13/03/2025,11/01/2027,1069467118
+P0692,Baringo Urban Renewal Project,Housing,Ongoing,James Onyango,Mercy Abdalla,0.474478599,35.97565832,Baringo,27/05/2025,06/06/2026,2056701129
+P0693,Garissa Solar Power Plant,Energy,Completed,Chebet Hussein,Janet Noor,-0.458930067,39.64093114,Garissa,14/09/2022,06/02/2024,1679652414
+P0694,Turkana Solar Power Plant,Energy,Ongoing,Mercy Onyango,James Mutua,3.118238919,35.5998135,Turkana,08/01/2025,12/07/2026,2607369448
+P0695,Nairobi Medical Supply Chain,Health,Design,Joseph Toroitich,James Mwangi,-1.287974505,36.81659603,Nairobi,13/10/2025,22/08/2026,2228080847
+P0696,Machakos Resort Development,Tourism,Completed,Hassan Achieng,Fatma Chepngeno,-1.508632149,37.25673602,Machakos,04/11/2021,04/05/2024,2904270329
+P0697,Uasin Gishu Sanitation Project,Water,Completed,Daniel Toroitich,Janet Ekal,0.525680303,35.27552995,Uasin Gishu,10/12/2023,30/06/2024,443000780
+P0698,Baringo Referral Hospital,Health,Ongoing,Rose Abdalla,Janet Mutua,0.467967139,35.96632276,Baringo,11/02/2025,06/09/2026,65603255
+P0699,Kisumu Urban Renewal Project,Housing,Design,Mercy Mohamed,Chebet Hassan,-0.08724749,34.77220414,Kisumu,31/07/2026,26/05/2027,1846765231
+P0700,Baringo Cultural Center,Tourism,Ongoing,Hassan Mwangi,Samuel Chebet,0.462028277,35.9608679,Baringo,10/03/2024,14/11/2027,1811566786
+P0701,Nairobi Sanitation Project,Water,Completed,Chebet Mutua,Samuel Hussein,-1.278951096,36.82594083,Nairobi,07/06/2022,25/08/2024,2771060941
+P0702,Garissa Agro-Processing Plant,Agriculture,Design,Rebecca Mwangi,Peter Mutua,-0.455158449,39.63705075,Garissa,16/09/2026,08/07/2027,2697379576
+P0703,Nakuru Irrigation Scheme,Agriculture,Design,Abdi Abdalla,Janet Abdalla,-0.296887543,36.0712098,Nakuru,24/11/2025,27/09/2027,572869933
+P0704,Nairobi Estate Development,Housing,Design,Francis Kiprotich,Chebet Abdalla,-1.295487995,36.81348549,Nairobi,15/02/2026,07/09/2028,1571332162
+P0705,Garissa Eco-Tourism Project,Tourism,Ongoing,Janet Achieng,Hassan Cherono,-0.458272892,39.64807252,Garissa,16/06/2025,02/04/2028,2298246412
+P0706,Baringo Urban Renewal Project,Housing,Design,Mercy Kibet,Halima Mutua,0.468839792,35.95813019,Baringo,23/01/2027,08/08/2028,447964700
+P0707,Nakuru Resort Development,Tourism,Ongoing,Sarah Mutua,Peter Kibet,-0.296377461,36.07125251,Nakuru,19/02/2025,04/04/2027,730316798
+P0708,Kisumu Technical Institute,Education,Design,Hassan Kiprotich,Ali Toroitich,-0.082959529,34.76655153,Kisumu,19/05/2026,27/12/2026,552908765
+P0709,Garissa Water Pipeline,Water,Completed,James Nduku,Ahmed Adan,-0.458060224,39.64528978,Garissa,22/03/2024,23/01/2025,1977559775
+P0710,Mombasa Smart City Project,ICT,Ongoing,Samuel Chebet,Hassan Onyango,-4.038193837,39.66849398,Mombasa,22/02/2024,19/05/2028,1148447706
+P0711,Uasin Gishu Farm Input Program,Agriculture,Design,Halima Hussein,Janet Abdalla,0.513834739,35.26898397,Uasin Gishu,28/05/2026,10/09/2027,1669107095
+P0712,Kisumu Solar Power Plant,Energy,Ongoing,Ali Hassan,Grace Abdalla,-0.09694529,34.77013777,Kisumu,22/03/2024,15/02/2027,1695349671
+P0713,Kisumu Resort Development,Tourism,Design,Daniel Abdalla,Mercy Noor,-0.093123154,34.7692088,Kisumu,04/07/2026,11/09/2027,173185125
+P0714,Baringo Technical Institute,Education,Ongoing,Francis Ekal,Janet Adan,0.470029137,35.95725638,Baringo,02/03/2024,19/10/2027,1390641493
+P0715,Kisumu Bypass Road,Transport,Ongoing,Francis Adan,Sarah Onyango,-0.082211416,34.76909656,Kisumu,01/06/2024,05/12/2027,1273223407
+P0716,Kisumu Biogas Initiative,Energy,Design,Chebet Mohamed,Grace Ekidor,-0.096410249,34.77561066,Kisumu,01/01/2026,22/03/2027,571340559
+P0717,Mandera Highway Upgrade,Transport,Design,Mercy Mutua,Francis Otieno,3.938704097,41.86716175,Mandera,28/12/2025,09/03/2027,677121406
+P0718,Garissa Medical Supply Chain,Health,Design,Mercy Mwangi,Ali Abdalla,-0.446189342,39.64458968,Garissa,30/01/2026,08/07/2027,910006899
+P0719,Garissa Referral Hospital,Health,Completed,Sarah Adan,Rose Ekal,-0.450170438,39.64217517,Garissa,09/04/2022,07/12/2023,2635188890
+P0720,Nakuru Solar Power Plant,Energy,Design,Halima Toroitich,Daniel Onyango,-0.300225482,36.085531,Nakuru,24/07/2026,09/02/2027,280899756
+P0721,Machakos Solar Power Plant,Energy,Ongoing,Abdi Hussein,Daniel Hussein,-1.519882065,37.25522641,Machakos,17/12/2024,24/09/2027,2069787281
+P0722,Mandera Resettlement Housing,Housing,Design,Ali Kiprotich,Ali Otieno,3.945403774,41.86488196,Mandera,05/08/2026,05/03/2029,1938110245
+P0723,Garissa Bypass Road,Transport,Completed,Samuel Ekal,Francis Noor,-0.453004562,39.64514073,Garissa,02/09/2023,16/10/2024,571038327
+P0724,Nairobi Eco-Tourism Project,Tourism,Ongoing,Chebet Ekal,Halima Onyango,-1.286448279,36.82463751,Nairobi,04/03/2024,11/03/2028,2641834880
+P0725,Nairobi Resort Development,Tourism,Completed,Ali Mutua,Hassan Kiprotich,-1.285532063,36.81568147,Nairobi,26/11/2022,22/04/2024,1860473153
+P0726,Garissa Solar Power Plant,Energy,Ongoing,Hassan Otieno,Ahmed Chebet,-0.447699162,39.64106618,Garissa,07/01/2025,15/10/2026,1451415229
+P0727,Uasin Gishu Urban Renewal Project,Housing,Completed,Ali Kibet,Sarah Kibet,0.515570647,35.2790581,Uasin Gishu,28/06/2023,28/09/2024,1384068089
+P0728,Uasin Gishu Clinic Construction,Health,Ongoing,Fatma Hassan,Chebet Chepngeno,0.513257817,35.2700319,Uasin Gishu,20/04/2024,30/09/2027,407889224
+P0729,Mandera Dam Construction,Water,Completed,Abdi Mwangi,Mercy Otieno,3.936348593,41.8678655,Mandera,19/01/2023,12/07/2024,2777761646
+P0730,Baringo Biogas Initiative,Energy,Completed,Ali Noor,James Mutua,0.46467685,35.97031565,Baringo,30/03/2023,09/02/2025,1720680544
+P0731,Kisumu Highway Upgrade,Transport,Completed,Sarah Hussein,Fatma Cherono,-0.097308184,34.77208,Kisumu,21/03/2023,23/11/2024,1120331575
+P0732,Nakuru Eco-Tourism Project,Tourism,Design,Sarah Hussein,Francis Ekidor,-0.305232269,36.07715233,Nakuru,25/04/2026,13/06/2028,2134985506
+P0733,Machakos Affordable Housing,Housing,Design,Hassan Toroitich,Chebet Cherono,-1.510689007,37.26127165,Machakos,04/04/2027,27/08/2029,1519939631
+P0734,Mombasa Wildlife Conservancy,Tourism,Design,Hassan Nduku,Rebecca Chepngeno,-4.048570722,39.6774708,Mombasa,23/01/2026,30/07/2026,423589209
+P0735,Machakos Bridge Construction,Transport,Completed,Janet Abdalla,Daniel Abdalla,-1.522899399,37.25848872,Machakos,21/01/2021,26/01/2023,2173192306
+P0736,Garissa Health Center Upgrade,Health,Design,Mercy Ekidor,David Kibet,-0.454078771,39.64535196,Garissa,06/02/2026,27/12/2026,27246189
+P0737,Baringo Technical Institute,Education,Completed,Sarah Mohamed,Ahmed Ekidor,0.473452175,35.957829,Baringo,02/03/2021,20/07/2023,2290085166
+P0738,Garissa Resort Development,Tourism,Design,Grace Otieno,David Otieno,-0.457914375,39.65372968,Garissa,12/12/2026,25/02/2028,1912508711
+P0739,Garissa Estate Development,Housing,Ongoing,Grace Otieno,Daniel Kibet,-0.461874974,39.65193217,Garissa,19/12/2024,17/08/2026,1541593396
+P0740,Uasin Gishu Library Project,Education,Completed,Peter Chepngeno,Francis Toroitich,0.520186242,35.27042961,Uasin Gishu,20/02/2024,12/06/2025,2225478802
+P0741,Uasin Gishu Resort Development,Tourism,Completed,Joseph Adan,Mercy Achieng,0.520389568,35.26545593,Uasin Gishu,16/10/2023,12/03/2025,233362734
+P0742,Kisumu Medical Supply Chain,Health,Design,Mercy Mohamed,Joseph Otieno,-0.099971573,34.76451791,Kisumu,31/07/2026,12/02/2027,2209057513
+P0743,Baringo Irrigation Scheme,Agriculture,Completed,Daniel Achieng,Hassan Chepngeno,0.468090652,35.96409826,Baringo,08/08/2020,21/04/2023,1799250594
+P0744,Mandera Sanitation Project,Water,Ongoing,Mercy Achieng,Ali Nduku,3.93014474,41.85264699,Mandera,09/10/2024,25/11/2026,1292313176
+P0745,Garissa Digital Learning Center,Education,Design,David Mohamed,Fatma Ekidor,-0.444378322,39.64503873,Garissa,29/11/2025,22/07/2027,2888765754
+P0746,Kisumu Dam Construction,Water,Completed,Abdi Hussein,Grace Adan,-0.087101474,34.77166801,Kisumu,20/11/2022,22/04/2025,1738721365
+P0747,Kisumu Wind Farm,Energy,Completed,Grace Hussein,Halima Kiprotich,-0.094523395,34.77267536,Kisumu,03/07/2023,11/01/2024,2390287499
+P0748,Nakuru Digital Learning Center,Education,Ongoing,Rebecca Toroitich,Sarah Mwangi,-0.294701966,36.08062407,Nakuru,22/08/2024,24/06/2026,1074290746
+P0749,Nairobi Sanitation Project,Water,Design,Mercy Chebet,Hassan Otieno,-1.280157812,36.82432455,Nairobi,13/04/2026,26/05/2027,351198471
+P0750,Machakos Farm Input Program,Agriculture,Ongoing,James Toroitich,Chebet Achieng,-1.520439662,37.26693473,Machakos,07/05/2025,21/12/2027,843934373
+P0751,Nakuru Agro-Processing Plant,Agriculture,Ongoing,Joseph Mutua,Abdi Kibet,-0.306745079,36.07457935,Nakuru,23/08/2024,08/01/2027,2514747855
+P0752,Nakuru Dam Construction,Water,Ongoing,Chebet Kibet,James Mwangi,-0.305565597,36.08869248,Nakuru,03/12/2024,24/09/2026,1828341781
+P0753,Machakos Digital Hub,ICT,Design,Chebet Ekidor,Daniel Mutua,-1.509143227,37.27176139,Machakos,15/08/2026,22/06/2027,971515940
+P0754,Kisumu Health Center Upgrade,Health,Design,Rebecca Ekal,Sarah Chepngeno,-0.094180412,34.76615809,Kisumu,12/08/2026,25/07/2027,753706533
+P0755,Mombasa Water Pipeline,Water,Ongoing,Ali Ekal,Rose Abdalla,-4.040172986,39.67021674,Mombasa,02/04/2024,07/09/2027,2946480816
+P0756,Garissa Eco-Tourism Project,Tourism,Design,Ali Adan,Daniel Cherono,-0.452653226,39.65268493,Garissa,04/02/2026,06/08/2027,1953031190
+P0757,Nakuru Digital Hub,ICT,Ongoing,Francis Achieng,Samuel Hassan,-0.310516577,36.0790082,Nakuru,07/01/2025,29/12/2026,1180529695
+P0758,Turkana Urban Renewal Project,Housing,Ongoing,Abdi Hussein,David Mwangi,3.112045057,35.60920347,Turkana,30/04/2024,30/10/2026,1809849187
+P0759,Turkana Greenhouse Project,Agriculture,Completed,Chebet Ekidor,James Abdalla,3.108574873,35.61264738,Turkana,09/08/2022,17/05/2024,765694625
+P0760,Kisumu Medical Supply Chain,Health,Design,James Chebet,Ahmed Ekal,-0.090989933,34.76418627,Kisumu,12/10/2026,11/08/2027,2139819375
+P0761,Mombasa Solar Power Plant,Energy,Design,David Achieng,Grace Ekidor,-4.039440514,39.66338491,Mombasa,31/05/2026,20/12/2027,1069741432
+P0762,Nairobi Bus Rapid Transit,Transport,Design,Francis Hassan,Peter Nduku,-1.295758828,36.81587017,Nairobi,19/05/2026,26/03/2028,784185827
+P0763,Turkana Resort Development,Tourism,Completed,Hassan Noor,Francis Toroitich,3.119524607,35.59619282,Turkana,12/11/2021,08/05/2024,20022733
+P0764,Mombasa Bypass Road,Transport,Design,Sarah Hassan,Hassan Noor,-4.033906839,39.65846524,Mombasa,12/10/2026,16/07/2027,1166360064
+P0765,Mandera Clinic Construction,Health,Completed,Ali Hassan,Ahmed Kiprotich,3.950067217,41.86998719,Mandera,08/01/2024,22/07/2025,1303463993
+P0766,Uasin Gishu Agro-Processing Plant,Agriculture,Design,Francis Adan,Rose Nduku,0.519478038,35.26615351,Uasin Gishu,14/11/2026,17/08/2028,715206712
+P0767,Uasin Gishu Dam Construction,Water,Completed,Ali Kibet,Samuel Abdalla,0.520410442,35.26607924,Uasin Gishu,17/03/2023,30/10/2023,2600737840
+P0768,Kisumu Solar Power Plant,Energy,Completed,David Hassan,James Abdalla,-0.093512595,34.77436838,Kisumu,21/11/2022,11/06/2023,2613264741
+P0769,Kisumu Digital Hub,ICT,Design,David Chebet,Rose Onyango,-0.087892014,34.76345678,Kisumu,14/03/2027,01/10/2029,1734049084
+P0770,Nakuru Digital Hub,ICT,Design,James Mwangi,Hassan Kibet,-0.30889971,36.07493779,Nakuru,16/07/2026,06/01/2028,1035811933
+P0771,Mombasa Cultural Center,Tourism,Design,Ahmed Achieng,Rebecca Nduku,-4.045174451,39.67660018,Mombasa,06/10/2025,01/08/2027,1129586729
+P0772,Kisumu Urban Renewal Project,Housing,Ongoing,Francis Adan,Joseph Hussein,-0.092020272,34.76474159,Kisumu,17/02/2025,08/10/2027,1882551025
+P0773,Mombasa Wildlife Conservancy,Tourism,Ongoing,Fatma Kiprotich,Ahmed Otieno,-4.045476838,39.67699565,Mombasa,04/01/2025,05/05/2026,1411808526
+P0774,Kisumu Referral Hospital,Health,Completed,Francis Kibet,Ahmed Mutua,-0.088073853,34.773953,Kisumu,24/06/2021,22/01/2023,333687441
+P0775,Garissa Health Center Upgrade,Health,Design,Hassan Noor,Hassan Mutua,-0.454665311,39.63631891,Garissa,27/10/2026,04/09/2028,2020948539
+P0776,Nakuru Urban Renewal Project,Housing,Ongoing,Ahmed Achieng,Fatma Chebet,-0.30456159,36.0722218,Nakuru,16/07/2025,30/10/2025,1295056581
+P0777,Kisumu Innovation Center,ICT,Completed,Daniel Ekidor,Mercy Ekal,-0.083383811,34.7748513,Kisumu,29/03/2021,13/08/2023,1640775306
+P0778,Baringo Digital Learning Center,Education,Completed,Abdi Nduku,Sarah Abdalla,0.47639771,35.97226287,Baringo,14/08/2022,13/03/2024,1888561753
+P0779,Uasin Gishu Sanitation Project,Water,Design,Fatma Otieno,Halima Otieno,0.511827649,35.26583066,Uasin Gishu,03/10/2026,08/02/2028,1151776039
+P0780,Baringo Bridge Construction,Transport,Ongoing,Rebecca Toroitich,Peter Kibet,0.476224125,35.96294345,Baringo,03/07/2024,13/03/2028,2647751456
+P0781,Kisumu Technical Institute,Education,Ongoing,Mercy Chebet,Hassan Chepngeno,-0.097208339,34.77697217,Kisumu,08/06/2025,31/03/2028,907073065
+P0782,Kisumu Greenhouse Project,Agriculture,Design,Abdi Mohamed,Janet Chebet,-0.090058744,34.76793277,Kisumu,04/06/2026,30/12/2028,1871941560
+P0783,Mombasa Digital Learning Center,Education,Completed,Fatma Hussein,James Chebet,-4.044696813,39.66599659,Mombasa,22/12/2022,18/01/2025,1667722611
+P0784,Mombasa Wildlife Conservancy,Tourism,Design,Ali Abdalla,Samuel Kiprotich,-4.03496397,39.6722035,Mombasa,21/07/2026,02/02/2028,1845603956
+P0785,Mombasa Affordable Housing,Housing,Design,Abdi Mohamed,James Nduku,-4.036176644,39.66174511,Mombasa,28/10/2026,01/07/2027,1335510043
+P0786,Baringo Smart City Project,ICT,Completed,Halima Kiprotich,Samuel Mwangi,0.463216779,35.96158446,Baringo,15/08/2021,16/04/2023,1106069366
+P0787,Machakos Bridge Construction,Transport,Ongoing,Hassan Chebet,Mercy Chebet,-1.526297231,37.26963876,Machakos,26/06/2024,03/11/2026,919721477
+P0788,Kisumu Resettlement Housing,Housing,Design,Grace Toroitich,Francis Nduku,-0.082661712,34.77054147,Kisumu,01/11/2026,14/07/2028,1199643604
+P0789,Mombasa Bus Rapid Transit,Transport,Design,Francis Ekal,Samuel Mutua,-4.04732751,39.67807444,Mombasa,11/12/2025,26/06/2028,2237427693
+P0790,Mandera Highway Upgrade,Transport,Ongoing,Hassan Nduku,Ali Chepngeno,3.948108042,41.86462573,Mandera,27/08/2024,24/07/2026,2362906699
+P0791,Nakuru Bus Rapid Transit,Transport,Completed,Chebet Chebet,Francis Ekal,-0.296958307,36.08652979,Nakuru,18/06/2023,11/01/2024,2323643405
+P0792,Kisumu Bridge Construction,Transport,Completed,Joseph Nduku,Rebecca Chebet,-0.088629069,34.76674053,Kisumu,11/05/2022,15/01/2023,1348171043
+P0793,Nakuru Mini Hydro Project,Energy,Completed,Samuel Kibet,Janet Achieng,-0.305632644,36.08595487,Nakuru,30/05/2022,16/02/2023,1319592255
+P0794,Uasin Gishu Resort Development,Tourism,Ongoing,Ahmed Mwangi,Halima Chepngeno,0.512425344,35.27448943,Uasin Gishu,01/04/2025,18/04/2028,1601712899
+P0795,Kisumu Smart City Project,ICT,Design,Rose Chepngeno,Daniel Kibet,-0.09652115,34.7735766,Kisumu,31/03/2027,29/12/2028,2084722099
+P0796,Kisumu Smart City Project,ICT,Design,Halima Achieng,Hassan Ekidor,-0.098120725,34.76501259,Kisumu,18/12/2025,13/06/2027,1699049692
+P0797,Turkana Farm Input Program,Agriculture,Design,Ali Cherono,Fatma Ekal,3.106065282,35.60393062,Turkana,21/06/2026,09/01/2027,1727262629
+P0798,Baringo Water Pipeline,Water,Design,Samuel Mutua,Peter Noor,0.459523676,35.97308954,Baringo,25/12/2025,23/02/2027,2759035991
+P0799,Mombasa Agro-Processing Plant,Agriculture,Design,Samuel Hassan,Francis Chepngeno,-4.050364783,39.66803728,Mombasa,06/03/2026,28/08/2028,2127219162
+P0800,Baringo E-Government System,ICT,Design,Mercy Achieng,Rebecca Adan,0.463398099,35.97430709,Baringo,12/10/2026,20/11/2028,2032996379
+P0801,Baringo Urban Renewal Project,Housing,Ongoing,Peter Mwangi,Abdi Otieno,0.469335219,35.96966399,Baringo,18/04/2024,02/07/2026,2052968477
+P0802,Turkana Bypass Road,Transport,Completed,Peter Mutua,Ahmed Nduku,3.118964706,35.61004954,Turkana,10/12/2021,21/04/2023,1021664998
+P0803,Machakos Agro-Processing Plant,Agriculture,Completed,James Mohamed,Grace Hussein,-1.512801139,37.25504806,Machakos,28/09/2021,25/08/2023,2309396763
+P0804,Mombasa Estate Development,Housing,Ongoing,Peter Mohamed,Fatma Ekidor,-4.039132843,39.67108565,Mombasa,05/02/2024,14/01/2027,1529215638
+P0805,Nakuru Wildlife Conservancy,Tourism,Completed,Samuel Ekal,Rebecca Ekal,-0.302861787,36.08605625,Nakuru,27/08/2022,14/06/2024,1283736810
+P0806,Nakuru Resettlement Housing,Housing,Completed,Samuel Kibet,Samuel Adan,-0.307489803,36.08483745,Nakuru,14/03/2021,23/01/2023,455150898
+P0807,Uasin Gishu Dam Construction,Water,Completed,James Toroitich,Rebecca Hassan,0.511771874,35.26176503,Uasin Gishu,27/05/2023,21/05/2024,119285419
+P0808,Turkana Urban Renewal Project,Housing,Ongoing,Peter Achieng,David Chepngeno,3.109671558,35.61029563,Turkana,06/01/2025,03/02/2028,1138331503
+P0809,Baringo Health Center Upgrade,Health,Completed,Joseph Cherono,Sarah Hassan,0.463393441,35.95941144,Baringo,21/01/2024,29/07/2024,1119166706
+P0810,Mandera Wildlife Conservancy,Tourism,Ongoing,Joseph Kiprotich,Ali Ekidor,3.932979531,41.87006254,Mandera,23/12/2024,14/11/2025,1266415622
+P0811,Mombasa Referral Hospital,Health,Ongoing,Hassan Chebet,Chebet Ekidor,-4.034440167,39.6710783,Mombasa,15/09/2024,26/01/2026,435896324
+P0812,Mombasa Bus Rapid Transit,Transport,Design,James Abdalla,James Mutua,-4.045235334,39.67781143,Mombasa,18/11/2025,20/07/2026,1024686056
+P0813,Baringo Resettlement Housing,Housing,Ongoing,James Mwangi,Sarah Achieng,0.466366676,35.96868697,Baringo,10/07/2025,29/12/2026,225330439
+P0814,Uasin Gishu Medical Supply Chain,Health,Completed,Chebet Mutua,James Chebet,0.529507592,35.26416652,Uasin Gishu,27/03/2022,21/11/2023,68506596
+P0815,Turkana Bypass Road,Transport,Completed,Samuel Adan,Grace Achieng,3.119911327,35.60191351,Turkana,23/09/2021,23/04/2023,769907825
+P0816,Kisumu Farm Input Program,Agriculture,Ongoing,Rebecca Otieno,Mercy Abdalla,-0.085345221,34.76492748,Kisumu,10/02/2024,23/01/2026,1081190659
+P0817,Turkana Wildlife Conservancy,Tourism,Design,Rebecca Chepngeno,Sarah Hassan,3.106487802,35.59629595,Turkana,29/10/2025,27/05/2028,1518651374
+P0818,Baringo Mini Hydro Project,Energy,Ongoing,Samuel Chepngeno,Hassan Noor,0.459915997,35.97399493,Baringo,18/11/2024,24/03/2027,728087215
+P0819,Baringo Water Pipeline,Water,Ongoing,Mercy Kiprotich,Joseph Otieno,0.459869085,35.96396175,Baringo,08/04/2025,24/04/2027,193231323
+P0820,Baringo Affordable Housing,Housing,Ongoing,Daniel Mutua,Rose Chebet,0.476615198,35.95742102,Baringo,22/01/2024,03/03/2027,2517767957
+P0821,Turkana Greenhouse Project,Agriculture,Ongoing,Peter Hussein,Daniel Cherono,3.116429888,35.60858211,Turkana,05/11/2024,22/11/2025,1730500531
+P0822,Baringo Water Pipeline,Water,Completed,Fatma Chebet,Samuel Cherono,0.474819555,35.97107852,Baringo,10/12/2022,26/10/2024,588459026
+P0823,Mandera Innovation Center,ICT,Design,Joseph Mutua,Samuel Abdalla,3.942227112,41.86200606,Mandera,09/08/2026,15/06/2028,1134505147
+P0824,Mandera Clinic Construction,Health,Design,Halima Nduku,James Mutua,3.947110838,41.87196316,Mandera,16/03/2026,07/12/2027,184259123
+P0825,Nakuru Clinic Construction,Health,Ongoing,Ali Noor,Peter Nduku,-0.295495679,36.08213739,Nakuru,23/11/2024,11/06/2027,202864413
+P0826,Turkana Resettlement Housing,Housing,Design,Chebet Kiprotich,Rebecca Adan,3.125529377,35.60548854,Turkana,14/01/2027,16/06/2029,2642459678
+P0827,Kisumu Medical Supply Chain,Health,Completed,Mercy Achieng,Peter Mutua,-0.0988462,34.76819422,Kisumu,09/12/2022,01/01/2024,1280718486
+P0828,Nairobi Innovation Center,ICT,Ongoing,Grace Onyango,Ahmed Nduku,-1.29181757,36.82193327,Nairobi,10/10/2024,30/09/2027,1158874128
+P0829,Mombasa Sanitation Project,Water,Ongoing,Joseph Onyango,Francis Onyango,-4.049536426,39.67327678,Mombasa,09/03/2024,14/05/2026,1968055501
+P0830,Kisumu Water Pipeline,Water,Ongoing,Joseph Chebet,Chebet Otieno,-0.092385208,34.77786218,Kisumu,05/05/2025,29/11/2026,2261983611
+P0831,Turkana Irrigation Scheme,Agriculture,Completed,Ali Kiprotich,Rose Achieng,3.117024835,35.59831052,Turkana,04/12/2024,10/06/2025,2739377753
+P0832,Kisumu Affordable Housing,Housing,Ongoing,Daniel Noor,Chebet Nduku,-0.10046983,34.77269464,Kisumu,10/04/2024,05/05/2028,978610210
+P0833,Turkana Highway Upgrade,Transport,Completed,Francis Mwangi,Daniel Kibet,3.122807609,35.59610487,Turkana,30/08/2020,18/02/2023,1446781622
+P0834,Nairobi Solar Power Plant,Energy,Completed,Ali Hassan,Abdi Cherono,-1.291539821,36.82332105,Nairobi,18/04/2023,12/09/2024,2825474117
+P0835,Mandera Smart City Project,ICT,Completed,Grace Abdalla,Francis Kiprotich,3.949048633,41.87033517,Mandera,14/01/2023,08/09/2023,1772475153
+P0836,Mandera Biogas Initiative,Energy,Ongoing,Sarah Adan,Janet Ekidor,3.934883912,41.86832015,Mandera,27/05/2025,07/12/2025,2079942887
+P0837,Mandera Cultural Center,Tourism,Design,Fatma Achieng,Mercy Hassan,3.936854707,41.86448435,Mandera,16/07/2026,19/06/2028,573109924
+P0838,Mombasa Affordable Housing,Housing,Completed,Joseph Mohamed,Fatma Abdalla,-4.050008444,39.66737766,Mombasa,15/12/2022,07/01/2025,795366946
+P0839,Turkana Technical Institute,Education,Ongoing,Ahmed Chebet,Peter Adan,3.125114966,35.60704879,Turkana,28/05/2025,30/09/2027,825721910
+P0840,Nairobi Highway Upgrade,Transport,Completed,Ali Kibet,Rose Hussein,-1.289010175,36.81325344,Nairobi,06/12/2021,15/02/2023,615757422
+P0841,Turkana Digital Learning Center,Education,Completed,Halima Otieno,Ali Chebet,3.106460165,35.5993474,Turkana,24/08/2023,19/12/2024,829496136
+P0842,Turkana Farm Input Program,Agriculture,Ongoing,Daniel Chebet,Mercy Chepngeno,3.124813342,35.59687549,Turkana,12/02/2024,12/07/2026,2883875223
+P0843,Mombasa Urban Renewal Project,Housing,Design,Chebet Adan,Hassan Kiprotich,-4.045689941,39.67626229,Mombasa,28/03/2027,22/01/2028,2689429978
+P0844,Mombasa Mini Hydro Project,Energy,Design,Chebet Hussein,Rebecca Kibet,-4.050260918,39.67069431,Mombasa,19/01/2027,02/10/2028,2382178683
+P0845,Garissa Wildlife Conservancy,Tourism,Ongoing,Peter Mohamed,David Chebet,-0.456388424,39.64275335,Garissa,07/07/2025,10/10/2027,718653074
+P0846,Kisumu Referral Hospital,Health,Ongoing,Chebet Toroitich,Grace Ekal,-0.08247943,34.77040872,Kisumu,26/09/2024,24/07/2026,2062033837
+P0847,Mandera Estate Development,Housing,Completed,Fatma Otieno,Fatma Adan,3.940843934,41.86255099,Mandera,12/12/2023,19/03/2025,1108625503
+P0848,Machakos Wind Farm,Energy,Completed,Daniel Chebet,Joseph Achieng,-1.52317092,37.26545686,Machakos,08/12/2021,23/07/2023,1587857109
+P0849,Uasin Gishu School Construction,Education,Ongoing,Chebet Onyango,Peter Ekidor,0.5187756,35.27131092,Uasin Gishu,11/07/2024,12/12/2026,2810062902
+P0850,Kisumu Irrigation Scheme,Agriculture,Design,Mercy Adan,Francis Abdalla,-0.092931831,34.76128543,Kisumu,01/04/2027,25/08/2029,195396374
+P0851,Uasin Gishu School Construction,Education,Completed,Fatma Mutua,Halima Achieng,0.528770042,35.27549913,Uasin Gishu,06/01/2023,13/05/2024,1114475127
+P0852,Nakuru Greenhouse Project,Agriculture,Completed,Halima Noor,Sarah Hassan,-0.304272574,36.07866891,Nakuru,05/02/2021,21/07/2023,1168470238
+P0853,Uasin Gishu Estate Development,Housing,Ongoing,Hassan Nduku,Samuel Cherono,0.525069162,35.26053912,Uasin Gishu,26/09/2024,23/12/2026,66723193
+P0854,Mandera Water Pipeline,Water,Completed,Janet Mwangi,Rose Achieng,3.93424197,41.85315188,Mandera,06/02/2021,01/08/2023,2683482519
+P0855,Kisumu Estate Development,Housing,Design,Grace Ekidor,Grace Hussein,-0.092925041,34.76004534,Kisumu,11/04/2026,01/01/2028,1674318946
+P0856,Mandera Referral Hospital,Health,Ongoing,Hassan Abdalla,James Ekal,3.933920634,41.87149574,Mandera,29/04/2024,30/09/2026,2317069941
+P0857,Turkana Resort Development,Tourism,Design,James Toroitich,Mercy Mutua,3.111428986,35.59994885,Turkana,15/02/2027,27/09/2027,21360528
+P0858,Nakuru School Construction,Education,Completed,Joseph Mwangi,Rose Mwangi,-0.29924205,36.08980124,Nakuru,15/08/2022,02/08/2023,753341001
+P0859,Mombasa Affordable Housing,Housing,Design,Joseph Mwangi,Janet Toroitich,-4.043592106,39.67749868,Mombasa,20/10/2026,07/07/2028,1815617608
+P0860,Nakuru Farm Input Program,Agriculture,Ongoing,Joseph Otieno,Janet Cherono,-0.296970801,36.07143687,Nakuru,10/01/2024,06/10/2025,2614769702
+P0861,Machakos Smart City Project,ICT,Completed,James Ekal,Rose Noor,-1.519102814,37.26551327,Machakos,07/09/2021,01/11/2023,1563687063
+P0862,Turkana Biogas Initiative,Energy,Completed,Fatma Adan,Samuel Otieno,3.114685132,35.59519955,Turkana,23/03/2022,21/07/2024,2488991394
+P0863,Machakos Estate Development,Housing,Completed,Chebet Mohamed,Ali Abdalla,-1.519839839,37.25760546,Machakos,18/10/2022,13/06/2025,1196393164
+P0864,Mandera Cultural Center,Tourism,Design,Fatma Mutua,Fatma Mohamed,3.94960802,41.86981223,Mandera,19/03/2027,17/05/2029,1245061397
+P0865,Mandera E-Government System,ICT,Completed,Hassan Abdalla,Joseph Chebet,3.946182944,41.86584565,Mandera,06/03/2023,09/06/2024,1459560969
+P0866,Turkana Mini Hydro Project,Energy,Ongoing,Peter Kiprotich,Samuel Kiprotich,3.110056733,35.6025927,Turkana,07/05/2025,12/01/2028,2519193849
+P0867,Turkana Clinic Construction,Health,Design,Ahmed Mwangi,Samuel Toroitich,3.10799717,35.60257104,Turkana,17/02/2026,12/01/2028,2428693512
+P0868,Nairobi Bypass Road,Transport,Completed,Rose Nduku,Ahmed Mutua,-1.290504498,36.8171953,Nairobi,15/04/2024,25/11/2024,1877828173
+P0869,Garissa Highway Upgrade,Transport,Completed,Fatma Noor,Abdi Kibet,-0.444916757,39.63687015,Garissa,24/05/2023,30/08/2024,1522228792
+P0870,Kisumu Innovation Center,ICT,Design,Grace Mutua,Halima Kibet,-0.09709649,34.75808057,Kisumu,23/03/2026,06/04/2027,2557049386
+P0871,Nairobi Health Center Upgrade,Health,Design,Samuel Ekal,Samuel Nduku,-1.295606199,36.82484948,Nairobi,27/09/2026,07/03/2028,1576049463
+P0872,Baringo Sanitation Project,Water,Completed,Hassan Otieno,Rose Chebet,0.466443431,35.96092683,Baringo,09/07/2022,31/08/2024,1363663736
+P0873,Garissa Affordable Housing,Housing,Ongoing,Mercy Kiprotich,Abdi Achieng,-0.462718839,39.64172873,Garissa,23/03/2025,03/09/2027,47600746
+P0874,Kisumu Biogas Initiative,Energy,Ongoing,Fatma Ekal,Ahmed Noor,-0.09881758,34.76677278,Kisumu,21/03/2024,05/12/2027,315405738
+P0875,Kisumu Clinic Construction,Health,Ongoing,Joseph Nduku,Janet Hussein,-0.090298899,34.77508219,Kisumu,16/06/2024,30/11/2027,440436524
+P0876,Nakuru Wind Farm,Energy,Design,Peter Abdalla,Rose Otieno,-0.293667909,36.07588084,Nakuru,25/03/2026,07/03/2028,1636543841
+P0877,Mandera Highway Upgrade,Transport,Design,Sarah Kibet,Sarah Ekidor,3.949481914,41.86495164,Mandera,31/12/2025,02/10/2026,60536691
+P0878,Baringo Referral Hospital,Health,Ongoing,David Ekal,Rebecca Noor,0.464326177,35.97115427,Baringo,19/12/2024,17/04/2027,2812778778
+P0879,Uasin Gishu Solar Power Plant,Energy,Completed,Joseph Mutua,Peter Otieno,0.516272668,35.27079208,Uasin Gishu,15/04/2024,30/06/2025,1706015982
+P0880,Uasin Gishu Innovation Center,ICT,Ongoing,Grace Hussein,Grace Toroitich,0.510812439,35.27870202,Uasin Gishu,18/11/2024,11/10/2026,1678681182
+P0881,Mombasa Eco-Tourism Project,Tourism,Design,Mercy Chebet,Mercy Chebet,-4.036088558,39.66431338,Mombasa,20/09/2026,06/07/2027,2502654148
+P0882,Kisumu Farm Input Program,Agriculture,Ongoing,Francis Ekidor,Halima Adan,-0.09956725,34.77578937,Kisumu,11/07/2025,09/03/2028,2301610589
+P0883,Nakuru Wildlife Conservancy,Tourism,Completed,Chebet Chepngeno,Ali Mohamed,-0.294834842,36.08454641,Nakuru,08/10/2021,07/02/2024,2088569384
+P0884,Garissa Farm Input Program,Agriculture,Ongoing,Daniel Mutua,Ahmed Mwangi,-0.460104824,39.65312968,Garissa,08/08/2024,13/05/2027,492388552
+P0885,Machakos Technical Institute,Education,Completed,James Onyango,Abdi Hussein,-1.509247229,37.26040324,Machakos,06/02/2024,22/06/2025,1183296760
+P0886,Turkana Library Project,Education,Ongoing,Fatma Noor,Samuel Chebet,3.110516637,35.60164111,Turkana,29/09/2024,14/04/2026,1477998439
+P0887,Mandera Dam Construction,Water,Design,Samuel Achieng,Peter Noor,3.946106875,41.86102967,Mandera,19/11/2025,26/11/2027,564596304
+P0888,Kisumu School Construction,Education,Completed,Sarah Adan,Peter Hussein,-0.09804877,34.77704907,Kisumu,14/08/2022,31/01/2024,1848331829
+P0889,Nakuru Cultural Center,Tourism,Completed,Daniel Abdalla,James Onyango,-0.298028465,36.08692474,Nakuru,30/12/2022,13/01/2025,2523210392
+P0890,Uasin Gishu School Construction,Education,Design,Ahmed Chebet,Janet Mwangi,0.513300906,35.27452518,Uasin Gishu,27/07/2026,20/05/2028,2301233736
+P0891,Garissa Irrigation Scheme,Agriculture,Completed,Francis Nduku,Sarah Ekidor,-0.457067204,39.63902306,Garissa,26/12/2021,11/03/2024,2126026601
+P0892,Kisumu Farm Input Program,Agriculture,Completed,Rebecca Mutua,Hassan Ekidor,-0.083250529,34.76367404,Kisumu,19/04/2023,16/02/2025,739856191
+P0893,Nakuru Wildlife Conservancy,Tourism,Completed,Halima Noor,Samuel Noor,-0.294197913,36.07916748,Nakuru,21/08/2022,26/08/2024,526699642
+P0894,Mandera Water Pipeline,Water,Completed,Halima Noor,Grace Mohamed,3.932586606,41.8576443,Mandera,13/03/2022,15/10/2024,2458843131
+P0895,Mandera Irrigation Scheme,Agriculture,Design,Peter Mutua,Joseph Kibet,3.945267158,41.85382245,Mandera,18/01/2026,20/01/2028,1429976035
+P0896,Baringo Wildlife Conservancy,Tourism,Ongoing,Grace Abdalla,Halima Ekal,0.473777537,35.96275436,Baringo,05/08/2024,30/12/2025,1473420566
+P0897,Mandera Bypass Road,Transport,Ongoing,Abdi Adan,Hassan Mohamed,3.93604135,41.86091968,Mandera,18/03/2025,03/11/2025,1441832195
+P0898,Mandera Solar Power Plant,Energy,Ongoing,Hassan Mohamed,David Onyango,3.939593173,41.85440787,Mandera,19/07/2024,06/10/2027,1942477012
+P0899,Nairobi Technical Institute,Education,Ongoing,Peter Mutua,Halima Kiprotich,-1.279819388,36.82488388,Nairobi,23/06/2025,22/04/2026,2726514166
+P0900,Baringo Highway Upgrade,Transport,Ongoing,Samuel Chebet,Francis Kiprotich,0.457171525,35.96803841,Baringo,17/10/2024,20/04/2026,946733905
+P0901,Uasin Gishu Eco-Tourism Project,Tourism,Completed,Ali Ekidor,Grace Onyango,0.529489494,35.27028518,Uasin Gishu,22/05/2021,12/11/2023,1881728156
+P0902,Mombasa Smart City Project,ICT,Completed,Daniel Onyango,Chebet Mutua,-4.050117508,39.66669279,Mombasa,18/01/2023,18/12/2024,187924351
+P0903,Mandera Farm Input Program,Agriculture,Ongoing,Rose Adan,Ali Ekidor,3.947062716,41.85246608,Mandera,12/05/2024,01/08/2027,1699218579
+P0904,Mombasa Farm Input Program,Agriculture,Design,Sarah Kibet,Grace Chepngeno,-4.040732634,39.65867716,Mombasa,23/01/2026,29/01/2028,163855025
+P0905,Nakuru Resort Development,Tourism,Design,Joseph Achieng,Ahmed Ekal,-0.296787791,36.08392299,Nakuru,24/05/2026,13/02/2027,329711733
+P0906,Garissa Urban Renewal Project,Housing,Design,Daniel Mwangi,Francis Chebet,-0.451044221,39.65006055,Garissa,28/11/2026,30/12/2027,2193890746
+P0907,Kisumu Sanitation Project,Water,Ongoing,Rebecca Kibet,Chebet Cherono,-0.092532312,34.76319485,Kisumu,06/07/2024,18/02/2026,2944321394
+P0908,Nakuru Health Center Upgrade,Health,Ongoing,Mercy Kibet,David Onyango,-0.312608613,36.0842921,Nakuru,02/05/2024,09/04/2027,2199871434
+P0909,Nakuru School Construction,Education,Ongoing,Abdi Noor,Joseph Hassan,-0.309749192,36.0722254,Nakuru,06/09/2024,23/04/2027,2637330485
+P0910,Baringo Sanitation Project,Water,Completed,Janet Toroitich,Ahmed Mohamed,0.458832044,35.96646887,Baringo,13/09/2021,16/12/2022,1256770354
+P0911,Garissa Bus Rapid Transit,Transport,Completed,Hassan Kibet,James Kibet,-0.462474516,39.64397969,Garissa,28/04/2024,10/03/2025,1122079628
+P0912,Baringo Dam Construction,Water,Completed,Sarah Hassan,Samuel Adan,0.473380012,35.96802243,Baringo,26/12/2022,17/08/2023,2168743423
+P0913,Nakuru Urban Renewal Project,Housing,Ongoing,Rebecca Toroitich,Joseph Hassan,-0.307671693,36.07490144,Nakuru,11/07/2025,17/02/2027,2072631280
+P0914,Kisumu Dam Construction,Water,Ongoing,Peter Adan,Chebet Chepngeno,-0.084816329,34.76611444,Kisumu,07/12/2024,13/10/2025,2905571010
+P0915,Uasin Gishu Irrigation Scheme,Agriculture,Ongoing,Abdi Ekidor,Rebecca Mwangi,0.51965046,35.27019135,Uasin Gishu,04/01/2025,15/04/2026,2872633385
+P0916,Mombasa Cultural Center,Tourism,Completed,Daniel Onyango,Daniel Nduku,-4.041864374,39.65882633,Mombasa,06/07/2020,07/01/2023,2407438280
+P0917,Garissa Irrigation Scheme,Agriculture,Design,Hassan Achieng,Rebecca Mwangi,-0.445664563,39.65118317,Garissa,26/01/2027,10/07/2028,2131312606
+P0918,Machakos Farm Input Program,Agriculture,Completed,James Ekidor,James Achieng,-1.522260325,37.27230443,Machakos,19/12/2021,25/12/2022,111511764
+P0919,Nairobi Clinic Construction,Health,Completed,Sarah Chepngeno,Samuel Onyango,-1.292852166,36.81286812,Nairobi,09/09/2023,19/02/2025,131330897
+P0920,Nakuru Medical Supply Chain,Health,Design,Samuel Otieno,Chebet Adan,-0.311381706,36.07986768,Nakuru,21/09/2026,01/12/2027,1584586758
+P0921,Mandera Resettlement Housing,Housing,Completed,Samuel Chebet,Peter Cherono,3.933211397,41.85666346,Mandera,15/02/2023,01/01/2025,1083289265
+P0922,Nakuru Eco-Tourism Project,Tourism,Design,Fatma Adan,Rose Hassan,-0.30775828,36.07458788,Nakuru,21/12/2025,30/03/2028,1807269247
+P0923,Nairobi Borehole Drilling,Water,Ongoing,Abdi Cherono,James Chebet,-1.287379374,36.81712417,Nairobi,20/08/2024,22/12/2027,2202516958
+P0924,Garissa Biogas Initiative,Energy,Completed,Sarah Nduku,Joseph Mwangi,-0.457852871,39.63827551,Garissa,05/03/2022,28/12/2022,2940875699
+P0925,Baringo Eco-Tourism Project,Tourism,Design,Chebet Kibet,Daniel Ekidor,0.467745123,35.96429278,Baringo,06/01/2027,01/06/2029,950428598
+P0926,Turkana School Construction,Education,Ongoing,Mercy Hassan,James Ekal,3.122257493,35.61096757,Turkana,14/03/2024,26/06/2026,1441145313
+P0927,Turkana Innovation Center,ICT,Completed,Chebet Kiprotich,Grace Hassan,3.113346365,35.59853012,Turkana,06/03/2024,12/11/2024,2936594034
+P0928,Mandera Digital Hub,ICT,Ongoing,Ahmed Noor,Chebet Ekal,3.9495734,41.8630483,Mandera,24/09/2024,19/02/2027,699742880
+P0929,Baringo School Construction,Education,Ongoing,Joseph Toroitich,Fatma Adan,0.45688044,35.972933,Baringo,13/01/2024,21/12/2026,292218195
+P0930,Turkana Innovation Center,ICT,Ongoing,Rose Mwangi,Peter Mohamed,3.116489533,35.60429445,Turkana,10/01/2025,24/08/2027,602412435
+P0931,Uasin Gishu Resettlement Housing,Housing,Design,Janet Toroitich,Peter Otieno,0.52126411,35.26205743,Uasin Gishu,06/11/2026,18/11/2028,2436845784
+P0932,Kisumu Smart City Project,ICT,Ongoing,Abdi Abdalla,Halima Achieng,-0.092062949,34.77216566,Kisumu,24/02/2025,10/10/2026,1651823139
+P0933,Nakuru Health Center Upgrade,Health,Ongoing,Rose Mwangi,Joseph Chepngeno,-0.310061684,36.08999986,Nakuru,02/04/2024,26/12/2027,896367294
+P0934,Turkana Farm Input Program,Agriculture,Completed,Janet Onyango,Francis Otieno,3.113288093,35.5955648,Turkana,17/08/2023,02/04/2025,713736759
+P0935,Mombasa Library Project,Education,Ongoing,Halima Noor,Francis Abdalla,-4.037718253,39.6717532,Mombasa,19/03/2025,06/10/2026,1479772981
+P0936,Baringo Agro-Processing Plant,Agriculture,Ongoing,Grace Mutua,James Ekidor,0.462379105,35.97537121,Baringo,28/11/2024,30/04/2026,640475568
+P0937,Baringo School Construction,Education,Design,Grace Noor,Samuel Chepngeno,0.464334333,35.97646074,Baringo,10/10/2026,25/08/2028,2944416736
+P0938,Garissa Sanitation Project,Water,Design,Rebecca Ekidor,Peter Otieno,-0.452418469,39.64309349,Garissa,02/01/2027,09/07/2027,2191986202
+P0939,Kisumu Resort Development,Tourism,Ongoing,Rose Achieng,Hassan Kibet,-0.08201895,34.75854827,Kisumu,26/09/2024,14/03/2027,2428292856
+P0940,Garissa Borehole Drilling,Water,Ongoing,James Ekal,Fatma Hussein,-0.444565938,39.65097486,Garissa,13/05/2025,12/09/2026,2229098238
+P0941,Baringo Irrigation Scheme,Agriculture,Ongoing,Peter Mwangi,Fatma Mohamed,0.460934013,35.95952656,Baringo,27/02/2024,12/12/2027,1564955248
+P0942,Mandera Bypass Road,Transport,Design,Rebecca Ekal,Daniel Kibet,3.930770941,41.86354181,Mandera,07/06/2026,25/09/2027,1676495080
+P0943,Mombasa Mini Hydro Project,Energy,Ongoing,Grace Cherono,James Mwangi,-4.052837292,39.66597032,Mombasa,19/10/2024,17/01/2027,1055386887
+P0944,Garissa Affordable Housing,Housing,Completed,Ali Onyango,Joseph Chepngeno,-0.455810823,39.63620284,Garissa,10/05/2022,23/09/2024,2892818186
+P0945,Uasin Gishu Highway Upgrade,Transport,Completed,Sarah Mohamed,Rebecca Noor,0.51937711,35.26343813,Uasin Gishu,10/05/2023,12/12/2023,2292232775
+P0946,Nairobi Bridge Construction,Transport,Ongoing,Rose Nduku,Chebet Abdalla,-1.277984375,36.81839112,Nairobi,28/09/2024,19/06/2026,458012931
+P0947,Machakos Technical Institute,Education,Ongoing,Halima Mohamed,Samuel Toroitich,-1.510920227,37.26303279,Machakos,01/03/2024,06/09/2026,1376170501
+P0948,Baringo Medical Supply Chain,Health,Ongoing,Grace Adan,Janet Mutua,0.460222919,35.97502892,Baringo,30/05/2024,11/01/2026,203165128
+P0949,Turkana Dam Construction,Water,Completed,Rebecca Abdalla,James Cherono,3.113505683,35.59594258,Turkana,19/09/2022,21/01/2025,273521128
+P0950,Machakos Irrigation Scheme,Agriculture,Design,Janet Nduku,Peter Chepngeno,-1.526470372,37.26482015,Machakos,28/10/2025,16/12/2027,1677526110
+P0951,Machakos Bypass Road,Transport,Completed,Daniel Otieno,Hassan Mohamed,-1.518247821,37.25669061,Machakos,13/11/2022,02/08/2023,1712083055
+P0952,Nakuru Mini Hydro Project,Energy,Ongoing,Rose Ekidor,Janet Kiprotich,-0.305990322,36.0880837,Nakuru,04/05/2025,01/05/2026,2493071353
+P0953,Kisumu Bus Rapid Transit,Transport,Ongoing,Samuel Kiprotich,Mercy Ekidor,-0.092051256,34.77523142,Kisumu,25/05/2024,28/02/2026,2019837141
+P0954,Mombasa Borehole Drilling,Water,Ongoing,Ahmed Mutua,Peter Hussein,-4.034370469,39.66954225,Mombasa,29/06/2024,07/02/2027,1433113286
+P0955,Baringo Solar Power Plant,Energy,Design,Grace Kibet,Fatma Ekidor,0.473392672,35.97547715,Baringo,21/01/2027,12/06/2028,332647420
+P0956,Machakos Resettlement Housing,Housing,Ongoing,Fatma Ekidor,Halima Nduku,-1.512163036,37.26251973,Machakos,12/04/2025,14/04/2028,2986521715
+P0957,Mombasa Estate Development,Housing,Completed,Rebecca Toroitich,Hassan Onyango,-4.053250915,39.66416732,Mombasa,20/05/2022,29/12/2023,1830064600
+P0958,Nakuru Medical Supply Chain,Health,Ongoing,Samuel Achieng,Halima Achieng,-0.308013592,36.0889919,Nakuru,20/08/2024,07/03/2027,1210680607
+P0959,Uasin Gishu Digital Learning Center,Education,Design,Abdi Achieng,Rebecca Nduku,0.511483153,35.26725895,Uasin Gishu,13/10/2026,14/11/2027,1212296305
+P0960,Mandera Innovation Center,ICT,Design,Samuel Hassan,Halima Achieng,3.931679857,41.86979293,Mandera,20/06/2026,18/01/2027,749501997
+P0961,Kisumu Smart City Project,ICT,Design,Janet Hussein,Abdi Onyango,-0.091066954,34.76751056,Kisumu,10/11/2025,24/05/2028,1690534339
+P0962,Kisumu Library Project,Education,Design,Rebecca Mutua,Joseph Kibet,-0.099067267,34.77122368,Kisumu,29/11/2026,27/11/2027,2208132785
+P0963,Uasin Gishu Digital Learning Center,Education,Ongoing,Peter Chepngeno,James Kibet,0.522389472,35.26677298,Uasin Gishu,23/04/2024,16/03/2028,2371497219
+P0964,Nakuru Highway Upgrade,Transport,Design,Rose Mwangi,Ahmed Toroitich,-0.311046777,36.08317666,Nakuru,22/01/2027,08/09/2027,701032453
+P0965,Uasin Gishu Estate Development,Housing,Ongoing,James Hussein,Hassan Mwangi,0.516957084,35.26557429,Uasin Gishu,09/05/2025,12/04/2027,2689732766
+P0966,Nakuru Dam Construction,Water,Completed,Sarah Cherono,Hassan Abdalla,-0.297272478,36.07680318,Nakuru,11/09/2022,15/05/2024,1774279661
+P0967,Garissa Affordable Housing,Housing,Design,Chebet Chebet,Janet Onyango,-0.45259117,39.65150419,Garissa,05/10/2025,26/03/2027,2678398264
+P0968,Turkana Digital Learning Center,Education,Design,Daniel Ekal,Joseph Achieng,3.112996207,35.604222,Turkana,28/09/2026,10/06/2029,1717344630
+P0969,Machakos Biogas Initiative,Energy,Completed,Francis Kibet,Joseph Otieno,-1.524529782,37.2621763,Machakos,04/10/2020,20/04/2023,1778723440
+P0970,Machakos Bus Rapid Transit,Transport,Ongoing,Samuel Hussein,Fatma Chepngeno,-1.52238061,37.25364606,Machakos,28/06/2024,25/03/2027,2328048287
+P0971,Mombasa Sanitation Project,Water,Ongoing,James Kibet,Daniel Hassan,-4.038779816,39.67059694,Mombasa,06/09/2024,02/02/2028,84915873
+P0972,Baringo Medical Supply Chain,Health,Completed,Fatma Adan,Ahmed Onyango,0.469571638,35.96180974,Baringo,14/10/2023,23/08/2024,1944286192
+P0973,Mombasa Borehole Drilling,Water,Design,Fatma Noor,Ali Chepngeno,-4.05187926,39.67805228,Mombasa,14/11/2025,16/07/2027,1648329647
+P0974,Mombasa Smart City Project,ICT,Ongoing,Hassan Hassan,David Chepngeno,-4.039243697,39.66122394,Mombasa,05/09/2024,27/04/2027,2236721381
+P0975,Mandera Wildlife Conservancy,Tourism,Completed,Sarah Onyango,Abdi Abdalla,3.945103294,41.86582605,Mandera,10/02/2022,21/01/2024,446272200
+P0976,Mandera Bridge Construction,Transport,Design,Janet Otieno,Chebet Mwangi,3.949329038,41.86988337,Mandera,02/01/2027,26/11/2028,2364935206
+P0977,Machakos School Construction,Education,Ongoing,Sarah Nduku,James Nduku,-1.5102608,37.2712687,Machakos,01/03/2024,25/10/2026,2263116184
+P0978,Uasin Gishu Sanitation Project,Water,Completed,Abdi Toroitich,Peter Adan,0.523972894,35.26845473,Uasin Gishu,18/05/2023,02/03/2025,827090752
+P0979,Baringo Referral Hospital,Health,Ongoing,Ali Hussein,Rebecca Adan,0.475783729,35.96688314,Baringo,17/03/2025,09/12/2026,2482015215
+P0980,Uasin Gishu Medical Supply Chain,Health,Design,Janet Chepngeno,Ahmed Achieng,0.524722817,35.27233749,Uasin Gishu,29/10/2025,02/06/2027,2278834470
+P0981,Uasin Gishu Irrigation Scheme,Agriculture,Completed,Halima Chepngeno,Halima Abdalla,0.515910932,35.26839478,Uasin Gishu,05/06/2021,17/02/2023,2872756724
+P0982,Mandera Innovation Center,ICT,Design,Hassan Mutua,Chebet Ekal,3.94111327,41.85803077,Mandera,15/01/2026,27/05/2028,1218791848
+P0983,Baringo Smart City Project,ICT,Completed,David Cherono,Mercy Chepngeno,0.459339721,35.96985454,Baringo,13/05/2022,28/10/2023,2997373359
+P0984,Machakos Solar Power Plant,Energy,Completed,Samuel Hassan,Daniel Chebet,-1.512701878,37.25438486,Machakos,23/07/2024,14/07/2025,2666237818
+P0985,Mombasa Estate Development,Housing,Completed,Daniel Cherono,Fatma Cherono,-4.037229056,39.66719659,Mombasa,11/09/2021,17/02/2024,1898409220
+P0986,Mandera Wildlife Conservancy,Tourism,Ongoing,Janet Ekidor,Peter Adan,3.945140079,41.85606463,Mandera,05/02/2025,04/07/2026,1005717600
+P0987,Kisumu Cultural Center,Tourism,Design,Sarah Ekal,Rebecca Onyango,-0.084975619,34.76943553,Kisumu,19/01/2027,16/05/2029,1269423369
+P0988,Kisumu Farm Input Program,Agriculture,Ongoing,Grace Ekidor,Abdi Mohamed,-0.087961372,34.77530974,Kisumu,07/12/2024,05/01/2026,912962960
+P0989,Mombasa Digital Learning Center,Education,Design,Daniel Hussein,Abdi Otieno,-4.050611143,39.67122926,Mombasa,01/02/2027,03/04/2029,1114617045
+P0990,Mandera E-Government System,ICT,Design,Ahmed Kibet,Francis Hassan,3.940646069,41.85458247,Mandera,07/02/2027,05/02/2029,1552740679
+P0991,Mombasa Technical Institute,Education,Completed,Grace Mutua,Halima Achieng,-4.039619877,39.67616755,Mombasa,19/03/2021,09/07/2023,1673180030
+P0992,Baringo Urban Renewal Project,Housing,Design,Mercy Ekal,Fatma Mwangi,0.465107341,35.96791659,Baringo,24/11/2025,24/05/2027,887448518
+P0993,Garissa Water Pipeline,Water,Design,Daniel Onyango,Samuel Noor,-0.455901834,39.65484745,Garissa,31/01/2026,08/07/2027,1564229239
+P0994,Uasin Gishu Urban Renewal Project,Housing,Design,Mercy Ekal,Daniel Noor,0.522987412,35.26823647,Uasin Gishu,01/04/2026,17/12/2026,2964228631
+P0995,Nairobi Water Pipeline,Water,Completed,Janet Ekidor,Mercy Hussein,-1.290528364,36.82668056,Nairobi,25/09/2021,02/01/2023,2616810365
+P0996,Machakos Bypass Road,Transport,Design,Halima Adan,Joseph Achieng,-1.515149066,37.26368454,Machakos,24/12/2025,12/10/2026,1057021520
+P0997,Baringo E-Government System,ICT,Ongoing,Joseph Mutua,Samuel Hassan,0.470803945,35.97183932,Baringo,21/05/2024,15/02/2027,2318740813
+P0998,Turkana Technical Institute,Education,Completed,Peter Nduku,Daniel Otieno,3.114762174,35.61305625,Turkana,11/08/2022,24/05/2023,1479250848
+P0999,Baringo Affordable Housing,Housing,Design,David Adan,Francis Mwangi,0.467774912,35.97222747,Baringo,06/09/2026,11/08/2028,2831779336
+P1000,Mandera Health Center Upgrade,Health,Design,Joseph Achieng,Grace Mohamed,3.941967793,41.85591136,Mandera,14/12/2026,20/04/2028,2369366808

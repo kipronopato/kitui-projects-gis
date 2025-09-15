@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-3" style="font-family: Arial, sans-serif;">
+    <div class="row">
+        <div class="col-md-12">
+            <h3 class="text-kenya-green mb-1">All Projects in Kenya</h3>
+            <p class="text-muted fs-6">Browse through all development projects across the country</p>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="card border-kenya-green">
+                <div class="card-header bg-kenya-green text-white py-2">
+                    <h6 class="mb-0">Filter Projects</h6>
+                </div>
+                <div class="card-body p-3">
+                    <form method="get" class="row g-2">
+                        <div class="col-md-3">
+                            <label for="county" class="form-label fs-6">County</label>
+                            <select class="form-select form-select-sm" id="county" name="county">
+                                <option value="">All Counties</option>
+                                <option value="Nairobi">Nairobi</option>
+                                <option value="Mombasa">Mombasa</option>
+                                <option value="Kisumu">Kisumu</option>
+                                <option value="Nakuru">Nakuru</option>
+                                <option value="Eldoret">Eldoret</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="status" class="form-label fs-6">Status</label>
+                            <select class="form-select form-select-sm" id="status" name="status">
+                                <option value="">All Statuses</option>
+                                <option value="planned">Planned</option>
+                                <option value="ongoing">Ongoing</option>
+                                <option value="completed">Completed</option>
+                                <option value="delayed">Delayed</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="agency" class="form-label fs-6">Implementing Agency</label>
+                            <select class="form-select form-select-sm" id="agency" name="agency">
+                                <option value="">All Agencies</option>
+                                <option value="KURA">Kenya Urban Roads Authority (KURA)</option>
+                                <option value="KERRA">Kenya Rural Roads Authority (KERRA)</option>
+                                <option value="KWS">Kenya Wildlife Service (KWS)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 d-flex align-items-end">
+                            <button type="submit" class="btn btn-kenya-green btn-sm me-2">
+                                Apply Filters
+                            </button>
+                            <a href="{% url 'project_list' %}" 
+                               class="btn btn-outline-secondary btn-sm">Reset</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Projects List -->
+    <div class="row g-2">
+        {% for project in projects %}
+        <div class="col-md-6 mb-3">
+            <div class="card h-100 border-kenya-green" style="position:relative; padding-top:22px;">
+                
+                <!-- Status Badge -->
+                <span class="status-badge 
+                    {% if project.status == 'completed' %} bg-completed
+                    {% elif project.status == 'ongoing' %} bg-ongoing
+                    {% elif project.status == 'delayed' %} bg-delayed
+                    {% elif project.status == 'planned' %} bg-planned
+                    {% else %} bg-default
+                    {% endif %}
+                ">
+                    {{ project.get_status_display }}
+                </span>
+
+                <div class="card-body p-3">
+                    <h6 class="card-title mb-2">{{ project.name }}</h6>
+                    <p class="card-text fs-6 mb-2">{{ project.description|truncatewords:20 }}</p>
+                    <div class="mb-2">
+                        <span class="badge bg-kenya-green me-1 fs-6">
+                            {{ project.county }} County
+                        </span>
+                        <span class="badge bg-secondary fs-6">
+                            {{ project.implementing_agency }}
+                        </span>
+                    </div>
+                    <p class="card-text mb-0 fs-6">
+                        <small class="text-muted">Start: {{ project.start_date }} | End: {{ project.end_date }}</small>
+                    </p>
+                </div>
+                <div class="card-footer bg-white p-2">
+                    <a href="{% url 'project_detail' project.pk %}" 
+                       class="btn btn-outline-kenya-green btn-sm me-1">
+                       View Details
+                    </a>
+                    <a href="{% url 'submit_report' project.pk %}" 
+                       class="btn btn-outline-kenya-red btn-sm">
+                       Report Progress
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-md-12">
+            <div class="alert alert-info py-2">
+                No projects found matching your criteria.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+    <div class="row mt-3">
+        <div class="col-md-12">
+            <nav aria-label="Project pagination">
+                <ul class="pagination justify-content-center pagination-sm">
+
+                    <!-- Previous button -->
+                    {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link text-kenya-green" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Previous</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled"><a class="page-link">Previous</a></li>
+                    {% endif %}
+
+                    <!-- Page numbers (window around current page) -->
+                    {% for i in paginator.page_range %}
+                        {% if i >= page_obj.number|add:"-2" and i <= page_obj.number|add:"2" %}
+                            {% if page_obj.number == i %}
+                            <li class="page-item active">
+                                <a class="page-link" style="background:#2e7d32; border-color:#2e7d32; color:#fff;">{{ i }}</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item">
+                                <a class="page-link text-kenya-green" href="?page={{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
+                            </li>
+                            {% endif %}
+                        {% endif %}
+                    {% endfor %}
+
+                    <!-- Next button -->
+                    {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link text-kenya-green" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Next</a>
+                    </li>
+                    {% else %}
+                    <li class="page-item disabled"><a class="page-link">Next</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+/* Status Badge Styles */
+.status-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+.bg-completed { background: #22c55e; }
+.bg-ongoing   { background: #3b82f6; }
+.bg-delayed   { background: #f59e0b; }
+.bg-planned   { background: #8b5cf6; }
+.bg-default   { background: #6c757d; }
+
+.card {
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.btn-outline-kenya-red {
+    border-color: var(--kenya-red);
+    color: var(--kenya-red);
+}
+
+.btn-outline-kenya-red:hover {
+    background-color: var(--kenya-red);
+    color: white;
+}
+</style>
+{% endblock %}

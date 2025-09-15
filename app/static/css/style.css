@@ -1,0 +1,72 @@
+/* Kenya-themed colors */
+:root {
+    --kenya-green: #006600;
+    --kenya-red: #FF0000;
+    --kenya-black: #000000;
+    --kenya-white: #FFFFFF;
+}
+
+/* Custom button styles */
+.btn-kenya-green {
+    background-color: var(--kenya-green);
+    color: white;
+    border-color: var(--kenya-green);
+}
+
+.btn-kenya-green:hover {
+    background-color: #004d00;
+    border-color: #004d00;
+    color: white;
+}
+
+.btn-outline-kenya-green {
+    color: var(--kenya-green);
+    border-color: var(--kenya-green);
+}
+
+.btn-outline-kenya-green:hover {
+    background-color: var(--kenya-green);
+    color: white;
+}
+
+.btn-kenya-red {
+    background-color: var(--kenya-red);
+    color: white;
+    border-color: var(--kenya-red);
+}
+
+.btn-kenya-red:hover {
+    background-color: #cc0000;
+    border-color: #cc0000;
+    color: white;
+}
+
+/* County badge style */
+.county-badge {
+    background-color: var(--kenya-green);
+    color: white;
+}
+
+/* Status badges */
+.status-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1;
+}
+
+/* Project card hover effect */
+.project-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.project-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+/* Kenya flag colors bar */
+.kenya-flag-colors {
+    height: 5px;
+    background: linear-gradient(to right, var(--kenya-black) 33%, var(--kenya-red) 33%, var(--kenya-red) 66%, var(--kenya-green) 66%);
+}

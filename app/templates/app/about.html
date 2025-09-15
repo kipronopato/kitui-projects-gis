@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <!-- Header Section -->
+    <div class="row mb-5">
+        <div class="col-md-12 text-center">
+            <h1>About Kenya Geospatial Project Monitoring System</h1>
+            <p class="lead">Promoting transparency and accountability in development projects across Kenya</p>
+        </div>
+    </div>
+
+    <!-- Mission Section -->
+    <div class="row mb-5">
+        <div class="col-md-6">
+            <h2>Our Mission</h2>
+            <p>The Kenya Geospatial Project Monitoring System is a government initiative designed to enhance transparency, accountability, and citizen participation in monitoring development projects across the country.</p>
+            <p>By providing a platform for citizens to track and report on projects in their communities, we aim to:</p>
+            <ul>
+                <li>Improve project implementation and outcomes</li>
+                <li>Reduce corruption and mismanagement of funds</li>
+                <li>Enhance citizen engagement in development processes</li>
+                <li>Ensure public funds are used effectively for public benefit</li>
+            </ul>
+        </div>
+        <div class="col-md-6">
+            <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Kenya development" class="img-fluid rounded">
+        </div>
+    </div>
+
+    <!-- How It Works Section -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <h2 class="text-center mb-4">How It Works</h2>
+            <div class="row">
+                <div class="col-md-4 text-center mb-4">
+                    <div class="bg-light p-4 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 100px; height: 100px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="var(--kenya-green)" class="bi bi-map" viewBox="0 0 16 16">
+                            <path d="M15.817.113A.5.5 0 0 1 16 .5v14a.5.5 0 0 1-.402.49l-5 1a.502.502 0 0 1-.196 0L5.5 15.01l-4.902.98A.5.5 0 0 1 0 15.5v-14a.5.5 0 0 1 .402-.49l5-1a.5.5 0 0 1 .196 0L10.5.99l4.902-.98a.5.5 0 0 1 .415.103zM10 1.91l-4 1v12l4-1V1.91zm1 12.98l4-1V2.91l-4 1v12.98zm-6-.98V3.91l-4 1v12l4-1z"/>
+                        </svg>
+                    </div>
+                    <h4>Explore Projects</h4>
+                    <p>Browse ongoing and completed development projects across all 47 counties on an interactive map.</p>
+                </div>
+                <div class="col-md-4 text-center mb-4">
+                    <div class="bg-light p-4 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 100px; height: 100px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="var(--kenya-green)" class="bi bi-binoculars" viewBox="0 0 16 16">
+                            <path d="M3 2.5A1.5 1.5 0 0 1 4.5 1h1A1.5 1.5 0 0 1 7 2.5V5h2V2.5A1.5 1.5 0 0 1 10.5 1h1A1.5 1.5 0 0 1 13 2.5v2.382a.5.5 0 0 0 .276.447l.895.447A1.5 1.5 0 0 1 15 7.118V14.5a1.5 1.5 0 0 1-1.5 1.5h-3A1.5 1.5 0 0 1 9 14.5v-3a.5.5 0 0 1 .146-.354l.854-.853V9.5a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v.793l.854.853A.5.5 0 0 1 7 11.5v3A1.5 1.5 0 0 1 5.5 16h-3A1.5 1.5 0 0 1 1 14.5V7.118a1.5 1.5 0 0 1 .83-1.342l.894-.447A.5.5 0 0 0 3 4.882V2.5zM4.5 2a.5.5 0 0 0-.5.5V3h2v-.5a.5.5 0 0 0-.5-.5h-1zM6 4H4v.882a1.5 1.5 0 0 1-.83 1.342l-.894.447A.5.5 0 0 0 2 7.118V13h4v-1.293l-.854-.853A.5.5 0 0 1 5 10.5v-1A1.5 1.5 0 0 1 6.5 8h3A1.5 1.5 0 0 1 11 9.5v1a.5.5 0 0 1-.146.354l-.854.853V13h4V7.118a.5.5 0 0 0-.276-.447l-.895-.447A1.5 1.5 0 0 1 12 4.882V4h-2v1.5a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5V4zm4-1h2v-.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5V3zm4 11h-4v.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5V14zm-8 0H2v.5a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 .5-.5V14z"/>
+                        </svg>
+                    </div>
+                    <h4>Monitor Progress</h4>
+                    <p>Track the implementation status, timelines, and budget utilization of various projects.</p>
+                </div>
+                <div class="col-md-4 text-center mb-4">
+                    <div class="bg-light p-4 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 100px; height: 100px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="var(--kenya-green)" class="bi bi-megaphone" viewBox="0 0 16 16">
+                            <path d="M13 2.5a1.5 1.5 0 0 1 3 0v11a1.5 1.5 0 0 1-3 0v-.214c-2.162-1.241-4.49-1.843-6.912-2.083l.405 2.712A1 1 0 0 1 5.51 15.1h-.548a1 1 0 0 1-.916-.599l-1.85-3.49a68.14 68.14 0 0 0-.202-.003A2.014 2.014 0 0 1 0 9V7a2.02 2.02 0 0 1 1.992-2.013 74.663 74.663 0 0 0 2.483-.075c3.043-.154 6.148-.849 8.525-2.199V2.5zm1 0v11a.5.5 0 0 0 1 0v-11a.5.5 0 0 0-1 0zm-1 1.35c-2.344 1.205-5.209 1.842-8 2.033v4.233c.18.01.359.022.537.036 2.568.189 5.093.744 7.463 1.993V3.85zm-9 6.215v-4.13a95.09 95.09 0 0 1-1.992.052A1.02 1.02 0 0 0 1 7v2c0 .55.448 1.002 1.006 1.009A60.49 60.49 0 0 1 4 10.065zm-.657.975l1.609 3.037.01.024h.548l-.002-.014-.443-2.966a68.019 68.019 0 0 0-1.722-.082z"/>
+                        </svg>
+                    </div>
+                    <h4>Report Issues</h4>
+                    <p>Citizens can report progress, problems, or provide suggestions for improvement on any project.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Government Commitment Section -->
+    <div class="row mb-5">
+        <div class="col-md-12">
+            <div class="bg-light p-5 rounded">
+                <h2 class="text-center mb-4">Government Commitment</h2>
+                <p class="text-center">This platform is part of the Kenyan government's commitment to the Constitution of Kenya (2010), which emphasizes transparency, accountability, and public participation in governance.</p>
+                <p class="text-center">We believe that informed and engaged citizens are essential for effective development and democratic governance.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Info -->
+    <div class="row">
+        <div class="col-md-12 text-center">
+            <h2>Have Questions?</h2>
+            <p>Contact us for more information about the platform or specific projects</p>
+            <a href="{% url 'contact' %}" class="btn btn-kenya-green">Contact Us</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

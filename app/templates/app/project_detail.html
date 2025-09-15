@@ -1,0 +1,206 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Project Header -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2>{{ project.name }}</h2>
+                <span class="badge bg-{% if project.status == 'completed' %}success{% elif project.status == 'ongoing' %}primary{% elif project.status == 'delayed' %}warning{% else %}secondary{% endif %} fs-6">
+                    {{ project.get_status_display }}
+                </span>
+            </div>
+
+            <!-- County and Agency -->
+            <div class="mb-4">
+                <span class="badge county-badge fs-6">{{ project.county }} County</span>
+                <span class="badge bg-light text-dark fs-6">{{ project.implementing_agency }}</span>
+                {% if project.contractor %}
+                <span class="badge bg-secondary fs-6">Contractor: {{ project.contractor }}</span>
+                {% endif %}
+            </div>
+
+            <!-- Project Description -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Project Description</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">{{ project.description }}</p>
+                </div>
+            </div>
+
+            <!-- Project Details -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Financial Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Budget:</strong> KES {{ project.budget|intcomma }}</p>
+                            <p><strong>Funding Source:</strong> Government of Kenya</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card h-100">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">Timeline</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Start Date:</strong> {{ project.start_date }}</p>
+                            <p><strong>Expected Completion:</strong> {{ project.end_date }}</p>
+                            <p><strong>Duration:</strong> {{ project.start_date|timesince:project.end_date }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project Updates -->
+            <div class="card mb-4">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Project Updates</h5>
+                    <a href="{% url 'submit_report' project.pk %}" class="btn btn-sm btn-kenya-green">Report Progress</a>
+                </div>
+                <div class="card-body">
+                    {% if project.updates.all %}
+                    <div class="list-group list-group-flush">
+                        {% for update in project.updates.all %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ update.title }}</h6>
+                                <small>{{ update.created_at|date:"M d, Y" }}</small>
+                            </div>
+                            <p class="mb-1">{{ update.description }}</p>
+                            {% if update.photo %}
+                            <img src="{{ update.photo.url }}" alt="Update photo" class="img-fluid mt-2" style="max-height: 200px;">
+                            {% endif %}
+                            <div class="progress mt-2" style="height: 20px;">
+                                <div class="progress-bar" role="progressbar" style="width: {{ update.progress_percentage }}%;" 
+                                    aria-valuenow="{{ update.progress_percentage }}" aria-valuemin="0" aria-valuemax="100">
+                                    {{ update.progress_percentage }}%
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No updates available for this project yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Quick Actions -->
+            <div class="card mb-4">
+                <div class="card-header bg-kenya-green text-white">
+                    <h5 class="mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'submit_report' project.pk %}" class="btn btn-kenya-red w-100 mb-2">Report Progress or Issues</a>
+                    <a href="{% url 'project_map' %}" class="btn btn-outline-kenya-green w-100 mb-2">View on Map</a>
+                    <button class="btn btn-outline-secondary w-100" data-bs-toggle="modal" data-bs-target="#shareModal">Share Project</button>
+                </div>
+            </div>
+
+            <!-- Citizen Reports -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Community Reports</h5>
+                </div>
+                <div class="card-body">
+                    {% if project.citizen_reports.all %}
+                    <div class="list-group list-group-flush">
+                        {% for report in project.citizen_reports.all|slice:":5" %}
+                        {% if report.is_approved %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ report.get_report_type_display }}</h6>
+                                <small>{{ report.created_at|date:"M d, Y" }}</small>
+                            </div>
+                            <p class="mb-1">{{ report.description|truncatewords:20 }}</p>
+                            {% if report.reported_by %}
+                            <small class="text-muted">Reported by: {{ report.reported_by.username }}</small>
+                            {% else %}
+                            <small class="text-muted">Reported by: Anonymous</small>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                    <a href="#" class="btn btn-sm btn-outline-primary mt-2">View All Reports</a>
+                    {% else %}
+                    <p class="text-muted">No community reports yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Project Location -->
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Project Location</h5>
+                </div>
+                <div class="card-body">
+                    <div id="project-map" style="height: 200px;"></div>
+                    <p class="mt-2 mb-0 text-center">{{ project.county }} County</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Share Modal -->
+<div class="modal fade" id="shareModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Share Project</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Share this project with others:</p>
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" value="{{ request.build_absolute_uri }}" id="shareUrl" readonly>
+                    <button class="btn btn-outline-secondary" type="button" onclick="copyShareUrl()">Copy</button>
+                </div>
+                <div class="d-flex justify-content-center gap-2">
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}" 
+                       class="btn btn-outline-primary" target="_blank">Facebook</a>
+                    <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri|urlencode }}&text=Check out this project: {{ project.name|urlencode }}" 
+                       class="btn btn-outline-info" target="_blank">Twitter</a>
+                    <a href="whatsapp://send?text=Check out this project: {{ project.name }} {{ request.build_absolute_uri|urlencode }}" 
+                       class="btn btn-outline-success" target="_blank">WhatsApp</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize project location map
+    var map = L.map('project-map').setView([{{ project.location.y }}, {{ project.location.x }}], 13);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    
+    L.marker([{{ project.location.y }}, {{ project.location.x }}]).addTo(map)
+        .bindPopup('{{ project.name }}')
+        .openPopup();
+    
+    // Copy share URL function
+    function copyShareUrl() {
+        var copyText = document.getElementById("shareUrl");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        document.execCommand("copy");
+        alert("Copied the URL: " + copyText.value);
+    }
+</script>
+{% endblock %}
