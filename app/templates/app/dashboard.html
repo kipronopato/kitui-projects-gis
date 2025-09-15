@@ -2,16 +2,25 @@
 {% load static %}
 {% load humanize %}
 {% block extra_css %}
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <!-- DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
 <!-- Date Range Picker -->
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <!-- Bootstrap Select -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/css/bootstrap-select.min.css">
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<!-- Leaflet MarkerCluster -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
 <style>
-    /* Enhanced Dashboard Styles */
+    :root {
+        --kenya-green: #006600;
+        --kenya-red: #DE2910;
+        --kenya-black: #000000;
+        --kenya-gray: #999999;
+    }
+    
     .dashboard-card {
         border-radius: 10px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.08);
@@ -37,6 +46,19 @@
     .stat-card {
         text-align: center;
         padding: 1rem 0.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(90deg, var(--kenya-green), var(--kenya-red));
+        opacity: 0.7;
     }
     
     .stat-number {
@@ -218,6 +240,15 @@
         font-size: 0.875rem;
     }
     
+    /* KPI indicator dots */
+    .kpi-dot {
+        height: 10px;
+        width: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 5px;
+    }
+    
     /* Responsive adjustments */
     @media (max-width: 768px) {
         .stat-number {
@@ -234,6 +265,41 @@
             font-size: 0.75rem;
         }
     }
+    
+    /* Custom tabs */
+    .dashboard-tabs .nav-link {
+        color: #495057;
+        font-weight: 500;
+        border: none;
+        border-bottom: 2px solid transparent;
+        padding: 0.5rem 1rem;
+    }
+    
+    .dashboard-tabs .nav-link.active {
+        color: var(--kenya-green);
+        background: transparent;
+        border-bottom: 2px solid var(--kenya-green);
+    }
+    
+    /* Info cards */
+    .info-card {
+        border-left: 4px solid var(--kenya-green);
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.75rem;
+        background: #f8f9fa;
+        border-radius: 4px;
+    }
+    
+    .info-card h6 {
+        margin-bottom: 0.25rem;
+        font-weight: 600;
+    }
+    
+    .info-card p {
+        margin-bottom: 0;
+        font-size: 0.85rem;
+        color: #6c757d;
+    }
 </style>
 {% endblock %}
 
@@ -247,10 +313,10 @@
         </div>
         <div class="col-md-6 text-md-end">
             <div class="btn-group">
-                <button class="btn btn-kenya-green">
+                <button class="btn btn-kenya-green" id="exportBtn">
                     <i class="fas fa-download me-1"></i> Export Report
                 </button>
-                <button class="btn btn-outline-kenya-green">
+                <button class="btn btn-outline-kenya-green" data-bs-toggle="modal" data-bs-target="#settingsModal">
                     <i class="fas fa-cog me-1"></i> Settings
                 </button>
             </div>
@@ -345,48 +411,86 @@
 
     <!-- Key Metrics Row -->
     <div class="row mb-4">
-        <div class="col-xl-3 col-md-6 grid-item">
+        <div class="col-xl-2 col-md-4 col-sm-6 grid-item">
             <div class="dashboard-card">
                 <div class="card-body stat-card">
                     <div class="stat-number">{{ total_projects|intcomma }}</div>
                     <div class="stat-label">TOTAL PROJECTS</div>
-                    <div class="stat-trend trend-up">+5.2% from last quarter</div>
+                    <div class="stat-trend">
+                        <span class="kpi-dot bg-success"></span>
+                        <span class="trend-up">+5.2% from last quarter</span>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6 grid-item">
+        <div class="col-xl-2 col-md-4 col-sm-6 grid-item">
             <div class="dashboard-card">
                 <div class="card-body stat-card">
                     <div class="stat-number">Ksh {{ total_budget|floatformat:0|intcomma }}</div>
                     <div class="stat-label">TOTAL BUDGET</div>
-                    <div class="stat-trend trend-up">+12.7% from last year</div>
+                    <div class="stat-trend">
+                        <span class="kpi-dot bg-success"></span>
+                        <span class="trend-up">+12.7% from last year</span>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6 grid-item">
+        <div class="col-xl-2 col-md-4 col-sm-6 grid-item">
             <div class="dashboard-card">
                 <div class="card-body stat-card">
-                    <div class="stat-number">{{ percent_on_budget }}%</div>
-                    <div class="stat-label">ON BUDGET</div>
-                    <div class="stat-trend trend-down">-2.3% from last month</div>
+                    <div class="stat-number">{{ completion_rate }}%</div>
+                    <div class="stat-label">COMPLETION RATE</div>
+                    <div class="stat-trend">
+                        <span class="kpi-dot bg-{% if completion_rate > 70 %}success{% else %}warning{% endif %}"></span>
+                        <span class="trend-{% if completion_rate > 70 %}up{% else %}down{% endif %}">
+                            {% if completion_rate > 70 %}+{% else %}-{% endif %}{{ completion_rate|floatformat:1 }}% overall
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6 grid-item">
+        <div class="col-xl-2 col-md-4 col-sm-6 grid-item">
             <div class="dashboard-card">
                 <div class="card-body stat-card">
-                    <div class="stat-number">{{ percent_on_schedule }}%</div>
-                    <div class="stat-label">ON SCHEDULE</div>
-                    <div class="stat-trend trend-up">+4.1% from last month</div>
+                    <div class="stat-number">Ksh {{ avg_budget|floatformat:0|intcomma }}</div>
+                    <div class="stat-label">AVG. PROJECT BUDGET</div>
+                    <div class="stat-trend">
+                        <span class="kpi-dot bg-info"></span>
+                        <span>Compared to Ksh 25M national average</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-sm-6 grid-item">
+            <div class="dashboard-card">
+                <div class="card-body stat-card">
+                    <div class="stat-number">{{ behind_schedule }}</div>
+                    <div class="stat-label">BEHIND SCHEDULE</div>
+                    <div class="stat-trend">
+                        <span class="kpi-dot bg-danger"></span>
+                        <span class="trend-down">{% widthratio behind_schedule total_projects 100 %}% of projects</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4 col-sm-6 grid-item">
+            <div class="dashboard-card">
+                <div class="card-body stat-card">
+                    <div class="stat-number">{{ ahead_of_schedule }}</div>
+                    <div class="stat-label">AHEAD OF SCHEDULE</div>
+                    <div class="stat-trend">
+                        <span class="kpi-dot bg-success"></span>
+                        <span class="trend-up">{% widthratio ahead_of_schedule total_projects 100 %}% of projects</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Charts and Map Row -->
+    <!-- Charts and Visualizations -->
     <div class="row mb-4">
         <!-- Status Distribution Chart -->
-        <div class="col-xl-4 col-lg-6 grid-item">
+        <div class="col-xl-3 col-lg-6 grid-item">
             <div class="dashboard-card">
                 <div class="dashboard-card-header">Project Status Distribution</div>
                 <div class="card-body">
@@ -398,7 +502,7 @@
         </div>
         
         <!-- Budget Allocation Chart -->
-        <div class="col-xl-4 col-lg-6 grid-item">
+        <div class="col-xl-3 col-lg-6 grid-item">
             <div class="dashboard-card">
                 <div class="dashboard-card-header">Budget Allocation by Sector</div>
                 <div class="card-body">
@@ -410,12 +514,48 @@
         </div>
         
         <!-- County Distribution Chart -->
-        <div class="col-xl-4 col-lg-6 grid-item">
+        <div class="col-xl-3 col-lg-6 grid-item">
             <div class="dashboard-card">
-                <div class="dashboard-card-header">Projects by County</div>
+                <div class="dashboard-card-header">Projects by County (Top 10)</div>
                 <div class="card-body">
                     <div class="chart-container">
                         <canvas id="countyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Completion Rate by County -->
+        <div class="col-xl-3 col-lg-6 grid-item">
+            <div class="dashboard-card">
+                <div class="dashboard-card-header">Completion Rate by County (Top 5)</div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="performanceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Project Timeline -->
+        <div class="col-xl-6 grid-item">
+            <div class="dashboard-card">
+                <div class="dashboard-card-header">Project Timeline</div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="timelineChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Budget by Status -->
+        <div class="col-xl-6 grid-item">
+            <div class="dashboard-card">
+                <div class="dashboard-card-header">Budget Allocation by Status</div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="budgetStatusChart"></canvas>
                     </div>
                 </div>
             </div>
@@ -454,11 +594,79 @@
         <!-- Project Details Panel -->
         <div class="col-xl-4 grid-item">
             <div class="dashboard-card h-100">
-                <div class="dashboard-card-header">Project Details</div>
+                <div class="dashboard-card-header d-flex justify-content-between align-items-center">
+                    <span>Project Details</span>
+                    <div class="btn-group">
+                        <button class="btn btn-sm btn-outline-light" id="prevProject">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-light" id="nextProject">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
                 <div class="card-body" id="project-detail-panel" style="overflow-y: auto; max-height: 400px;">
                     <div class="text-center text-muted py-5">
                         <i class="fas fa-map-marker-alt fa-2x mb-2 text-kenya-green"></i>
                         <p class="mb-0">Select a project on the map to view details.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Additional Information Row -->
+    <div class="row mb-4">
+        <!-- Recent Updates -->
+        <div class="col-xl-6 grid-item">
+            <div class="dashboard-card h-100">
+                <div class="dashboard-card-header">Recent Project Updates</div>
+                <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                    {% if recent_updates %}
+                        {% for update in recent_updates %}
+                        <div class="info-card">
+                            <h6>{{ update.title }}</h6>
+                            <p class="mb-1">{{ update.description|truncatewords:20 }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">{{ update.project.name }}</small>
+                                <div class="d-flex align-items-center">
+                                    <div class="progress me-2" style="height: 5px; width: 60px;">
+                                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ update.progress_percentage }}%;" aria-valuenow="{{ update.progress_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                    <small>{{ update.progress_percentage }}%</small>
+                                </div>
+                            </div>
+                            <small class="text-muted">{{ update.created_at|timesince }} ago</small>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-info-circle fa-2x mb-2"></i>
+                            <p>No recent updates available</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Citizen Reports Summary -->
+        <div class="col-xl-6 grid-item">
+            <div class="dashboard-card h-100">
+                <div class="dashboard-card-header">Citizen Reports Summary</div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="reportsChart"></canvas>
+                    </div>
+                    <div class="mt-3">
+                        {% for report in report_summary %}
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>{{ report.report_type|title }} Reports</span>
+                            <div>
+                                <span class="badge bg-kenya-green">{{ report.approved }} approved</span>
+                                <span class="badge bg-secondary ms-1">{{ report.count }} total</span>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -528,9 +736,52 @@
         </div>
     </div>
 </div>
+
+<!-- Settings Modal -->
+<div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="settingsModalLabel">Dashboard Settings</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Refresh Interval</label>
+                    <select class="form-select">
+                        <option value="5">5 minutes</option>
+                        <option value="15" selected>15 minutes</option>
+                        <option value="30">30 minutes</option>
+                        <option value="60">1 hour</option>
+                        <option value="0">Never (manual refresh)</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Default Date Range</label>
+                    <select class="form-select">
+                        <option value="7">Last 7 days</option>
+                        <option value="30" selected>Last 30 days</option>
+                        <option value="90">Last 90 days</option>
+                        <option value="365">Last year</option>
+                    </select>
+                </div>
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" id="notificationsSwitch" checked>
+                    <label class="form-check-label" for="notificationsSwitch">Enable notifications</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-kenya-green">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
+<!-- jQuery first, then other JS libraries -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
 <!-- DataTables -->
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
@@ -539,9 +790,11 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <!-- Multiselect -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.14.0-beta3/dist/js/bootstrap-select.min.js"></script>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <!-- Leaflet MarkerCluster -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css">
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
 <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 
 <script>
@@ -584,6 +837,15 @@
         $('#resetFilters').on('click', function() {
             window.location.href = "{% url 'dashboard' %}";
         });
+        
+        // Export functionality
+        $('#exportBtn').on('click', function() {
+            // Get current filters
+            const params = new URLSearchParams(window.location.search);
+            
+            // Redirect to export endpoint with current filters
+            window.location.href = `/api/export/?${params.toString()}`;
+        });
     });
     
     // Initialize map with better styling
@@ -611,7 +873,7 @@
     
     var terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
         maxZoom: 17,
-        attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a>'
+        attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://openttopomap.org">OpenTopoMap</a>'
     });
     
     // Add default layer
@@ -647,9 +909,10 @@
     
     // Projects data
     var projects = {{ geojson|safe }};
+    var currentProjectIndex = 0;
     
     // Add markers for each project
-    projects.features.forEach(function(feature) {
+    projects.features.forEach(function(feature, index) {
         var marker = L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
             color: '#fff',
             weight: 1.5,
@@ -676,19 +939,8 @@
         
         // Add click event to show details in panel
         marker.on('click', function() {
-            var html = `
-                <h6 class="text-kenya-green fw-bold">${feature.properties.name}</h6>
-                <p class="mb-1"><strong>Status:</strong> <span class="badge bg-${feature.properties.status === 'completed' ? 'success' : feature.properties.status === 'ongoing' ? 'warning' : 'dark'}">${feature.properties.status}</span></p>
-                <p class="mb-1"><strong>County:</strong> ${feature.properties.county}</p>
-                <p class="mb-1"><strong>Sector:</strong> ${feature.properties.sector || 'N/A'}</p>
-                <p class="mb-1"><strong>Budget:</strong> Ksh ${budget}</p>
-                <p class="mb-1"><strong>Start Date:</strong> ${feature.properties.start_date || 'N/A'}</p>
-                <p class="mb-1"><strong>End Date:</strong> ${feature.properties.end_date || 'N/A'}</p>
-                <p class="mb-2"><strong>Description:</strong> ${feature.properties.description || 'No description provided.'}</p>
-                <div class="text-center">
-                    <a href='/project/${feature.properties.id}/' class='btn btn-kenya-green btn-sm'>Full Details</a>
-                </div>`;
-            document.getElementById('project-detail-panel').innerHTML = html;
+            currentProjectIndex = index;
+            updateProjectDetailPanel(feature.properties);
         });
         
         // Add marker to the cluster group
@@ -710,7 +962,7 @@
         } else {
             map.removeLayer(markers);
             // Add individual markers if not clustering
-            projects.features.forEach(function(feature) {
+            projects.features.forEach(function(feature, index) {
                 var marker = L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
                     color: '#fff',
                     weight: 1.5,
@@ -719,10 +971,64 @@
                     radius: 8
                 }).addTo(map);
                 
-                // Bind popup and click events (same as above)
-                marker.bindPopup(`...`);
-                marker.on('click', function() { ... });
+                // Bind popup and click events
+                marker.bindPopup(`
+                    <div class="p-2">
+                        <h6 class="text-kenya-green mb-1">${feature.properties.name}</h6>
+                        <p class="mb-1"><strong>Status:</strong> <span style="color:${getColor(feature.properties.status)}">${feature.properties.status}</span></p>
+                        <p class="mb-1"><strong>County:</strong> ${feature.properties.county}</p>
+                        <p class="mb-1"><strong>Budget:</strong> Ksh ${feature.properties.budget ? new Intl.NumberFormat().format(feature.properties.budget) : 'N/A'}</p>
+                        <div class="text-center mt-2">
+                            <a href='/project/${feature.properties.id}/' class='btn btn-sm btn-kenya-green'>View Details</a>
+                        </div>
+                    </div>
+                `);
+                marker.on('click', function() {
+                    currentProjectIndex = index;
+                    updateProjectDetailPanel(feature.properties);
+                });
             });
+        }
+    });
+    
+    // Function to update project detail panel
+    function updateProjectDetailPanel(properties) {
+        var budget = properties.budget ? new Intl.NumberFormat().format(properties.budget) : 'N/A';
+        var html = `
+            <h6 class="text-kenya-green fw-bold">${properties.name}</h6>
+            <p class="mb-1"><strong>Status:</strong> <span class="badge bg-${properties.status === 'completed' ? 'success' : properties.status === 'ongoing' ? 'warning' : 'dark'}">${properties.status}</span></p>
+            <p class="mb-1"><strong>County:</strong> ${properties.county}</p>
+            <p class="mb-1"><strong>Sector:</strong> ${properties.sector || 'N/A'}</p>
+            <p class="mb-1"><strong>Budget:</strong> Ksh ${budget}</p>
+            <p class="mb-1"><strong>Start Date:</strong> ${properties.start_date || 'N/A'}</p>
+            <p class="mb-1"><strong>End Date:</strong> ${properties.end_date || 'N/A'}</p>
+            <p class="mb-2"><strong>Description:</strong> ${properties.description || 'No description provided.'}</p>
+            <div class="text-center">
+                <a href='/project/${properties.id}/' class='btn btn-kenya-green btn-sm'>Full Details</a>
+            </div>`;
+        document.getElementById('project-detail-panel').innerHTML = html;
+    }
+    
+    // Navigation between projects
+    document.getElementById('nextProject').addEventListener('click', function() {
+        if (projects.features.length > 0) {
+            currentProjectIndex = (currentProjectIndex + 1) % projects.features.length;
+            updateProjectDetailPanel(projects.features[currentProjectIndex].properties);
+            
+            // Pan to the project
+            var coords = projects.features[currentProjectIndex].geometry.coordinates;
+            map.panTo([coords[1], coords[0]]);
+        }
+    });
+    
+    document.getElementById('prevProject').addEventListener('click', function() {
+        if (projects.features.length > 0) {
+            currentProjectIndex = (currentProjectIndex - 1 + projects.features.length) % projects.features.length;
+            updateProjectDetailPanel(projects.features[currentProjectIndex].properties);
+            
+            // Pan to the project
+            var coords = projects.features[currentProjectIndex].geometry.coordinates;
+            map.panTo([coords[1], coords[0]]);
         }
     });
     
@@ -810,6 +1116,116 @@
                 scales: {
                     x: {
                         beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        // Timeline Chart
+        var timelineCtx = document.getElementById('timelineChart').getContext('2d');
+        var timelineChart = new Chart(timelineCtx, {
+            type: 'line',
+            data: {
+                labels: {{ timeline_labels|safe }},
+                datasets: [{
+                    label: 'Projects Started',
+                    data: {{ timeline_values|safe }},
+                    borderColor: '#006600',
+                    backgroundColor: 'rgba(0, 102, 0, 0.1)',
+                    tension: 0.3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+        
+        // Budget by Status Chart
+        var budgetStatusCtx = document.getElementById('budgetStatusChart').getContext('2d');
+        var budgetStatusChart = new Chart(budgetStatusCtx, {
+            type: 'pie',
+            data: {
+                labels: {{ budget_status_labels|safe }},
+                datasets: [{
+                    data: {{ budget_status_values|safe }},
+                    backgroundColor: ['#006600', '#DE2910', '#000000', '#999999'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+        
+        // Performance Chart
+        var performanceCtx = document.getElementById('performanceChart').getContext('2d');
+        var performanceChart = new Chart(performanceCtx, {
+            type: 'bar',
+            data: {
+                labels: {{ performance_labels|safe }},
+                datasets: [{
+                    label: 'Completion Rate (%)',
+                    data: {{ performance_values|safe }},
+                    backgroundColor: '#006600',
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            callback: function(value) {
+                                return value + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Reports Chart
+        var reportsCtx = document.getElementById('reportsChart').getContext('2d');
+        var reportsChart = new Chart(reportsCtx, {
+            type: 'doughnut',
+            data: {
+                labels: [
+                    {% for report in report_summary %}
+                    '{{ report.report_type|title }}'{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                ],
+                datasets: [{
+                    data: [
+                        {% for report in report_summary %}
+                        {{ report.count }}{% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                    ],
+                    backgroundColor: ['#006600', '#DE2910', '#000000', '#999999', '#FFC107'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
                     }
                 }
             }

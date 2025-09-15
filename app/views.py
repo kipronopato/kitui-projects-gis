@@ -19,13 +19,12 @@ from django.db.models.functions import TruncMonth, ExtractYear
 from django.contrib.postgres.aggregates import StringAgg
 from django.utils import timezone
 from datetime import datetime, timedelta
-
-from .models import Project, ProjectUpdate, CitizenReport
-
+from django.db.models import Q, Count, Sum, Avg, Min, Max, F
+from django.db.models.functions import ExtractYear, TruncMonth
 
 def home(request):
-    # Start with all projects that have location data
-    projects = Project.objects.filter(location__isnull=False)
+    # Start with all projects
+    projects = Project.objects.all()
 
     # ---------------- Filters ----------------
     # Year filter
@@ -33,22 +32,61 @@ def home(request):
     if selected_year:
         projects = projects.filter(start_date__year=selected_year)
 
-    # Phase filter
-    selected_phases = request.GET.getlist("phase")
-    if selected_phases:
-        projects = projects.filter(status__in=[p.lower() for p in selected_phases])
+    # Status filter
+    selected_statuses = request.GET.getlist("status")
+    if selected_statuses:
+        projects = projects.filter(status__in=selected_statuses)
 
     # Sector filter
     selected_sectors = request.GET.getlist("sector")
     if selected_sectors:
         projects = projects.filter(sector__in=selected_sectors)
 
-    # ---------------- Metrics ----------------
+    # County filter
+    selected_counties = request.GET.getlist("county")
+    if selected_counties:
+        projects = projects.filter(county__in=selected_counties)
+
+    # Budget range filter
+    min_budget = request.GET.get("min_budget")
+    max_budget = request.GET.get("max_budget")
+    if min_budget:
+        try:
+            projects = projects.filter(budget__gte=Decimal(min_budget))
+        except:
+            pass
+    if max_budget:
+        try:
+            projects = projects.filter(budget__lte=Decimal(max_budget))
+        except:
+            pass
+
+    # Date range filter
+    start_date = request.GET.get("start_date")
+    end_date = request.GET.get("end_date")
+    if start_date:
+        projects = projects.filter(start_date__gte=start_date)
+    if end_date:
+        projects = projects.filter(end_date__lte=end_date)
+
+    # ---------------- Comprehensive Metrics ----------------
     total_projects = projects.count()
     total_budget = projects.aggregate(total=Sum('budget'))['total'] or 0
     county_count = projects.values('county').distinct().count()
 
-    # Status percentages
+    # Budget analysis
+    budget_stats = projects.aggregate(
+        avg_budget=Avg('budget'),
+        min_budget=Min('budget'),
+        max_budget=Max('budget'),
+        total_budget=Sum('budget')
+    )
+    
+    # Top and bottom budget projects
+    highest_budget_projects = projects.order_by('-budget')[:5]
+    lowest_budget_projects = projects.order_by('budget')[:5]
+
+    # Status analysis
     status_counts = projects.values('status').annotate(count=Count('id'))
     status_data = {item['status']: item['count'] for item in status_counts}
 
@@ -58,55 +96,92 @@ def home(request):
         for status, count in status_data.items()
     }
 
-    # On-budget and on-schedule percentages
-    completed_projects = projects.filter(status='completed')
-    on_budget_count = completed_projects.count()  # Simplified assumption
-    on_schedule_count = projects.filter(
-        Q(status='ongoing') & Q(end_date__gte=now())
+    # Timeline analysis
+    current_date = timezone.now().date()
+    overdue_projects = projects.filter(
+        Q(status='ongoing') & Q(end_date__lt=current_date)
+    ).count()
+    
+    upcoming_deadlines = projects.filter(
+        Q(status='ongoing') & 
+        Q(end_date__gte=current_date) & 
+        Q(end_date__lte=current_date + timedelta(days=30))
     ).count()
 
-    percent_on_budget = round((on_budget_count / total_projects * 100), 1) if total_projects else 0
-    percent_on_schedule = round((on_schedule_count / total_projects * 100), 1) if total_projects else 0
+    # Completion rate
+    completed_projects = projects.filter(status='completed').count()
+    completion_rate = round((completed_projects / total_projects * 100), 1) if total_projects else 0
 
-    # Sector data
-    sector_counts = projects.values('sector').annotate(count=Count('id')).order_by('-count')
+    # Sector analysis
+    sector_stats = projects.values('sector').annotate(
+        count=Count('id'),
+        total_budget=Sum('budget'),
+        avg_budget=Avg('budget')
+    ).order_by('-total_budget')
+
     sector_data = []
-    for item in sector_counts:
+    for item in sector_stats:
         percentage = (item['count'] / total_projects * 100) if total_projects else 0
         sector_data.append({
             'sector': item['sector'] or 'Not Specified',
             'count': item['count'],
+            'total_budget': item['total_budget'] or 0,
+            'avg_budget': item['avg_budget'] or 0,
             'percentage': round(percentage, 1)
         })
 
+    # County analysis
+    county_stats = projects.values('county').annotate(
+        count=Count('id'),
+        total_budget=Sum('budget')
+    ).order_by('-count')[:10]
+
+    # Monthly timeline
+    monthly_timeline = projects.annotate(
+        month=TruncMonth('start_date')
+    ).values('month').annotate(
+        count=Count('id')
+    ).order_by('month')
+
     # Recent updates
-    recent_updates = ProjectUpdate.objects.select_related('project').order_by('-created_at')[:3]
+    recent_updates = ProjectUpdate.objects.select_related('project').order_by('-created_at')[:5]
 
-    # Budget analysis
-    highest_budget_project = projects.order_by('-budget').first()
-    average_budget = projects.aggregate(avg=Avg('budget'))['avg'] or 0
-
-    # Citizen reports
-    report_counts = CitizenReport.objects.aggregate(
-        progress=Count('id', filter=Q(report_type='progress')),
-        issue=Count('id', filter=Q(report_type='issue')),
-        complaint=Count('id', filter=Q(report_type='complaint'))
+    # Citizen reports analysis
+    report_stats = CitizenReport.objects.values('report_type').annotate(
+        count=Count('id'),
+        approved=Count('id', filter=Q(is_approved=True))
     )
 
-    approved_reports = CitizenReport.objects.filter(is_approved=True).count()
-    total_reports = CitizenReport.objects.count()
+    report_counts = {item['report_type']: item['count'] for item in report_stats}
+    approved_reports = sum(item['approved'] for item in report_stats)
+    total_reports = sum(item['count'] for item in report_stats)
     approval_rate = round((approved_reports / total_reports * 100), 1) if total_reports else 0
 
-    # ---------------- Fiscal Years (Fixed Unique) ----------------
+    # Project manager performance
+    manager_stats = projects.values('project_manager').annotate(
+        count=Count('id'),
+        completed=Count('id', filter=Q(status='completed')),
+        total_budget=Sum('budget')
+    ).exclude(project_manager='').order_by('-count')[:5]
+
+    # Budget utilization by status
+    budget_by_status = projects.values('status').annotate(
+        total_budget=Sum('budget')
+    ).order_by('status')
+
+    # ---------------- Filter Options ----------------
     fiscal_years_qs = Project.objects.dates('start_date', 'year').order_by('-start_date')
     fiscal_years = sorted({year.year for year in fiscal_years_qs}, reverse=True)
 
-    # ---------------- Phases ----------------
-    phases = [label for value, label in Project.STATUS_CHOICES]
+    status_choices = [choice[0] for choice in Project.STATUS_CHOICES]
+    status_labels = dict(Project.STATUS_CHOICES)
+
+    sectors = Project.objects.exclude(sector__isnull=True).exclude(sector='').values_list('sector', flat=True).distinct().order_by('sector')
+    counties = Project.objects.values_list('county', flat=True).distinct().order_by('county')
 
     # ---------------- GeoJSON for map ----------------
     features = []
-    for project in projects:
+    for project in projects.filter(location__isnull=False):
         if project.location:
             features.append({
                 "type": "Feature",
@@ -126,6 +201,7 @@ def home(request):
                     "description": project.description or "",
                     "implementing_agency": project.implementing_agency or "",
                     "contractor": project.contractor or "",
+                    "project_manager": project.project_manager or "",
                 }
             })
 
@@ -133,25 +209,62 @@ def home(request):
 
     # ---------------- Context ----------------
     context = {
+        # Core metrics
         "total_projects": total_projects,
         "total_budget": total_budget,
-        "percent_on_budget": percent_on_budget,
-        "percent_on_schedule": percent_on_schedule,
         "county_count": county_count,
+        "completion_rate": completion_rate,
+        "overdue_projects": overdue_projects,
+        "upcoming_deadlines": upcoming_deadlines,
+        
+        # Budget analysis
+        "budget_stats": budget_stats,
+        "highest_budget_projects": highest_budget_projects,
+        "lowest_budget_projects": lowest_budget_projects,
+        
+        # Status analysis
         "status_counts": status_data,
         "status_percentages": status_percentages,
+        "status_labels": status_labels,
+        
+        # Sector analysis
         "sector_data": sector_data,
+        
+        # County analysis
+        "county_stats": county_stats,
+        
+        # Timeline
+        "monthly_timeline": list(monthly_timeline),
+        
+        # Recent activity
         "recent_updates": recent_updates,
+        
+        # Citizen engagement
         "report_counts": report_counts,
         "approval_rate": approval_rate,
-        "highest_budget_project": highest_budget_project,
-        "average_budget": average_budget,
+        
+        # Performance metrics
+        "manager_stats": manager_stats,
+        "budget_by_status": list(budget_by_status),
+        
+        # Filter options
         "fiscal_years": fiscal_years,
-        "phases": phases,
+        "status_choices": status_choices,
+        "sectors": sectors,
+        "counties": counties,
+        
+        # GeoJSON
         "geojson": json.dumps(geojson),
+        
+        # Selected filters
         "selected_year": selected_year,
-        "selected_phases": selected_phases,
+        "selected_statuses": selected_statuses,
         "selected_sectors": selected_sectors,
+        "selected_counties": selected_counties,
+        "min_budget": min_budget,
+        "max_budget": max_budget,
+        "start_date": start_date,
+        "end_date": end_date,
     }
 
     return render(request, "app/home.html", context)
