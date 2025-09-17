@@ -1,0 +1,15 @@
+services:
+  postgis:
+    image: postgis/postgis:17-3.4   # ❌ not alpine
+    container_name: kenya_postgis
+    restart: always
+    environment:
+      POSTGRES_DB: kenya
+      POSTGRES_USER: straton
+      POSTGRES_PASSWORD: Straton12.
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgis_data:/var/lib/postgresql/data
+volumes:
+  postgis_data:
