@@ -5,555 +5,642 @@
 
 <div class="container-fluid mt-2">
   <div class="row g-2">
-    <!-- Sidebar Filters -->
+    <!-- Sidebar Navigation -->
     <div class="col-xl-2 col-lg-3 col-md-4">
       <div class="sticky-top" style="top: 70px; z-index: 1019;">
-        <form method="get" id="filter-form">
-          <!-- Status Filter -->
-          <div class="card mb-2 shadow-sm border-kenya-green">
-            <div class="card-header bg-kenya-green text-white fw-bold d-flex align-items-center py-1">
-              <i class="fas fa-tasks me-1 fs-7"></i> <span class="fs-7">Project Status</span>
-            </div>
-            <div class="card-body p-1">
-              {% for status in status_choices %}
-              <div class="form-check mb-1">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  name="status"
-                  value="{{ status }}"
-                  id="status-{{ forloop.counter }}"
-                  style="width: 0.7rem; height: 0.7rem;"
-                  {% if status in selected_statuses %}checked{% endif %}
-                  onchange="this.form.submit()"
-                />
-                <label class="form-check-label fs-7" for="status-{{ forloop.counter }}">
-                  {{ status_labels|get_item:status }} ({{ status_counts|get_item:status|default:0 }})
-                </label>
-              </div>
-              {% endfor %}
-            </div>
-          </div>
-
-          <!-- Sector Filter -->
-          <div class="card mb-2 shadow-sm border-kenya-green">
-            <div class="card-header bg-kenya-green text-white fw-bold d-flex align-items-center py-1">
-              <i class="fas fa-layer-group me-1 fs-7"></i>
-              <span class="fs-7">Project Sector</span>
-            </div>
-            <div class="card-body p-1" style="max-height: 200px; overflow-y: auto;">
-              {% for sector in sectors %}
-              <div class="form-check mb-1">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  name="sector"
-                  value="{{ sector }}"
-                  id="sector-{{ forloop.counter }}"
-                  style="width: 0.7rem; height: 0.7rem;"
-                  {% if sector in selected_sectors %}checked{% endif %}
-                  onchange="this.form.submit()"
-                />
-                <label class="form-check-label fs-7" for="sector-{{ forloop.counter }}">
-                  {{ sector }}
-                </label>
-              </div>
-              {% endfor %}
-            </div>
-          </div>
-
-          <!-- County Filter -->
-          <div class="card mb-2 shadow-sm border-kenya-green">
-            <div class="card-header bg-kenya-green text-white fw-bold d-flex align-items-center py-1">
-              <i class="fas fa-map-marker-alt me-1 fs-7"></i>
-              <span class="fs-7">County</span>
-            </div>
-            <div class="card-body p-1" style="max-height: 200px; overflow-y: auto;">
-              {% for county in counties %}
-              <div class="form-check mb-1">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  name="county"
-                  value="{{ county }}"
-                  id="county-{{ forloop.counter }}"
-                  style="width: 0.7rem; height: 0.7rem;"
-                  {% if county in selected_counties %}checked{% endif %}
-                  onchange="this.form.submit()"
-                />
-                <label class="form-check-label fs-7" for="county-{{ forloop.counter }}">
-                  {{ county }}
-                </label>
-              </div>
-              {% endfor %}
-            </div>
-          </div>
-
-          <!-- Budget Filter -->
-          <div class="card mb-2 shadow-sm border-kenya-green">
-            <div class="card-header bg-kenya-green text-white fw-bold d-flex align-items-center py-1">
-              <i class="fas fa-money-bill-wave me-1 fs-7"></i>
-              <span class="fs-7">Budget Range (KES)</span>
-            </div>
-            <div class="card-body p-1">
-              <div class="row g-1">
-                <div class="col-6">
-                  <input type="number" class="form-control form-control-sm fs-7" name="min_budget" 
-                         placeholder="Min" value="{{ min_budget }}">
-                </div>
-                <div class="col-6">
-                  <input type="number" class="form-control form-control-sm fs-7" name="max_budget" 
-                         placeholder="Max" value="{{ max_budget }}">
-                </div>
-              </div>
-              <button type="submit" class="btn btn-kenya-green btn-sm w-100 mt-1 fs-7">
-                Apply Budget Filter
+        <!-- Navigation Tabs -->
+        <div class="card mb-3 shadow-sm border-kenya-green" style="background-color: #90EE90;">
+          <div class="card-body p-2">
+            <div class="d-flex flex-column nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+              <button class="nav-link active mb-1 text-start" id="v-pills-overview-tab" data-bs-toggle="pill" data-bs-target="#v-pills-overview" type="button" role="tab">
+                <i class="fas fa-chart-pie me-2"></i> Overview
+              </button>
+              <button class="nav-link mb-1 text-start" id="v-pills-analytics-tab" data-bs-toggle="pill" data-bs-target="#v-pills-analytics" type="button" role="tab">
+                <i class="fas fa-chart-line me-2"></i> Analytics
+              </button>
+              <button class="nav-link mb-1 text-start" id="v-pills-map-tab" data-bs-toggle="pill" data-bs-target="#v-pills-map" type="button" role="tab">
+                <i class="fas fa-map-marked-alt me-2"></i> Map View
               </button>
             </div>
           </div>
-
-          <!-- Date Filter -->
-          <div class="card mb-2 shadow-sm border-kenya-green">
-            <div class="card-header bg-kenya-green text-white fw-bold d-flex align-items-center py-1">
-              <i class="fas fa-calendar-alt me-1 fs-7"></i>
-              <span class="fs-7">Date Range</span>
-            </div>
-            <div class="card-body p-1">
-              <div class="mb-1">
-                <label class="form-label fs-7 mb-0">Start Date</label>
-                <input type="date" class="form-control form-control-sm fs-7" name="start_date" value="{{ start_date }}">
-              </div>
-              <div class="mb-1">
-                <label class="form-label fs-7 mb-0">End Date</label>
-                <input type="date" class="form-control form-control-sm fs-7" name="end_date" value="{{ end_date }}">
-              </div>
-              <button type="submit" class="btn btn-kenya-green btn-sm w-100 mt-1 fs-7">
-                Apply Date Filter
-              </button>
-            </div>
-          </div>
-
-          <!-- Fiscal Year -->
-          <div class="card mb-2 shadow-sm border-kenya-green">
-            <div class="card-header bg-kenya-green text-white fw-bold d-flex align-items-center py-1">
-              <i class="fas fa-calendar-alt me-1 fs-7"></i> <span class="fs-7">Fiscal Year</span>
-            </div>
-            <div class="card-body p-1">
-              <div class="d-flex flex-wrap gap-1">
-                {% for year in fiscal_years %}
-                  <button 
-                    type="submit" 
-                    name="year" 
-                    value="{{ year }}"
-                    class="btn btn-sm btn-outline-kenya-green {% if selected_year and selected_year|stringformat:'s' == year|stringformat:'s' %}active{% endif %}"
-                    style="font-size: 0.6rem; padding: 0.15rem 0.3rem;"
-                  >
-                    {{ year }}
-                  </button>
-                {% endfor %}
-              </div>
-            </div>
-          </div>
-        </form>
+        </div>
+        <!-- Filters Section -->
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="text-kenya-green mb-0">Filters</h5>
+          <button class="btn btn-sm btn-kenya-green" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
+            <i class="fas fa-filter"></i>
+          </button>
+        </div>
         
-        <!-- Reset Filters -->
-        <a href="{% url 'home' %}" class="btn btn-kenya-green w-100 py-1 fs-7">
-          <i class="fas fa-sync me-1 fs-7"></i> Reset Filters
-        </a>
+        <div class="collapse show" id="filterCollapse">
+          <form method="get" id="filter-form">
+            <!-- Status Filter -->
+            <div class="card mb-2 shadow-sm border-kenya-green">
+              <div class="card-header bg-kenya-green text-white fw-bold d-flex align-items-center justify-content-between py-1" data-bs-toggle="collapse" data-bs-target="#statusFilter">
+                <div>
+                  <i class="fas fa-tasks me-1 fs-7"></i> <span class="fs-7">Project Status</span>
+                </div>
+                <i class="fas fa-chevron-down fs-7"></i>
+              </div>
+              <div class="collapse show" id="statusFilter">
+                <div class="card-body p-1">
+                  {% for status in status_choices %}
+                  <div class="form-check mb-1">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      name="status"
+                      value="{{ status }}"
+                      id="status-{{ forloop.counter }}"
+                      style="width: 0.7rem; height: 0.7rem;"
+                      {% if status in selected_statuses %}checked{% endif %}
+                      onchange="this.form.submit()"
+                    />
+                    <label class="form-check-label fs-7" for="status-{{ forloop.counter }}">
+                      {{ status_labels|get_item:status }} ({{ status_counts|get_item:status|default:0 }})
+                    </label>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            <!-- Sector Filter -->
+            <div class="card mb-2 shadow-sm border-kenya-green">
+              <div class="card-header bg-kenya-green text-white fw-bold d-flex align-items-center justify-content-between py-1" data-bs-toggle="collapse" data-bs-target="#sectorFilter">
+                <div>
+                  <i class="fas fa-layer-group me-1 fs-7"></i>
+                  <span class="fs-7">Project Sector</span>
+                </div>
+                <i class="fas fa-chevron-down fs-7"></i>
+              </div>
+              <div class="collapse show" id="sectorFilter">
+                <div class="card-body p-1" style="max-height: 200px; overflow-y: auto;">
+                  {% for sector in sectors %}
+                  <div class="form-check mb-1">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      name="sector"
+                      value="{{ sector }}"
+                      id="sector-{{ forloop.counter }}"
+                      style="width: 0.7rem; height: 0.7rem;"
+                      {% if sector in selected_sectors %}checked{% endif %}
+                      onchange="this.form.submit()"
+                    />
+                    <label class="form-check-label fs-7" for="sector-{{ forloop.counter }}">
+                      {{ sector }}
+                    </label>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            <!-- County Filter -->
+            <div class="card mb-2 shadow-sm border-kenya-green">
+              <div class="card-header bg-kenya-green text-white fw-bold d-flex align-items-center justify-content-between py-1" data-bs-toggle="collapse" data-bs-target="#countyFilter">
+                <div>
+                  <i class="fas fa-map-marker-alt me-1 fs-7"></i>
+                  <span class="fs-7">County</span>
+                </div>
+                <i class="fas fa-chevron-down fs-7"></i>
+              </div>
+              <div class="collapse show" id="countyFilter">
+                <div class="card-body p-1" style="max-height: 200px; overflow-y: auto;">
+                  {% for county in counties %}
+                  <div class="form-check mb-1">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      name="county"
+                      value="{{ county }}"
+                      id="county-{{ forloop.counter }}"
+                      style="width: 0.7rem; height: 0.7rem;"
+                      {% if county in selected_counties %}checked{% endif %}
+                      onchange="this.form.submit()"
+                    />
+                    <label class="form-check-label fs-7" for="county-{{ forloop.counter }}">
+                      {{ county }}
+                    </label>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            <!-- Budget Filter -->
+            <div class="card mb-2 shadow-sm border-kenya-green">
+              <div class="card-header bg-kenya-green text-white fw-bold d-flex align-items-center justify-content-between py-1" data-bs-toggle="collapse" data-bs-target="#budgetFilter">
+                <div>
+                  <i class="fas fa-money-bill-wave me-1 fs-7"></i>
+                  <span class="fs-7">Budget Range (KES)</span>
+                </div>
+                <i class="fas fa-chevron-down fs-7"></i>
+              </div>
+              <div class="collapse show" id="budgetFilter">
+                <div class="card-body p-1">
+                  <div class="row g-1">
+                    <div class="col-6">
+                      <input type="number" class="form-control form-control-sm fs-7" name="min_budget" 
+                             placeholder="Min" value="{{ min_budget }}">
+                    </div>
+                    <div class="col-6">
+                      <input type="number" class="form-control form-control-sm fs-7" name="max_budget" 
+                             placeholder="Max" value="{{ max_budget }}">
+                    </div>
+                  </div>
+                  <button type="submit" class="btn btn-kenya-green btn-sm w-100 mt-1 fs-7">
+                    Apply Budget Filter
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Date Filter -->
+            <div class="card mb-2 shadow-sm border-kenya-green">
+              <div class="card-header bg-kenya-green text-white fw-bold d-flex align-items-center justify-content-between py-1" data-bs-toggle="collapse" data-bs-target="#dateFilter">
+                <div>
+                  <i class="fas fa-calendar-alt me-1 fs-7"></i>
+                  <span class="fs-7">Date Range</span>
+                </div>
+                <i class="fas fa-chevron-down fs-7"></i>
+              </div>
+              <div class="collapse show" id="dateFilter">
+                <div class="card-body p-1">
+                  <div class="mb-1">
+                    <label class="form-label fs-7 mb-0">Start Date</label>
+                    <input type="date" class="form-control form-control-sm fs-7" name="start_date" value="{{ start_date }}">
+                  </div>
+                  <div class="mb-1">
+                    <label class="form-label fs-7 mb-0">End Date</label>
+                    <input type="date" class="form-control form-control-sm fs-7" name="end_date" value="{{ end_date }}">
+                  </div>
+                  <button type="submit" class="btn btn-kenya-green btn-sm w-100 mt-1 fs-7">
+                    Apply Date Filter
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fiscal Year -->
+            <div class="card mb-2 shadow-sm border-kenya-green">
+              <div class="card-header bg-kenya-green text-white fw-bold d-flex align-items-center justify-content-between py-1" data-bs-toggle="collapse" data-bs-target="#yearFilter">
+                <div>
+                  <i class="fas fa-calendar-alt me-1 fs-7"></i> <span class="fs-7">Fiscal Year</span>
+                </div>
+                <i class="fas fa-chevron-down fs-7"></i>
+              </div>
+              <div class="collapse show" id="yearFilter">
+                <div class="card-body p-1">
+                  <select class="form-select form-select-sm fs-7" name="year" onchange="this.form.submit()">
+                    <option value="">All Years</option>
+                    {% for year in fiscal_years %}
+                    <option value="{{ year }}" {% if selected_year and selected_year|stringformat:'s' == year|stringformat:'s' %}selected{% endif %}>{{ year }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+          </form>
+          
+          <!-- Reset Filters -->
+          <a href="{% url 'home' %}" class="btn btn-kenya-green w-100 py-1 fs-7">
+            <i class="fas fa-sync me-1 fs-7"></i> Reset Filters
+          </a>
+        </div>
       </div>
     </div>
 
     <!-- Main Dashboard -->
     <div class="col-xl-10 col-lg-9 col-md-8">
       <!-- Page Header -->
-      <div class="d-flex justify-content-between align-items-center mb-2">
-        <h3 class="text-kenya-green mb-0 fs-5">Kenya Projects Dashboard</h3>
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3 class="text-kenya-green mb-0">Kenya Projects Dashboard</h3>
         <div>
-          <span class="badge bg-kenya-green me-2 fs-7">
+          <span class="badge bg-kenya-green me-2 fs-6">
             {{ total_projects }} Projects
           </span>
-          <button class="btn btn-outline-kenya-green me-1 btn-sm fs-7">
+          <button class="btn btn-outline-kenya-green me-1 btn-sm">
             <i class="fas fa-download me-1"></i> Export
           </button>
         </div>
       </div>
 
-      <!-- Top Stats -->
-      <div class="row g-2 mb-2">
-        <!-- Total Projects -->
-        <div class="col-xl-2 col-md-4 col-sm-6">
-          <div class="card text-center shadow-sm border-kenya-green h-100">
-            <div class="card-header kenya-flag-colors py-1"></div>
-            <div class="card-body p-1">
-              <div class="d-flex justify-content-center align-items-center mb-1">
-                <div class="bg-kenya-green p-1 rounded-circle">
-                  <i class="fas fa-clipboard-list text-white fs-6"></i>
+      <div class="tab-content" id="v-pills-tabContent">
+        <!-- Overview Tab -->
+        <div class="tab-pane fade show active" id="v-pills-overview" role="tabpanel">
+          <!-- Top Stats -->
+          <div class="row g-3 mb-4">
+            <!-- Total Projects -->
+            <div class="col-xl-2 col-md-4 col-sm-6">
+              <div class="card text-center shadow-sm border-kenya-green h-100 overview-card">
+                <div class="card-header kenya-flag-colors py-1"></div>
+                <div class="card-body p-2">
+                  <div class="d-flex justify-content-center align-items-center mb-2">
+                    <div class="bg-kenya-green p-2 rounded-circle">
+                      <i class="fas fa-clipboard-list text-white fs-5"></i>
+                    </div>
+                  </div>
+                  <h3 class="fw-bold text-kenya-green mb-0">{{ total_projects|intcomma }}</h3>
+                  <p class="mb-0 text-muted">Total Projects</p>
                 </div>
               </div>
-              <h3 class="fw-bold text-kenya-green mb-0 fs-5">{{ total_projects|intcomma }}</h3>
-              <p class="mb-0 text-muted fs-7">Total Projects</p>
             </div>
-          </div>
-        </div>
 
-        <!-- Total Budget -->
-        <div class="col-xl-2 col-md-4 col-sm-6">
-          <div class="card text-center shadow-sm border-kenya-green h-100">
-            <div class="card-header kenya-flag-colors py-1"></div>
-            <div class="card-body p-1">
-              <div class="d-flex justify-content-center align-items-center mb-1">
-                <div class="bg-kenya-green p-1 rounded-circle">
-                  <i class="fas fa-money-bill-wave text-white fs-6"></i>
+            <!-- Total Budget -->
+            <div class="col-xl-2 col-md-4 col-sm-6">
+              <div class="card text-center shadow-sm border-kenya-green h-100 overview-card">
+                <div class="card-header kenya-flag-colors py-1"></div>
+                <div class="card-body p-2">
+                  <div class="d-flex justify-content-center align-items-center mb-2">
+                    <div class="bg-kenya-green p-2 rounded-circle">
+                      <i class="fas fa-money-bill-wave text-white fs-5"></i>
+                    </div>
+                  </div>
+                  <h4 class="fw-bold text-kenya-green mb-0">
+                    Ksh {{ total_budget|floatformat:0|intcomma }}
+                  </h4>
+                  <p class="mb-0 text-muted">Total Budget</p>
                 </div>
               </div>
-              <h4 class="fw-bold text-kenya-green mb-0 fs-6">
-                Ksh {{ total_budget|floatformat:0|intcomma }}
-              </h4>
-              <p class="mb-0 text-muted fs-7">Total Budget</p>
             </div>
-          </div>
-        </div>
 
-        <!-- Completion Rate -->
-        <div class="col-xl-2 col-md-4 col-sm-6">
-          <div class="card text-center shadow-sm border-kenya-green h-100">
-            <div class="card-header kenya-flag-colors py-1"></div>
-            <div class="card-body p-1">
-              <div class="d-flex justify-content-center align-items-center mb-1">
-                <div class="bg-kenya-green p-1 rounded-circle">
-                  <i class="fas fa-calendar-check text-white fs-6"></i>
+            <!-- Completion Rate -->
+            <div class="col-xl-2 col-md-4 col-sm-6">
+              <div class="card text-center shadow-sm border-kenya-green h-100 overview-card">
+                <div class="card-header kenya-flag-colors py-1"></div>
+                <div class="card-body p-2">
+                  <div class="d-flex justify-content-center align-items-center mb-2">
+                    <div class="bg-kenya-green p-2 rounded-circle">
+                      <i class="fas fa-calendar-check text-white fs-5"></i>
+                    </div>
+                  </div>
+                  <h4 class="fw-bold text-kenya-green mb-0">
+                    {{ completion_rate }}%
+                  </h4>
+                  <p class="mb-0 text-muted">Completion Rate</p>
                 </div>
               </div>
-              <h4 class="fw-bold text-kenya-green mb-0 fs-6">
-                {{ completion_rate }}%
-              </h4>
-              <p class="mb-0 text-muted fs-7">Completion Rate</p>
             </div>
-          </div>
-        </div>
-        
-        <!-- County Coverage -->
-        <div class="col-xl-2 col-md-4 col-sm-6">
-          <div class="card text-center shadow-sm border-kenya-green h-100">
-            <div class="card-header kenya-flag-colors py-1"></div>
-            <div class="card-body p-1">
-              <div class="d-flex justify-content-center align-items-center mb-1">
-                <div class="bg-kenya-green p-1 rounded-circle">
-                  <i class="fas fa-map-marker-alt text-white fs-6"></i>
+            
+            <!-- County Coverage -->
+            <div class="col-xl-2 col-md-4 col-sm-6">
+              <div class="card text-center shadow-sm border-kenya-green h-100 overview-card">
+                <div class="card-header kenya-flag-colors py-1"></div>
+                <div class="card-body p-2">
+                  <div class="d-flex justify-content-center align-items-center mb-2">
+                    <div class="bg-kenya-green p-2 rounded-circle">
+                      <i class="fas fa-map-marker-alt text-white fs-5"></i>
+                    </div>
+                  </div>
+                  <h4 class="fw-bold text-kenya-green mb-0">
+                    {{ county_count }}
+                  </h4>
+                  <p class="mb-0 text-muted">Counties Covered</p>
                 </div>
               </div>
-              <h4 class="fw-bold text-kenya-green mb-0 fs-6">
-                {{ county_count }}
-              </h4>
-              <p class="mb-0 text-muted fs-7">Counties Covered</p>
             </div>
-          </div>
-        </div>
 
-        <!-- Overdue Projects -->
-        <div class="col-xl-2 col-md-4 col-sm-6">
-          <div class="card text-center shadow-sm border-kenya-green h-100">
-            <div class="card-header kenya-flag-colors py-1"></div>
-            <div class="card-body p-1">
-              <div class="d-flex justify-content-center align-items-center mb-1">
-                <div class="bg-danger p-1 rounded-circle">
-                  <i class="fas fa-exclamation-triangle text-white fs-6"></i>
+            <!-- Overdue Projects -->
+            <div class="col-xl-2 col-md-4 col-sm-6">
+              <div class="card text-center shadow-sm border-kenya-green h-100 overview-card">
+                <div class="card-header kenya-flag-colors py-1"></div>
+                <div class="card-body p-2">
+                  <div class="d-flex justify-content-center align-items-center mb-2">
+                    <div class="bg-danger p-2 rounded-circle">
+                      <i class="fas fa-exclamation-triangle text-white fs-5"></i>
+                    </div>
+                  </div>
+                  <h4 class="fw-bold text-danger mb-0">
+                    {{ overdue_projects }}
+                  </h4>
+                  <p class="mb-0 text-muted">Overdue Projects</p>
                 </div>
               </div>
-              <h4 class="fw-bold text-danger mb-0 fs-6">
-                {{ overdue_projects }}
-              </h4>
-              <p class="mb-0 text-muted fs-7">Overdue Projects</p>
             </div>
-          </div>
-        </div>
 
-        <!-- Upcoming Deadlines -->
-        <div class="col-xl-2 col-md-4 col-sm-6">
-          <div class="card text-center shadow-sm border-kenya-green h-100">
-            <div class="card-header kenya-flag-colors py-1"></div>
-            <div class="card-body p-1">
-              <div class="d-flex justify-content-center align-items-center mb-1">
-                <div class="bg-warning p-1 rounded-circle">
-                  <i class="fas fa-clock text-white fs-6"></i>
+            <!-- Upcoming Deadlines -->
+            <div class="col-xl-2 col-md-4 col-sm-6">
+              <div class="card text-center shadow-sm border-kenya-green h-100 overview-card">
+                <div class="card-header kenya-flag-colors py-1"></div>
+                <div class="card-body p-2">
+                  <div class="d-flex justify-content-center align-items-center mb-2">
+                    <div class="bg-warning p-2 rounded-circle">
+                      <i class="fas fa-clock text-white fs-5"></i>
+                    </div>
+                  </div>
+                  <h4 class="fw-bold text-warning mb-0">
+                    {{ upcoming_deadlines }}
+                  </h4>
+                  <p class="mb-0 text-muted">Upcoming Deadlines</p>
                 </div>
               </div>
-              <h4 class="fw-bold text-warning mb-0 fs-6">
-                {{ upcoming_deadlines }}
-              </h4>
-              <p class="mb-0 text-muted fs-7">Upcoming Deadlines</p>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Map & Project Details -->
-      <div class="row g-2 mb-2" style="height: 40vh;">
-        <div class="col-xl-9 col-lg-8">
-          <div class="card shadow-sm border-kenya-green h-100">
-            <div class="card-header bg-kenya-green text-white fw-bold d-flex justify-content-between align-items-center py-1">
-              <span><i class="fas fa-map-marked-alt me-1 fs-7"></i> <span class="fs-7">Project Map</span></span>
-              <div id="map-layer-switcher" class="d-inline-block">
-                <select
-                  id="map-layer-select"
-                  class="form-select form-select-sm d-inline-block"
-                  style="width: auto; font-size: 0.7rem; padding: 0.1rem 1.5rem 0.1rem 0.4rem;"
-                >
-                  <option value="street">Street Map</option>
-                  <option value="satellite">Satellite</option>
-                  <option value="terrain">Terrain</option>
-                </select>
-              </div>
-            </div>
-            <div class="card-body p-0 h-100">
-              <div
-                id="project-map"
-                style="height: 100%; width: 100%; border-radius: 0 0 0.375rem 0.375rem;"
-              ></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xl-3 col-lg-4">
-          <div class="card shadow-sm border-kenya-green h-100">
-            <div class="card-header bg-kenya-green text-white fw-bold py-1">
-              <i class="fas fa-info-circle me-1 fs-7"></i> <span class="fs-7">Project Details</span>
-            </div>
-            <div class="card-body p-1" id="project-detail-panel" style="overflow-y: auto;">
-              <div class="text-center text-muted py-4">
-                <i class="fas fa-map-marker-alt fa-2x mb-2 text-kenya-green"></i>
-                <p class="fs-7 mb-0">Select a project on the map to view details.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Budget Analysis Section -->
-      <div class="row g-2 mb-2">
-        <!-- Budget Statistics -->
-        <div class="col-xl-4 col-md-6">
-          <div class="card shadow-sm border-kenya-green h-100">
-            <div class="card-header bg-kenya-green text-white fw-bold py-1">
-              <i class="fas fa-chart-bar me-1 fs-7"></i> <span class="fs-7">Budget Statistics</span>
-            </div>
-            <div class="card-body p-2">
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="fs-7">Average Budget</span>
-                <span class="badge bg-kenya-green fs-7">Ksh {{ budget_stats.avg_budget|floatformat:0|intcomma }}</span>
-              </div>
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="fs-7">Minimum Budget</span>
-                <span class="badge bg-kenya-green fs-7">Ksh {{ budget_stats.min_budget|floatformat:0|intcomma }}</span>
-              </div>
-              <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="fs-7">Maximum Budget</span>
-                <span class="badge bg-kenya-green fs-7">Ksh {{ budget_stats.max_budget|floatformat:0|intcomma }}</span>
-              </div>
-              <div class="progress mt-2" style="height: 10px;">
-                <div class="progress-bar bg-kenya-green" role="progressbar" 
-                     style="width: {{ completion_rate }}%;" 
-                     aria-valuenow="{{ completion_rate }}" 
-                     aria-valuemin="0" 
-                     aria-valuemax="100">
+          <!-- Status & Sector Distribution -->
+          <div class="row g-3 mb-4">
+            <!-- Status Distribution -->
+            <div class="col-xl-4 col-md-6">
+              <div class="card shadow-sm border-kenya-green h-100">
+                <div class="card-header bg-kenya-green text-white fw-bold py-2">
+                  <i class="fas fa-chart-pie me-1"></i> Project Status
+                </div>
+                <div class="card-body p-3">
+                  {% for status, count in status_counts.items %}
+                  <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span>{{ status_labels|get_item:status }}</span>
+                    <span class="badge bg-{% if status == 'completed' %}success{% elif status == 'ongoing' %}warning text-dark{% elif status == 'delayed' %}danger{% else %}secondary{% endif %}">
+                      {{ count }}
+                    </span>
+                  </div>
+                  <div class="progress mb-3" style="height: 10px;">
+                    <div class="progress-bar bg-{% if status == 'completed' %}success{% elif status == 'ongoing' %}warning{% elif status == 'delayed' %}danger{% else %}secondary{% endif %}" 
+                      role="progressbar" 
+                      style="width: {{ status_percentages|get_item:status|default:0 }}%;" 
+                      aria-valuenow="{{ status_percentages|get_item:status|default:0 }}" 
+                      aria-valuemin="0" 
+                      aria-valuemax="100">
+                    </div>
+                  </div>
+                  {% endfor %}
                 </div>
               </div>
-              <small class="text-muted fs-7">Budget Utilization: {{ completion_rate }}%</small>
             </div>
-          </div>
-        </div>
 
-        <!-- Highest Budget Projects -->
-        <div class="col-xl-4 col-md-6">
-          <div class="card shadow-sm border-kenya-green h-100">
-            <div class="card-header bg-kenya-green text-white fw-bold py-1">
-              <i class="fas fa-arrow-up me-1 fs-7"></i> <span class="fs-7">Top Budget Projects</span>
-            </div>
-            <div class="card-body p-2" style="max-height: 200px; overflow-y: auto;">
-              {% for project in highest_budget_projects %}
-              <div class="border-bottom pb-1 mb-1">
-                <div class="d-flex justify-content-between align-items-center">
-                  <span class="fw-bold fs-7 text-truncate" style="max-width: 70%;">{{ project.name }}</span>
-                  <span class="badge bg-kenya-green fs-7">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
+            <!-- Sector Distribution -->
+            <div class="col-xl-4 col-md-6">
+              <div class="card shadow-sm border-kenya-green h-100">
+                <div class="card-header bg-kenya-green text-white fw-bold py-2">
+                  <i class="fas fa-industry me-1"></i> Top Sectors
                 </div>
-                <p class="mb-0 fs-7 text-muted">{{ project.county }} • {{ project.sector }}</p>
-              </div>
-              {% empty %}
-              <p class="text-center text-muted fs-7 mb-0">No projects found</p>
-              {% endfor %}
-            </div>
-          </div>
-        </div>
-
-        <!-- Lowest Budget Projects -->
-        <div class="col-xl-4 col-md-6">
-          <div class="card shadow-sm border-kenya-green h-100">
-            <div class="card-header bg-kenya-green text-white fw-bold py-1">
-              <i class="fas fa-arrow-down me-1 fs-7"></i> <span class="fs-7">Lowest Budget Projects</span>
-            </div>
-            <div class="card-body p-2" style="max-height: 200px; overflow-y: auto;">
-              {% for project in lowest_budget_projects %}
-              <div class="border-bottom pb-1 mb-1">
-                <div class="d-flex justify-content-between align-items-center">
-                  <span class="fw-bold fs-7 text-truncate" style="max-width: 70%;">{{ project.name }}</span>
-                  <span class="badge bg-kenya-green fs-7">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
-                </div>
-                <p class="mb-0 fs-7 text-muted">{{ project.county }} • {{ project.sector }}</p>
-              </div>
-              {% empty %}
-              <p class="text-center text-muted fs-7 mb-0">No projects found</p>
-              {% endfor %}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Status & Sector Distribution -->
-      <div class="row g-2 mb-2">
-        <!-- Status Distribution -->
-        <div class="col-xl-4 col-md-6">
-          <div class="card shadow-sm border-kenya-green h-100">
-            <div class="card-header bg-kenya-green text-white fw-bold py-1">
-              <i class="fas fa-chart-pie me-1 fs-7"></i> <span class="fs-7">Project Status</span>
-            </div>
-            <div class="card-body p-2">
-              {% for status, count in status_counts.items %}
-              <div class="d-flex justify-content-between align-items-center mb-1">
-                <span class="fs-7">{{ status_labels|get_item:status }}</span>
-                <span class="badge bg-{% if status == 'completed' %}success{% elif status == 'ongoing' %}warning text-dark{% elif status == 'delayed' %}danger{% else %}secondary{% endif %} fs-7">
-                  {{ count }}
-                </span>
-              </div>
-              <div class="progress mb-2" style="height: 8px;">
-                <div class="progress-bar bg-{% if status == 'completed' %}success{% elif status == 'ongoing' %}warning{% elif status == 'delayed' %}danger{% else %}secondary{% endif %}" 
-                  role="progressbar" 
-                  style="width: {{ status_percentages|get_item:status|default:0 }}%;" 
-                  aria-valuenow="{{ status_percentages|get_item:status|default:0 }}" 
-                  aria-valuemin="0" 
-                  aria-valuemax="100">
+                <div class="card-body p-3" style="max-height: 300px; overflow-y: auto;">
+                  {% for item in sector_data|slice:":5" %}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <span class="text-truncate" style="max-width: 70%;">{{ item.sector }}</span>
+                      <span class="badge bg-kenya-green">{{ item.count }}</span>
+                    </div>
+                    <div class="progress mb-3" style="height: 8px;">
+                      <div class="progress-bar bg-kenya-green" role="progressbar"
+                          style="width: {{ item.percentage }}%;"
+                          aria-valuenow="{{ item.count }}" aria-valuemin="0" aria-valuemax="{{ total_projects }}">
+                      </div>
+                    </div>
+                  {% empty %}
+                    <p class="text-center text-muted mb-0">No sector data available</p>
+                  {% endfor %}
                 </div>
               </div>
-              {% endfor %}
+            </div>
+
+            <!-- Top Counties -->
+            <div class="col-xl-4 col-md-6">
+              <div class="card shadow-sm border-kenya-green h-100">
+                <div class="card-header bg-kenya-green text-white fw-bold py-2">
+                  <i class="fas fa-map me-1"></i> Top Counties
+                </div>
+                <div class="card-body p-3" style="max-height: 300px; overflow-y: auto;">
+                  {% for county in county_stats %}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                      <span class="text-truncate" style="max-width: 70%;">{{ county.county }}</span>
+                      <span class="badge bg-kenya-green">{{ county.count }}</span>
+                    </div>
+                    <div class="progress mb-3" style="height: 8px;">
+                      <div class="progress-bar bg-kenya-green" role="progressbar"
+                          style="width: {% widthratio county.count total_projects 100 %}%;"
+                          aria-valuenow="{{ county.count }}" aria-valuemin="0" aria-valuemax="{{ total_projects }}">
+                      </div>
+                    </div>
+                  {% empty %}
+                    <p class="text-center text-muted mb-0">No county data available</p>
+                  {% endfor %}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Sector Distribution -->
-        <div class="col-xl-4 col-md-6">
-          <div class="card shadow-sm border-kenya-green h-100">
-            <div class="card-header bg-kenya-green text-white fw-bold py-1">
-              <i class="fas fa-industry me-1 fs-7"></i> <span class="fs-7">Top Sectors</span>
-            </div>
-            <div class="card-body p-2" style="max-height: 200px; overflow-y: auto;">
-              {% for item in sector_data|slice:":5" %}
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                  <span class="fs-7 text-truncate" style="max-width: 70%;">{{ item.sector }}</span>
-                  <span class="badge bg-kenya-green fs-7">{{ item.count }}</span>
+          <!-- Recent Activity & Performance -->
+          <div class="row g-3">
+            <!-- Recent Updates -->
+            <div class="col-xl-6 col-md-12">
+              <div class="card shadow-sm border-kenya-green h-100">
+                <div class="card-header bg-kenya-green text-white fw-bold py-2">
+                  <i class="fas fa-history me-1"></i> Recent Updates
                 </div>
-                <div class="progress mb-2" style="height: 5px;">
-                  <div class="progress-bar bg-kenya-green" role="progressbar"
-                      style="width: {{ item.percentage }}%;"
-                      aria-valuenow="{{ item.count }}" aria-valuemin="0" aria-valuemax="{{ total_projects }}">
+                <div class="card-body p-3" style="max-height: 300px; overflow-y: auto;">
+                  {% for update in recent_updates %}
+                  <div class="border-bottom pb-2 mb-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span class="fw-bold text-truncate" style="max-width: 70%;">{{ update.project.name }}</span>
+                      <small class="text-muted">{{ update.created_at|timesince }} ago</small>
+                    </div>
+                    <p class="mb-1 text-truncate">{{ update.title }}</p>
+                    <div class="progress mt-2" style="height: 8px;">
+                      <div class="progress-bar bg-kenya-green" role="progressbar" style="width: {{ update.progress_percentage }}%;" aria-valuenow="{{ update.progress_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                  </div>
+                  {% empty %}
+                  <p class="text-center text-muted mb-0">No recent updates</p>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            <!-- Citizen Engagement -->
+            <div class="col-xl-6 col-md-12">
+              <div class="card shadow-sm border-kenya-green h-100">
+                <div class="card-header bg-kenya-green text-white fw-bold py-2">
+                  <i class="fas fa-users me-1"></i> Citizen Engagement
+                </div>
+                <div class="card-body p-3">
+                  <div class="row text-center mb-3">
+                    <div class="col-3">
+                      <div class="border-end">
+                        <h5 class="fw-bold text-kenya-green mb-0">{{ report_counts.progress|default:0 }}</h5>
+                        <small class="text-muted">Progress</small>
+                      </div>
+                    </div>
+                    <div class="col-3">
+                      <div class="border-end">
+                        <h5 class="fw-bold text-kenya-green mb-0">{{ report_counts.issue|default:0 }}</h5>
+                        <small class="text-muted">Issues</small>
+                      </div>
+                    </div>
+                    <div class="col-3">
+                      <div class="border-end">
+                        <h5 class="fw-bold text-kenya-green mb-0">{{ report_counts.complaint|default:0 }}</h5>
+                        <small class="text-muted">Complaints</small>
+                      </div>
+                    </div>
+                    <div class="col-3">
+                      <h5 class="fw-bold text-kenya-green mb-0">{{ report_counts.suggestion|default:0 }}</h5>
+                      <small class="text-muted">Suggestions</small>
+                    </div>
+                  </div>
+                  <div class="mt-2 p-3 bg-light rounded">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span>Approval Rate</span>
+                      <span class="badge bg-kenya-green">{{ approval_rate|default:0 }}%</span>
+                    </div>
+                    <div class="progress mt-2" style="height: 10px;">
+                      <div class="progress-bar bg-kenya-green" role="progressbar" style="width: {{ approval_rate|default:0 }}%;" aria-valuenow="{{ approval_rate|default:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
                   </div>
                 </div>
-              {% empty %}
-                <p class="text-center text-muted fs-7 mb-0">No sector data available</p>
-              {% endfor %}
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Top Counties -->
-        <div class="col-xl-4 col-md-6">
-          <div class="card shadow-sm border-kenya-green h-100">
-            <div class="card-header bg-kenya-green text-white fw-bold py-1">
-              <i class="fas fa-map me-1 fs-7"></i> <span class="fs-7">Top Counties</span>
-            </div>
-            <div class="card-body p-2" style="max-height: 200px; overflow-y: auto;">
-              {% for county in county_stats %}
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                  <span class="fs-7 text-truncate" style="max-width: 70%;">{{ county.county }}</span>
-                  <span class="badge bg-kenya-green fs-7">{{ county.count }}</span>
+        <!-- Analytics Tab -->
+        <div class="tab-pane fade" id="v-pills-analytics" role="tabpanel">
+          <!-- Budget Analysis Section -->
+          <div class="row g-3 mb-4">
+            <!-- Budget Statistics -->
+            <div class="col-xl-4 col-md-6">
+              <div class="card shadow-sm border-kenya-green h-100">
+                <div class="card-header bg-kenya-green text-white fw-bold py-2">
+                  <i class="fas fa-chart-bar me-1"></i> Budget Statistics
                 </div>
-                <div class="progress mb-2" style="height: 5px;">
-                  <div class="progress-bar bg-kenya-green" role="progressbar"
-                      style="width: {% widthratio county.count total_projects 100 %}%;"
-                      aria-valuenow="{{ county.count }}" aria-valuemin="0" aria-valuemax="{{ total_projects }}">
+                <div class="card-body p-3">
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span>Average Budget</span>
+                    <span class="badge bg-kenya-green">Ksh {{ budget_stats.avg_budget|floatformat:0|intcomma }}</span>
                   </div>
-                </div>
-              {% empty %}
-                <p class="text-center text-muted fs-7 mb-0">No county data available</p>
-              {% endfor %}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Recent Activity & Performance -->
-      <div class="row g-2">
-        <!-- Recent Updates -->
-        <div class="col-xl-6 col-md-12">
-          <div class="card shadow-sm border-kenya-green h-100">
-            <div class="card-header bg-kenya-green text-white fw-bold py-1">
-              <i class="fas fa-history me-1 fs-7"></i> <span class="fs-7">Recent Updates</span>
-            </div>
-            <div class="card-body p-2" style="max-height: 200px; overflow-y: auto;">
-              {% for update in recent_updates %}
-              <div class="border-bottom pb-1 mb-1">
-                <div class="d-flex justify-content-between align-items-center">
-                  <span class="fw-bold fs-7 text-truncate" style="max-width: 70%;">{{ update.project.name }}</span>
-                  <small class="text-muted">{{ update.created_at|timesince }} ago</small>
-                </div>
-                <p class="mb-0 fs-7 text-truncate">{{ update.title }}</p>
-                <div class="progress mt-1" style="height: 5px;">
-                  <div class="progress-bar bg-kenya-green" role="progressbar" style="width: {{ update.progress_percentage }}%;" aria-valuenow="{{ update.progress_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span>Minimum Budget</span>
+                    <span class="badge bg-kenya-green">Ksh {{ budget_stats.min_budget|floatformat:0|intcomma }}</span>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span>Maximum Budget</span>
+                    <span class="badge bg-kenya-green">Ksh {{ budget_stats.max_budget|floatformat:0|intcomma }}</span>
+                  </div>
+                  <div class="progress mt-2" style="height: 12px;">
+                    <div class="progress-bar bg-kenya-green" role="progressbar" 
+                         style="width: {{ completion_rate }}%;" 
+                         aria-valuenow="{{ completion_rate }}" 
+                         aria-valuemin="0" 
+                         aria-valuemax="100">
+                    </div>
+                  </div>
+                  <small class="text-muted">Budget Utilization: {{ completion_rate }}%</small>
                 </div>
               </div>
-              {% empty %}
-              <p class="text-center text-muted fs-7 mb-0">No recent updates</p>
-              {% endfor %}
+            </div>
+
+            <!-- Highest Budget Projects -->
+            <div class="col-xl-4 col-md-6">
+              <div class="card shadow-sm border-kenya-green h-100">
+                <div class="card-header bg-kenya-green text-white fw-bold py-2">
+                  <i class="fas fa-arrow-up me-1"></i> Top Budget Projects
+                </div>
+                <div class="card-body p-3" style="max-height: 300px; overflow-y: auto;">
+                  {% for project in highest_budget_projects %}
+                  <div class="border-bottom pb-2 mb-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span class="fw-bold text-truncate" style="max-width: 70%;">{{ project.name }}</span>
+                      <span class="badge bg-kenya-green">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
+                    </div>
+                    <p class="mb-0 text-muted">{{ project.county }} • {{ project.sector }}</p>
+                  </div>
+                  {% empty %}
+                  <p class="text-center text-muted mb-0">No projects found</p>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            <!-- Lowest Budget Projects -->
+            <div class="col-xl-4 col-md-6">
+              <div class="card shadow-sm border-kenya-green h-100">
+                <div class="card-header bg-kenya-green text-white fw-bold py-2">
+                  <i class="fas fa-arrow-down me-1"></i> Lowest Budget Projects
+                </div>
+                <div class="card-body p-3" style="max-height: 300px; overflow-y: auto;">
+                  {% for project in lowest_budget_projects %}
+                  <div class="border-bottom pb-2 mb-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span class="fw-bold text-truncate" style="max-width: 70%;">{{ project.name }}</span>
+                      <span class="badge bg-kenya-green">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
+                    </div>
+                    <p class="mb-0 text-muted">{{ project.county }} • {{ project.sector }}</p>
+                  </div>
+                  {% empty %}
+                  <p class="text-center text-muted mb-0">No projects found</p>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Additional Analytics Content -->
+          <div class="row g-3">
+            <!-- Project Timeline -->
+            <div class="col-xl-6">
+              <div class="card shadow-sm border-kenya-green h-100">
+                <div class="card-header bg-kenya-green text-white fw-bold py-2">
+                  <i class="fas fa-chart-line me-1"></i> Project Timeline
+                </div>
+                <div class="card-body p-3">
+                  <canvas id="timeline-chart" height="250"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Budget by Status -->
+            <div class="col-xl-6">
+              <div class="card shadow-sm border-kenya-green h-100">
+                <div class="card-header bg-kenya-green text-white fw-bold py-2">
+                  <i class="fas fa-chart-pie me-1"></i> Budget by Status
+                </div>
+                <div class="card-body p-3">
+                  <canvas id="budget-pie-chart" height="250"></canvas>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <!-- Citizen Engagement -->
-        <div class="col-xl-6 col-md-12">
-          <div class="card shadow-sm border-kenya-green h-100">
-            <div class="card-header bg-kenya-green text-white fw-bold py-1">
-              <i class="fas fa-users me-1 fs-7"></i> <span class="fs-7">Citizen Engagement</span>
-            </div>
-            <div class="card-body p-2">
-              <div class="row text-center">
-                <div class="col-3">
-                  <div class="border-end">
-                    <h5 class="fw-bold text-kenya-green mb-0">{{ report_counts.progress|default:0 }}</h5>
-                    <small class="text-muted fs-7">Progress</small>
+        <!-- Map View Tab -->
+        <div class="tab-pane fade" id="v-pills-map" role="tabpanel">
+          <!-- Map & Project Details -->
+          <div class="row g-3" style="height: 75vh;">
+            <div class="col-xl-9 col-lg-8">
+              <div class="card shadow-sm border-kenya-green h-100">
+                <div class="card-header bg-kenya-green text-white fw-bold d-flex justify-content-between align-items-center py-2">
+                  <span><i class="fas fa-map-marked-alt me-1"></i> Project Map</span>
+                  <div id="map-layer-switcher" class="d-inline-block">
+                    <select
+                      id="map-layer-select"
+                      class="form-select form-select-sm d-inline-block"
+                      style="width: auto;"
+                    >
+                      <option value="street">Street Map</option>
+                      <option value="satellite">Satellite</option>
+                      <option value="terrain">Terrain</option>
+                    </select>
                   </div>
                 </div>
-                <div class="col-3">
-                  <div class="border-end">
-                    <h5 class="fw-bold text-kenya-green mb-0">{{ report_counts.issue|default:0 }}</h5>
-                    <small class="text-muted fs-7">Issues</small>
-                  </div>
-                </div>
-                <div class="col-3">
-                  <div class="border-end">
-                    <h5 class="fw-bold text-kenya-green mb-0">{{ report_counts.complaint|default:0 }}</h5>
-                    <small class="text-muted fs-7">Complaints</small>
-                  </div>
-                </div>
-                <div class="col-3">
-                  <h5 class="fw-bold text-kenya-green mb-0">{{ report_counts.suggestion|default:0 }}</h5>
-                  <small class="text-muted fs-7">Suggestions</small>
+                <div class="card-body p-0 h-100">
+                  <div
+                    id="project-map"
+                    style="height: 100%; width: 100%; border-radius: 0 0 0.375rem 0.375rem;"
+                  ></div>
                 </div>
               </div>
-              <div class="mt-2 p-2 bg-light rounded">
-                <div class="d-flex justify-content-between align-items-center">
-                  <span class="fs-7">Approval Rate</span>
-                  <span class="badge bg-kenya-green fs-7">{{ approval_rate|default:0 }}%</span>
+            </div>
+
+            <div class="col-xl-3 col-lg-4">
+              <div class="card shadow-sm border-kenya-green h-100">
+                <div class="card-header bg-kenya-green text-white fw-bold py-2">
+                  <i class="fas fa-info-circle me-1"></i> Project Details
                 </div>
-                <div class="progress mt-1" style="height: 8px;">
-                  <div class="progress-bar bg-kenya-green" role="progressbar" style="width: {{ approval_rate|default:0 }}%;" aria-valuenow="{{ approval_rate|default:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="card-body p-3" id="project-detail-panel" style="overflow-y: auto;">
+                  <div class="text-center text-muted py-5">
+                    <i class="fas fa-map-marker-alt fa-3x mb-3 text-kenya-green"></i>
+                    <p class="mb-0">Select a project on the map to view details.</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -567,7 +654,6 @@
 <style>
   /* ================================
    Kenya Project Dashboard Styles
-   Dynamic Colors (Green dominant)
    ================================ */
 
 /* Theme Colors */
@@ -587,7 +673,7 @@
 
 /* Flag-inspired Header Bars */
 .kenya-flag-colors {
-  height: 3px;
+  height: 4px;
   background: linear-gradient(
     to right,
     var(--kenya-black) 25%,
@@ -601,43 +687,30 @@
    Card Styling
    =========================== */
 .card {
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Rotate header colors for variety */
-.card:nth-child(4n+1) .card-header {
-  background-color: var(--kenya-green);
-  color: var(--kenya-white);
-}
-.card:nth-child(4n+2) .card-header {
-  background-color: var(--kenya-red);
-  color: var(--kenya-white);
-}
-.card:nth-child(4n+3) .card-header {
-  background-color: var(--kenya-blue);
-  color: var(--kenya-white);
-}
-.card:nth-child(4n+4) .card-header {
-  background-color: var(--kenya-gold);
-  color: var(--kenya-black);
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
 }
 
 /* Card header defaults */
 .card-header {
   font-weight: 600;
-  font-size: 0.85rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
 }
 
 /* ===========================
    Buttons
    =========================== */
 .btn {
-  font-size: 0.8rem;
-  border-radius: 14px;
+  border-radius: 20px;
   font-weight: 500;
   transition: all 0.2s ease-in-out;
 }
@@ -646,14 +719,16 @@
 .btn-kenya-green {
   background-color: var(--kenya-green);
   color: var(--kenya-white);
+  border: none;
 }
 .btn-kenya-green:hover {
   background-color: var(--kenya-dark-green);
+  transform: translateY(-1px);
 }
 
 /* Outline buttons */
 .btn-outline-kenya-green {
-  border: 1px solid var(--kenya-green);
+  border: 2px solid var(--kenya-green);
   color: var(--kenya-green);
 }
 .btn-outline-kenya-green:hover,
@@ -662,22 +737,27 @@
   color: var(--kenya-white);
 }
 
-.btn-outline-kenya-red {
-  border: 1px solid var(--kenya-red);
-  color: var(--kenya-red);
-}
-.btn-outline-kenya-red:hover {
-  background-color: var(--kenya-red);
-  color: var(--kenya-white);
+/* ===========================
+   Navigation
+   =========================== */
+.nav-pills .nav-link {
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--kenya-grey);
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
-.btn-outline-kenya-blue {
-  border: 1px solid var(--kenya-blue);
-  color: var(--kenya-blue);
+.nav-pills .nav-link.active {
+  background-color: var(--kenya-green);
+  color: white;
+  box-shadow: 0 4px 8px rgba(0,102,0,0.3);
 }
-.btn-outline-kenya-blue:hover {
-  background-color: var(--kenya-blue);
-  color: var(--kenya-white);
+
+.nav-pills .nav-link:hover:not(.active) {
+  background-color: rgba(0,102,0,0.1);
+  color: var(--kenya-green);
 }
 
 /* ===========================
@@ -691,10 +771,10 @@
 /* ===========================
    Badges
    =========================== */
-.badge-green { background-color: var(--kenya-green); color: var(--kenya-white); }
-.badge-red { background-color: var(--kenya-red); color: var(--kenya-white); }
-.badge-blue { background-color: var(--kenya-blue); color: var(--kenya-white); }
-.badge-gold { background-color: var(--kenya-gold); color: var(--kenya-black); }
+.badge {
+  font-size: 0.8em;
+  padding: 0.4em 0.6em;
+}
 
 /* ===========================
    Form Inputs
@@ -705,9 +785,101 @@
 }
 
 /* ===========================
-   Text Sizing
+   Overview Cards
    =========================== */
-.fs-7 { font-size: 0.8rem !important; }
+.overview-card .card-body {
+  padding: 1.5rem 1rem !important;
+}
+
+.overview-card .rounded-circle {
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===========================
+   Map Styling
+   =========================== */
+#project-map {
+  border-radius: 0 0 12px 12px;
+}
+
+/* Map marker clusters */
+.marker-cluster-small {
+  background-color: rgba(0, 102, 0, 0.7);
+  color: white;
+}
+.marker-cluster-small div {
+  background-color: rgba(0, 102, 0, 0.7);
+  color: white;
+}
+
+.marker-cluster-medium {
+  background-color: rgba(222, 41, 16, 0.7);
+  color: white;
+}
+.marker-cluster-medium div {
+  background-color: rgba(222, 41, 16, 0.7);
+  color: white;
+}
+
+.marker-cluster-large {
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+}
+.marker-cluster-large div {
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+}
+
+/* Custom marker styles */
+.custom-marker {
+  width: 28px;
+  height: 28px;
+  border-radius: 50% 50% 50% 0;
+  background: var(--kenya-green);
+  position: relative;
+  transform: rotate(-45deg);
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+}
+
+.custom-marker::after {
+  content: '';
+  width: 18px;
+  height: 18px;
+  margin: 5px;
+  background: white;
+  position: absolute;
+  border-radius: 50%;
+}
+
+.marker-completed {
+  background: var(--kenya-green);
+}
+
+.marker-ongoing {
+  background: var(--kenya-red);
+}
+
+.marker-delayed {
+  background: var(--kenya-black);
+}
+
+.marker-other {
+  background: var(--kenya-grey);
+}
+
+.leaflet-popup-content {
+  margin: 15px;
+  line-height: 1.4;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+}
 
 /* ===========================
    Responsive
@@ -721,36 +893,20 @@
 
 @media (max-width: 767.98px) {
   #project-map {
-    min-height: 250px;
+    min-height: 300px;
   }
-}
-
-/* Map marker clusters */
-.marker-cluster-small {
-  background-color: rgba(0, 102, 0, 0.6);
-}
-.marker-cluster-small div {
-  background-color: rgba(0, 102, 0, 0.6);
-}
-
-.marker-cluster-medium {
-  background-color: rgba(222, 41, 16, 0.6);
-}
-.marker-cluster-medium div {
-  background-color: rgba(222, 41, 16, 0.6);
-}
-
-.marker-cluster-large {
-  background-color: rgba(0, 0, 0, 0.6);
-}
-.marker-cluster-large div {
-  background-color: rgba(0, 0, 0, 0.6);
+  
+  .overview-card .card-body {
+    padding: 1rem 0.5rem !important;
+  }
 }
 </style>
 
 <!-- Load Leaflet and MarkerCluster -->
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+<!-- Load Chart.js for analytics tab -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
   // Initialize map with better styling
@@ -796,12 +952,19 @@
     else if (selected === 'terrain') terrainLayer.addTo(map);
   });
   
-  // Function to determine marker color based on status
-  function getColor(status) {
-    if (status === 'completed') return '#006600';
-    if (status === 'ongoing') return '#DE2910';
-    if (status === 'delayed') return '#000000';
-    return '#999999';
+  // Function to create custom markers
+  function createCustomMarker(feature, latlng) {
+    var status = feature.properties.status;
+    var markerHtml = `<div class="custom-marker marker-${status}"></div>`;
+    
+    return L.marker(latlng, {
+      icon: L.divIcon({
+        className: 'custom-marker-icon',
+        html: markerHtml,
+        iconSize: [28, 28],
+        iconAnchor: [14, 28]
+      })
+    });
   }
   
   // Create a marker cluster group
@@ -809,7 +972,17 @@
     maxClusterRadius: 50,
     spiderfyOnMaxZoom: true,
     showCoverageOnHover: false,
-    zoomToBoundsOnClick: true
+    zoomToBoundsOnClick: true,
+    iconCreateFunction: function(cluster) {
+      var count = cluster.getChildCount();
+      var size = count < 10 ? 'small' : count < 100 ? 'medium' : 'large';
+      
+      return L.divIcon({
+        html: '<div><span>' + count + '</span></div>',
+        className: 'marker-cluster marker-cluster-' + size,
+        iconSize: L.point(40, 40)
+      });
+    }
   });
   
   // Projects data
@@ -817,13 +990,7 @@
   
   // Add markers for each project
   projects.features.forEach(function(feature) {
-    var marker = L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
-      color: '#fff',
-      weight: 1.5,
-      fillColor: getColor(feature.properties.status),
-      fillOpacity: 0.8,
-      radius: 7
-    });
+    var marker = createCustomMarker(feature, [feature.geometry.coordinates[1], feature.geometry.coordinates[0]]);
     
     // Format budget with thousand separators
     var budget = feature.properties.budget ? 
@@ -831,13 +998,13 @@
     
     // Bind popup to marker
     marker.bindPopup(`
-      <div class="p-1">
-        <h6 class="text-kenya-green mb-1 fs-7">${feature.properties.name}</h6>
-        <p class="mb-1 fs-7"><strong>Status:</strong> <span style="color:${getColor(feature.properties.status)}">${feature.properties.status}</span></p>
-        <p class="mb-1 fs-7"><strong>County:</strong> ${feature.properties.county}</p>
-        <p class="mb-1 fs-7"><strong>Budget:</strong> ${budget}</p>
-        <div class="text-center mt-1">
-          <a href='/project/${feature.properties.id}/' class='btn btn-sm btn-kenya-green fs-7'>View Details</a>
+      <div class="p-2">
+        <h6 class="text-kenya-green mb-2 fw-bold">${feature.properties.name}</h6>
+        <p class="mb-1"><strong>Status:</strong> <span class="badge bg-${feature.properties.status === 'completed' ? 'success' : feature.properties.status === 'ongoing' ? 'warning' : 'dark'}">${feature.properties.status}</span></p>
+        <p class="mb-1"><strong>County:</strong> ${feature.properties.county}</p>
+        <p class="mb-2"><strong>Budget:</strong> ${budget}</p>
+        <div class="text-center mt-2">
+          <a href='/project/${feature.properties.id}/' class='btn btn-sm btn-kenya-green'>View Details</a>
         </div>
       </div>
     `);
@@ -853,18 +1020,18 @@
         'Ksh ' + parseFloat(feature.properties.budget).toLocaleString('en-KE', {maximumFractionDigits: 0}) : 'N/A';
       
       var html = `
-        <h6 class="text-kenya-green fw-bold fs-6">${feature.properties.name}</h6>
-        <p class="mb-1 fs-7"><strong>Status:</strong> <span class="badge bg-${feature.properties.status === 'completed' ? 'success' : feature.properties.status === 'ongoing' ? 'warning' : 'dark'} fs-7">${feature.properties.status}</span></p>
-        <p class="mb-1 fs-7"><strong>County:</strong> ${feature.properties.county || 'N/A'}</p>
-        <p class="mb-1 fs-7"><strong>Sector:</strong> ${feature.properties.sector || 'N/A'}</p>
-        <p class="mb-1 fs-7"><strong>Budget:</strong> ${budget}</p>
-        <p class="mb-1 fs-7"><strong>Start Date:</strong> ${startDate}</p>
-        <p class="mb-1 fs-7"><strong>End Date:</strong> ${endDate}</p>
-        <p class="mb-1 fs-7"><strong>Agency:</strong> ${feature.properties.implementing_agency || 'N/A'}</p>
-        <p class="mb-1 fs-7"><strong>Contractor:</strong> ${feature.properties.contractor || 'N/A'}</p>
-        <p class="mb-2 fs-7"><strong>Description:</strong> ${feature.properties.description || 'No description provided.'}</p>
+        <h6 class="text-kenya-green fw-bold mb-3">${feature.properties.name}</h6>
+        <p class="mb-2"><strong>Status:</strong> <span class="badge bg-${feature.properties.status === 'completed' ? 'success' : feature.properties.status === 'ongoing' ? 'warning' : 'dark'}">${feature.properties.status}</span></p>
+        <p class="mb-2"><strong>County:</strong> ${feature.properties.county || 'N/A'}</p>
+        <p class="mb-2"><strong>Sector:</strong> ${feature.properties.sector || 'N/A'}</p>
+        <p class="mb-2"><strong>Budget:</strong> ${budget}</p>
+        <p class="mb-2"><strong>Start Date:</strong> ${startDate}</p>
+        <p class="mb-2"><strong>End Date:</strong> ${endDate}</p>
+        <p class="mb-2"><strong>Agency:</strong> ${feature.properties.implementing_agency || 'N/A'}</p>
+        <p class="mb-3"><strong>Contractor:</strong> ${feature.properties.contractor || 'N/A'}</p>
+        <p class="mb-3"><strong>Description:</strong> ${feature.properties.description || 'No description provided.'}</p>
         <div class="text-center">
-          <a href='/project/${feature.properties.id}/' class='btn btn-kenya-green btn-sm fs-7'>Full Details</a>
+          <a href='/project/${feature.properties.id}/' class='btn btn-kenya-green'>Full Details</a>
         </div>`;
       document.getElementById('project-detail-panel').innerHTML = html;
     });
@@ -879,6 +1046,105 @@
   // Fit map to show all markers
   if (projects.features.length > 0) {
     map.fitBounds(markers.getBounds(), { padding: [20, 20] });
+  }
+  
+  // Function to determine marker color based on status
+  function getColor(status) {
+    if (status === 'completed') return '#006600';
+    if (status === 'ongoing') return '#DE2910';
+    if (status === 'delayed') return '#000000';
+    return '#999999';
+  }
+  
+  // Initialize charts when analytics tab is shown
+  document.getElementById('v-pills-analytics-tab').addEventListener('shown.bs.tab', function() {
+    initCharts();
+  });
+  
+  // Function to initialize charts
+  function initCharts() {
+    // Check if charts already exist to prevent reinitialization
+    if (window.timelineChart || window.budgetPieChart) {
+      window.timelineChart.destroy();
+      window.budgetPieChart.destroy();
+    }
+    
+    // Timeline chart
+    var timelineCtx = document.getElementById('timeline-chart');
+    if (timelineCtx) {
+      // Sample data - replace with your actual data
+      var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      var counts = [12, 19, 8, 15, 22, 18, 25, 12, 16, 21, 14, 17];
+      
+      window.timelineChart = new Chart(timelineCtx, {
+        type: 'line',
+        data: {
+          labels: months,
+          datasets: [{
+            label: 'Projects Started',
+            data: counts,
+            borderColor: '#006600',
+            backgroundColor: 'rgba(0, 102, 0, 0.1)',
+            tension: 0.3,
+            fill: true,
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                precision: 0
+              }
+            }
+          }
+        }
+      });
+    }
+    
+    // Budget by status pie chart
+    var budgetPieCtx = document.getElementById('budget-pie-chart');
+    if (budgetPieCtx) {
+      // Sample data - replace with your actual data
+      var statusLabels = ['Completed', 'Ongoing', 'Delayed', 'Planning'];
+      var budgetData = [12000000, 8500000, 3500000, 2000000];
+      
+      var backgroundColors = ['#006600', '#DE2910', '#000000', '#6c757d'];
+      
+      window.budgetPieChart = new Chart(budgetPieCtx, {
+        type: 'doughnut',
+        data: {
+          labels: statusLabels,
+          datasets: [{
+            data: budgetData,
+            backgroundColor: backgroundColors,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }
+      });
+    }
+  }
+  
+  // Initialize charts if we're on the analytics tab on page load
+  if (window.location.hash === '#analytics') {
+    setTimeout(initCharts, 500);
   }
 </script>
 

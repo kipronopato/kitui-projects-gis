@@ -1,27 +1,384 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load humanize %}
+{% load custom_filters %}
+{% block extra_css %}
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<!-- Leaflet MarkerCluster -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+<style>
+    /* Map container */
+    #map {
+        height: 70vh;
+        width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    
+    /* Filter panel */
+    .filter-panel {
+        background: white;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        margin-bottom: 15px;
+    }
+    
+    /* Insight cards */
+    .insight-card {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-left: 4px solid var(--kenya-green);
+        transition: transform 0.2s ease;
+    }
+    
+    .insight-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    /* Custom marker clusters */
+    .marker-cluster-small {
+        background-color: rgba(0, 102, 0, 0.6);
+    }
+    .marker-cluster-small div {
+        background-color: rgba(0, 102, 0, 0.6);
+    }
+    
+    .marker-cluster-medium {
+        background-color: rgba(222, 41, 16, 0.6);
+    }
+    .marker-cluster-medium div {
+        background-color: rgba(222, 41, 16, 0.6);
+    }
+    
+    .marker-cluster-large {
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+    .marker-cluster-large div {
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+    
+    /* Popup styling */
+    .leaflet-popup-content {
+        margin: 12px;
+        line-height: 1.4;
+        min-width: 280px;
+    }
+    
+    .popup-header {
+        border-bottom: 2px solid #006600;
+        padding-bottom: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .popup-detail {
+        margin-bottom: 6px;
+        padding: 3px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .popup-budget {
+        font-weight: bold;
+        color: #006600;
+        font-size: 1.1em;
+    }
+    
+    .popup-impact {
+        background: #e8f5e8;
+        padding: 5px;
+        border-radius: 4px;
+        margin-top: 5px;
+    }
+    
+    /* Legend styling */
+    .map-legend {
+        background: white;
+        padding: 12px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        line-height: 1.5;
+        max-width: 200px;
+    }
+    
+    .map-legend i {
+        width: 18px;
+        height: 18px;
+        float: left;
+        margin-right: 10px;
+        opacity: 0.8;
+        border-radius: 50%;
+        border: 2px solid white;
+    }
+    
+    /* Progress bars */
+    .progress {
+        height: 8px;
+        margin: 5px 0;
+    }
+    
+    /* Badge styling */
+    .badge-impact {
+        background: linear-gradient(45deg, #006600, #00a86b);
+        color: white;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        #map {
+            height: 50vh;
+        }
+        
+        .filter-panel {
+            padding: 10px;
+        }
+        
+        .insight-card {
+            padding: 10px;
+        }
+    }
+    
+    /* Animation for insights */
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.02); }
+        100% { transform: scale(1); }
+    }
+    
+    .highlight {
+        animation: pulse 2s ease-in-out;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container-fluid px-0">
-    <div id="map" style="height: 65vh;"></div>
-</div>
+<div class="container-fluid mt-3">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2 class="text-kenya-green fw-bold">Kenya Projects Geographical Intelligence Map</h2>
+            <p class="text-muted">Deep insights and spatial analysis of development projects across Kenya</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <div class="btn-group">
+                <button class="btn btn-kenya-green" onclick="exportInsights()">
+                    <i class="fas fa-download me-1"></i> Export Insights
+                </button>
+                <button class="btn btn-outline-kenya-green" onclick="resetFilters()">
+                    <i class="fas fa-sync-alt me-1"></i> Reset
+                </button>
+            </div>
+        </div>
+    </div>
 
-<div class="container mt-3">
-    <h4 class="text-kenya-green mb-2">Projects Across Kenya</h4>
-    <p class="text-muted fs-6 mb-3">Click on any marker to see project details</p>
-    
-    <div class="row">
-        <div class="col-md-12">
-            <div class="card border-kenya-green">
-                <div class="card-header bg-kenya-green text-white py-2">
-                    <h6 class="mb-0">Project Legend</h6>
+    <!-- Quick Stats Row -->
+    <div class="row mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="insight-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="fw-bold text-kenya-green mb-0">{{ total_projects|intcomma }}</h4>
+                        <p class="text-muted mb-0">Total Projects Mapped</p>
+                    </div>
+                    <i class="fas fa-map-marked-alt fa-2x text-kenya-green"></i>
                 </div>
-                <div class="card-body p-3">
-                    <div class="d-flex flex-wrap gap-3 fs-6">
-                        <span><i class="fas fa-map-marker-alt text-primary me-1"></i> Ongoing Projects</span>
-                        <span><i class="fas fa-map-marker-alt text-success me-1"></i> Completed Projects</span>
-                        <span><i class="fas fa-map-marker-alt text-warning me-1"></i> Delayed Projects</span>
-                        <span><i class="fas fa-map-marker-alt text-secondary me-1"></i> Planned Projects</span>
+                <div class="progress mt-2">
+                    <div class="progress-bar bg-kenya-green" style="width: 100%"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="insight-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="fw-bold text-kenya-green mb-0">Ksh {{ total_budget|floatformat:0|intcomma }}</h4>
+                        <p class="text-muted mb-0">Total Investment</p>
+                    </div>
+                    <i class="fas fa-money-bill-wave fa-2x text-kenya-green"></i>
+                </div>
+                <div class="progress mt-2">
+                    <div class="progress-bar bg-kenya-green" style="width: 100%"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="insight-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="fw-bold text-kenya-green mb-0">Ksh {{ budget_stats.avg_budget|floatformat:0|intcomma }}</h4>
+                        <p class="text-muted mb-0">Average Project Budget</p>
+                    </div>
+                    <i class="fas fa-chart-line fa-2x text-kenya-green"></i>
+                </div>
+                <div class="progress mt-2">
+                    <div class="progress-bar bg-kenya-green" 
+                         style="width: {% widthratio budget_stats.avg_budget budget_stats.max_budget 100 %}%"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6">
+            <div class="insight-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h4 class="fw-bold text-kenya-green mb-0">{{ counties|length }}</h4>
+                        <p class="text-muted mb-0">Counties Covered</p>
+                    </div>
+                    <i class="fas fa-globe-africa fa-2x text-kenya-green"></i>
+                </div>
+                <div class="progress mt-2">
+                    <div class="progress-bar bg-kenya-green" 
+                         style="width: {% widthratio counties|length 47 100 %}%"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters and Map -->
+    <div class="row mb-4">
+        <div class="col-lg-3">
+            <!-- Filters Panel -->
+            <div class="filter-panel">
+                <h5 class="text-kenya-green mb-3"><i class="fas fa-filter me-2"></i>Filter Projects</h5>
+                
+                <!-- Status Filter -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Project Status</label>
+                    {% for status in status_choices %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="status" value="{{ status }}"
+                            id="status-{{ forloop.counter }}" {% if status in selected_statuses %}checked{% endif %}>
+                        <label class="form-check-label" for="status-{{ forloop.counter }}">
+                            {{ status_labels|get_item:status }}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- County Filter -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">County</label>
+                    <select name="county" class="form-select" multiple size="5">
+                        {% for county in counties %}
+                        <option value="{{ county }}" {% if county in selected_counties %}selected{% endif %}>
+                            {{ county }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Sector Filter -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Sector</label>
+                    <select name="sector" class="form-select" multiple size="5">
+                        {% for sector in sectors %}
+                        <option value="{{ sector }}" {% if sector in selected_sectors %}selected{% endif %}>
+                            {{ sector }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-kenya-green w-100">
+                    <i class="fas fa-filter me-1"></i> Apply Filters
+                </button>
+            </div>
+
+            <!-- Deep Insights Panel -->
+            <div class="filter-panel mt-3">
+                <h5 class="text-kenya-green mb-3"><i class="fas fa-chart-line me-2"></i>Key Insights</h5>
+                
+                <!-- Top Counties -->
+                <h6 class="fw-bold">Top Counties by Projects</h6>
+                {% for county in county_distribution|slice:":3" %}
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-truncate" style="max-width: 60%;">{{ county.county }}</span>
+                    <span class="badge bg-kenya-green">{{ county.count }}</span>
+                </div>
+                <div class="progress mb-3" style="height: 6px;">
+                    <div class="progress-bar bg-kenya-green" 
+                         style="width: {% widthratio county.count total_projects 100 %}%"></div>
+                </div>
+                {% endfor %}
+
+                <!-- Budget Distribution -->
+                <h6 class="fw-bold mt-3">Budget Range</h6>
+                <div class="text-center">
+                    <span class="badge bg-kenya-green">Min: Ksh {{ budget_stats.min_budget|floatformat:0|intcomma }}</span>
+                    <span class="badge bg-kenya-red mx-1">Max: Ksh {{ budget_stats.max_budget|floatformat:0|intcomma }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-9">
+            <!-- Map Container -->
+            <div class="card border-kenya-green">
+                <div class="card-header bg-kenya-green text-white d-flex justify-content-between align-items-center py-2">
+                    <span>Geographical Intelligence Map</span>
+                    <div class="d-flex align-items-center">
+                        <select id="map-layer-select" class="form-select form-select-sm me-2" style="width: auto;">
+                            <option value="street">Street View</option>
+                            <option value="satellite">Satellite View</option>
+                            <option value="terrain">Terrain View</option>
+                        </select>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="clusterToggle" checked>
+                            <label class="form-check-label text-white" for="clusterToggle">Cluster</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div id="map"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Deep Insights Section -->
+    <div class="row">
+        <div class="col-12">
+            <div class="filter-panel">
+                <h4 class="text-kenya-green mb-4"><i class="fas fa-brain me-2"></i>Deep Spatial Insights</h4>
+                
+                <div class="row">
+                    <!-- Sector Analysis -->
+                    <div class="col-md-6">
+                        <h5 class="fw-bold">Sector Investment Analysis</h5>
+                        {% for sector in sector_analysis %}
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span>{{ sector.sector|default:"Unknown" }}</span>
+                            <div>
+                                <span class="badge bg-kenya-green me-1">{{ sector.count }} projects</span>
+                                <span class="text-muted">Ksh {{ sector.total_budget|floatformat:0|intcomma }}</span>
+                            </div>
+                        </div>
+                        <div class="progress mb-3" style="height: 8px;">
+                            <div class="progress-bar bg-kenya-green" 
+                                 style="width: {% widthratio sector.total_budget total_budget 100 %}%"></div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- High Impact Projects -->
+                    <div class="col-md-6">
+                        <h5 class="fw-bold">High Impact Projects</h5>
+                        {% for project in high_impact_projects %}
+                        <div class="border-bottom pb-2 mb-2">
+                            <h6 class="fw-bold text-kenya-green">{{ project.name }}</h6>
+                            <div class="d-flex justify-content-between">
+                                <span class="badge bg-{% if project.status == 'completed' %}success{% elif project.status == 'ongoing' %}warning{% else %}secondary{% endif %}">
+                                    {{ project.get_status_display }}
+                                </span>
+                                <span class="badge badge-impact">
+                                    Ksh {{ project.budget|floatformat:0|intcomma }}
+                                </span>
+                            </div>
+                            <small class="text-muted">{{ project.county }} • {{ project.sector }}</small>
+                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -31,53 +388,292 @@
 {% endblock %}
 
 {% block extra_js %}
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<!-- Leaflet MarkerCluster -->
+<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+
 <script>
-    // Initialize map
-    var map = L.map('map').setView([-1.286, 36.817], 7);
+    // Initialize map centered on Kenya
+    var map = L.map('map', {
+        center: [-1.286389, 36.817223], // Nairobi coordinates
+        zoom: 7,
+        zoomControl: false
+    });
     
-    // Add base layer
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // Add zoom control to top-right
+    L.control.zoom({
+        position: 'topright'
+    }).addTo(map);
+    
+    // Define tile layers
+    var streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+    });
     
-    // Add project markers
-    var geojson = {{ geojson|safe }};
+    var satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19,
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+    });
     
-    L.geoJSON(geojson, {
-        pointToLayer: function(feature, latlng) {
-            // Choose marker color based on status
-            var color;
-            switch(feature.properties.status) {
-                case 'ongoing': color = 'blue'; break;
-                case 'completed': color = 'green'; break;
-                case 'delayed': color = 'orange'; break;
-                default: color = 'gray';
-            }
-            
-            // Create marker
-            var marker = L.marker(latlng, {
-                icon: L.icon({
-                    iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
-                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-                    iconSize: [20, 32],
-                    iconAnchor: [10, 32],
-                    popupAnchor: [1, -28],
-                    shadowSize: [32, 32]
-                })
-            });
-            
-            // Bind popup
-            marker.bindPopup(`
-                <div class="p-1">
-                    <h6 class="text-kenya-green mb-1">${feature.properties.name}</h6>
-                    <p class="mb-1 fs-6">Status: ${feature.properties.status}</p>
-                    <p class="mb-2 fs-6">County: ${feature.properties.county}</p>
-                    <a href="/projects/${feature.properties.id}/" class="btn btn-kenya-green btn-sm">View Details</a>
-                </div>
-            `);
-            
-            return marker;
+    var terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        maxZoom: 17,
+        attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a>'
+    });
+    
+    // Add default layer
+    streetLayer.addTo(map);
+    
+    // Layer switcher functionality
+    document.getElementById('map-layer-select').addEventListener('change', function(e) {
+        var selected = e.target.value;
+        map.eachLayer(function(layer) {
+            if (layer instanceof L.TileLayer) map.removeLayer(layer);
+        });
+        
+        if (selected === 'street') streetLayer.addTo(map);
+        else if (selected === 'satellite') satelliteLayer.addTo(map);
+        else if (selected === 'terrain') terrainLayer.addTo(map);
+    });
+    
+    // Function to determine marker color based on status
+    function getColor(status) {
+        if (status === 'completed') return '#006600';
+        if (status === 'ongoing') return '#DE2910';
+        if (status === 'delayed') return '#000000';
+        return '#999999';
+    }
+    
+    // Function to get marker size based on budget impact
+    function getMarkerSize(budget, maxBudget) {
+        if (!budget || !maxBudget) return 8;
+        const size = 8 + (budget / maxBudget * 15); // Scale from 8 to 23
+        return Math.min(size, 23);
+    }
+    
+    // Function to get marker icon
+    function getStatusIcon(status, budget, maxBudget) {
+        var color;
+        switch(status) {
+            case 'completed': color = 'green'; break;
+            case 'ongoing': color = 'blue'; break;
+            case 'delayed': color = 'orange'; break;
+            default: color = 'gray';
         }
-    }).addTo(map);
+        
+        const size = getMarkerSize(budget, maxBudget);
+        
+        return L.icon({
+            iconUrl: `https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-${color}.png`,
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [size, size * 1.6],
+            iconAnchor: [size / 2, size * 1.6],
+            popupAnchor: [1, -size * 1.4],
+            shadowSize: [size * 1.6, size * 1.6]
+        });
+    }
+    
+    // Create a marker cluster group
+    var markers = L.markerClusterGroup({
+        maxClusterRadius: 50,
+        spiderfyOnMaxZoom: true,
+        showCoverageOnHover: false,
+        zoomToBoundsOnClick: true
+    });
+    
+    // Projects data
+    var projects = {{ geojson|safe }};
+    
+    // Find max budget for scaling
+    var maxBudget = Math.max(...projects.features.map(f => f.properties.budget || 0));
+    
+    // Add markers for each project
+    projects.features.forEach(function(feature) {
+        var marker = L.marker(
+            [feature.geometry.coordinates[1], feature.geometry.coordinates[0]],
+            { 
+                icon: getStatusIcon(feature.properties.status, feature.properties.budget, maxBudget),
+                riseOnHover: true
+            }
+        );
+        
+        // Format budget with thousand separators
+        var budget = feature.properties.budget ? 
+            'Ksh ' + parseFloat(feature.properties.budget).toLocaleString('en-KE', {maximumFractionDigits: 0}) : 'N/A';
+        
+        // Format dates
+        var startDate = feature.properties.start_date ? new Date(feature.properties.start_date).toLocaleDateString() : 'N/A';
+        var endDate = feature.properties.end_date ? new Date(feature.properties.end_date).toLocaleDateString() : 'N/A';
+        
+        // Calculate budget impact percentage
+        var budgetPercentage = feature.properties.budget_percentage ? 
+            feature.properties.budget_percentage.toFixed(2) + '% of total budget' : 'N/A';
+        
+        // Create detailed popup content with insights
+        var popupContent = `
+            <div class="popup-header">
+                <h6 class="text-kenya-green fw-bold mb-1">${feature.properties.name}</h6>
+                <span class="badge bg-${feature.properties.status === 'completed' ? 'success' : feature.properties.status === 'ongoing' ? 'warning' : 'dark'}">
+                    ${feature.properties.status}
+                </span>
+            </div>
+            
+            <div class="popup-detail">
+                <strong><i class="fas fa-map-marker-alt me-1"></i>Location:</strong> ${feature.properties.county || 'N/A'}
+            </div>
+            
+            <div class="popup-detail">
+                <strong><i class="fas fa-industry me-1"></i>Sector:</strong> ${feature.properties.sector || 'N/A'}
+            </div>
+            
+            <div class="popup-detail">
+                <strong><i class="fas fa-money-bill-wave me-1"></i>Budget:</strong> 
+                <span class="popup-budget">${budget}</span>
+            </div>
+            
+            <div class="popup-impact">
+                <small><i class="fas fa-chart-pie me-1"></i>Represents ${budgetPercentage}</small>
+            </div>
+            
+            <div class="popup-detail">
+                <strong><i class="fas fa-calendar me-1"></i>Timeline:</strong> ${startDate} to ${endDate}
+            </div>
+            
+            ${feature.properties.implementing_agency ? `
+            <div class="popup-detail">
+                <strong><i class="fas fa-building me-1"></i>Agency:</strong> ${feature.properties.implementing_agency}
+            </div>` : ''}
+            
+            <div class="text-center mt-3">
+                <a href="/project/${feature.properties.id}/" class="btn btn-kenya-green btn-sm">
+                    <i class="fas fa-eye me-1"></i> View Detailed Analysis
+                </a>
+            </div>
+        `;
+        
+        // Bind popup to marker
+        marker.bindPopup(popupContent);
+        
+        // Add hover effect for insights
+        marker.on('mouseover', function(e) {
+            this.openPopup();
+            // Highlight related insights
+            document.querySelectorAll('.insight-card').forEach(card => {
+                card.classList.add('highlight');
+            });
+        });
+        
+        // Add marker to the cluster group
+        markers.addLayer(marker);
+    });
+    
+    // Add marker cluster group to map
+    map.addLayer(markers);
+    
+    // Fit map to show all markers
+    if (projects.features.length > 0) {
+        map.fitBounds(markers.getBounds(), { padding: [50, 50] });
+    }
+    
+    // Toggle clustering
+    document.getElementById('clusterToggle').addEventListener('change', function(e) {
+        if (e.target.checked) {
+            map.addLayer(markers);
+        } else {
+            map.removeLayer(markers);
+            // Add individual markers if not clustering
+            projects.features.forEach(function(feature) {
+                var marker = L.marker(
+                    [feature.geometry.coordinates[1], feature.geometry.coordinates[0]],
+                    { 
+                        icon: getStatusIcon(feature.properties.status, feature.properties.budget, maxBudget),
+                        riseOnHover: true
+                    }
+                ).addTo(map);
+                
+                // Create popup content (same as above)
+                var budget = feature.properties.budget ? 
+                    'Ksh ' + parseFloat(feature.properties.budget).toLocaleString('en-KE', {maximumFractionDigits: 0}) : 'N/A';
+                
+                var popupContent = `
+                    <div class="popup-header">
+                        <h6 class="text-kenya-green fw-bold mb-1">${feature.properties.name}</h6>
+                        <span class="badge bg-${feature.properties.status === 'completed' ? 'success' : feature.properties.status === 'ongoing' ? 'warning' : 'dark'}">
+                            ${feature.properties.status}
+                        </span>
+                    </div>
+                    
+                    <div class="popup-detail">
+                        <strong>County:</strong> ${feature.properties.county || 'N/A'}
+                    </div>
+                    
+                    <div class="popup-detail">
+                        <strong>Budget:</strong> <span class="popup-budget">${budget}</span>
+                    </div>
+                    
+                    <div class="text-center mt-2">
+                        <a href="/project/${feature.properties.id}/" class="btn btn-kenya-green btn-sm">
+                            View Detailed Analysis
+                        </a>
+                    </div>
+                `;
+                
+                marker.bindPopup(popupContent);
+            });
+        }
+    });
+    
+    // Add legend
+    var legend = L.control({ position: 'bottomright' });
+    legend.onAdd = function(map) {
+        var div = L.DomUtil.create('div', 'map-legend');
+        div.innerHTML = `
+            <h6 class="mb-2 fw-bold">Project Insights Legend</h6>
+            <div><i style="background: #006600"></i> Completed Projects</div>
+            <div><i style="background: #DE2910"></i> Ongoing Projects</div>
+            <div><i style="background: #000000"></i> Delayed Projects</div>
+            <div><i style="background: #999999"></i> Planned Projects</div>
+            <hr>
+            <small>Marker size indicates budget impact</small>
+        `;
+        return div;
+    };
+    legend.addTo(map);
+    
+    // Add scale control
+    L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(map);
+    
+    // Utility functions
+    function exportInsights() {
+        const insightsData = {
+            total_projects: {{ total_projects }},
+            total_budget: {{ total_budget }},
+            average_budget: {{ budget_stats.avg_budget|default:0 }},
+            spatial_data: projects
+        };
+        
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(insightsData, null, 2));
+        const downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href", dataStr);
+        downloadAnchorNode.setAttribute("download", "kenya_projects_insights.json");
+        document.body.appendChild(downloadAnchorNode);
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
+    }
+    
+    function resetFilters() {
+        window.location.href = "{% url 'project_map' %}";
+    }
+    
+    // Initialize with some animations
+    document.addEventListener('DOMContentLoaded', function() {
+        // Animate insight cards on load
+        document.querySelectorAll('.insight-card').forEach((card, index) => {
+            setTimeout(() => {
+                card.classList.add('highlight');
+            }, index * 200);
+        });
+    });
 </script>
 {% endblock %}

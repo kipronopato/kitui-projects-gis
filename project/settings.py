@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,11 +26,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-j^xyizibfq96zb5!cv$$i$%m$ps6_paw_cxy%9j8xmar6jnou#'
-
+DB_LIVE = os.getenv("DB_LIVE", "False").lower() in ["true", "1", "yes"]
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.getenv("DEBUG", "False").lower() in ["true", "1", "yes"]
 
-ALLOWED_HOSTS = []
+if DB_LIVE:
+    ALLOWED_HOSTS = [
+        "safaricom-claims-production-be5c.up.railway.app",
+        "localhost",
+        "127.0.0.1"
+    ]
+else:
+    ALLOWED_HOSTS = ["*"]
+
+
+
 
 
 # Application definition
@@ -45,6 +60,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -83,16 +99,34 @@ WSGI_APPLICATION = 'project.wsgi.application'
     }
 }'''
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.contrib.gis.db.backends.postgis",  # Use PostGIS backend
-        "NAME": "kenya",       # Database name
-        "USER": "straton",         # Database user
-        "PASSWORD": "Straton12.",   # Database password
-        "HOST": "localhost",       # Host (assuming PostgreSQL runs locally)
-        "PORT": "5432",            # Default PostgreSQL port
+if not DB_LIVE:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.contrib.gis.db.backends.postgis",  # Use PostGIS backend
+            "NAME": "kenya",       # Database name
+            "USER": "straton",         # Database user
+            "PASSWORD": "Straton12.",   # Database password
+            "HOST": "localhost",       # Host (assuming PostgreSQL runs locally)
+            "PORT": "5433",            # Default PostgreSQL port
+        }
     }
-}
+    
+else:
+    # Check for required DB env vars
+    required_vars = ["DB_NAME", "DB_USER", "DB_PASSWORD", "DB_HOST", "DB_PORT"]
+    missing = [var for var in required_vars if not os.environ.get(var)]
+    if missing:
+        raise Exception(f"Missing required database environment variables: {', '.join(missing)}")
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.contrib.gis.db.backends.postgis",  # Use PostGIS backend for Railway Docker PostGIS
+            "NAME": os.environ.get("DB_NAME"),
+            "USER": os.environ.get("DB_USER"),
+            "PASSWORD": os.environ.get("DB_PASSWORD"),
+            "HOST": os.environ.get("DB_HOST"),
+            "PORT": os.environ.get("DB_PORT"),
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -140,7 +174,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 

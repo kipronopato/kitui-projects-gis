@@ -21,7 +21,7 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from django.db.models import Q, Count, Sum, Avg, Min, Max, F
 from django.db.models.functions import ExtractYear, TruncMonth
-
+from django.db.models import Avg, Sum, Count, Min, Max, StdDev
 def home(request):
     # Start with all projects
     projects = Project.objects.all()
@@ -511,29 +511,142 @@ class ProjectDetailView(DetailView):
 
 # ---------------- Project Map ---------------- #
 def project_map_view(request):
-    projects = Project.objects.all()
-
+    # Start with all projects that have location data
+    projects = Project.objects.filter(location__isnull=False)
+    
+    # Filters
+    status_filter = request.GET.getlist('status')
+    if status_filter:
+        projects = projects.filter(status__in=status_filter)
+    
+    county_filter = request.GET.getlist('county')
+    if county_filter:
+        projects = projects.filter(county__in=county_filter)
+    
+    sector_filter = request.GET.getlist('sector')
+    if sector_filter:
+        projects = projects.filter(sector__in=sector_filter)
+    
+    # Get filter options
+    status_choices = [choice[0] for choice in Project.STATUS_CHOICES]
+    status_labels = dict(Project.STATUS_CHOICES)
+    counties = Project.objects.values_list('county', flat=True).distinct().order_by('county')
+    sectors = (
+        Project.objects
+        .exclude(sector__isnull=True)
+        .exclude(sector='')
+        .values_list('sector', flat=True)
+        .distinct()
+        .order_by('sector')
+    )
+    
+    # Deep Insights Calculations
+    total_projects = projects.count()
+    total_budget = projects.aggregate(total=Sum('budget'))['total'] or Decimal(0)
+    
+    # Geographical Distribution Insights
+    county_distribution = (
+        projects.values('county')
+        .annotate(
+            count=Count('id'),
+            total_budget=Sum('budget'),
+            avg_budget=Avg('budget')
+        )
+        .order_by('-count')[:10]
+    )
+    
+    # Status Distribution
+    status_distribution = projects.values('status').annotate(
+        count=Count('id'),
+        total_budget=Sum('budget')
+    )
+    
+    # Sector Analysis
+    sector_analysis = (
+        projects.values('sector')
+        .annotate(
+            count=Count('id'),
+            total_budget=Sum('budget'),
+            avg_budget=Avg('budget')
+        )
+        .exclude(sector__isnull=True)
+        .order_by('-total_budget')[:5]
+    )
+    
+    # Budget Analysis
+    budget_stats = projects.aggregate(
+        avg_budget=Avg('budget'),
+        min_budget=Min('budget'),
+        max_budget=Max('budget'),
+        budget_stddev=StdDev('budget')
+    )
+    
+    # Spatial Clustering Analysis
+    county_density = []
+    for county in county_distribution:
+        county_density.append({
+            'county': county['county'],
+            'project_density': county['count'],
+            'budget_density': county['total_budget'] or 0
+        })
+    
+    # Recent Projects
+    recent_projects = projects.order_by('-created_at')[:3]
+    
+    # High Impact Projects (top 5 by budget)
+    high_impact_projects = projects.order_by('-budget')[:5]
+    
+    # Create GeoJSON
     features = []
     for project in projects:
-        if project.location:
-            features.append({
-                "type": "Feature",
-                "geometry": {
-                    "type": "Point",
-                    "coordinates": [project.location.x, project.location.y],
-                },
-                "properties": {
-                    "name": project.name,
-                    "status": project.status,
-                    "county": project.county,
-                    "id": project.id,
-                }
-            })
+        budget = project.budget or Decimal(0)
+        budget_percentage = (budget / total_budget * Decimal(100)) if total_budget and budget else Decimal(0)
 
+        features.append({
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [project.location.x, project.location.y],
+            },
+            "properties": {
+                "id": project.id,
+                "name": project.name,
+                "status": project.status,
+                "county": project.county,
+                "sector": project.sector or "",
+                "budget": float(budget),  # safe for JSON
+                "start_date": project.start_date.strftime("%Y-%m-%d") if project.start_date else "",
+                "end_date": project.end_date.strftime("%Y-%m-%d") if project.end_date else "",
+                "description": project.description or "",
+                "implementing_agency": project.implementing_agency or "",
+                "project_manager": project.project_manager or "",
+                "budget_percentage": float(budget_percentage)  # convert Decimal to float for JSON
+            }
+        })
+    
     geojson = {"type": "FeatureCollection", "features": features}
-    context = {"geojson": geojson, "projects": projects}
+    
+    context = {
+        "geojson": json.dumps(geojson),
+        "status_choices": status_choices,
+        "status_labels": status_labels,
+        "counties": counties,
+        "sectors": sectors,
+        "selected_statuses": status_filter,
+        "selected_counties": county_filter,
+        "selected_sectors": sector_filter,
+        "total_projects": total_projects,
+        "total_budget": total_budget,
+        "county_distribution": county_distribution,
+        "status_distribution": status_distribution,
+        "sector_analysis": sector_analysis,
+        "budget_stats": budget_stats,
+        "county_density": county_density,
+        "recent_projects": recent_projects,
+        "high_impact_projects": high_impact_projects,
+    }
+    
     return render(request, 'app/project_map.html', context)
-
 
 # ---------------- Citizen Report ---------------- #
 def submit_report(request, project_id):
