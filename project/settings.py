@@ -31,13 +31,13 @@ DEBUG = os.getenv("DEBUG", "False").lower() in ["true", "1", "yes"]
 
 if DB_LIVE:
     ALLOWED_HOSTS = [
-        "safaricom-claims-production-be5c.up.railway.app",  # if deploying to Railway
-        "safaricom-claims-production.onrender.com",         # Render hostname
+        "kitui-projects-gis-2.onrender.com",  # ✅ your actual Render URL
         "localhost",
         "127.0.0.1",
     ]
 else:
     ALLOWED_HOSTS = ["*"]
+
 
 
 
