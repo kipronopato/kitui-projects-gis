@@ -107,7 +107,7 @@ if not DB_LIVE:
             "USER": "straton",         # Database user
             "PASSWORD": "Straton12.",   # Database password
             "HOST": "localhost",       # Host (assuming PostgreSQL runs locally)
-            "PORT": "5433",            # Default PostgreSQL port
+            "PORT": "5432",            # Default PostgreSQL port
         }
     }
     

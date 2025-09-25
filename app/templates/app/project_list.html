@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
-
+{% load humanize %}
+{% load custom_filters %}
 {% block content %}
-<div class="container mt-3" style="font-family: Arial, sans-serif;">
+<div class="container-fluid mt-3" style="font-family: Arial, sans-serif;">
     <div class="row">
         <div class="col-md-12">
             <h3 class="text-kenya-green mb-1">All Projects in Kenya</h3>
@@ -9,156 +10,326 @@
         </div>
     </div>
 
-    <!-- Filter Section -->
+    <!-- Statistics Overview -->
     <div class="row mb-3">
         <div class="col-md-12">
             <div class="card border-kenya-green">
+                <div class="card-header bg-kenya-green text-white py-2 d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0">Projects Overview</h6>
+                    <span class="badge bg-light text-kenya-green">{{ total_projects }} Projects</span>
+                </div>
+                <div class="card-body p-3">
+                    <div class="row text-center">
+                        <div class="col-md-3 col-6 mb-2">
+                            <div class="p-2 bg-light rounded">
+                                <h5 class="fw-bold text-kenya-green mb-0">{{ total_projects|intcomma }}</h5>
+                                <small class="text-muted">Total Projects</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-2">
+                            <div class="p-2 bg-light rounded">
+                                <h5 class="fw-bold text-kenya-green mb-0">Ksh {{ total_budget|floatformat:0|intcomma }}</h5>
+                                <small class="text-muted">Total Budget</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-2">
+                            <div class="p-2 bg-light rounded">
+                                <h5 class="fw-bold text-kenya-green mb-0">Ksh {{ avg_budget|floatformat:0|intcomma }}</h5>
+                                <small class="text-muted">Average Budget</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-2">
+                            <div class="p-2 bg-light rounded">
+                                <h5 class="fw-bold text-kenya-green mb-0">{{ counties|length }}</h5>
+                                <small class="text-muted">Counties Covered</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Status Distribution -->
+                    <div class="mt-3">
+                        <h6 class="text-kenya-green mb-2">Project Status Distribution</h6>
+                        <div class="row">
+                            {% for status, count in status_counts.items %}
+                            <div class="col-md-3 col-6 mb-2">
+                                <div class="d-flex justify-content-between align-items-center p-2 border rounded">
+                                    <span class="badge bg-{% if status == 'completed' %}success{% elif status == 'ongoing' %}warning text-dark{% elif status == 'delayed' %}danger{% else %}secondary{% endif %}">
+                                        {{ status_labels|get_item:status }}
+                                    </span>
+                                    <span class="fw-bold">{{ count }}</span>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Filter Section -->
+        <div class="col-md-3">
+            <div class="card border-kenya-green mb-3">
                 <div class="card-header bg-kenya-green text-white py-2">
                     <h6 class="mb-0">Filter Projects</h6>
                 </div>
                 <div class="card-body p-3">
-                    <form method="get" class="row g-2">
-                        <div class="col-md-3">
+                    <form method="get" id="filter-form">
+                        <!-- County Filter -->
+                        <div class="mb-3">
                             <label for="county" class="form-label fs-6">County</label>
                             <select class="form-select form-select-sm" id="county" name="county">
                                 <option value="">All Counties</option>
-                                <option value="Nairobi">Nairobi</option>
-                                <option value="Mombasa">Mombasa</option>
-                                <option value="Kisumu">Kisumu</option>
-                                <option value="Nakuru">Nakuru</option>
-                                <option value="Eldoret">Eldoret</option>
+                                {% for county in counties %}
+                                <option value="{{ county }}" {% if selected_county == county %}selected{% endif %}>{{ county }}</option>
+                                {% endfor %}
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        
+                        <!-- Status Filter -->
+                        <div class="mb-3">
                             <label for="status" class="form-label fs-6">Status</label>
                             <select class="form-select form-select-sm" id="status" name="status">
                                 <option value="">All Statuses</option>
-                                <option value="planned">Planned</option>
-                                <option value="ongoing">Ongoing</option>
-                                <option value="completed">Completed</option>
-                                <option value="delayed">Delayed</option>
+                                {% for status_code, status_name in status_labels.items %}
+                                <option value="{{ status_code }}" {% if selected_status == status_code %}selected{% endif %}>{{ status_name }}</option>
+                                {% endfor %}
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        
+                        <!-- Sector Filter -->
+                        <div class="mb-3">
+                            <label for="sector" class="form-label fs-6">Sector</label>
+                            <select class="form-select form-select-sm" id="sector" name="sector">
+                                <option value="">All Sectors</option>
+                                {% for sector in sectors %}
+                                <option value="{{ sector }}" {% if selected_sector == sector %}selected{% endif %}>{{ sector }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <!-- Agency Filter -->
+                        <div class="mb-3">
                             <label for="agency" class="form-label fs-6">Implementing Agency</label>
                             <select class="form-select form-select-sm" id="agency" name="agency">
                                 <option value="">All Agencies</option>
-                                <option value="KURA">Kenya Urban Roads Authority (KURA)</option>
-                                <option value="KERRA">Kenya Rural Roads Authority (KERRA)</option>
-                                <option value="KWS">Kenya Wildlife Service (KWS)</option>
+                                {% for agency in agencies %}
+                                <option value="{{ agency }}" {% if selected_agency == agency %}selected{% endif %}>{{ agency }}</option>
+                                {% endfor %}
                             </select>
                         </div>
-                        <div class="col-md-3 d-flex align-items-end">
-                            <button type="submit" class="btn btn-kenya-green btn-sm me-2">
+                        
+                        <!-- Budget Range Filter -->
+                        <div class="mb-3">
+                            <label class="form-label fs-6">Budget Range (KES)</label>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <input type="number" class="form-control form-control-sm" name="min_budget" 
+                                           placeholder="Min" value="{{ selected_min_budget }}">
+                                </div>
+                                <div class="col-6">
+                                    <input type="number" class="form-control form-control-sm" name="max_budget" 
+                                           placeholder="Max" value="{{ selected_max_budget }}">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Date Range Filter -->
+                        <div class="mb-3">
+                            <label class="form-label fs-6">Date Range</label>
+                            <div class="mb-2">
+                                <input type="date" class="form-control form-control-sm" name="start_date" 
+                                       placeholder="Start Date" value="{{ selected_start_date }}">
+                            </div>
+                            <div>
+                                <input type="date" class="form-control form-control-sm" name="end_date" 
+                                       placeholder="End Date" value="{{ selected_end_date }}">
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-kenya-green btn-sm">
                                 Apply Filters
                             </button>
-                            <a href="{% url 'project_list' %}" 
-                               class="btn btn-outline-secondary btn-sm">Reset</a>
+                            <a href="{% url 'project_list' %}" class="btn btn-outline-secondary btn-sm">
+                                Reset Filters
+                            </a>
                         </div>
                     </form>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Projects List -->
-    <div class="row g-2">
-        {% for project in projects %}
-        <div class="col-md-6 mb-3">
-            <div class="card h-100 border-kenya-green" style="position:relative; padding-top:22px;">
-                
-                <!-- Status Badge -->
-                <span class="status-badge 
-                    {% if project.status == 'completed' %} bg-completed
-                    {% elif project.status == 'ongoing' %} bg-ongoing
-                    {% elif project.status == 'delayed' %} bg-delayed
-                    {% elif project.status == 'planned' %} bg-planned
-                    {% else %} bg-default
-                    {% endif %}
-                ">
-                    {{ project.get_status_display }}
-                </span>
-
+            
+            <!-- Quick Insights -->
+            <div class="card border-kenya-green">
+                <div class="card-header bg-kenya-green text-white py-2">
+                    <h6 class="mb-0">Quick Insights</h6>
+                </div>
                 <div class="card-body p-3">
-                    <h6 class="card-title mb-2">{{ project.name }}</h6>
-                    <p class="card-text fs-6 mb-2">{{ project.description|truncatewords:20 }}</p>
-                    <div class="mb-2">
-                        <span class="badge bg-kenya-green me-1 fs-6">
-                            {{ project.county }} County
-                        </span>
-                        <span class="badge bg-secondary fs-6">
-                            {{ project.implementing_agency }}
-                        </span>
+                    <!-- Top Counties -->
+                    <h6 class="text-kenya-green mb-2">Top Counties</h6>
+                    {% for county in county_stats %}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-truncate" style="max-width: 60%;">{{ county.county }}</span>
+                        <span class="badge bg-kenya-green">{{ county.count }}</span>
                     </div>
-                    <p class="card-text mb-0 fs-6">
-                        <small class="text-muted">Start: {{ project.start_date }} | End: {{ project.end_date }}</small>
-                    </p>
-                </div>
-                <div class="card-footer bg-white p-2">
-                    <a href="{% url 'project_detail' project.pk %}" 
-                       class="btn btn-outline-kenya-green btn-sm me-1">
-                       View Details
-                    </a>
-                    <a href="{% url 'submit_report' project.pk %}" 
-                       class="btn btn-outline-kenya-red btn-sm">
-                       Report Progress
-                    </a>
+                    {% empty %}
+                    <p class="text-muted small mb-0">No county data available</p>
+                    {% endfor %}
+                    
+                    <hr>
+                    
+                    <!-- Top Sectors -->
+                    <h6 class="text-kenya-green mb-2">Top Sectors</h6>
+                    {% for sector in sector_stats %}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-truncate" style="max-width: 60%;">{{ sector.sector }}</span>
+                        <span class="badge bg-kenya-green">{{ sector.count }}</span>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted small mb-0">No sector data available</p>
+                    {% endfor %}
+                    
+                    <hr>
+                    
+                    <!-- High Budget Projects -->
+                    <h6 class="text-kenya-green mb-2">High Budget Projects</h6>
+                    {% for project in high_budget_projects %}
+                    <div class="mb-2">
+                        <div class="fw-bold text-truncate small" style="max-width: 100%;">{{ project.name }}</div>
+                        <div class="text-muted small">Ksh {{ project.budget|floatformat:0|intcomma }}</div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted small mb-0">No high budget projects</p>
+                    {% endfor %}
                 </div>
             </div>
         </div>
-        {% empty %}
-        <div class="col-md-12">
-            <div class="alert alert-info py-2">
-                No projects found matching your criteria.
+
+        <!-- Projects List -->
+        <div class="col-md-9">
+            <div class="row g-3">
+                {% for project in projects %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-kenya-green" style="position:relative; padding-top:22px;">
+                        
+                        <!-- Status Badge -->
+                        <span class="status-badge 
+                            {% if project.status == 'completed' %} bg-completed
+                            {% elif project.status == 'ongoing' %} bg-ongoing
+                            {% elif project.status == 'delayed' %} bg-delayed
+                            {% elif project.status == 'planned' %} bg-planned
+                            {% else %} bg-default
+                            {% endif %}
+                        ">
+                            {{ project.get_status_display }}
+                        </span>
+
+                        <div class="card-body p-3">
+                            <h6 class="card-title mb-2">{{ project.name }}</h6>
+                            <p class="card-text fs-6 mb-2 text-muted">{{ project.description|truncatewords:15|default:"No description available" }}</p>
+                            <div class="mb-2">
+                                <span class="badge bg-kenya-green me-1 fs-6">
+                                    {{ project.county }} County
+                                </span>
+                                {% if project.sector %}
+                                <span class="badge bg-secondary fs-6">
+                                    {{ project.sector }}
+                                </span>
+                                {% endif %}
+                            </div>
+                            <div class="mb-2">
+                                <span class="fw-bold text-kenya-green">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
+                            </div>
+                            <p class="card-text mb-0 fs-6">
+                                <small class="text-muted">
+                                    <i class="fas fa-calendar-alt me-1"></i>
+                                    {{ project.start_date|date:"M Y" }} - {{ project.end_date|date:"M Y" }}
+                                </small>
+                            </p>
+                            {% if project.implementing_agency %}
+                            <p class="card-text mb-0 fs-6">
+                                <small class="text-muted">
+                                    <i class="fas fa-building me-1"></i>
+                                    {{ project.implementing_agency }}
+                                </small>
+                            </p>
+                            {% endif %}
+                        </div>
+                        <div class="card-footer bg-white p-2">
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'project_detail' project.pk %}" 
+                                   class="btn btn-outline-kenya-green btn-sm">
+                                   View Details
+                                </a>
+                                <a href="{% url 'submit_report' project.pk %}" 
+                                   class="btn btn-outline-kenya-red btn-sm">
+                                   <i class="fas fa-flag me-1"></i>Report
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-md-12">
+                    <div class="alert alert-info py-3 text-center">
+                        <i class="fas fa-info-circle fa-2x mb-2"></i>
+                        <h5>No projects found</h5>
+                        <p class="mb-0">Try adjusting your filters to see more results</p>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
-        </div>
-        {% endfor %}
-    </div>
 
-    <!-- Pagination -->
-    {% if is_paginated %}
-    <div class="row mt-3">
-        <div class="col-md-12">
-            <nav aria-label="Project pagination">
-                <ul class="pagination justify-content-center pagination-sm">
+            <!-- Pagination -->
+            {% if is_paginated %}
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <nav aria-label="Project pagination">
+                        <ul class="pagination justify-content-center pagination-sm">
 
-                    <!-- Previous button -->
-                    {% if page_obj.has_previous %}
-                    <li class="page-item">
-                        <a class="page-link text-kenya-green" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Previous</a>
-                    </li>
-                    {% else %}
-                    <li class="page-item disabled"><a class="page-link">Previous</a></li>
-                    {% endif %}
-
-                    <!-- Page numbers (window around current page) -->
-                    {% for i in paginator.page_range %}
-                        {% if i >= page_obj.number|add:"-2" and i <= page_obj.number|add:"2" %}
-                            {% if page_obj.number == i %}
-                            <li class="page-item active">
-                                <a class="page-link" style="background:#2e7d32; border-color:#2e7d32; color:#fff;">{{ i }}</a>
+                            <!-- Previous button -->
+                            {% if page_obj.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link text-kenya-green" href="?page={{ page_obj.previous_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Previous</a>
                             </li>
                             {% else %}
-                            <li class="page-item">
-                                <a class="page-link text-kenya-green" href="?page={{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
-                            </li>
+                            <li class="page-item disabled"><a class="page-link">Previous</a></li>
                             {% endif %}
-                        {% endif %}
-                    {% endfor %}
 
-                    <!-- Next button -->
-                    {% if page_obj.has_next %}
-                    <li class="page-item">
-                        <a class="page-link text-kenya-green" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Next</a>
-                    </li>
-                    {% else %}
-                    <li class="page-item disabled"><a class="page-link">Next</a></li>
-                    {% endif %}
-                </ul>
-            </nav>
+                            <!-- Page numbers (window around current page) -->
+                            {% for i in paginator.page_range %}
+                                {% if i >= page_obj.number|add:"-2" and i <= page_obj.number|add:"2" %}
+                                    {% if page_obj.number == i %}
+                                    <li class="page-item active">
+                                        <a class="page-link" style="background:#2e7d32; border-color:#2e7d32; color:#fff;">{{ i }}</a>
+                                    </li>
+                                    {% else %}
+                                    <li class="page-item">
+                                        <a class="page-link text-kenya-green" href="?page={{ i }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">{{ i }}</a>
+                                    </li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+
+                            <!-- Next button -->
+                            {% if page_obj.has_next %}
+                            <li class="page-item">
+                                <a class="page-link text-kenya-green" href="?page={{ page_obj.next_page_number }}{% for key, value in request.GET.items %}{% if key != 'page' %}&{{ key }}={{ value }}{% endif %}{% endfor %}">Next</a>
+                            </li>
+                            {% else %}
+                            <li class="page-item disabled"><a class="page-link">Next</a></li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                    <p class="text-center text-muted small mt-2">
+                        Showing {{ page_obj.start_index }} - {{ page_obj.end_index }} of {{ paginator.count }} projects
+                    </p>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
-    {% endif %}
 </div>
 
 <style>
@@ -173,6 +344,7 @@
     font-weight: 600;
     text-transform: uppercase;
     color: #fff;
+    z-index: 10;
 }
 
 .bg-completed { background: #22c55e; }
@@ -184,6 +356,12 @@
 .card {
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .btn-outline-kenya-red {
@@ -195,5 +373,54 @@
     background-color: var(--kenya-red);
     color: white;
 }
+
+/* Form styling */
+.form-select:focus, .form-control:focus {
+    border-color: var(--kenya-green);
+    box-shadow: 0 0 0 0.2rem rgba(0, 102, 0, 0.25);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .col-md-3 {
+        margin-bottom: 1rem;
+    }
+}
 </style>
+
+<script>
+// Add interactivity to filters
+document.addEventListener('DOMContentLoaded', function() {
+    // Add change event to all filters for better UX
+    const filters = document.querySelectorAll('#filter-form select, #filter-form input');
+    filters.forEach(filter => {
+        filter.addEventListener('change', function() {
+            // For better UX, we could add a loading indicator
+            document.getElementById('filter-form').submit();
+        });
+    });
+    
+    // Add debounce to number inputs
+    const numberInputs = document.querySelectorAll('input[type="number"]');
+    const debounce = (func, wait) => {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    };
+    
+    numberInputs.forEach(input => {
+        input.addEventListener('input', debounce(function() {
+            if (this.value) {
+                document.getElementById('filter-form').submit();
+            }
+        }, 800));
+    });
+});
+</script>
 {% endblock %}

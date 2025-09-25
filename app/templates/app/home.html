@@ -3,643 +3,539 @@
 {% load humanize %}
 {% block content %}
 
-<div class="container-fluid mt-2">
-  <div class="row g-2">
-    <!-- Sidebar Navigation -->
-    <div class="col-xl-2 col-lg-3 col-md-4">
-      <div class="sticky-top" style="top: 70px; z-index: 1019;">
-        <!-- Navigation Tabs -->
-        <div class="card mb-3 shadow-sm border-kenya-green" style="background-color: #90EE90;">
-          <div class="card-body p-2">
-            <div class="d-flex flex-column nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-              <button class="nav-link active mb-1 text-start" id="v-pills-overview-tab" data-bs-toggle="pill" data-bs-target="#v-pills-overview" type="button" role="tab">
-                <i class="fas fa-chart-pie me-2"></i> Overview
-              </button>
-              <button class="nav-link mb-1 text-start" id="v-pills-analytics-tab" data-bs-toggle="pill" data-bs-target="#v-pills-analytics" type="button" role="tab">
-                <i class="fas fa-chart-line me-2"></i> Analytics
-              </button>
-              <button class="nav-link mb-1 text-start" id="v-pills-map-tab" data-bs-toggle="pill" data-bs-target="#v-pills-map" type="button" role="tab">
-                <i class="fas fa-map-marked-alt me-2"></i> Map View
-              </button>
+<div class="kenya-dashboard">
+  
+  <!-- Quick Stats Bar -->
+  <div class="quick-stats-bar" style="background:#f8f9fa; padding:5px 0; font-size:12px;">
+    <div class="container-fluid">
+      <div class="row g-2" style="margin:0;">
+        
+        <div class="col-xl-2 col-md-4 col-sm-6" style="padding:3px;">
+          <div style="display:flex; align-items:center; background:#fff; border:1px solid #e1e1e1; border-radius:6px; padding:5px 8px;">
+            <div style="width:24px; height:24px; border-radius:50%; background:#0d6efd; color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; margin-right:6px;">
+              <i class="fas fa-project-diagram"></i>
+            </div>
+            <div>
+              <h3 style="font-size:13px; margin:0; font-weight:600;">{{ total_projects|intcomma }}</h3>
+              <span style="font-size:11px; color:#666;">Total Projects</span>
             </div>
           </div>
         </div>
-        <!-- Filters Section -->
-        <div class="d-flex justify-content-between align-items-center mb-2">
-          <h5 class="text-kenya-green mb-0">Filters</h5>
-          <button class="btn btn-sm btn-kenya-green" type="button" data-bs-toggle="collapse" data-bs-target="#filterCollapse">
-            <i class="fas fa-filter"></i>
-          </button>
+
+        <div class="col-xl-2 col-md-4 col-sm-6" style="padding:3px;">
+          <div style="display:flex; align-items:center; background:#fff; border:1px solid #e1e1e1; border-radius:6px; padding:5px 8px;">
+            <div style="width:24px; height:24px; border-radius:50%; background:#198754; color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; margin-right:6px;">
+              <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <div>
+              <h3 style="font-size:13px; margin:0; font-weight:600;">Ksh {{ total_budget|floatformat:0|intcomma }}</h3>
+              <span style="font-size:11px; color:#666;">Total Budget</span>
+            </div>
+          </div>
         </div>
-        
-        <div class="collapse show" id="filterCollapse">
-          <form method="get" id="filter-form">
-            <!-- Status Filter -->
-            <div class="card mb-2 shadow-sm border-kenya-green">
-              <div class="card-header bg-kenya-green text-white fw-bold d-flex align-items-center justify-content-between py-1" data-bs-toggle="collapse" data-bs-target="#statusFilter">
-                <div>
-                  <i class="fas fa-tasks me-1 fs-7"></i> <span class="fs-7">Project Status</span>
-                </div>
-                <i class="fas fa-chevron-down fs-7"></i>
-              </div>
-              <div class="collapse show" id="statusFilter">
-                <div class="card-body p-1">
-                  {% for status in status_choices %}
-                  <div class="form-check mb-1">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      name="status"
-                      value="{{ status }}"
-                      id="status-{{ forloop.counter }}"
-                      style="width: 0.7rem; height: 0.7rem;"
-                      {% if status in selected_statuses %}checked{% endif %}
-                      onchange="this.form.submit()"
-                    />
-                    <label class="form-check-label fs-7" for="status-{{ forloop.counter }}">
-                      {{ status_labels|get_item:status }} ({{ status_counts|get_item:status|default:0 }})
-                    </label>
-                  </div>
-                  {% endfor %}
-                </div>
+
+        <div class="col-xl-2 col-md-4 col-sm-6" style="padding:3px;">
+          <div style="display:flex; align-items:center; background:#fff; border:1px solid #e1e1e1; border-radius:6px; padding:5px 8px;">
+            <div style="width:24px; height:24px; border-radius:50%; background:#0dcaf0; color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; margin-right:6px;">
+              <i class="fas fa-check-circle"></i>
+            </div>
+            <div>
+              <h3 style="font-size:13px; margin:0; font-weight:600;">{{ completion_rate }}%</h3>
+              <span style="font-size:11px; color:#666;">Completion Rate</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-2 col-md-4 col-sm-6" style="padding:3px;">
+          <div style="display:flex; align-items:center; background:#fff; border:1px solid #e1e1e1; border-radius:6px; padding:5px 8px;">
+            <div style="width:24px; height:24px; border-radius:50%; background:#ffc107; color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; margin-right:6px;">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div>
+              <h3 style="font-size:13px; margin:0; font-weight:600;">{{ county_count }}</h3>
+              <span style="font-size:11px; color:#666;">Counties Covered</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-2 col-md-4 col-sm-6" style="padding:3px;">
+          <div style="display:flex; align-items:center; background:#fff; border:1px solid #e1e1e1; border-radius:6px; padding:5px 8px;">
+            <div style="width:24px; height:24px; border-radius:50%; background:#dc3545; color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; margin-right:6px;">
+              <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div>
+              <h3 style="font-size:13px; margin:0; font-weight:600;">{{ overdue_projects }}</h3>
+              <span style="font-size:11px; color:#666;">Overdue Projects</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-2 col-md-4 col-sm-6" style="padding:3px;">
+          <div style="display:flex; align-items:center; background:#fff; border:1px solid #e1e1e1; border-radius:6px; padding:5px 8px;">
+            <div style="width:24px; height:24px; border-radius:50%; background:#6c757d; color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; margin-right:6px;">
+              <i class="fas fa-clock"></i>
+            </div>
+            <div>
+              <h3 style="font-size:13px; margin:0; font-weight:600;">{{ upcoming_deadlines }}</h3>
+              <span style="font-size:11px; color:#666;">Upcoming Deadlines</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Filters Sidebar -->
+        <div class="col-xl-3 col-lg-4">
+          <div class="filters-sidebar">
+            <div class="sidebar-header">
+              <h5><i class="fas fa-filter me-2"></i>Filters</h5>
+              <button class="btn btn-sm btn-outline-kenya-green" onclick="clearAllFilters()">
+                Clear All
+              </button>
+            </div>
+
+            <!-- Navigation Tabs -->
+            <div class="navigation-tabs mb-4" style="margin-bottom: 1rem;">
+              <div class="nav nav-pills nav-fill" id="v-pills-tab" role="tablist" style="display: flex; gap: 6px;">
+                <button class="nav-link active" id="v-pills-map-tab" data-bs-toggle="pill" 
+                        data-bs-target="#v-pills-map" type="button"
+                        style="color: #fff; font-weight: 600; background-color: #0b1a2b; border: 1px solid #000; border-radius: 6px;">
+                  <i class="fas fa-map-marked-alt me-2"></i>Map
+                </button>
+                <button class="nav-link" id="v-pills-overview-tab" data-bs-toggle="pill" 
+                        data-bs-target="#v-pills-overview" type="button"
+                        style="color: #fff; font-weight: 600; background-color: #0b1a2b; border: 1px solid #000; border-radius: 6px;">
+                  <i class="fas fa-chart-pie me-2"></i>Overview
+                </button>
+                <button class="nav-link" id="v-pills-analytics-tab" data-bs-toggle="pill" 
+                        data-bs-target="#v-pills-analytics" type="button"
+                        style="color: #fff; font-weight: 600; background-color: #0b1a2b; border: 1px solid #000; border-radius: 6px;">
+                  <i class="fas fa-chart-line me-2"></i>Analytics
+                </button>
               </div>
             </div>
 
-            <!-- Sector Filter -->
-            <div class="card mb-2 shadow-sm border-kenya-green">
-              <div class="card-header bg-kenya-green text-white fw-bold d-flex align-items-center justify-content-between py-1" data-bs-toggle="collapse" data-bs-target="#sectorFilter">
-                <div>
-                  <i class="fas fa-layer-group me-1 fs-7"></i>
-                  <span class="fs-7">Project Sector</span>
+            <form method="get" id="filter-form">
+              <!-- Status Filter -->
+              <div class="filter-group">
+                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#statusFilter">
+                  <h6><i class="fas fa-tasks me-2"></i>Project Status</h6>
+                  <i class="fas fa-chevron-down"></i>
                 </div>
-                <i class="fas fa-chevron-down fs-7"></i>
-              </div>
-              <div class="collapse show" id="sectorFilter">
-                <div class="card-body p-1" style="max-height: 200px; overflow-y: auto;">
-                  {% for sector in sectors %}
-                  <div class="form-check mb-1">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      name="sector"
-                      value="{{ sector }}"
-                      id="sector-{{ forloop.counter }}"
-                      style="width: 0.7rem; height: 0.7rem;"
-                      {% if sector in selected_sectors %}checked{% endif %}
-                      onchange="this.form.submit()"
-                    />
-                    <label class="form-check-label fs-7" for="sector-{{ forloop.counter }}">
-                      {{ sector }}
-                    </label>
+                <div class="collapse show" id="statusFilter">
+                  <div class="filter-options">
+                    {% for status in status_choices %}
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" name="status" 
+                             value="{{ status }}" id="status-{{ forloop.counter }}"
+                             {% if status in selected_statuses %}checked{% endif %}>
+                      <label class="form-check-label" for="status-{{ forloop.counter }}">
+                        {{ status_labels|get_item:status }}
+                      </label>
+                    </div>
+                    {% endfor %}
                   </div>
-                  {% endfor %}
                 </div>
               </div>
-            </div>
 
-            <!-- County Filter -->
-            <div class="card mb-2 shadow-sm border-kenya-green">
-              <div class="card-header bg-kenya-green text-white fw-bold d-flex align-items-center justify-content-between py-1" data-bs-toggle="collapse" data-bs-target="#countyFilter">
-                <div>
-                  <i class="fas fa-map-marker-alt me-1 fs-7"></i>
-                  <span class="fs-7">County</span>
+              <!-- Sector Filter -->
+              <div class="filter-group">
+                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#sectorFilter">
+                  <h6><i class="fas fa-layer-group me-2"></i>Sector</h6>
+                  <i class="fas fa-chevron-down"></i>
                 </div>
-                <i class="fas fa-chevron-down fs-7"></i>
-              </div>
-              <div class="collapse show" id="countyFilter">
-                <div class="card-body p-1" style="max-height: 200px; overflow-y: auto;">
-                  {% for county in counties %}
-                  <div class="form-check mb-1">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      name="county"
-                      value="{{ county }}"
-                      id="county-{{ forloop.counter }}"
-                      style="width: 0.7rem; height: 0.7rem;"
-                      {% if county in selected_counties %}checked{% endif %}
-                      onchange="this.form.submit()"
-                    />
-                    <label class="form-check-label fs-7" for="county-{{ forloop.counter }}">
-                      {{ county }}
-                    </label>
+                <div class="collapse show" id="sectorFilter">
+                  <div class="search-box">
+                    <input type="text" class="form-control form-control-sm" 
+                           placeholder="Search sectors..." id="sector-search">
                   </div>
-                  {% endfor %}
+                  <div class="filter-options" style="max-height: 200px; overflow-y: auto;">
+                    {% for sector in sectors %}
+                    <div class="form-check sector-item">
+                      <input class="form-check-input" type="checkbox" name="sector"
+                             value="{{ sector }}" id="sector-{{ forloop.counter }}"
+                             {% if sector in selected_sectors %}checked{% endif %}>
+                      <label class="form-check-label" for="sector-{{ forloop.counter }}">
+                        {{ sector }}
+                      </label>
+                    </div>
+                    {% endfor %}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Budget Filter -->
-            <div class="card mb-2 shadow-sm border-kenya-green">
-              <div class="card-header bg-kenya-green text-white fw-bold d-flex align-items-center justify-content-between py-1" data-bs-toggle="collapse" data-bs-target="#budgetFilter">
-                <div>
-                  <i class="fas fa-money-bill-wave me-1 fs-7"></i>
-                  <span class="fs-7">Budget Range (KES)</span>
+              <!-- Location Filters -->
+              <div class="filter-group">
+                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#locationFilter">
+                  <h6><i class="fas fa-map me-2"></i>Location</h6>
+                  <i class="fas fa-chevron-down"></i>
                 </div>
-                <i class="fas fa-chevron-down fs-7"></i>
+                <div class="collapse show" id="locationFilter">
+                  <!-- County -->
+                  <div class="mb-3">
+                    <label class="form-label small fw-bold">County</label>
+                    <select class="form-select form-select-sm" name="county" id="county-select" multiple>
+                      {% for county in counties %}
+                      <option value="{{ county }}" {% if county in selected_counties %}selected{% endif %}>
+                        {{ county }}
+                      </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+
+                  <!-- Subcounty -->
+                  <div class="mb-3">
+                    <label class="form-label small fw-bold">Subcounty</label>
+                    <select class="form-select form-select-sm" name="subcounty" id="subcounty-select" 
+                            {% if not selected_counties %}disabled{% endif %} multiple>
+                      {% for subcounty in subcounties %}
+                      <option value="{{ subcounty }}" {% if subcounty in selected_subcounties %}selected{% endif %}>
+                        {{ subcounty }}
+                      </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+
+                  <!-- Ward -->
+                  <div class="mb-3">
+                    <label class="form-label small fw-bold">Ward</label>
+                    <select class="form-select form-select-sm" name="ward" id="ward-select" 
+                            {% if not selected_subcounties %}disabled{% endif %} multiple>
+                      {% for ward in wards %}
+                      <option value="{{ ward }}" {% if ward in selected_wards %}selected{% endif %}>
+                        {{ ward }}
+                      </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
               </div>
-              <div class="collapse show" id="budgetFilter">
-                <div class="card-body p-1">
-                  <div class="row g-1">
+
+              <!-- Budget Filter -->
+              <div class="filter-group">
+                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#budgetFilter">
+                  <h6><i class="fas fa-money-bill-wave me-2"></i>Budget Range (KES)</h6>
+                  <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="collapse show" id="budgetFilter">
+                  <div class="row g-2">
                     <div class="col-6">
-                      <input type="number" class="form-control form-control-sm fs-7" name="min_budget" 
+                      <input type="number" class="form-control form-control-sm" name="min_budget"
                              placeholder="Min" value="{{ min_budget }}">
                     </div>
                     <div class="col-6">
-                      <input type="number" class="form-control form-control-sm fs-7" name="max_budget" 
+                      <input type="number" class="form-control form-control-sm" name="max_budget"
                              placeholder="Max" value="{{ max_budget }}">
                     </div>
                   </div>
-                  <button type="submit" class="btn btn-kenya-green btn-sm w-100 mt-1 fs-7">
-                    Apply Budget Filter
-                  </button>
                 </div>
               </div>
-            </div>
 
-            <!-- Date Filter -->
-            <div class="card mb-2 shadow-sm border-kenya-green">
-              <div class="card-header bg-kenya-green text-white fw-bold d-flex align-items-center justify-content-between py-1" data-bs-toggle="collapse" data-bs-target="#dateFilter">
-                <div>
-                  <i class="fas fa-calendar-alt me-1 fs-7"></i>
-                  <span class="fs-7">Date Range</span>
+              <!-- Date Filter -->
+              <div class="filter-group">
+                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#dateFilter">
+                  <h6><i class="fas fa-calendar-alt me-2"></i>Date Range</h6>
+                  <i class="fas fa-chevron-down"></i>
                 </div>
-                <i class="fas fa-chevron-down fs-7"></i>
-              </div>
-              <div class="collapse show" id="dateFilter">
-                <div class="card-body p-1">
-                  <div class="mb-1">
-                    <label class="form-label fs-7 mb-0">Start Date</label>
-                    <input type="date" class="form-control form-control-sm fs-7" name="start_date" value="{{ start_date }}">
+                <div class="collapse show" id="dateFilter">
+                  <div class="mb-2">
+                    <label class="form-label small">Start Date</label>
+                    <input type="date" class="form-control form-control-sm" name="start_date" value="{{ start_date }}">
                   </div>
-                  <div class="mb-1">
-                    <label class="form-label fs-7 mb-0">End Date</label>
-                    <input type="date" class="form-control form-control-sm fs-7" name="end_date" value="{{ end_date }}">
+                  <div class="mb-2">
+                    <label class="form-label small">End Date</label>
+                    <input type="date" class="form-control form-control-sm" name="end_date" value="{{ end_date }}">
                   </div>
-                  <button type="submit" class="btn btn-kenya-green btn-sm w-100 mt-1 fs-7">
-                    Apply Date Filter
-                  </button>
                 </div>
               </div>
-            </div>
 
-            <!-- Fiscal Year -->
-            <div class="card mb-2 shadow-sm border-kenya-green">
-              <div class="card-header bg-kenya-green text-white fw-bold d-flex align-items-center justify-content-between py-1" data-bs-toggle="collapse" data-bs-target="#yearFilter">
-                <div>
-                  <i class="fas fa-calendar-alt me-1 fs-7"></i> <span class="fs-7">Fiscal Year</span>
+              <!-- Fiscal Year -->
+              <div class="filter-group">
+                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#yearFilter">
+                  <h6><i class="fas fa-calendar me-2"></i>Fiscal Year</h6>
+                  <i class="fas fa-chevron-down"></i>
                 </div>
-                <i class="fas fa-chevron-down fs-7"></i>
-              </div>
-              <div class="collapse show" id="yearFilter">
-                <div class="card-body p-1">
-                  <select class="form-select form-select-sm fs-7" name="year" onchange="this.form.submit()">
+                <div class="collapse show" id="yearFilter">
+                  <select class="form-select form-select-sm" name="year">
                     <option value="">All Years</option>
                     {% for year in fiscal_years %}
-                    <option value="{{ year }}" {% if selected_year and selected_year|stringformat:'s' == year|stringformat:'s' %}selected{% endif %}>{{ year }}</option>
+                    <option value="{{ year }}" {% if selected_year == year|stringformat:"s" %}selected{% endif %}>
+                      {{ year }}
+                    </option>
                     {% endfor %}
                   </select>
                 </div>
               </div>
-            </div>
-          </form>
-          
-          <!-- Reset Filters -->
-          <a href="{% url 'home' %}" class="btn btn-kenya-green w-100 py-1 fs-7">
-            <i class="fas fa-sync me-1 fs-7"></i> Reset Filters
-          </a>
-        </div>
-      </div>
-    </div>
 
-    <!-- Main Dashboard -->
-    <div class="col-xl-10 col-lg-9 col-md-8">
-      <!-- Page Header -->
-      <div class="d-flex justify-content-between align-items-center mb-3">
-        <h3 class="text-kenya-green mb-0">Kenya Projects Dashboard</h3>
-        <div>
-          <span class="badge bg-kenya-green me-2 fs-6">
-            {{ total_projects }} Projects
-          </span>
-          <button class="btn btn-outline-kenya-green me-1 btn-sm">
-            <i class="fas fa-download me-1"></i> Export
-          </button>
-        </div>
-      </div>
-
-      <div class="tab-content" id="v-pills-tabContent">
-        <!-- Overview Tab -->
-        <div class="tab-pane fade show active" id="v-pills-overview" role="tabpanel">
-          <!-- Top Stats -->
-          <div class="row g-3 mb-4">
-            <!-- Total Projects -->
-            <div class="col-xl-2 col-md-4 col-sm-6">
-              <div class="card text-center shadow-sm border-kenya-green h-100 overview-card">
-                <div class="card-header kenya-flag-colors py-1"></div>
-                <div class="card-body p-2">
-                  <div class="d-flex justify-content-center align-items-center mb-2">
-                    <div class="bg-kenya-green p-2 rounded-circle">
-                      <i class="fas fa-clipboard-list text-white fs-5"></i>
-                    </div>
-                  </div>
-                  <h3 class="fw-bold text-kenya-green mb-0">{{ total_projects|intcomma }}</h3>
-                  <p class="mb-0 text-muted">Total Projects</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Total Budget -->
-            <div class="col-xl-2 col-md-4 col-sm-6">
-              <div class="card text-center shadow-sm border-kenya-green h-100 overview-card">
-                <div class="card-header kenya-flag-colors py-1"></div>
-                <div class="card-body p-2">
-                  <div class="d-flex justify-content-center align-items-center mb-2">
-                    <div class="bg-kenya-green p-2 rounded-circle">
-                      <i class="fas fa-money-bill-wave text-white fs-5"></i>
-                    </div>
-                  </div>
-                  <h4 class="fw-bold text-kenya-green mb-0">
-                    Ksh {{ total_budget|floatformat:0|intcomma }}
-                  </h4>
-                  <p class="mb-0 text-muted">Total Budget</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Completion Rate -->
-            <div class="col-xl-2 col-md-4 col-sm-6">
-              <div class="card text-center shadow-sm border-kenya-green h-100 overview-card">
-                <div class="card-header kenya-flag-colors py-1"></div>
-                <div class="card-body p-2">
-                  <div class="d-flex justify-content-center align-items-center mb-2">
-                    <div class="bg-kenya-green p-2 rounded-circle">
-                      <i class="fas fa-calendar-check text-white fs-5"></i>
-                    </div>
-                  </div>
-                  <h4 class="fw-bold text-kenya-green mb-0">
-                    {{ completion_rate }}%
-                  </h4>
-                  <p class="mb-0 text-muted">Completion Rate</p>
-                </div>
-              </div>
-            </div>
-            
-            <!-- County Coverage -->
-            <div class="col-xl-2 col-md-4 col-sm-6">
-              <div class="card text-center shadow-sm border-kenya-green h-100 overview-card">
-                <div class="card-header kenya-flag-colors py-1"></div>
-                <div class="card-body p-2">
-                  <div class="d-flex justify-content-center align-items-center mb-2">
-                    <div class="bg-kenya-green p-2 rounded-circle">
-                      <i class="fas fa-map-marker-alt text-white fs-5"></i>
-                    </div>
-                  </div>
-                  <h4 class="fw-bold text-kenya-green mb-0">
-                    {{ county_count }}
-                  </h4>
-                  <p class="mb-0 text-muted">Counties Covered</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Overdue Projects -->
-            <div class="col-xl-2 col-md-4 col-sm-6">
-              <div class="card text-center shadow-sm border-kenya-green h-100 overview-card">
-                <div class="card-header kenya-flag-colors py-1"></div>
-                <div class="card-body p-2">
-                  <div class="d-flex justify-content-center align-items-center mb-2">
-                    <div class="bg-danger p-2 rounded-circle">
-                      <i class="fas fa-exclamation-triangle text-white fs-5"></i>
-                    </div>
-                  </div>
-                  <h4 class="fw-bold text-danger mb-0">
-                    {{ overdue_projects }}
-                  </h4>
-                  <p class="mb-0 text-muted">Overdue Projects</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Upcoming Deadlines -->
-            <div class="col-xl-2 col-md-4 col-sm-6">
-              <div class="card text-center shadow-sm border-kenya-green h-100 overview-card">
-                <div class="card-header kenya-flag-colors py-1"></div>
-                <div class="card-body p-2">
-                  <div class="d-flex justify-content-center align-items-center mb-2">
-                    <div class="bg-warning p-2 rounded-circle">
-                      <i class="fas fa-clock text-white fs-5"></i>
-                    </div>
-                  </div>
-                  <h4 class="fw-bold text-warning mb-0">
-                    {{ upcoming_deadlines }}
-                  </h4>
-                  <p class="mb-0 text-muted">Upcoming Deadlines</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Status & Sector Distribution -->
-          <div class="row g-3 mb-4">
-            <!-- Status Distribution -->
-            <div class="col-xl-4 col-md-6">
-              <div class="card shadow-sm border-kenya-green h-100">
-                <div class="card-header bg-kenya-green text-white fw-bold py-2">
-                  <i class="fas fa-chart-pie me-1"></i> Project Status
-                </div>
-                <div class="card-body p-3">
-                  {% for status, count in status_counts.items %}
-                  <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span>{{ status_labels|get_item:status }}</span>
-                    <span class="badge bg-{% if status == 'completed' %}success{% elif status == 'ongoing' %}warning text-dark{% elif status == 'delayed' %}danger{% else %}secondary{% endif %}">
-                      {{ count }}
-                    </span>
-                  </div>
-                  <div class="progress mb-3" style="height: 10px;">
-                    <div class="progress-bar bg-{% if status == 'completed' %}success{% elif status == 'ongoing' %}warning{% elif status == 'delayed' %}danger{% else %}secondary{% endif %}" 
-                      role="progressbar" 
-                      style="width: {{ status_percentages|get_item:status|default:0 }}%;" 
-                      aria-valuenow="{{ status_percentages|get_item:status|default:0 }}" 
-                      aria-valuemin="0" 
-                      aria-valuemax="100">
-                    </div>
-                  </div>
-                  {% endfor %}
-                </div>
-              </div>
-            </div>
-
-            <!-- Sector Distribution -->
-            <div class="col-xl-4 col-md-6">
-              <div class="card shadow-sm border-kenya-green h-100">
-                <div class="card-header bg-kenya-green text-white fw-bold py-2">
-                  <i class="fas fa-industry me-1"></i> Top Sectors
-                </div>
-                <div class="card-body p-3" style="max-height: 300px; overflow-y: auto;">
-                  {% for item in sector_data|slice:":5" %}
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                      <span class="text-truncate" style="max-width: 70%;">{{ item.sector }}</span>
-                      <span class="badge bg-kenya-green">{{ item.count }}</span>
-                    </div>
-                    <div class="progress mb-3" style="height: 8px;">
-                      <div class="progress-bar bg-kenya-green" role="progressbar"
-                          style="width: {{ item.percentage }}%;"
-                          aria-valuenow="{{ item.count }}" aria-valuemin="0" aria-valuemax="{{ total_projects }}">
-                      </div>
-                    </div>
-                  {% empty %}
-                    <p class="text-center text-muted mb-0">No sector data available</p>
-                  {% endfor %}
-                </div>
-              </div>
-            </div>
-
-            <!-- Top Counties -->
-            <div class="col-xl-4 col-md-6">
-              <div class="card shadow-sm border-kenya-green h-100">
-                <div class="card-header bg-kenya-green text-white fw-bold py-2">
-                  <i class="fas fa-map me-1"></i> Top Counties
-                </div>
-                <div class="card-body p-3" style="max-height: 300px; overflow-y: auto;">
-                  {% for county in county_stats %}
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                      <span class="text-truncate" style="max-width: 70%;">{{ county.county }}</span>
-                      <span class="badge bg-kenya-green">{{ county.count }}</span>
-                    </div>
-                    <div class="progress mb-3" style="height: 8px;">
-                      <div class="progress-bar bg-kenya-green" role="progressbar"
-                          style="width: {% widthratio county.count total_projects 100 %}%;"
-                          aria-valuenow="{{ county.count }}" aria-valuemin="0" aria-valuemax="{{ total_projects }}">
-                      </div>
-                    </div>
-                  {% empty %}
-                    <p class="text-center text-muted mb-0">No county data available</p>
-                  {% endfor %}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Recent Activity & Performance -->
-          <div class="row g-3">
-            <!-- Recent Updates -->
-            <div class="col-xl-6 col-md-12">
-              <div class="card shadow-sm border-kenya-green h-100">
-                <div class="card-header bg-kenya-green text-white fw-bold py-2">
-                  <i class="fas fa-history me-1"></i> Recent Updates
-                </div>
-                <div class="card-body p-3" style="max-height: 300px; overflow-y: auto;">
-                  {% for update in recent_updates %}
-                  <div class="border-bottom pb-2 mb-2">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <span class="fw-bold text-truncate" style="max-width: 70%;">{{ update.project.name }}</span>
-                      <small class="text-muted">{{ update.created_at|timesince }} ago</small>
-                    </div>
-                    <p class="mb-1 text-truncate">{{ update.title }}</p>
-                    <div class="progress mt-2" style="height: 8px;">
-                      <div class="progress-bar bg-kenya-green" role="progressbar" style="width: {{ update.progress_percentage }}%;" aria-valuenow="{{ update.progress_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                  </div>
-                  {% empty %}
-                  <p class="text-center text-muted mb-0">No recent updates</p>
-                  {% endfor %}
-                </div>
-              </div>
-            </div>
-
-            <!-- Citizen Engagement -->
-            <div class="col-xl-6 col-md-12">
-              <div class="card shadow-sm border-kenya-green h-100">
-                <div class="card-header bg-kenya-green text-white fw-bold py-2">
-                  <i class="fas fa-users me-1"></i> Citizen Engagement
-                </div>
-                <div class="card-body p-3">
-                  <div class="row text-center mb-3">
-                    <div class="col-3">
-                      <div class="border-end">
-                        <h5 class="fw-bold text-kenya-green mb-0">{{ report_counts.progress|default:0 }}</h5>
-                        <small class="text-muted">Progress</small>
-                      </div>
-                    </div>
-                    <div class="col-3">
-                      <div class="border-end">
-                        <h5 class="fw-bold text-kenya-green mb-0">{{ report_counts.issue|default:0 }}</h5>
-                        <small class="text-muted">Issues</small>
-                      </div>
-                    </div>
-                    <div class="col-3">
-                      <div class="border-end">
-                        <h5 class="fw-bold text-kenya-green mb-0">{{ report_counts.complaint|default:0 }}</h5>
-                        <small class="text-muted">Complaints</small>
-                      </div>
-                    </div>
-                    <div class="col-3">
-                      <h5 class="fw-bold text-kenya-green mb-0">{{ report_counts.suggestion|default:0 }}</h5>
-                      <small class="text-muted">Suggestions</small>
-                    </div>
-                  </div>
-                  <div class="mt-2 p-3 bg-light rounded">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <span>Approval Rate</span>
-                      <span class="badge bg-kenya-green">{{ approval_rate|default:0 }}%</span>
-                    </div>
-                    <div class="progress mt-2" style="height: 10px;">
-                      <div class="progress-bar bg-kenya-green" role="progressbar" style="width: {{ approval_rate|default:0 }}%;" aria-valuenow="{{ approval_rate|default:0 }}" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+              <button type="submit" class="btn btn-kenya-green w-100 mt-3">
+                <i class="fas fa-filter me-1"></i> Apply Filters
+              </button>
+            </form>
           </div>
         </div>
 
-        <!-- Analytics Tab -->
-        <div class="tab-pane fade" id="v-pills-analytics" role="tabpanel">
-          <!-- Budget Analysis Section -->
-          <div class="row g-3 mb-4">
-            <!-- Budget Statistics -->
-            <div class="col-xl-4 col-md-6">
-              <div class="card shadow-sm border-kenya-green h-100">
-                <div class="card-header bg-kenya-green text-white fw-bold py-2">
-                  <i class="fas fa-chart-bar me-1"></i> Budget Statistics
-                </div>
-                <div class="card-body p-3">
-                  <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span>Average Budget</span>
-                    <span class="badge bg-kenya-green">Ksh {{ budget_stats.avg_budget|floatformat:0|intcomma }}</span>
-                  </div>
-                  <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span>Minimum Budget</span>
-                    <span class="badge bg-kenya-green">Ksh {{ budget_stats.min_budget|floatformat:0|intcomma }}</span>
-                  </div>
-                  <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span>Maximum Budget</span>
-                    <span class="badge bg-kenya-green">Ksh {{ budget_stats.max_budget|floatformat:0|intcomma }}</span>
-                  </div>
-                  <div class="progress mt-2" style="height: 12px;">
-                    <div class="progress-bar bg-kenya-green" role="progressbar" 
-                         style="width: {{ completion_rate }}%;" 
-                         aria-valuenow="{{ completion_rate }}" 
-                         aria-valuemin="0" 
-                         aria-valuemax="100">
+        <!-- Main Content Area -->
+        <div class="col-xl-9 col-lg-8">
+          <div class="tab-content" id="v-pills-tabContent">
+            <!-- Map View Tab -->
+            <div class="tab-pane fade show active" id="v-pills-map" role="tabpanel">
+              <div class="card map-card">
+                <div class="card-header" style="padding:6px 10px; background:#f8f9fa; border-bottom:1px solid #dee2e6; height:40px;">
+                  <div class="d-flex justify-content-between align-items-center" style="display:flex; justify-content:space-between; align-items:center; height:100%;">
+                    <h5 class="mb-0" style="margin:0; font-size:14px; font-weight:600; color:#333; display:flex; align-items:center;">
+                      <i class="fas fa-map me-2" style="margin-right:6px; font-size:13px; color:#198754;"></i>Project Locations
+                    </h5>
+                    <div class="map-controls" style="display:flex; align-items:center; gap:6px;">
+                      <div class="btn-group btn-group-sm" style="display:flex; gap:4px;">
+                        <button class="btn btn-outline-kenya-green active" id="toggle-projects" 
+                          style="font-size:12px; padding:3px 6px; border:1px solid #198754; border-radius:4px; background:#198754; color:#fff; cursor:pointer; display:flex; align-items:center;">
+                          <i class="fas fa-project-diagram me-1" style="margin-right:4px; font-size:11px;"></i>Projects
+                        </button>
+                        <button class="btn btn-outline-kenya-green" id="toggle-boundaries" 
+                          style="font-size:12px; padding:3px 6px; border:1px solid #198754; border-radius:4px; background:#fff; color:#198754; cursor:pointer; display:flex; align-items:center;">
+                          <i class="fas fa-map me-1" style="margin-right:4px; font-size:11px;"></i>Boundaries
+                        </button>
+                      </div>
+                      <select class="form-select form-select-sm ms-2" id="map-style" 
+                        style="font-size:12px; padding:3px 6px; border:1px solid #ccc; border-radius:4px; background:#fff; color:#333; cursor:pointer; height:26px;">
+                        <option value="streets">Streets</option>
+                        <option value="satellite">Satellite</option>
+                        <option value="light">Light</option>
+                      </select>
                     </div>
                   </div>
-                  <small class="text-muted">Budget Utilization: {{ completion_rate }}%</small>
                 </div>
-              </div>
-            </div>
-
-            <!-- Highest Budget Projects -->
-            <div class="col-xl-4 col-md-6">
-              <div class="card shadow-sm border-kenya-green h-100">
-                <div class="card-header bg-kenya-green text-white fw-bold py-2">
-                  <i class="fas fa-arrow-up me-1"></i> Top Budget Projects
-                </div>
-                <div class="card-body p-3" style="max-height: 300px; overflow-y: auto;">
-                  {% for project in highest_budget_projects %}
-                  <div class="border-bottom pb-2 mb-2">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <span class="fw-bold text-truncate" style="max-width: 70%;">{{ project.name }}</span>
-                      <span class="badge bg-kenya-green">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
+                <div class="card-body p-0 position-relative">
+                  <div id="kenya-map"></div>
+                  <div class="map-legends">
+                    <div class="map-legend project-legend">
+                      <h6>Project Status</h6>
+                      <div class="legend-item">
+                        <span class="legend-color completed"></span>
+                        <span>Completed</span>
+                      </div>
+                      <div class="legend-item">
+                        <span class="legend-color ongoing"></span>
+                        <span>Ongoing</span>
+                      </div>
+                      <div class="legend-item">
+                        <span class="legend-color delayed"></span>
+                        <span>Delayed</span>
+                      </div>
+                      <div class="legend-item">
+                        <span class="legend-color planned"></span>
+                        <span>Planned</span>
+                      </div>
                     </div>
-                    <p class="mb-0 text-muted">{{ project.county }} • {{ project.sector }}</p>
-                  </div>
-                  {% empty %}
-                  <p class="text-center text-muted mb-0">No projects found</p>
-                  {% endfor %}
-                </div>
-              </div>
-            </div>
-
-            <!-- Lowest Budget Projects -->
-            <div class="col-xl-4 col-md-6">
-              <div class="card shadow-sm border-kenya-green h-100">
-                <div class="card-header bg-kenya-green text-white fw-bold py-2">
-                  <i class="fas fa-arrow-down me-1"></i> Lowest Budget Projects
-                </div>
-                <div class="card-body p-3" style="max-height: 300px; overflow-y: auto;">
-                  {% for project in lowest_budget_projects %}
-                  <div class="border-bottom pb-2 mb-2">
-                    <div class="d-flex justify-content-between align-items-center">
-                      <span class="fw-bold text-truncate" style="max-width: 70%;">{{ project.name }}</span>
-                      <span class="badge bg-kenya-green">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
+                    <div class="map-legend boundary-legend">
+                      <h6>Projects Density</h6>
+                      <div class="legend-item">
+                        <span class="legend-color density-0"></span>
+                        <span>0 Projects</span>
+                      </div>
+                      <div class="legend-item">
+                        <span class="legend-color density-1"></span>
+                        <span>1-5 Projects</span>
+                      </div>
+                      <div class="legend-item">
+                        <span class="legend-color density-2"></span>
+                        <span>6-20 Projects</span>
+                      </div>
+                      <div class="legend-item">
+                        <span class="legend-color density-3"></span>
+                        <span>21+ Projects</span>
+                      </div>
                     </div>
-                    <p class="mb-0 text-muted">{{ project.county }} • {{ project.sector }}</p>
-                  </div>
-                  {% empty %}
-                  <p class="text-center text-muted mb-0">No projects found</p>
-                  {% endfor %}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Additional Analytics Content -->
-          <div class="row g-3">
-            <!-- Project Timeline -->
-            <div class="col-xl-6">
-              <div class="card shadow-sm border-kenya-green h-100">
-                <div class="card-header bg-kenya-green text-white fw-bold py-2">
-                  <i class="fas fa-chart-line me-1"></i> Project Timeline
-                </div>
-                <div class="card-body p-3">
-                  <canvas id="timeline-chart" height="250"></canvas>
-                </div>
-              </div>
-            </div>
-
-            <!-- Budget by Status -->
-            <div class="col-xl-6">
-              <div class="card shadow-sm border-kenya-green h-100">
-                <div class="card-header bg-kenya-green text-white fw-bold py-2">
-                  <i class="fas fa-chart-pie me-1"></i> Budget by Status
-                </div>
-                <div class="card-body p-3">
-                  <canvas id="budget-pie-chart" height="250"></canvas>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Map View Tab -->
-        <div class="tab-pane fade" id="v-pills-map" role="tabpanel">
-          <!-- Map & Project Details -->
-          <div class="row g-3" style="height: 75vh;">
-            <div class="col-xl-9 col-lg-8">
-              <div class="card shadow-sm border-kenya-green h-100">
-                <div class="card-header bg-kenya-green text-white fw-bold d-flex justify-content-between align-items-center py-2">
-                  <span><i class="fas fa-map-marked-alt me-1"></i> Project Map</span>
-                  <div id="map-layer-switcher" class="d-inline-block">
-                    <select
-                      id="map-layer-select"
-                      class="form-select form-select-sm d-inline-block"
-                      style="width: auto;"
-                    >
-                      <option value="street">Street Map</option>
-                      <option value="satellite">Satellite</option>
-                      <option value="terrain">Terrain</option>
-                    </select>
                   </div>
                 </div>
-                <div class="card-body p-0 h-100">
-                  <div
-                    id="project-map"
-                    style="height: 100%; width: 100%; border-radius: 0 0 0.375rem 0.375rem;"
-                  ></div>
+              </div>
+            </div>
+
+            <!-- Overview Tab -->
+            <div class="tab-pane fade" id="v-pills-overview" role="tabpanel">
+              <div class="row g-3">
+                <!-- Status Distribution -->
+                <div class="col-md-6">
+                  <div class="card h-100">
+                    <div class="card-header">
+                      <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Project Status Distribution</h5>
+                    </div>
+                    <div class="card-body">
+                      <canvas id="statusChart" height="250"></canvas>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Sector Distribution -->
+                <div class="col-md-6">
+                  <div class="card h-100">
+                    <div class="card-header">
+                      <h5 class="mb-0"><i class="fas fa-industry me-2"></i>Top Sectors</h5>
+                    </div>
+                    <div class="card-body">
+                      <canvas id="sectorChart" height="250"></canvas>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- County Distribution -->
+                <div class="col-md-6">
+                  <div class="card h-100">
+                    <div class="card-header">
+                      <h5 class="mb-0"><i class="fas fa-map me-2"></i>Projects by County</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="county-list">
+                        {% for county in county_stats %}
+                        <div class="county-item">
+                          <div class="county-info">
+                            <span class="county-name">{{ county.county }}</span>
+                            <span class="county-count">{{ county.count }} projects</span>
+                          </div>
+                          <div class="progress">
+                            <div class="progress-bar" style="width: {% widthratio county.count total_projects 100 %}%"></div>
+                          </div>
+                        </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="col-md-6">
+                  <div class="card h-100">
+                    <div class="card-header">
+                      <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Updates</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="recent-updates">
+                        {% for update in recent_updates %}
+                        <div class="update-item">
+                          <div class="update-header">
+                            <strong>{{ update.project.name }}</strong>
+                            <small class="text-muted">{{ update.created_at|timesince }} ago</small>
+                          </div>
+                          <p class="update-title">{{ update.title }}</p>
+                          <div class="progress">
+                            <div class="progress-bar" style="width: {{ update.progress_percentage }}%"></div>
+                          </div>
+                          <small>{{ update.progress_percentage }}% Complete</small>
+                        </div>
+                        {% empty %}
+                        <p class="text-center text-muted">No recent updates</p>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div class="col-xl-3 col-lg-4">
-              <div class="card shadow-sm border-kenya-green h-100">
-                <div class="card-header bg-kenya-green text-white fw-bold py-2">
-                  <i class="fas fa-info-circle me-1"></i> Project Details
+            <!-- Analytics Tab -->
+            <div class="tab-pane fade" id="v-pills-analytics" role="tabpanel">
+              <div class="row g-3">
+                <!-- Budget Analysis -->
+                <div class="col-md-6">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Budget by Status</h5>
+                    </div>
+                    <div class="card-body">
+                      <canvas id="budgetChart" height="300"></canvas>
+                    </div>
+                  </div>
                 </div>
-                <div class="card-body p-3" id="project-detail-panel" style="overflow-y: auto;">
-                  <div class="text-center text-muted py-5">
-                    <i class="fas fa-map-marker-alt fa-3x mb-3 text-kenya-green"></i>
-                    <p class="mb-0">Select a project on the map to view details.</p>
+
+                <!-- Timeline -->
+                <div class="col-md-6">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Project Timeline</h5>
+                    </div>
+                    <div class="card-body">
+                      <canvas id="timelineChart" height="300"></canvas>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Top Budget Projects -->
+                <div class="col-md-6">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5 class="mb-0"><i class="fas fa-arrow-up me-2"></i>Highest Budget Projects</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="project-list">
+                        {% for project in highest_budget_projects %}
+                        <div class="project-item">
+                          <div class="project-info">
+                            <strong>{{ project.name }}</strong>
+                            <span class="budget">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
+                          </div>
+                          <div class="project-meta">
+                            <span class="county">{{ project.county }}</span>
+                            <span class="sector">{{ project.sector }}</span>
+                            <span class="status badge bg-{{ project.status }}">{{ project.status }}</span>
+                          </div>
+                        </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Citizen Engagement -->
+                <div class="col-md-6">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5 class="mb-0"><i class="fas fa-users me-2"></i>Citizen Engagement</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="engagement-stats">
+                        <div class="row text-center mb-3">
+                          <div class="col-3">
+                            <div class="stat">
+                              <h4 class="text-primary">{{ report_counts.progress|default:0 }}</h4>
+                              <small>Progress Reports</small>
+                            </div>
+                          </div>
+                          <div class="col-3">
+                            <div class="stat">
+                              <h4 class="text-warning">{{ report_counts.issue|default:0 }}</h4>
+                              <small>Issue Reports</small>
+                            </div>
+                          </div>
+                          <div class="col-3">
+                            <div class="stat">
+                              <h4 class="text-danger">{{ report_counts.complaint|default:0 }}</h4>
+                              <small>Complaints</small>
+                            </div>
+                          </div>
+                          <div class="col-3">
+                            <div class="stat">
+                              <h4 class="text-info">{{ report_counts.suggestion|default:0 }}</h4>
+                              <small>Suggestions</small>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="approval-rate">
+                          <div class="d-flex justify-content-between">
+                            <span>Approval Rate</span>
+                            <strong>{{ approval_rate|default:0 }}%</strong>
+                          </div>
+                          <div class="progress">
+                            <div class="progress-bar" style="width: {{ approval_rate|default:0 }}%"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -652,500 +548,1211 @@
 </div>
 
 <style>
-  /* ================================
-   Kenya Project Dashboard Styles
-   ================================ */
-
-/* Theme Colors */
-:root {
-  --kenya-black: #000000;
-  --kenya-red: #de2910;
-  --kenya-green: #006600;
-  --kenya-white: #ffffff;
-
-  /* Dynamic accent palette */
-  --kenya-light-green: #4caf50;
-  --kenya-dark-green: #004d00;
-  --kenya-gold: #d4af37;
-  --kenya-blue: #1e88e5;
-  --kenya-grey: #6c757d;
+.kenya-dashboard {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+  min-height: 100vh;
 }
 
-/* Flag-inspired Header Bars */
-.kenya-flag-colors {
-  height: 4px;
-  background: linear-gradient(
-    to right,
-    var(--kenya-black) 25%,
-    var(--kenya-red) 25% 50%,
-    var(--kenya-green) 50% 75%,
-    var(--kenya-white) 75% 100%
-  );
-}
-
-/* ===========================
-   Card Styling
-   =========================== */
-.card {
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  border: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
-}
-
-/* Card header defaults */
-.card-header {
-  font-weight: 600;
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-}
-
-/* ===========================
-   Buttons
-   =========================== */
-.btn {
-  border-radius: 20px;
-  font-weight: 500;
-  transition: all 0.2s ease-in-out;
-}
-
-/* Green button */
-.btn-kenya-green {
-  background-color: var(--kenya-green);
-  color: var(--kenya-white);
-  border: none;
-}
-.btn-kenya-green:hover {
-  background-color: var(--kenya-dark-green);
-  transform: translateY(-1px);
-}
-
-/* Outline buttons */
-.btn-outline-kenya-green {
-  border: 2px solid var(--kenya-green);
-  color: var(--kenya-green);
-}
-.btn-outline-kenya-green:hover,
-.btn-outline-kenya-green.active {
-  background-color: var(--kenya-green);
-  color: var(--kenya-white);
-}
-
-/* ===========================
-   Navigation
-   =========================== */
-.nav-pills .nav-link {
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  margin-bottom: 0.5rem;
-  color: var(--kenya-grey);
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.nav-pills .nav-link.active {
-  background-color: var(--kenya-green);
+.dashboard-header {
+  background: linear-gradient(135deg, var(--kitui-primary) 0%, #2c3e50 100%);
   color: white;
-  box-shadow: 0 4px 8px rgba(0,102,0,0.3);
+  margin-bottom: 0;
+  padding: 2rem 0;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 4px 12px var(--kitui-shadow);
 }
 
-.nav-pills .nav-link:hover:not(.active) {
-  background-color: rgba(0,102,0,0.1);
-  color: var(--kenya-green);
+.quick-stats-bar {
+  background: white;
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--kitui-border);
+  box-shadow: 0 4px 12px var(--kitui-shadow);
+  margin-bottom: 2rem;
 }
 
-/* ===========================
-   Progress Bars
-   =========================== */
-.progress-bar.bg-success { background-color: var(--kenya-green) !important; }
-.progress-bar.bg-warning { background-color: var(--kenya-gold) !important; }
-.progress-bar.bg-danger { background-color: var(--kenya-red) !important; }
-.progress-bar.bg-info { background-color: var(--kenya-blue) !important; }
-
-/* ===========================
-   Badges
-   =========================== */
-.badge {
-  font-size: 0.8em;
-  padding: 0.4em 0.6em;
+.stat-card {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-left: 4px solid var(--kitui-primary);
+  height: 100%;
 }
 
-/* ===========================
-   Form Inputs
-   =========================== */
-.form-check-input:checked {
-  background-color: var(--kenya-green);
-  border-color: var(--kenya-green);
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
 }
 
-/* ===========================
-   Overview Cards
-   =========================== */
-.overview-card .card-body {
-  padding: 1.5rem 1rem !important;
-}
-
-.overview-card .rounded-circle {
+.stat-icon {
   width: 60px;
   height: 60px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+  margin-right: 1.5rem;
+  background: linear-gradient(135deg, var(--kitui-primary) 0%, #2c3e50 100%);
 }
 
-/* ===========================
-   Map Styling
-   =========================== */
-#project-map {
-  border-radius: 0 0 12px 12px;
+.stat-content h3 {
+  margin: 0;
+  font-weight: 700;
+  color: var(--kitui-dark);
+  font-size: 1.8rem;
+  font-family: 'Montserrat', sans-serif;
 }
 
-/* Map marker clusters */
-.marker-cluster-small {
-  background-color: rgba(0, 102, 0, 0.7);
-  color: white;
-}
-.marker-cluster-small div {
-  background-color: rgba(0, 102, 0, 0.7);
-  color: white;
+.stat-content span {
+  color: var(--kitui-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
-.marker-cluster-medium {
-  background-color: rgba(222, 41, 16, 0.7);
-  color: white;
-}
-.marker-cluster-medium div {
-  background-color: rgba(222, 41, 16, 0.7);
-  color: white;
-}
-
-.marker-cluster-large {
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-}
-.marker-cluster-large div {
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
+.filters-sidebar {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px var(--kitui-shadow);
+  height: calc(100vh - 200px);
+  overflow-y: auto;
+  position: sticky;
+  top: 1rem;
+  border: 1px solid var(--kitui-border);
 }
 
-/* Custom marker styles */
-.custom-marker {
-  width: 28px;
-  height: 28px;
-  border-radius: 50% 50% 50% 0;
-  background: var(--kenya-green);
-  position: relative;
-  transform: rotate(-45deg);
-  box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--kitui-border);
+}
+
+.sidebar-header h5 {
+  color: var(--kitui-primary);
+  font-weight: 600;
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.navigation-tabs {
+  background: var(--kitui-light);
+  border-radius: 10px;
+  padding: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.navigation-tabs .nav-link {
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  color: var(--kitui-muted);
+  font-weight: 500;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.navigation-tabs .nav-link.active {
+  background: linear-gradient(135deg, var(--kitui-primary) 0%, #2c3e50 100%);
+  color: white;
+  box-shadow: 0 2px 8px var(--kitui-shadow);
+}
+
+.navigation-tabs .nav-link:hover:not(.active) {
+  background: rgba(26, 82, 118, 0.1);
+  color: var(--kitui-primary);
+}
+
+.filter-group {
+  border: 1px solid var(--kitui-border);
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  overflow: hidden;
   transition: all 0.3s ease;
 }
 
-.custom-marker::after {
-  content: '';
-  width: 18px;
-  height: 18px;
-  margin: 5px;
-  background: white;
+.filter-group:hover {
+  border-color: var(--kitui-primary);
+}
+
+.filter-header {
+  background: var(--kitui-light);
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.filter-header:hover {
+  background: #e8f4f8;
+}
+
+.filter-header h6 {
+  margin: 0;
+  color: var(--kitui-dark);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.filter-header i {
+  transition: transform 0.3s ease;
+  color: var(--kitui-muted);
+}
+
+.filter-header[aria-expanded="true"] i {
+  transform: rotate(180deg);
+}
+
+.filter-options {
+  padding: 1.25rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.search-box {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--kitui-border);
+}
+
+.search-box input {
+  border: 1px solid var(--kitui-border);
+  border-radius: 6px;
+}
+
+.search-box input:focus {
+  border-color: var(--kitui-primary);
+  box-shadow: 0 0 0 0.2rem rgba(26, 82, 118, 0.1);
+}
+
+.form-check {
+  margin-bottom: 0.5rem;
+}
+
+.form-check-input:checked {
+  background-color: var(--kitui-primary);
+  border-color: var(--kitui-primary);
+}
+
+.form-check-label {
+  color: var(--kitui-dark);
+  font-size: 0.9rem;
+}
+
+.form-select {
+  border: 1px solid var(--kitui-border);
+  border-radius: 6px;
+}
+
+.form-select:focus {
+  border-color: var(--kitui-primary);
+  box-shadow: 0 0 0 0.2rem rgba(26, 82, 118, 0.1);
+}
+
+.form-control {
+  border: 1px solid var(--kitui-border);
+  border-radius: 6px;
+}
+
+.form-control:focus {
+  border-color: var(--kitui-primary);
+  box-shadow: 0 0 0 0.2rem rgba(26, 82, 118, 0.1);
+}
+
+.map-card {
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px var(--kitui-shadow);
+  transition: all 0.3s ease;
+}
+
+.map-card:hover {
+  box-shadow: 0 8px 20px var(--kitui-shadow);
+}
+
+.map-card .card-header {
+  background: linear-gradient(135deg, var(--kitui-primary) 0%, #2c3e50 100%);
+  color: white;
+  border-radius: 12px 12px 0 0;
+  padding: 1.25rem;
+}
+
+.map-card .card-header h5 {
+  margin: 0;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
+}
+
+#kenya-map {
+  height: 70vh;
+  width: 100%;
+  border-radius: 0 0 12px 12px;
+}
+
+.map-legends {
   position: absolute;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.map-legend {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px var(--kitui-shadow);
+  backdrop-filter: blur(10px);
+  min-width: 160px;
+  border: 1px solid var(--kitui-border);
+}
+
+.map-legend h6 {
+  margin: 0 0 0.75rem 0;
+  font-weight: 600;
+  color: var(--kitui-dark);
+  font-size: 0.9rem;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
+  margin-right: 0.75rem;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
-.marker-completed {
-  background: var(--kenya-green);
+.legend-color.completed { background: var(--kitui-accent); }
+.legend-color.ongoing { background: var(--kitui-secondary); }
+.legend-color.delayed { background: #e74c3c; }
+.legend-color.planned { background: var(--kitui-muted); }
+
+.legend-color.density-0 { background: #f8f9fa; }
+.legend-color.density-1 { background: #a3d9b1; }
+.legend-color.density-2 { background: #48c78e; }
+.legend-color.density-3 { background: var(--kitui-accent); }
+
+.map-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-.marker-ongoing {
-  background: var(--kenya-red);
+.btn-kitui-primary {
+  background: linear-gradient(135deg, var(--kitui-primary) 0%, #2c3e50 100%);
+  border: none;
+  color: white;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
-.marker-delayed {
-  background: var(--kenya-black);
+.btn-kitui-primary:hover {
+  background: linear-gradient(135deg, #2c3e50 0%, var(--kitui-primary) 100%);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.marker-other {
-  background: var(--kenya-grey);
+.btn-outline-kitui-primary {
+  border: 2px solid var(--kitui-primary);
+  color: var(--kitui-primary);
+  font-weight: 500;
+  transition: all 0.3s ease;
+  background: transparent;
+}
+
+.btn-outline-kitui-primary:hover,
+.btn-outline-kitui-primary.active {
+  background: var(--kitui-primary);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Card enhancements */
+.card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--kitui-shadow);
+  transition: all 0.3s ease;
+  margin-bottom: 1.5rem;
+  background: white;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px var(--kitui-shadow);
+}
+
+.card-header {
+  background: linear-gradient(135deg, var(--kitui-primary) 0%, #2c3e50 100%);
+  color: white;
+  border-radius: 12px 12px 0 0 !important;
+  padding: 1.25rem;
+  font-weight: 600;
+}
+
+.card-header h5 {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+/* Project list styles */
+.project-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.project-item {
+  padding: 1rem;
+  border-bottom: 1px solid var(--kitui-border);
+  transition: background-color 0.3s ease;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+}
+
+.project-item:hover {
+  background: var(--kitui-light);
+  transform: translateX(5px);
+}
+
+.project-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.project-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.project-info strong {
+  color: var(--kitui-dark);
+  font-weight: 600;
+  flex: 1;
+  margin-right: 1rem;
+}
+
+.budget {
+  color: var(--kitui-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.project-meta {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.project-meta span {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  background: var(--kitui-light);
+  color: var(--kitui-muted);
+}
+
+.project-meta .badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* County list styles */
+.county-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.county-item {
+  margin-bottom: 1.25rem;
+  padding: 0.75rem;
+  border-radius: 6px;
+  transition: background-color 0.3s ease;
+}
+
+.county-item:hover {
+  background: var(--kitui-light);
+}
+
+.county-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.county-name {
+  font-weight: 600;
+  color: var(--kitui-dark);
+}
+
+.county-count {
+  color: var(--kitui-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.progress {
+  height: 6px;
+  background-color: #e9ecef;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  background: linear-gradient(135deg, var(--kitui-primary) 0%, var(--kitui-accent) 100%);
+  transition: width 0.6s ease;
+}
+
+/* Update styles */
+.recent-updates {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.update-item {
+  padding: 1rem;
+  border-bottom: 1px solid var(--kitui-border);
+  transition: background-color 0.3s ease;
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+}
+
+.update-item:hover {
+  background: var(--kitui-light);
+}
+
+.update-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.update-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.update-header strong {
+  color: var(--kitui-dark);
+  font-weight: 600;
+}
+
+.update-header small {
+  color: var(--kitui-muted);
+  font-size: 0.8rem;
+}
+
+.update-title {
+  margin-bottom: 0.75rem;
+  color: var(--kitui-muted);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* Engagement stats */
+.engagement-stats .stat {
+  padding: 0.75rem;
+  text-align: center;
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+}
+
+.engagement-stats .stat:hover {
+  background: var(--kitui-light);
+}
+
+.engagement-stats h4 {
+  margin: 0;
+  font-weight: 700;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.engagement-stats small {
+  color: var(--kitui-muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.approval-rate {
+  background: var(--kitui-light);
+  padding: 1.25rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+}
+
+.approval-rate .d-flex {
+  margin-bottom: 0.5rem;
+}
+
+.approval-rate span {
+  color: var(--kitui-dark);
+  font-weight: 500;
+}
+
+.approval-rate strong {
+  color: var(--kitui-primary);
+  font-weight: 600;
+}
+
+/* Chart container styles */
+canvas {
+  border-radius: 8px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .dashboard-header {
+    padding: 1.5rem 0;
+  }
+  
+  .dashboard-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .stat-card {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .stat-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.25rem;
+    margin-right: 1rem;
+  }
+  
+  .stat-content h3 {
+    font-size: 1.5rem;
+  }
+  
+  #kenya-map {
+    height: 50vh;
+  }
+  
+  .map-legends {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    padding: 1rem;
+    justify-content: center;
+  }
+  
+  .filters-sidebar {
+    height: auto;
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+  
+  .map-controls {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+  }
+  
+  .btn-group {
+    width: 100%;
+  }
+  
+  .btn-group .btn {
+    flex: 1;
+  }
+}
+
+/* Leaflet marker styles */
+.leaflet-marker-icon {
+  border: 3px solid white;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
 }
 
 .leaflet-popup-content {
   margin: 15px;
-  line-height: 1.4;
+  min-width: 250px;
+  font-family: 'Open Sans', sans-serif;
 }
 
-.leaflet-popup-content-wrapper {
-  border-radius: 12px;
+.leaflet-popup-content h6 {
+  color: var(--kitui-primary);
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  font-family: 'Montserrat', sans-serif;
 }
 
-/* ===========================
-   Responsive
-   =========================== */
-@media (max-width: 991.98px) {
-  .sticky-top {
-    position: relative !important;
-    top: 0 !important;
+.leaflet-popup-content p {
+  margin-bottom: 0.5rem;
+  color: var(--kitui-dark);
+  font-size: 0.9rem;
+}
+
+.leaflet-popup-content .badge {
+  font-size: 0.75rem;
+}
+
+/* Custom scrollbar */
+.filter-options::-webkit-scrollbar,
+.project-list::-webkit-scrollbar,
+.county-list::-webkit-scrollbar,
+.recent-updates::-webkit-scrollbar {
+  width: 6px;
+}
+
+.filter-options::-webkit-scrollbar-track,
+.project-list::-webkit-scrollbar-track,
+.county-list::-webkit-scrollbar-track,
+.recent-updates::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.filter-options::-webkit-scrollbar-thumb,
+.project-list::-webkit-scrollbar-thumb,
+.county-list::-webkit-scrollbar-thumb,
+.recent-updates::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.filter-options::-webkit-scrollbar-thumb:hover,
+.project-list::-webkit-scrollbar-thumb:hover,
+.county-list::-webkit-scrollbar-thumb:hover,
+.recent-updates::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Animation for dashboard elements */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
-@media (max-width: 767.98px) {
-  #project-map {
-    min-height: 300px;
-  }
-  
-  .overview-card .card-body {
-    padding: 1rem 0.5rem !important;
-  }
+.stat-card,
+.filter-group,
+.card {
+  animation: fadeInUp 0.6s ease;
 }
+
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stat-card:nth-child(3) { animation-delay: 0.3s; }
+.stat-card:nth-child(4) { animation-delay: 0.4s; }
+.stat-card:nth-child(5) { animation-delay: 0.5s; }
+.stat-card:nth-child(6) { animation-delay: 0.6s; }
+
+/* Utility classes for Kitui theme */
+.text-kitui-primary { color: var(--kitui-primary) !important; }
+.text-kitui-secondary { color: var(--kitui-secondary) !important; }
+.text-kitui-accent { color: var(--kitui-accent) !important; }
+
+.bg-kitui-primary { background-color: var(--kitui-primary) !important; }
+.bg-kitui-secondary { background-color: var(--kitui-secondary) !important; }
+.bg-kitui-accent { background-color: var(--kitui-accent) !important; }
+
+.border-kitui-primary { border-color: var(--kitui-primary) !important; }
+.border-kitui-secondary { border-color: var(--kitui-secondary) !important; }
 </style>
 
-<!-- Load Leaflet and MarkerCluster -->
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
-<!-- Load Chart.js for analytics tab -->
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-  // Initialize map with better styling
-  var map = L.map('project-map', {
-    center: [-1.286389, 36.817223], // Nairobi coordinates
+// Initialize map with enhanced styling
+function initMap() {
+  // Create map centered on Kenya
+  const map = L.map('kenya-map', {
+    center: [-1.286389, 36.817223],
     zoom: 7,
-    zoomControl: false
+    zoomControl: true,
+    preferCanvas: true
   });
   
-  // Add zoom control to top-right
-  L.control.zoom({
-    position: 'topright'
-  }).addTo(map);
+  // Add tile layer with multiple options
+  const baseLayers = {
+    "Streets": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors',
+      maxZoom: 19
+    }),
+    "Satellite": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles © Esri',
+      maxZoom: 19
+    }),
+    "Light": L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap contributors © CartoDB',
+      maxZoom: 20
+    })
+  };
   
-  // Define tile layers
-  var streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  });
+  baseLayers.Streets.addTo(map);
   
-  var satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-    maxZoom: 19,
-    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-  });
+  // Define status colors with better visual distinction
+  const statusColors = {
+    'completed': '#28a745',
+    'ongoing': '#ffc107', 
+    'delayed': '#dc3545',
+    'planned': '#6c757d'
+  };
   
-  var terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-    maxZoom: 17,
-    attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a>'
-  });
+  // Create feature groups for better layer management
+  const projectMarkers = L.featureGroup();
+  const boundaryLayers = {
+    counties: L.featureGroup(),
+    subcounties: L.featureGroup(),
+    wards: L.featureGroup()
+  };
   
-  // Add default layer
-  streetLayer.addTo(map);
-  
-  // Layer switcher functionality
-  document.getElementById('map-layer-select').addEventListener('change', function(e) {
-    var selected = e.target.value;
-    map.eachLayer(function(layer) {
-      if (layer instanceof L.TileLayer) map.removeLayer(layer);
+  // Enhanced marker creation function
+  function createProjectMarker(feature, latlng) {
+    const status = feature.properties.status;
+    const color = statusColors[status] || '#6c757d';
+    
+    // Create custom circle marker with better styling
+    const marker = L.circleMarker(latlng, {
+      radius: 8,
+      fillColor: color,
+      color: '#ffffff',
+      weight: 2,
+      opacity: 1,
+      fillOpacity: 0.8
     });
     
-    if (selected === 'street') streetLayer.addTo(map);
-    else if (selected === 'satellite') satelliteLayer.addTo(map);
-    else if (selected === 'terrain') terrainLayer.addTo(map);
-  });
-  
-  // Function to create custom markers
-  function createCustomMarker(feature, latlng) {
-    var status = feature.properties.status;
-    var markerHtml = `<div class="custom-marker marker-${status}"></div>`;
-    
-    return L.marker(latlng, {
-      icon: L.divIcon({
-        className: 'custom-marker-icon',
-        html: markerHtml,
-        iconSize: [28, 28],
-        iconAnchor: [14, 28]
-      })
-    });
-  }
-  
-  // Create a marker cluster group
-  var markers = L.markerClusterGroup({
-    maxClusterRadius: 50,
-    spiderfyOnMaxZoom: true,
-    showCoverageOnHover: false,
-    zoomToBoundsOnClick: true,
-    iconCreateFunction: function(cluster) {
-      var count = cluster.getChildCount();
-      var size = count < 10 ? 'small' : count < 100 ? 'medium' : 'large';
-      
-      return L.divIcon({
-        html: '<div><span>' + count + '</span></div>',
-        className: 'marker-cluster marker-cluster-' + size,
-        iconSize: L.point(40, 40)
+    // Add hover effects
+    marker.on('mouseover', function() {
+      this.setStyle({
+        radius: 10,
+        weight: 3
       });
-    }
-  });
-  
-  // Projects data
-  var projects = {{ geojson|safe }};
-  
-  // Add markers for each project
-  projects.features.forEach(function(feature) {
-    var marker = createCustomMarker(feature, [feature.geometry.coordinates[1], feature.geometry.coordinates[0]]);
+    });
     
-    // Format budget with thousand separators
-    var budget = feature.properties.budget ? 
-      'Ksh ' + parseFloat(feature.properties.budget).toLocaleString('en-KE', {maximumFractionDigits: 0}) : 'N/A';
+    marker.on('mouseout', function() {
+      this.setStyle({
+        radius: 8,
+        weight: 2
+      });
+    });
     
-    // Bind popup to marker
-    marker.bindPopup(`
-      <div class="p-2">
-        <h6 class="text-kenya-green mb-2 fw-bold">${feature.properties.name}</h6>
-        <p class="mb-1"><strong>Status:</strong> <span class="badge bg-${feature.properties.status === 'completed' ? 'success' : feature.properties.status === 'ongoing' ? 'warning' : 'dark'}">${feature.properties.status}</span></p>
-        <p class="mb-1"><strong>County:</strong> ${feature.properties.county}</p>
-        <p class="mb-2"><strong>Budget:</strong> ${budget}</p>
+    // Enhanced popup content
+    const popupContent = `
+      <div class="project-popup">
+        <h6 class="text-kenya-green fw-bold">${feature.properties.name}</h6>
+        <div class="popup-details">
+          <p><strong>Status:</strong> <span class="badge bg-${status}">${status}</span></p>
+          <p><strong>County:</strong> ${feature.properties.county}</p>
+          <p><strong>Sector:</strong> ${feature.properties.sector || 'N/A'}</p>
+          <p><strong>Budget:</strong> Ksh ${parseFloat(feature.properties.budget).toLocaleString('en-KE')}</p>
+          <p><strong>Start Date:</strong> ${feature.properties.start_date || 'N/A'}</p>
+          <p><strong>End Date:</strong> ${feature.properties.end_date || 'N/A'}</p>
+        </div>
         <div class="text-center mt-2">
-          <a href='/project/${feature.properties.id}/' class='btn btn-sm btn-kenya-green'>View Details</a>
+          <a href="/project/${feature.properties.id}/" class="btn btn-sm btn-kenya-green">
+            <i class="fas fa-info-circle me-1"></i>View Details
+          </a>
         </div>
       </div>
-    `);
+    `;
     
-    // Add click event to show details in panel
-    marker.on('click', function() {
-      // Format dates properly
-      const startDate = feature.properties.start_date ? new Date(feature.properties.start_date).toLocaleDateString() : 'N/A';
-      const endDate = feature.properties.end_date ? new Date(feature.properties.end_date).toLocaleDateString() : 'N/A';
-      
-      // Format budget with commas
-      const budget = feature.properties.budget ? 
-        'Ksh ' + parseFloat(feature.properties.budget).toLocaleString('en-KE', {maximumFractionDigits: 0}) : 'N/A';
-      
-      var html = `
-        <h6 class="text-kenya-green fw-bold mb-3">${feature.properties.name}</h6>
-        <p class="mb-2"><strong>Status:</strong> <span class="badge bg-${feature.properties.status === 'completed' ? 'success' : feature.properties.status === 'ongoing' ? 'warning' : 'dark'}">${feature.properties.status}</span></p>
-        <p class="mb-2"><strong>County:</strong> ${feature.properties.county || 'N/A'}</p>
-        <p class="mb-2"><strong>Sector:</strong> ${feature.properties.sector || 'N/A'}</p>
-        <p class="mb-2"><strong>Budget:</strong> ${budget}</p>
-        <p class="mb-2"><strong>Start Date:</strong> ${startDate}</p>
-        <p class="mb-2"><strong>End Date:</strong> ${endDate}</p>
-        <p class="mb-2"><strong>Agency:</strong> ${feature.properties.implementing_agency || 'N/A'}</p>
-        <p class="mb-3"><strong>Contractor:</strong> ${feature.properties.contractor || 'N/A'}</p>
-        <p class="mb-3"><strong>Description:</strong> ${feature.properties.description || 'No description provided.'}</p>
-        <div class="text-center">
-          <a href='/project/${feature.properties.id}/' class='btn btn-kenya-green'>Full Details</a>
-        </div>`;
-      document.getElementById('project-detail-panel').innerHTML = html;
+    marker.bindPopup(popupContent, {
+      maxWidth: 300,
+      className: 'custom-popup'
     });
     
-    // Add marker to the cluster group
-    markers.addLayer(marker);
-  });
-  
-  // Add marker cluster group to map
-  map.addLayer(markers);
-  
-  // Fit map to show all markers
-  if (projects.features.length > 0) {
-    map.fitBounds(markers.getBounds(), { padding: [20, 20] });
+    return marker;
   }
   
-  // Function to determine marker color based on status
-  function getColor(status) {
-    if (status === 'completed') return '#006600';
-    if (status === 'ongoing') return '#DE2910';
-    if (status === 'delayed') return '#000000';
-    return '#999999';
-  }
+  // Load and display projects
+  const projects = {{ geojson|safe }};
+  let validProjects = 0;
   
-  // Initialize charts when analytics tab is shown
-  document.getElementById('v-pills-analytics-tab').addEventListener('shown.bs.tab', function() {
-    initCharts();
-  });
-  
-  // Function to initialize charts
-  function initCharts() {
-    // Check if charts already exist to prevent reinitialization
-    if (window.timelineChart || window.budgetPieChart) {
-      window.timelineChart.destroy();
-      window.budgetPieChart.destroy();
-    }
-    
-    // Timeline chart
-    var timelineCtx = document.getElementById('timeline-chart');
-    if (timelineCtx) {
-      // Sample data - replace with your actual data
-      var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-      var counts = [12, 19, 8, 15, 22, 18, 25, 12, 16, 21, 14, 17];
+  projects.features.forEach(feature => {
+    if (feature.geometry && feature.geometry.coordinates) {
+      const coords = feature.geometry.coordinates;
+      // Ensure coordinates are in correct order [lng, lat]
+      const latlng = [coords[1], coords[0]];
       
-      window.timelineChart = new Chart(timelineCtx, {
-        type: 'line',
-        data: {
-          labels: months,
-          datasets: [{
-            label: 'Projects Started',
-            data: counts,
-            borderColor: '#006600',
-            backgroundColor: 'rgba(0, 102, 0, 0.1)',
-            tension: 0.3,
-            fill: true,
-            borderWidth: 2
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              display: false
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                precision: 0
-              }
+      const marker = createProjectMarker(feature, latlng);
+      projectMarkers.addLayer(marker);
+      validProjects++;
+    }
+  });
+  
+  // Add projects to map
+  projectMarkers.addTo(map);
+  
+  // Fit map to show all markers if there are valid projects
+  if (validProjects > 0) {
+    map.fitBounds(projectMarkers.getBounds(), { padding: [50, 50] });
+  }
+  
+  // Load administrative boundaries with enhanced styling
+  async function loadBoundaryLayers() {
+    try {
+      // Load counties with project counts
+      const countiesResponse = await fetch("{% url 'counties_geojson' %}");
+      const countiesData = await countiesResponse.json();
+      
+      if (countiesData && countiesData.features) {
+        const countyStyle = (feature) => {
+          const projectCount = feature.properties.project_count || 0;
+          return {
+            fillColor: getDensityColor(projectCount),
+            weight: 2,
+            opacity: 1,
+            color: 'white',
+            dashArray: '3',
+            fillOpacity: 0.6
+          };
+        };
+        
+        boundaryLayers.counties = L.geoJSON(countiesData, {
+          style: countyStyle,
+          onEachFeature: (feature, layer) => {
+            const props = feature.properties;
+            layer.bindPopup(`
+              <div class="boundary-popup">
+                <h6>${props.county}</h6>
+                <p><strong>Projects:</strong> ${props.project_count || 0}</p>
+                <p><strong>Population (2009):</strong> ${props.pop_2009 ? props.pop_2009.toLocaleString() : 'N/A'}</p>
+              </div>
+            `);
+          }
+        });
+      }
+      
+      // Initially show counties
+      boundaryLayers.counties.addTo(map);
+      
+    } catch (error) {
+      console.error('Error loading boundary layers:', error);
+    }
+  }
+  
+  // Helper function for density-based coloring
+  function getDensityColor(projectCount) {
+    if (projectCount === 0) return '#f8f9fa';
+    if (projectCount <= 5) return '#c6e48b';
+    if (projectCount <= 20) return '#7bc96f';
+    return '#196127';
+  }
+  
+  // Map control functions
+  document.getElementById('toggle-projects').addEventListener('click', function() {
+    const isActive = this.classList.contains('active');
+    if (!isActive) {
+      this.classList.add('active');
+      document.getElementById('toggle-boundaries').classList.remove('active');
+      map.addLayer(projectMarkers);
+      map.removeLayer(boundaryLayers.counties);
+      document.querySelector('.project-legend').style.display = 'block';
+      document.querySelector('.boundary-legend').style.display = 'none';
+    }
+  });
+  
+  document.getElementById('toggle-boundaries').addEventListener('click', function() {
+    const isActive = this.classList.contains('active');
+    if (!isActive) {
+      this.classList.add('active');
+      document.getElementById('toggle-projects').classList.remove('active');
+      map.removeLayer(projectMarkers);
+      map.addLayer(boundaryLayers.counties);
+      document.querySelector('.project-legend').style.display = 'none';
+      document.querySelector('.boundary-legend').style.display = 'block';
+    }
+  });
+  
+  // Map style switcher
+  document.getElementById('map-style').addEventListener('change', function(e) {
+    const style = e.target.value;
+    Object.values(baseLayers).forEach(layer => map.removeLayer(layer));
+    baseLayers[style.charAt(0).toUpperCase() + style.slice(1)].addTo(map);
+  });
+  
+  // Initialize boundary layers
+  loadBoundaryLayers();
+  
+  // Store map instance for global access
+  window.kenyaMap = map;
+}
+
+// Initialize charts
+function initCharts() {
+  // Status Distribution Chart
+  const statusCtx = document.getElementById('statusChart');
+  if (statusCtx) {
+    const statusData = {
+      labels: Object.keys({{ status_counts|safe }}).map(status => 
+        '{{ status_labels|get_item:"' + status + '" }}'
+      ),
+      datasets: [{
+        data: Object.values({{ status_counts|safe }}),
+        backgroundColor: ['#28a745', '#ffc107', '#dc3545', '#6c757d'],
+        borderWidth: 2,
+        borderColor: '#ffffff'
+      }]
+    };
+    
+    new Chart(statusCtx, {
+      type: 'doughnut',
+      data: statusData,
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              padding: 20,
+              usePointStyle: true
             }
           }
         }
-      });
-    }
+      }
+    });
+  }
+  
+  // Sector Distribution Chart
+  const sectorCtx = document.getElementById('sectorChart');
+  if (sectorCtx) {
+    const sectorLabels = {{ sector_data|slice:":8"|safe }}.map(s => s.sector);
+    const sectorCounts = {{ sector_data|slice:":8"|safe }}.map(s => s.count);
     
-    // Budget by status pie chart
-    var budgetPieCtx = document.getElementById('budget-pie-chart');
-    if (budgetPieCtx) {
-      // Sample data - replace with your actual data
-      var statusLabels = ['Completed', 'Ongoing', 'Delayed', 'Planning'];
-      var budgetData = [12000000, 8500000, 3500000, 2000000];
-      
-      var backgroundColors = ['#006600', '#DE2910', '#000000', '#6c757d'];
-      
-      window.budgetPieChart = new Chart(budgetPieCtx, {
-        type: 'doughnut',
-        data: {
-          labels: statusLabels,
-          datasets: [{
-            data: budgetData,
-            backgroundColor: backgroundColors,
-            borderWidth: 1
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'bottom'
+    new Chart(sectorCtx, {
+      type: 'bar',
+      data: {
+        labels: sectorLabels,
+        datasets: [{
+          label: 'Number of Projects',
+          data: sectorCounts,
+          backgroundColor: '#006600',
+          borderColor: '#004d00',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1
             }
           }
         }
-      });
-    }
+      }
+    });
   }
   
-  // Initialize charts if we're on the analytics tab on page load
-  if (window.location.hash === '#analytics') {
-    setTimeout(initCharts, 500);
+  // Budget by Status Chart
+  const budgetCtx = document.getElementById('budgetChart');
+  if (budgetCtx) {
+    new Chart(budgetCtx, {
+      type: 'pie',
+      data: {
+        labels: {{ budget_by_status|safe }}.map(item => '{{ status_labels|get_item:"' + item.status + '" }}'),
+        datasets: [{
+          data: {{ budget_by_status|safe }}.map(item => item.total_budget || 0),
+          backgroundColor: ['#28a745', '#ffc107', '#dc3545', '#6c757d']
+        }]
+      }
+    });
   }
+  
+  // Timeline Chart
+  const timelineCtx = document.getElementById('timelineChart');
+  if (timelineCtx) {
+    const timelineData = {};
+    {% for item in monthly_timeline %}
+      timelineData["{{ item.month|date:'M Y' }}"] = {{ item.count }};
+    {% endfor %}
+    
+    new Chart(timelineCtx, {
+      type: 'line',
+      data: {
+        labels: Object.keys(timelineData),
+        datasets: [{
+          label: 'Projects Started',
+          data: Object.values(timelineData),
+          borderColor: '#006600',
+          backgroundColor: 'rgba(0, 102, 0, 0.1)',
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+  }
+}
+
+// Filter functionality
+function initFilters() {
+  // County selection updates subcounty options
+  const countySelect = document.getElementById('county-select');
+  const subcountySelect = document.getElementById('subcounty-select');
+  const wardSelect = document.getElementById('ward-select');
+  
+  countySelect.addEventListener('change', function() {
+    const selectedCounties = Array.from(this.selectedOptions).map(opt => opt.value);
+    subcountySelect.disabled = selectedCounties.length === 0;
+    
+    if (selectedCounties.length === 0) {
+      wardSelect.disabled = true;
+      wardSelect.innerHTML = '';
+    }
+    
+    // Update subcounty options based on selected counties
+    updateSubcountyOptions(selectedCounties);
+  });
+  
+  subcountySelect.addEventListener('change', function() {
+    const selectedSubcounties = Array.from(this.selectedOptions).map(opt => opt.value);
+    wardSelect.disabled = selectedSubcounties.length === 0;
+    
+    if (selectedSubcounties.length > 0) {
+      updateWardOptions(selectedSubcounties);
+    }
+  });
+  
+  // Sector search functionality
+  document.getElementById('sector-search').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    document.querySelectorAll('.sector-item').forEach(item => {
+      const label = item.querySelector('label').textContent.toLowerCase();
+      item.style.display = label.includes(searchTerm) ? 'block' : 'none';
+    });
+  });
+}
+
+function updateSubcountyOptions(selectedCounties) {
+  const countySubcounties = {{ county_subcounties_json|safe }};
+  const subcountySelect = document.getElementById('subcounty-select');
+  
+  // Clear existing options
+  subcountySelect.innerHTML = '';
+  
+  // Get unique subcounties from selected counties
+  const allSubcounties = new Set();
+  selectedCounties.forEach(county => {
+    if (countySubcounties[county]) {
+      countySubcounties[county].forEach(sc => allSubcounties.add(sc));
+    }
+  });
+  
+  // Add options
+  Array.from(allSubcounties).sort().forEach(subcounty => {
+    const option = document.createElement('option');
+    option.value = subcounty;
+    option.textContent = subcounty;
+    subcountySelect.appendChild(option);
+  });
+}
+
+function updateWardOptions(selectedSubcounties) {
+  const subcountyWards = {{ subcounty_wards_json|safe }};
+  const wardSelect = document.getElementById('ward-select');
+  
+  // Clear existing options
+  wardSelect.innerHTML = '';
+  
+  // Get unique wards from selected subcounties
+  const allWards = new Set();
+  selectedSubcounties.forEach(subcounty => {
+    if (subcountyWards[subcounty]) {
+      subcountyWards[subcounty].forEach(ward => allWards.add(ward));
+    }
+  });
+  
+  // Add options
+  Array.from(allWards).sort().forEach(ward => {
+    const option = document.createElement('option');
+    option.value = ward;
+    option.textContent = ward;
+    wardSelect.appendChild(option);
+  });
+}
+
+function clearAllFilters() {
+  document.getElementById('filter-form').reset();
+  document.getElementById('county-select').selectedIndex = -1;
+  document.getElementById('subcounty-select').selectedIndex = -1;
+  document.getElementById('ward-select').selectedIndex = -1;
+  document.getElementById('subcounty-select').disabled = true;
+  document.getElementById('ward-select').disabled = true;
+}
+
+function exportData() {
+  // Simple export functionality - could be enhanced with proper file generation
+  const filters = {
+    counties: Array.from(document.getElementById('county-select').selectedOptions).map(o => o.value),
+    sectors: Array.from(document.querySelectorAll('input[name="sector"]:checked')).map(c => c.value),
+    statuses: Array.from(document.querySelectorAll('input[name="status"]:checked')).map(c => c.value)
+  };
+  
+  alert(`Exporting data with filters:\nCounties: ${filters.counties.join(', ') || 'All'}\nSectors: ${filters.sectors.join(', ') || 'All'}\nStatuses: ${filters.statuses.join(', ') || 'All'}`);
+}
+
+// Initialize everything when page loads
+document.addEventListener('DOMContentLoaded', function() {
+  initMap();
+  initCharts();
+  initFilters();
+  
+  // Pre-select any existing filters from URL parameters
+  const selectedCounties = {{ selected_counties_json|safe }};
+  if (selectedCounties.length > 0) {
+    document.getElementById('county-select').value = selectedCounties;
+    updateSubcountyOptions(selectedCounties);
+  }
+  
+  const selectedSubcounties = {{ selected_subcounties_json|safe }};
+  if (selectedSubcounties.length > 0) {
+    document.getElementById('subcounty-select').value = selectedSubcounties;
+    updateWardOptions(selectedSubcounties);
+  }
+  
+  const selectedWards = {{ selected_wards_json|safe }};
+  if (selectedWards.length > 0) {
+    document.getElementById('ward-select').value = selectedWards;
+  }
+});
 </script>
 
 {% endblock %}

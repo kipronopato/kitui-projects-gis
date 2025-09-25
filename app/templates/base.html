@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kenya Geospatial Project Monitoring System</title>
+    <title>Kitui County Geospatial Project Monitoring System</title>
 
     <!-- Bootstrap CSS -->
     <link
@@ -24,40 +24,50 @@
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
 
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/custom.css' %}" />
     {% block extra_css %}{% endblock %}
 
     <style>
       :root {
-        --kenya-black: #000000;
-        --kenya-red: #de2910;
-        --kenya-green: #006600;
-        --kenya-white: #ffffff;
-        --kenya-light: #f2f7f2;
-        --kenya-gold: #ffbf00;
-        --kenya-dark-green: #004d00;
+        --kitui-primary: #1a5276;      /* Deep blue */
+        --kitui-secondary: #d4af37;    /* Gold */
+        --kitui-accent: #27ae60;       /* Green */
+        --kitui-light: #f8f9fa;        /* Light background */
+        --kitui-dark: #2c3e50;         /* Dark text */
+        --kitui-muted: #7f8c8d;        /* Muted text */
+        --kitui-border: #e0e0e0;       /* Border color */
+        --kitui-shadow: rgba(26, 82, 118, 0.15); /* Shadow color */
       }
 
-      /* Global */
+      /* Global Styles */
       body {
-        font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        background: var(--kenya-light);
-        color: #333;
-        padding-top: 70px;
-        font-size: 0.9rem;
+        font-family: 'Open Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+        color: var(--kitui-dark);
+        padding-top: 80px;
+        font-size: 0.95rem;
+        line-height: 1.6;
       }
 
-      .kenya-flag-top {
-        height: 4px;
+      h1, h2, h3, h4, h5, h6, .navbar-brand {
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 600;
+      }
+
+      /* County Header Strip */
+      .county-header {
+        height: 6px;
         background: linear-gradient(
-          to right,
-          var(--kenya-black) 25%,
-          var(--kenya-red) 25%,
-          var(--kenya-red) 50%,
-          var(--kenya-white) 50%,
-          var(--kenya-white) 75%,
-          var(--kenya-green) 75%
+          90deg,
+          var(--kitui-primary) 0%,
+          var(--kitui-secondary) 50%,
+          var(--kitui-accent) 100%
         );
         position: fixed;
         top: 0;
@@ -65,165 +75,340 @@
         z-index: 1031;
       }
 
+      /* Enhanced Navbar */
       .navbar {
-        background: var(--kenya-green) !important;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        padding: 0.4rem 0;
-        min-height: 50px;
+        background: linear-gradient(135deg, var(--kitui-primary) 0%, #2c3e50 100%) !important;
+        box-shadow: 0 4px 12px var(--kitui-shadow);
+        padding: 0.5rem 0;
+        min-height: 60px;
+        transition: all 0.3s ease;
+      }
+
+      .navbar.scrolled {
+        padding: 0.3rem 0;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
       }
 
       .navbar-brand {
         font-weight: 700;
-        font-size: 1.1rem;
+        font-size: 1.3rem;
         display: flex;
         align-items: center;
         color: white !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
       }
 
-      .logo-img-wrapper {
+      .logo-container {
         display: flex;
         align-items: center;
-        height: 36px;
-        width: 36px;
-        background: #fff;
-        border-radius: 50%;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        height: 44px;
+        width: 44px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
         overflow: hidden;
-        margin-right: 8px;
+        margin-right: 12px;
+        padding: 4px;
+        transition: all 0.3s ease;
+      }
+
+      .navbar-brand:hover .logo-container {
+        transform: scale(1.05);
       }
 
       .navbar-brand img {
-        height: 32px;
+        height: 36px;
         width: auto;
         display: block;
         margin: auto;
       }
 
       .nav-link {
-        color: var(--kenya-white) !important;
+        color: rgba(255, 255, 255, 0.9) !important;
         font-weight: 500;
-        margin: 0 3px;
-        transition: all 0.2s;
-        border-radius: 3px;
-        padding: 0.4rem 0.6rem !important;
-        font-size: 0.85rem;
+        margin: 0 4px;
+        transition: all 0.3s ease;
+        border-radius: 6px;
+        padding: 0.5rem 0.8rem !important;
+        font-size: 0.9rem;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .nav-link::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+      }
+
+      .nav-link:hover::before {
+        left: 100%;
       }
 
       .nav-link:hover,
       .nav-link:focus {
-        color: var(--kenya-gold) !important;
+        color: var(--kitui-secondary) !important;
         background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
       }
 
       .nav-item.active .nav-link {
         background: rgba(255, 255, 255, 0.15);
-        color: var(--kenya-gold) !important;
+        color: var(--kitui-secondary) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       }
 
-      footer {
-        background: var(--kenya-dark-green);
+      .nav-link i {
+        margin-right: 6px;
+        font-size: 0.9rem;
+      }
+
+      /* Main Content Area */
+      main {
+        min-height: calc(100vh - 200px);
+        padding: 2rem 0;
+      }
+
+      .page-header {
+        background: linear-gradient(135deg, var(--kitui-primary) 0%, #2c3e50 100%);
         color: white;
-        padding: 1rem 0 0.8rem;
-        margin-top: 2rem;
-        font-size: 0.8rem;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 4px 12px var(--kitui-shadow);
+      }
+
+      .page-header h1 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      }
+
+      .page-header .breadcrumb {
+        background: transparent;
+        margin-bottom: 0;
+        padding: 0;
+      }
+
+      .page-header .breadcrumb-item a {
+        color: var(--kitui-secondary);
+      }
+
+      .page-header .breadcrumb-item.active {
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      /* Enhanced Footer */
+      footer {
+        background: linear-gradient(135deg, var(--kitui-dark) 0%, #1a252f 100%);
+        color: white;
+        padding: 2rem 0 1rem;
+        
+        font-size: 0.85rem;
+        
       }
 
       footer a {
-        color: var(--kenya-gold);
+        color: var(--kitui-secondary);
         text-decoration: none;
-        transition: all 0.2s;
-        font-size: 0.8rem;
+        transition: all 0.3s ease;
+        font-size: 0.85rem;
       }
 
       footer a:hover {
         color: white;
         text-decoration: underline;
+        transform: translateY(-1px);
+      }
+
+      .footer-logo {
+        max-height: 60px;
+        margin-bottom: 1rem;
+        filter: brightness(0) invert(1);
+      }
+
+      .footer-section {
+        margin-bottom: 1.5rem;
+      }
+
+      .footer-section h5 {
+        color: var(--kitui-secondary);
+        font-weight: 600;
+        margin-bottom: 1rem;
+        font-size: 1rem;
+      }
+
+      .footer-section ul {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      .footer-section ul li {
+        margin-bottom: 0.5rem;
+      }
+
+      .social-links a {
+        display: inline-block;
+        margin-right: 10px;
+        font-size: 1.2rem;
+      }
+
+      .copyright {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 1rem;
+        margin-top: 1rem;
+        text-align: center;
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.7);
       }
 
       /* Custom utility classes */
-      .bg-kenya-green {
-        background-color: var(--kenya-green) !important;
+      .bg-kitui-primary {
+        background-color: var(--kitui-primary) !important;
       }
-      .bg-kenya-red {
-        background-color: var(--kenya-red) !important;
+      .bg-kitui-secondary {
+        background-color: var(--kitui-secondary) !important;
       }
-      .bg-kenya-light {
-        background-color: var(--kenya-light) !important;
+      .bg-kitui-accent {
+        background-color: var(--kitui-accent) !important;
       }
-
-      .text-kenya-green {
-        color: var(--kenya-green) !important;
-      }
-      .text-kenya-red {
-        color: var(--kenya-red) !important;
-      }
-      .text-kenya-gold {
-        color: var(--kenya-gold) !important;
+      .bg-kitui-light {
+        background-color: var(--kitui-light) !important;
       }
 
-      .border-kenya-green {
-        border-color: var(--kenya-green) !important;
+      .text-kitui-primary {
+        color: var(--kitui-primary) !important;
       }
-      .border-kenya-red {
-        border-color: var(--kenya-red) !important;
+      .text-kitui-secondary {
+        color: var(--kitui-secondary) !important;
+      }
+      .text-kitui-accent {
+        color: var(--kitui-accent) !important;
       }
 
-      .btn-kenya-green {
-        background-color: var(--kenya-green);
+      .border-kitui-primary {
+        border-color: var(--kitui-primary) !important;
+      }
+      .border-kitui-secondary {
+        border-color: var(--kitui-secondary) !important;
+      }
+
+      .btn-kitui-primary {
+        background: linear-gradient(135deg, var(--kitui-primary) 0%, #2c3e50 100%);
         color: white;
         border: none;
-        font-size: 0.8rem;
-        padding: 0.3rem 0.6rem;
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
 
-      .btn-kenya-green:hover {
-        background-color: var(--kenya-dark-green);
+      .btn-kitui-primary:hover {
+        background: linear-gradient(135deg, #2c3e50 0%, var(--kitui-primary) 100%);
         color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
       }
 
-      .btn-outline-kenya-green {
-        border-color: var(--kenya-green);
-        color: var(--kenya-green);
-        font-size: 0.8rem;
-        padding: 0.3rem 0.6rem;
+      .btn-outline-kitui-primary {
+        border: 2px solid var(--kitui-primary);
+        color: var(--kitui-primary);
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        background: transparent;
       }
 
-      .btn-outline-kenya-green:hover {
-        background-color: var(--kenya-green);
+      .btn-outline-kitui-primary:hover {
+        background-color: var(--kitui-primary);
         color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Card enhancements */
+      .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px var(--kitui-shadow);
+        transition: all 0.3s ease;
+        margin-bottom: 1.5rem;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px var(--kitui-shadow);
+      }
+
+      .card-header {
+        background: linear-gradient(135deg, var(--kitui-primary) 0%, #2c3e50 100%);
+        color: white;
+        border-radius: 10px 10px 0 0 !important;
+        padding: 1rem 1.25rem;
+        font-weight: 600;
+      }
+
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        body {
+          padding-top: 70px;
+          font-size: 0.9rem;
+        }
+        
+        .navbar-brand {
+          font-size: 1.1rem;
+        }
+        
+        .logo-container {
+          height: 40px;
+          width: 40px;
+        }
+        
+        .navbar-brand img {
+          height: 32px;
+        }
+        
+        .page-header {
+          padding: 1.5rem 0;
+        }
+      }
+
+      /* Animation for page transitions */
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      main {
+        animation: fadeIn 0.5s ease;
       }
     </style>
   </head>
   <body>
-    <!-- Kenyan flag strip -->
-    <div class="kenya-flag-top"></div>
+    <!-- County Header Strip -->
+    <div class="county-header"></div>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
       <div class="container">
-        <a class="navbar-brand" href="{% url 'home' %}" style="gap: 8px">
-          <span
-            class="logo-img-wrapper"
-            style="
-              display: flex;
-              align-items: center;
-              height: 36px;
-              width: 36px;
-              background: #fff;
-              border-radius: 50%;
-              box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-              overflow: hidden;
-              margin-right: 8px;
-            "
-          >
+        <a class="navbar-brand" href="{% url 'home' %}">
+          <div class="logo-container">
             <img
-              src="{% static 'img/kenya-logo.png' %}"
-              alt="Kenya Logo"
-              style="height: 32px; width: auto; display: block; margin: auto"
-              onerror="this.style.display='none'; this.insertAdjacentHTML('afterend', '<svg width=32 height=32 viewBox=\'0 0 32 32\'><rect width=32 height=32 fill=\'#006600\'/><rect y=\'10\' width=32 height=12 fill=\'#fff\'/><rect y=\'12\' width=32 height=8 fill=\'#DE2910\'/></svg>');"
+              src="{% static 'img/kitui-logo.png' %}"
+              alt="Kitui County Logo"
+              onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-map-marked-alt\' style=\'color: var(--kitui-primary); font-size: 24px;\'></i>';"
             />
-          </span>
-          <span>Geospatial Monitoring</span>
+          </div>
+          <span>Kitui Geospatial Monitoring</span>
         </a>
         <button
           class="navbar-toggler"
@@ -237,32 +422,32 @@
           <ul class="navbar-nav ms-auto">
             <li class="nav-item">
               <a class="nav-link" href="{% url 'home' %}"
-                ><i class="fas fa-home me-1"></i> Home</a
+                ><i class="fas fa-home"></i> Home</a
               >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'project_list' %}"
-                ><i class="fas fa-list me-1"></i> Projects</a
+                ><i class="fas fa-list"></i> Projects</a
               >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'dashboard' %}"
-                ><i class="fas fa-tachometer-alt me-1"></i> Dashboard</a
+                ><i class="fas fa-tachometer-alt"></i> Dashboard</a
               >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'project_map' %}"
-                ><i class="fas fa-map-marked-alt me-1"></i> Map</a
+                ><i class="fas fa-map-marked-alt"></i> Map</a
               >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'about' %}"
-                ><i class="fas fa-info-circle me-1"></i> About</a
+                ><i class="fas fa-info-circle"></i> About</a
               >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'contact' %}"
-                ><i class="fas fa-envelope me-1"></i> Contact</a
+                ><i class="fas fa-envelope"></i> Contact</a
               >
             </li>
           </ul>
@@ -270,26 +455,64 @@
       </div>
     </nav>
 
-    <!-- Main -->
-    <main
-      class="container-fluid px-2 px-md-3"
-      style="min-height: calc(100vh - 170px)"
-    >
+    
+
+    <!-- Main Content -->
+    <main class="container-fluid px-3 px-md-4">
       {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
+    <!-- Enhanced Footer -->
     <footer>
       <div class="container">
-        <div class="row align-items-center">
-          <div class="col-md-6 text-center text-md-start">
-            <span class="fw-bold"
-              >Kenya Geospatial Project Monitoring System</span
-            ><br />
-            <span>Transparency in development projects</span>
+        <div class="row">
+          <div class="col-lg-4 col-md-6 footer-section">
+            <img src="{% static 'img/kitui-logo-white.png' %}" alt="Kitui County Logo" class="footer-logo" onerror="this.style.display='none'">
+            <h5>Kitui County Geospatial Monitoring System</h5>
+            <p>Transparency and accountability in development projects across Kitui County.</p>
+            <div class="social-links">
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-facebook"></i></a>
+              <a href="#"><i class="fab fa-linkedin"></i></a>
+              <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
           </div>
-          <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
-            <span>&copy; 2025 Government of Kenya. All rights reserved.</span>
+          <div class="col-lg-2 col-md-6 footer-section">
+            <h5>Quick Links</h5>
+            <ul>
+              <li><a href="{% url 'home' %}">Home</a></li>
+              <li><a href="{% url 'project_list' %}">Projects</a></li>
+              <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+              <li><a href="{% url 'project_map' %}">Interactive Map</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-3 col-md-6 footer-section">
+            <h5>Resources</h5>
+            <ul>
+              <li><a href="{% url 'about' %}">About Us</a></li>
+              <li><a href="{% url 'contact' %}">Contact</a></li>
+              <li><a href="#">County Website</a></li>
+              <li><a href="#">Data Privacy</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-3 col-md-6 footer-section">
+            <h5>Contact Info</h5>
+            <ul>
+              <li><i class="fas fa-map-marker-alt me-2"></i> Kitui County Headquarters</li>
+              <li><i class="fas fa-phone me-2"></i> +254 20 123 4567</li>
+              <li><i class="fas fa-envelope me-2"></i> info@kitui.go.ke</li>
+              <li><i class="fas fa-clock me-2"></i> Mon - Fri, 8:00 AM - 5:00 PM</li>
+            </ul>
+          </div>
+        </div>
+        <div class="copyright">
+          <div class="row align-items-center">
+            <div class="col-md-6 text-center text-md-start">
+              <span>&copy; 2025 County Government of Kitui. All rights reserved.</span>
+            </div>
+            <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
+              <span>Transparency in Development</span>
+            </div>
           </div>
         </div>
       </div>
@@ -298,6 +521,31 @@
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script>
+      // Navbar scroll effect
+      window.addEventListener('scroll', function() {
+        if (window.scrollY > 10) {
+          document.querySelector('.navbar').classList.add('scrolled');
+        } else {
+          document.querySelector('.navbar').classList.remove('scrolled');
+        }
+      });
+
+      // Add active class to current page in navigation
+      document.addEventListener('DOMContentLoaded', function() {
+        const currentLocation = location.pathname;
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        navLinks.forEach(link => {
+          if(link.getAttribute('href') === currentLocation) {
+            link.parentElement.classList.add('active');
+          }
+        });
+      });
+    </script>
+    
     <script src="{% static 'js/custom.js' %}"></script>
     {% block extra_js %}{% endblock %}
   </body>
