@@ -1,5 +1,6 @@
 import csv
 import datetime
+import time
 from decimal import Decimal, InvalidOperation
 from django.core.management.base import BaseCommand, CommandError
 from django.contrib.gis.geos import Point
@@ -46,11 +47,20 @@ class Command(BaseCommand):
                 return None
 
         try:
+            start_time = time.time()
+
             with open(csv_file_path, newline="", encoding="utf-8") as csvfile:
                 reader = csv.DictReader(csvfile)
+
+                # ✅ validate required columns
+                required_fields = ["Project ID", "Project Name", "County"]
+                for field in required_fields:
+                    if field not in reader.fieldnames:
+                        raise CommandError(f"Missing required column: {field}")
+
                 count_new, count_updated = 0, 0
 
-                for row in reader:
+                for i, row in enumerate(reader, start=1):
                     # Handle location (lat/lon)
                     location = None
                     lat = row.get("Latitude") or row.get("latitude")
@@ -61,17 +71,19 @@ class Command(BaseCommand):
                         except Exception:
                             location = None
 
-                    # Safely parse fields with fallbacks for required NOT NULL fields
+                    # Safely parse fields with fallbacks
                     project_id = row.get("Project ID")
-
                     start_date = parse_date(row.get("Start Date")) or datetime.date.today()
                     end_date = parse_date(row.get("End Date")) or start_date
                     budget = parse_decimal(row.get("Budget (KES)")) or Decimal("0.00")
 
+                    status = row.get("Status")
+                    status = status.lower().strip() if status else "planned"
+
                     defaults = {
                         "name": row.get("Project Name") or "Untitled Project",
                         "sector": row.get("Sector") or "",
-                        "status": row.get("Status").lower() if row.get("Status") else "planned",
+                        "status": status,
                         "project_manager": row.get("Project Manager") or "",
                         "person_responsible": row.get("Person Responsible") or "",
                         "location": location,
@@ -88,17 +100,21 @@ class Command(BaseCommand):
                     obj, created = Project.objects.update_or_create(
                         project_id=project_id, defaults=defaults
                     )
-
                     if created:
                         count_new += 1
                     else:
                         count_updated += 1
 
-                self.stdout.write(
-                    self.style.SUCCESS(
-                        f"Upload complete: {count_new} new projects, {count_updated} updated."
-                    )
+                    # ✅ log progress every 100 rows
+                    if i % 100 == 0:
+                        self.stdout.write(f"Processed {i} rows...")
+
+            elapsed = round(time.time() - start_time, 2)
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Upload complete: {count_new} new, {count_updated} updated in {elapsed} seconds."
                 )
+            )
 
         except FileNotFoundError:
             raise CommandError(f'File "{csv_file_path}" does not exist')
