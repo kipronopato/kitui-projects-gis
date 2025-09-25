@@ -25,8 +25,9 @@ from django.db.models import Avg, Sum, Count, Min, Max, StdDev
 from datetime import timedelta
 from django.contrib.gis.db.models.functions import Transform
 from .models import Project, ProjectUpdate, CitizenReport, KenyaCounty, KenyaSubCounty, Kenyawards
+from django.contrib.gis.db.models.functions import AsGeoJSON
 
-# ---------------- Helpers ----------------
+
 def _clean_get(request, name):
     """Return single GET param; treat 'None' or empty as None."""
     v = request.GET.get(name)
@@ -765,7 +766,6 @@ def spatial_statistics(request):
         
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
-
 
 
     """Comprehensive project analytics"""

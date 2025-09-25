@@ -14,27 +14,27 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
+# Load environment variables
 load_dotenv()
 
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Base directory
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-j^xyizibfq96zb5!cv$$i$%m$ps6_paw_cxy%9j8xmar6jnou#'
+# Security
+SECRET_KEY = os.getenv("SECRET_KEY", "insecure-secret-key")
 DB_LIVE = os.getenv("DB_LIVE", "False").lower() in ["true", "1", "yes"]
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False").lower() in ["true", "1", "yes"]
 
 if DB_LIVE:
     ALLOWED_HOSTS = [
-        "safaricom-claims-production-be5c.up.railway.app",
+        "safaricom-claims-production-be5c.up.railway.app",  # if deploying to Railway
+        "safaricom-claims-production.onrender.com",         # Render hostname
         "localhost",
-        "127.0.0.1"
+        "127.0.0.1",
     ]
 else:
     ALLOWED_HOSTS = ["*"]
@@ -99,32 +99,28 @@ WSGI_APPLICATION = 'project.wsgi.application'
     }
 }'''
 
-if not DB_LIVE:
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.contrib.gis.db.backends.postgis",  # Use PostGIS backend
-            "NAME": "kenya",       # Database name
-            "USER": "straton",         # Database user
-            "PASSWORD": "Straton12.",   # Database password
-            "HOST": "localhost",       # Host (assuming PostgreSQL runs locally)
-            "PORT": "5432",            # Default PostgreSQL port
-        }
-    }
-    
-else:
-    # Check for required DB env vars
+# Database
+if DB_LIVE:
     required_vars = ["DB_NAME", "DB_USER", "DB_PASSWORD", "DB_HOST", "DB_PORT"]
-    missing = [var for var in required_vars if not os.environ.get(var)]
+    missing = [var for var in required_vars if not os.getenv(var)]
     if missing:
         raise Exception(f"Missing required database environment variables: {', '.join(missing)}")
+
     DATABASES = {
         "default": {
-            "ENGINE": "django.contrib.gis.db.backends.postgis",  # Use PostGIS backend for Railway Docker PostGIS
-            "NAME": os.environ.get("DB_NAME"),
-            "USER": os.environ.get("DB_USER"),
-            "PASSWORD": os.environ.get("DB_PASSWORD"),
-            "HOST": os.environ.get("DB_HOST"),
-            "PORT": os.environ.get("DB_PORT"),
+            "ENGINE": "django.contrib.gis.db.backends.postgis",
+            "NAME": os.getenv("DB_NAME"),
+            "USER": os.getenv("DB_USER"),
+            "PASSWORD": os.getenv("DB_PASSWORD"),
+            "HOST": os.getenv("DB_HOST"),
+            "PORT": os.getenv("DB_PORT"),
+        }
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
         }
     }
 
