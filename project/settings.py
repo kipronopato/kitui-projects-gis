@@ -31,12 +31,15 @@ DEBUG = os.getenv("DEBUG", "False").lower() in ["true", "1", "yes"]
 
 if DB_LIVE:
     ALLOWED_HOSTS = [
-        "kitui-projects-gis-2.onrender.com",  # ✅ your actual Render URL
+        "kitui-project.onrender.com",
+        "www.kitui-project.onrender.com",
+        ".onrender.com",   # allows any subdomain of onrender.com
         "localhost",
         "127.0.0.1",
     ]
 else:
     ALLOWED_HOSTS = ["*"]
+
 
 
 
