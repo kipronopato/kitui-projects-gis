@@ -26,9 +26,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 # Security
 SECRET_KEY = os.getenv("SECRET_KEY", "insecure-secret-key")
-DB_LIVE = os.getenv("DB_LIVE", "False").lower() in ["true", "1", "yes"]
 DEBUG = os.getenv("DEBUG", "False").lower() in ["true", "1", "yes"]
+DB_LIVE = os.getenv("DB_LIVE", "False").lower() in ["true", "1", "yes"]
 
+# Allowed hosts
 if DB_LIVE:
     ALLOWED_HOSTS = [
         "kitui-project.onrender.com",
@@ -39,7 +40,6 @@ if DB_LIVE:
     ]
 else:
     ALLOWED_HOSTS = ["*"]
-
 
 
 
@@ -102,7 +102,7 @@ WSGI_APPLICATION = 'project.wsgi.application'
     }
 }'''
 
-# Database
+# Database configuration
 if DB_LIVE:
     required_vars = ["DB_NAME", "DB_USER", "DB_PASSWORD", "DB_HOST", "DB_PORT"]
     missing = [var for var in required_vars if not os.getenv(var)]
@@ -126,7 +126,7 @@ else:
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
-
+    
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
@@ -161,7 +161,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -187,3 +186,6 @@ LEAFLET_CONFIG = {
     'SCALE': 'metric',
     'ATTRIBUTION_PREFIX': 'Geospatial Project Monitoring System - Kenya',
 }
+
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
