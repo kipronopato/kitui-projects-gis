@@ -24,6 +24,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY", "insecure-secret-key")
 DEBUG = os.getenv("DEBUG", "False").lower() in ["true", "1", "yes"]
 
+# --- ADDED FOR PRODUCTION SECURITY (HTTPS ENFORCEMENT) ---
+# Allows Django to recognize incoming HTTPS requests forwarded by the Render proxy
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+# Redirects all incoming HTTP requests to HTTPS when DEBUG is False
+SECURE_SSL_REDIRECT = not DEBUG
+# Ensures session and CSRF cookies are only sent over HTTPS
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+# --- END SECURITY ADDITIONS ---
+
 # Toggle between SQLite+SpatiaLite (local) and PostGIS (production)
 DB_LIVE = os.getenv("DB_LIVE", "False").lower() in ["true", "1", "yes"]
 
