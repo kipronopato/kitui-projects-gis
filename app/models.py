@@ -171,3 +171,50 @@ class KenyaSubCounty(models.Model):
 
     def __str__(self):
         return self.subcounty or f"SubCounty {self.id}"
+    
+
+# In your models.py, update the ProjectChatMessage model
+
+class ProjectChatMessage(models.Model):
+    project = models.ForeignKey(Project, on_delete=models.CASCADE, related_name="chat_messages")
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)  # Allow null for guests
+    guest_name = models.CharField(max_length=100, blank=True, null=True)  # Store guest names separately
+    message = models.TextField(blank=True)
+    image = models.ImageField(upload_to='chat_images/', blank=True, null=True)
+    file = models.FileField(upload_to='chat_files/', blank=True, null=True)
+    message_type = models.CharField(
+        max_length=20,
+        choices=[
+            ('text', 'Text'),
+            ('image', 'Image'),
+            ('file', 'File'),
+            ('system', 'System Message')
+        ],
+        default='text'
+    )
+    is_read = models.BooleanField(default=False)
+    read_by = models.ManyToManyField(User, related_name='read_messages', blank=True)
+    reply_to = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='replies')
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['timestamp']
+
+    def __str__(self):
+        username = self.user.username if self.user else self.guest_name or 'Guest'
+        return f"{username} - {self.project.name}"
+
+    def mark_as_read(self, user):
+        if user not in self.read_by.all():
+            self.read_by.add(user)
+            self.save()
+
+    @property
+    def display_name(self):
+        """Get the display name for the message sender"""
+        return self.user.username if self.user else self.guest_name or 'Anonymous User'
+
+    @property
+    def is_guest(self):
+        """Check if the message is from a guest"""
+        return self.user is None

@@ -1,83 +1,122 @@
-{% extends 'base.html' %} 
+{% extends 'base.html' %}
 {% load custom_filters %}
 {% load humanize %}
 {% block content %}
 
+<!-- ==================== ENHANCED NOTIFICATION SYSTEM ==================== -->
+<!-- Notification Marquee -->
+<div class="notification-marquee-container">
+    <div id="notification-marquee">
+        <!-- Notifications will be populated by JavaScript -->
+    </div>
+</div>
+
+<!-- Alert Notifications -->
+<div class="alert-notifications-container">
+    <!-- Real-time alerts will appear here -->
+</div>
+
+<!-- System Status Bar -->
+<div class="system-status-bar">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <span class="text-muted">
+                    <i class="fas fa-sync-alt me-1"></i>
+                    Last updated: <span id="last-updated-time">{{ current_time|date:"H:i:s" }}</span>
+                </span>
+            </div>
+            <div class="col-md-6 text-end">
+                <span class="badge bg-success me-2">
+                    <i class="fas fa-circle me-1"></i>System Online
+                </span>
+                <span class="badge bg-info me-2">
+                    <i class="fas fa-database me-1"></i>{{ total_projects|intcomma }} Projects
+                </span>
+                <span class="badge bg-warning">
+                    <i class="fas fa-bell me-1"></i>{{ high_risk_projects }} Alerts
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ==================== END NOTIFICATION SYSTEM ==================== -->
+
 <div class="kenya-dashboard">
   
-  <!-- Quick Stats Bar -->
-  <div class="quick-stats-bar" style="background:#f8f9fa; padding:5px 0; font-size:12px;">
+  <!-- Enhanced Quick Stats Bar -->
+  <div class="quick-stats-bar">
     <div class="container-fluid">
-      <div class="row g-2" style="margin:0;">
-        
-        <div class="col-xl-2 col-md-4 col-sm-6" style="padding:3px;">
-          <div style="display:flex; align-items:center; background:#fff; border:1px solid #e1e1e1; border-radius:6px; padding:5px 8px;">
-            <div style="width:24px; height:24px; border-radius:50%; background:#0d6efd; color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; margin-right:6px;">
+      <div class="row g-2 stats-grid">
+
+        <div class="col-xl-2 col-md-4 col-sm-6">
+          <div class="stat-card">
+            <div class="stat-icon">
               <i class="fas fa-project-diagram"></i>
             </div>
-            <div>
-              <h3 style="font-size:13px; margin:0; font-weight:600;">{{ total_projects|intcomma }}</h3>
-              <span style="font-size:11px; color:#666;">Total Projects</span>
+            <div class="stat-content">
+              <h3>{{ total_projects|intcomma }}</h3>
+              <span>Total Projects</span>
             </div>
           </div>
         </div>
 
-        <div class="col-xl-2 col-md-4 col-sm-6" style="padding:3px;">
-          <div style="display:flex; align-items:center; background:#fff; border:1px solid #e1e1e1; border-radius:6px; padding:5px 8px;">
-            <div style="width:24px; height:24px; border-radius:50%; background:#198754; color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; margin-right:6px;">
+        <div class="col-xl-2 col-md-4 col-sm-6">
+          <div class="stat-card">
+            <div class="stat-icon">
               <i class="fas fa-money-bill-wave"></i>
             </div>
-            <div>
-              <h3 style="font-size:13px; margin:0; font-weight:600;">Ksh {{ total_budget|floatformat:0|intcomma }}</h3>
-              <span style="font-size:11px; color:#666;">Total Budget</span>
+            <div class="stat-content">
+              <h3>Ksh {{ total_budget|floatformat:0|intcomma }}</h3>
+              <span>Total Budget</span>
             </div>
           </div>
         </div>
 
-        <div class="col-xl-2 col-md-4 col-sm-6" style="padding:3px;">
-          <div style="display:flex; align-items:center; background:#fff; border:1px solid #e1e1e1; border-radius:6px; padding:5px 8px;">
-            <div style="width:24px; height:24px; border-radius:50%; background:#0dcaf0; color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; margin-right:6px;">
+        <div class="col-xl-2 col-md-4 col-sm-6">
+          <div class="stat-card">
+            <div class="stat-icon">
               <i class="fas fa-check-circle"></i>
             </div>
-            <div>
-              <h3 style="font-size:13px; margin:0; font-weight:600;">{{ completion_rate }}%</h3>
-              <span style="font-size:11px; color:#666;">Completion Rate</span>
+            <div class="stat-content">
+              <h3>{{ completion_rate }}%</h3>
+              <span>Completion Rate</span>
             </div>
           </div>
         </div>
 
-        <div class="col-xl-2 col-md-4 col-sm-6" style="padding:3px;">
-          <div style="display:flex; align-items:center; background:#fff; border:1px solid #e1e1e1; border-radius:6px; padding:5px 8px;">
-            <div style="width:24px; height:24px; border-radius:50%; background:#ffc107; color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; margin-right:6px;">
+        <div class="col-xl-2 col-md-4 col-sm-6">
+          <div class="stat-card">
+            <div class="stat-icon">
               <i class="fas fa-map-marker-alt"></i>
             </div>
-            <div>
-              <h3 style="font-size:13px; margin:0; font-weight:600;">{{ county_count }}</h3>
-              <span style="font-size:11px; color:#666;">Counties Covered</span>
+            <div class="stat-content">
+              <h3>{{ county_stats|length }}</h3>
+              <span>Counties Covered</span>
             </div>
           </div>
         </div>
 
-        <div class="col-xl-2 col-md-4 col-sm-6" style="padding:3px;">
-          <div style="display:flex; align-items:center; background:#fff; border:1px solid #e1e1e1; border-radius:6px; padding:5px 8px;">
-            <div style="width:24px; height:24px; border-radius:50%; background:#dc3545; color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; margin-right:6px;">
+        <div class="col-xl-2 col-md-4 col-sm-6">
+          <div class="stat-card">
+            <div class="stat-icon">
               <i class="fas fa-exclamation-triangle"></i>
             </div>
-            <div>
-              <h3 style="font-size:13px; margin:0; font-weight:600;">{{ overdue_projects }}</h3>
-              <span style="font-size:11px; color:#666;">Overdue Projects</span>
+            <div class="stat-content">
+              <h3>{{ overdue_projects }}</h3>
+              <span>Overdue Projects</span>
             </div>
           </div>
         </div>
 
-        <div class="col-xl-2 col-md-4 col-sm-6" style="padding:3px;">
-          <div style="display:flex; align-items:center; background:#fff; border:1px solid #e1e1e1; border-radius:6px; padding:5px 8px;">
-            <div style="width:24px; height:24px; border-radius:50%; background:#6c757d; color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; margin-right:6px;">
+        <div class="col-xl-2 col-md-4 col-sm-6">
+          <div class="stat-card">
+            <div class="stat-icon">
               <i class="fas fa-clock"></i>
             </div>
-            <div>
-              <h3 style="font-size:13px; margin:0; font-weight:600;">{{ upcoming_deadlines }}</h3>
-              <span style="font-size:11px; color:#666;">Upcoming Deadlines</span>
+            <div class="stat-content">
+              <h3>{{ upcoming_deadlines }}</h3>
+              <span>Upcoming Deadlines</span>
             </div>
           </div>
         </div>
@@ -90,38 +129,113 @@
   <div class="main-content">
     <div class="container-fluid">
       <div class="row">
-        <!-- Filters Sidebar -->
+        
+        <!-- Enhanced Filters Sidebar -->
         <div class="col-xl-3 col-lg-4">
           <div class="filters-sidebar">
             <div class="sidebar-header">
-              <h5><i class="fas fa-filter me-2"></i>Filters</h5>
-              <button class="btn btn-sm btn-outline-kenya-green" onclick="clearAllFilters()">
+              <h5><i class="fas fa-filter me-2"></i>Filters & Navigation</h5>
+              <button class="btn btn-sm btn-clear" onclick="clearAllFilters()">
                 Clear All
               </button>
             </div>
 
             <!-- Navigation Tabs -->
-            <div class="navigation-tabs mb-4" style="margin-bottom: 1rem;">
-              <div class="nav nav-pills nav-fill" id="v-pills-tab" role="tablist" style="display: flex; gap: 6px;">
+            <div class="navigation-tabs">
+              <div class="nav nav-pills nav-fill" id="v-pills-tab" role="tablist">
                 <button class="nav-link active" id="v-pills-map-tab" data-bs-toggle="pill" 
-                        data-bs-target="#v-pills-map" type="button"
-                        style="color: #fff; font-weight: 600; background-color: #0b1a2b; border: 1px solid #000; border-radius: 6px;">
-                  <i class="fas fa-map-marked-alt me-2"></i>Map
+                        data-bs-target="#v-pills-map" type="button">
+                  <i class="fas fa-map-marked-alt me-2"></i>Map View
                 </button>
                 <button class="nav-link" id="v-pills-overview-tab" data-bs-toggle="pill" 
-                        data-bs-target="#v-pills-overview" type="button"
-                        style="color: #fff; font-weight: 600; background-color: #0b1a2b; border: 1px solid #000; border-radius: 6px;">
+                        data-bs-target="#v-pills-overview" type="button">
                   <i class="fas fa-chart-pie me-2"></i>Overview
                 </button>
                 <button class="nav-link" id="v-pills-analytics-tab" data-bs-toggle="pill" 
-                        data-bs-target="#v-pills-analytics" type="button"
-                        style="color: #fff; font-weight: 600; background-color: #0b1a2b; border: 1px solid #000; border-radius: 6px;">
+                        data-bs-target="#v-pills-analytics" type="button">
                   <i class="fas fa-chart-line me-2"></i>Analytics
                 </button>
               </div>
             </div>
 
+            <!-- Location Selection -->
+            <div class="location-selection">
+              <h6><i class="fas fa-crosshairs me-2"></i>Location Selection</h6>
+              <div class="location-controls">
+                <button class="btn btn-location active" data-level="county">
+                  <i class="fas fa-map"></i> County
+                </button>
+                <button class="btn btn-location" data-level="subcounty">
+                  <i class="fas fa-map-marker-alt"></i> Subcounty
+                </button>
+                <button class="btn btn-location" data-level="ward">
+                  <i class="fas fa-location-dot"></i> Ward
+                </button>
+              </div>
+            </div>
+
             <form method="get" id="filter-form">
+              
+              <!-- County Filter -->
+              <div class="filter-group">
+                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#countyFilter">
+                  <h6><i class="fas fa-map me-2"></i>County</h6>
+                  <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="collapse show" id="countyFilter">
+                  <div class="filter-options">
+                    <select class="form-select form-select-sm" name="county" id="county-select" onchange="handleCountySelection(this.value)">
+                      <option value="">All Counties</option>
+                      {% for county in counties %}
+                      <option value="{{ county }}" {% if selected_county == county %}selected{% endif %}>
+                        {{ county }}
+                      </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Subcounty Filter -->
+              <div class="filter-group">
+                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#subcountyFilter">
+                  <h6><i class="fas fa-map-pin me-2"></i>Subcounty</h6>
+                  <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="collapse show" id="subcountyFilter">
+                  <div class="filter-options">
+                    <select class="form-select form-select-sm" name="subcounty" id="subcounty-select" onchange="handleSubcountySelection(this.value)">
+                      <option value="">All Subcounties</option>
+                      {% for subcounty in subcounties %}
+                      <option value="{{ subcounty }}" {% if subcounty in selected_subcounties %}selected{% endif %}>
+                        {{ subcounty }}
+                      </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Ward Filter -->
+              <div class="filter-group">
+                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#wardFilter">
+                  <h6><i class="fas fa-location-dot me-2"></i>Ward</h6>
+                  <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="collapse show" id="wardFilter">
+                  <div class="filter-options">
+                    <select class="form-select form-select-sm" name="ward" id="ward-select" onchange="handleWardSelection(this.value)">
+                      <option value="">All Wards</option>
+                      {% for ward in wards %}
+                      <option value="{{ ward }}" {% if ward in selected_wards %}selected{% endif %}>
+                        {{ ward }}
+                      </option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
               <!-- Status Filter -->
               <div class="filter-group">
                 <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#statusFilter">
@@ -155,7 +269,7 @@
                     <input type="text" class="form-control form-control-sm" 
                            placeholder="Search sectors..." id="sector-search">
                   </div>
-                  <div class="filter-options" style="max-height: 200px; overflow-y: auto;">
+                  <div class="filter-options">
                     {% for sector in sectors %}
                     <div class="form-check sector-item">
                       <input class="form-check-input" type="checkbox" name="sector"
@@ -166,53 +280,6 @@
                       </label>
                     </div>
                     {% endfor %}
-                  </div>
-                </div>
-              </div>
-
-              <!-- Location Filters -->
-              <div class="filter-group">
-                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#locationFilter">
-                  <h6><i class="fas fa-map me-2"></i>Location</h6>
-                  <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="collapse show" id="locationFilter">
-                  <!-- County -->
-                  <div class="mb-3">
-                    <label class="form-label small fw-bold">County</label>
-                    <select class="form-select form-select-sm" name="county" id="county-select" multiple>
-                      {% for county in counties %}
-                      <option value="{{ county }}" {% if county in selected_counties %}selected{% endif %}>
-                        {{ county }}
-                      </option>
-                      {% endfor %}
-                    </select>
-                  </div>
-
-                  <!-- Subcounty -->
-                  <div class="mb-3">
-                    <label class="form-label small fw-bold">Subcounty</label>
-                    <select class="form-select form-select-sm" name="subcounty" id="subcounty-select" 
-                            {% if not selected_counties %}disabled{% endif %} multiple>
-                      {% for subcounty in subcounties %}
-                      <option value="{{ subcounty }}" {% if subcounty in selected_subcounties %}selected{% endif %}>
-                        {{ subcounty }}
-                      </option>
-                      {% endfor %}
-                    </select>
-                  </div>
-
-                  <!-- Ward -->
-                  <div class="mb-3">
-                    <label class="form-label small fw-bold">Ward</label>
-                    <select class="form-select form-select-sm" name="ward" id="ward-select" 
-                            {% if not selected_subcounties %}disabled{% endif %} multiple>
-                      {% for ward in wards %}
-                      <option value="{{ ward }}" {% if ward in selected_wards %}selected{% endif %}>
-                        {{ ward }}
-                      </option>
-                      {% endfor %}
-                    </select>
                   </div>
                 </div>
               </div>
@@ -255,25 +322,53 @@
                 </div>
               </div>
 
-              <!-- Fiscal Year -->
-              <div class="filter-group">
-                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#yearFilter">
-                  <h6><i class="fas fa-calendar me-2"></i>Fiscal Year</h6>
-                  <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="collapse show" id="yearFilter">
-                  <select class="form-select form-select-sm" name="year">
-                    <option value="">All Years</option>
-                    {% for year in fiscal_years %}
-                    <option value="{{ year }}" {% if selected_year == year|stringformat:"s" %}selected{% endif %}>
-                      {{ year }}
-                    </option>
-                    {% endfor %}
-                  </select>
+              <!-- Performance Metrics in Sidebar -->
+              <div class="performance-metrics">
+                <div class="metrics-grid">
+
+                  <div class="metric-card">
+                    <div class="metric-icon">
+                      <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <div class="metric-content">
+                      <h4>{{ performance_metrics.efficiency_score|default:0 }}%</h4>
+                      <p>Efficiency</p>
+                    </div>
+                  </div>
+
+                  <div class="metric-card">
+                    <div class="metric-icon">
+                      <i class="fas fa-balance-scale"></i>
+                    </div>
+                    <div class="metric-content">
+                      <h4>{{ performance_metrics.spatial_distribution_score|default:0 }}%</h4>
+                      <p>Distribution</p>
+                    </div>
+                  </div>
+
+                  <div class="metric-card">
+                    <div class="metric-icon">
+                      <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="metric-content">
+                      <h4>{{ performance_metrics.budget_utilization_score|default:0 }}%</h4>
+                      <p>Budget</p>
+                    </div>
+                  </div>
+
+                  <div class="metric-card">
+                    <div class="metric-icon">
+                      <i class="fas fa-users"></i>
+                    </div>
+                    <div class="metric-content">
+                      <h4>{{ approval_rate|default:0 }}%</h4>
+                      <p>Approval</p>
+                    </div>
+                  </div>
+
                 </div>
               </div>
-
-              <button type="submit" class="btn btn-kenya-green w-100 mt-3">
+              <button type="submit" class="btn btn-primary w-100 mt-3">
                 <i class="fas fa-filter me-1"></i> Apply Filters
               </button>
             </form>
@@ -283,36 +378,56 @@
         <!-- Main Content Area -->
         <div class="col-xl-9 col-lg-8">
           <div class="tab-content" id="v-pills-tabContent">
+            
             <!-- Map View Tab -->
             <div class="tab-pane fade show active" id="v-pills-map" role="tabpanel">
+              
+              <!-- Map Controls 
+              <div class="map-controls-bar">
+                <div class="control-group">
+                  <button class="btn btn-control active" data-layer="projects">
+                    <i class="fas fa-project-diagram me-1"></i> Projects
+                  </button>
+                  <button class="btn btn-control" data-layer="heatmap">
+                    <i class="fas fa-fire me-1"></i> Heatmap
+                  </button>
+                  <button class="btn btn-control" data-layer="boundaries">
+                    <i class="fas fa-layer-group me-1"></i> Boundaries
+                  </button>
+                </div>
+                <div class="control-group">
+                  <button class="btn btn-outline-secondary btn-sm" onclick="exportData()">
+                    <i class="fas fa-download me-1"></i> Export
+                  </button>
+                  <button class="btn btn-outline-secondary btn-sm" onclick="refreshMonitoringData()">
+                    <i class="fas fa-sync-alt me-1"></i> Refresh
+                  </button>
+                </div>
+              </div> -->
+
+              <!-- Map Container -->
               <div class="card map-card">
-                <div class="card-header" style="padding:6px 10px; background:#f8f9fa; border-bottom:1px solid #dee2e6; height:40px;">
-                  <div class="d-flex justify-content-between align-items-center" style="display:flex; justify-content:space-between; align-items:center; height:100%;">
-                    <h5 class="mb-0" style="margin:0; font-size:14px; font-weight:600; color:#333; display:flex; align-items:center;">
-                      <i class="fas fa-map me-2" style="margin-right:6px; font-size:13px; color:#198754;"></i>Project Locations
-                    </h5>
-                    <div class="map-controls" style="display:flex; align-items:center; gap:6px;">
-                      <div class="btn-group btn-group-sm" style="display:flex; gap:4px;">
-                        <button class="btn btn-outline-kenya-green active" id="toggle-projects" 
-                          style="font-size:12px; padding:3px 6px; border:1px solid #198754; border-radius:4px; background:#198754; color:#fff; cursor:pointer; display:flex; align-items:center;">
-                          <i class="fas fa-project-diagram me-1" style="margin-right:4px; font-size:11px;"></i>Projects
-                        </button>
-                        <button class="btn btn-outline-kenya-green" id="toggle-boundaries" 
-                          style="font-size:12px; padding:3px 6px; border:1px solid #198754; border-radius:4px; background:#fff; color:#198754; cursor:pointer; display:flex; align-items:center;">
-                          <i class="fas fa-map me-1" style="margin-right:4px; font-size:11px;"></i>Boundaries
-                        </button>
-                      </div>
-                      <select class="form-select form-select-sm ms-2" id="map-style" 
-                        style="font-size:12px; padding:3px 6px; border:1px solid #ccc; border-radius:4px; background:#fff; color:#333; cursor:pointer; height:26px;">
-                        <option value="streets">Streets</option>
-                        <option value="satellite">Satellite</option>
-                        <option value="light">Light</option>
-                      </select>
-                    </div>
+                <div class="card-header">
+                  <h5 class="mb-0">
+                    <i class="fas fa-map me-2"></i>
+                    <span id="map-title">Project Locations - All Counties</span>
+                  </h5>
+                  <div class="map-info">
+                    <span id="selected-area-info"></span>
                   </div>
                 </div>
                 <div class="card-body p-0 position-relative">
                   <div id="kenya-map"></div>
+                  
+                  <!-- Map Loading Overlay -->
+                  <div class="map-loading" id="map-loading">
+                    <div class="spinner-border text-primary" role="status">
+                      <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p>Loading map data...</p>
+                  </div>
+
+                  <!-- Map Legends -->
                   <div class="map-legends">
                     <div class="map-legend project-legend">
                       <h6>Project Status</h6>
@@ -333,11 +448,12 @@
                         <span>Planned</span>
                       </div>
                     </div>
-                    <div class="map-legend boundary-legend">
-                      <h6>Projects Density</h6>
+                    
+                    <div class="map-legend density-legend">
+                      <h6>Project Density</h6>
                       <div class="legend-item">
                         <span class="legend-color density-0"></span>
-                        <span>0 Projects</span>
+                        <span>No Projects</span>
                       </div>
                       <div class="legend-item">
                         <span class="legend-color density-1"></span>
@@ -349,7 +465,258 @@
                       </div>
                       <div class="legend-item">
                         <span class="legend-color density-3"></span>
-                        <span>21+ Projects</span>
+                        <span>20+ Projects</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Selected Area Summary -->
+              <div class="selected-area-summary" id="selected-area-summary">
+                <div class="summary-header">
+                  <h6><i class="fas fa-info-circle me-2"></i>Selected Area Summary</h6>
+                  <button class="btn btn-sm btn-clear" onclick="clearSelection()">
+                    <i class="fas fa-times"></i> Clear
+                  </button>
+                </div>
+                <div class="summary-content" id="summary-content">
+                  <p class="text-muted">Select an area on the map or from dropdown to view summary</p>
+                </div>
+              </div>
+
+              <!-- Project Lists -->
+              <div class="row mt-4">
+                <div class="col-md-6">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5 class="mb-0"><i class="fas fa-arrow-up me-2"></i>Highest Budget Projects</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="project-list">
+                        {% for project in highest_budget_projects %}
+                        <div class="project-item">
+                          <div class="project-info">
+                            <strong>{{ project.name|truncatechars:30 }}</strong>
+                            <span class="budget">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
+                          </div>
+                          <div class="project-meta">
+                            <span class="location">{{ project.county }}</span>
+                            <span class="sector">{{ project.sector|default:"N/A" }}</span>
+                            <span class="status badge bg-{{ project.status }}">{{ project.status }}</span>
+                          </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-center text-muted">No projects found</p>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-md-6">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Risky Projects</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="project-list">
+                        {% for project in risky_projects %}
+                        <div class="project-item">
+                          <div class="project-info">
+                            <strong>{{ project.name|truncatechars:30 }}</strong>
+                            <span class="budget">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
+                          </div>
+                          <div class="project-meta">
+                            <span class="location">{{ project.county }}</span>
+                            <span class="status badge bg-danger">{{ project.status }}</span>
+                            {% if project.end_date %}
+                            <span class="days-remaining text-danger">
+                              {{ project.end_date|timeuntil }} overdue
+                            </span>
+                            {% endif %}
+                          </div>
+                        </div>
+                        {% empty %}
+                        <p class="text-center text-muted">No risky projects found</p>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Project Monitoring Section -->
+              <div class="row mt-4">
+                <div class="col-12">
+                  <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h5 class="mb-0">
+                        <i class="fas fa-chart-line me-2"></i>Project Monitoring & Reporting
+                      </h5>
+                      <div class="monitoring-controls">
+                        <button class="btn btn-sm btn-outline-primary" onclick="refreshMonitoringData()">
+                          <i class="fas fa-sync-alt me-1"></i>Refresh
+                        </button>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <div class="row g-3">
+                        
+                        <!-- Progress Tracking -->
+                        <div class="col-md-4">
+                          <div class="monitoring-card">
+                            <div class="monitoring-header">
+                              <h6><i class="fas fa-tasks me-2"></i>Progress Tracking</h6>
+                              <span class="badge bg-info">{{ recent_updates_count }} Updates</span>
+                            </div>
+                            <div class="monitoring-content">
+                              {% for update in recent_updates|slice:":5" %}
+                              <div class="update-item">
+                                <div class="update-info">
+                                  <strong>{{ update.project.name|truncatechars:25 }}</strong>
+                                  <span class="progress-badge">{{ update.progress_percentage }}%</span>
+                                </div>
+                                <div class="update-meta">
+                                  <small class="text-muted">{{ update.created_at|timesince }} ago</small>
+                                  <span class="status-indicator {% if update.progress_percentage < 30 %}bg-danger{% elif update.progress_percentage < 70 %}bg-warning{% else %}bg-success{% endif %}"></span>
+                                </div>
+                              </div>
+                              {% empty %}
+                              <p class="text-center text-muted">No recent updates</p>
+                              {% endfor %}
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Citizen Reports -->
+                        <div class="col-md-4">
+                          <div class="monitoring-card">
+                            <div class="monitoring-header">
+                              <h6><i class="fas fa-users me-2"></i>Citizen Reports</h6>
+                              <span class="badge bg-warning">{{ total_reports }} Total</span>
+                            </div>
+                            <div class="monitoring-content">
+                              {% for report_type, stats in report_counts.items %}
+                              <div class="report-type-item">
+                                <div class="report-type-info">
+                                  <span class="report-type">{{ report_type|title }}</span>
+                                  <span class="report-count">{{ stats.total }}</span>
+                                </div>
+                                <div class="progress" style="height: 6px;">
+                                  <div class="progress-bar" style="width: {{ stats.approval_rate }}%"></div>
+                                </div>
+                                <small class="text-muted">{{ stats.approved }} approved ({{ stats.approval_rate }}%)</small>
+                              </div>
+                              {% empty %}
+                              <p class="text-center text-muted">No citizen reports</p>
+                              {% endfor %}
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Performance Alerts -->
+                        <div class="col-md-4">
+                          <div class="monitoring-card">
+                            <div class="monitoring-header">
+                              <h6><i class="fas fa-bell me-2"></i>Performance Alerts</h6>
+                              <span class="badge bg-danger">{{ high_risk_projects }} Critical</span>
+                            </div>
+                            <div class="monitoring-content">
+                              {% for project in risky_projects|slice:":5" %}
+                              <div class="alert-item">
+                                <div class="alert-info">
+                                  <strong class="text-danger">{{ project.name|truncatechars:20 }}</strong>
+                                  <span class="alert-type">{% if project.status == 'delayed' %}Delayed{% else %}At Risk{% endif %}</span>
+                                </div>
+                                <div class="alert-meta">
+                                  <small class="text-muted">{{ project.county }}</small>
+                                  {% if project.end_date %}
+                                  <small class="text-danger">
+                                    {{ project.end_date|timeuntil }} overdue
+                                  </small>
+                                  {% endif %}
+                                </div>
+                              </div>
+                              {% empty %}
+                              <p class="text-center text-muted">No critical alerts</p>
+                              {% endfor %}
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+
+                      <!-- Detailed Monitoring Table -->
+                      <div class="mt-4">
+                        <h6>Detailed Project Monitoring</h6>
+                        <div class="table-responsive">
+                          <table class="table table-sm table-hover">
+                            <thead>
+                              <tr>
+                                <th>Project Name</th>
+                                <th>Status</th>
+                                <th>Progress</th>
+                                <th>Last Update</th>
+                                <th>Reports</th>
+                                <th>Health Score</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for project in recent_projects %}
+                              <tr>
+                                <td>{{ project.name|truncatechars:30 }}</td>
+                                <td>
+                                  <span class="badge bg-{{ project.status }}">
+                                    {{ project.status }}
+                                  </span>
+                                </td>
+                                <td>
+                                  {% with update=project.updates.first %}
+                                  {% if update %}
+                                  <div class="progress" style="height: 8px; width: 80px;">
+                                    <div class="progress-bar" style="width: {{ update.progress_percentage }}%"></div>
+                                  </div>
+                                  <small>{{ update.progress_percentage }}%</small>
+                                  {% else %}
+                                  <small class="text-muted">No updates</small>
+                                  {% endif %}
+                                  {% endwith %}
+                                </td>
+                                <td>
+                                  {% with update=project.updates.first %}
+                                  {% if update %}
+                                  <small>{{ update.created_at|timesince }} ago</small>
+                                  {% else %}
+                                  <small class="text-muted">Never</small>
+                                  {% endif %}
+                                  {% endwith %}
+                                </td>
+                                <td>
+                                  <span class="badge bg-info">{{ project.citizen_reports.count }}</span>
+                                </td>
+                                <td>
+                                  {% with health=project.health_score %}
+                                  <div class="health-indicator {% if health >= 80 %}bg-success{% elif health >= 60 %}bg-warning{% else %}bg-danger{% endif %}">
+                                    {{ health }}%
+                                  </div>
+                                  {% endwith %}
+                                </td>
+                                <td>
+                                  <button class="btn btn-sm btn-outline-primary" onclick="viewProjectDetails({{ project.id }})">
+                                    <i class="fas fa-eye"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                              {% empty %}
+                              <tr>
+                                <td colspan="7" class="text-center text-muted">No projects found</td>
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -360,81 +727,29 @@
             <!-- Overview Tab -->
             <div class="tab-pane fade" id="v-pills-overview" role="tabpanel">
               <div class="row g-3">
-                <!-- Status Distribution -->
                 <div class="col-md-6">
                   <div class="card h-100">
                     <div class="card-header">
                       <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Project Status Distribution</h5>
                     </div>
                     <div class="card-body">
-                      <canvas id="statusChart" height="250"></canvas>
+                      <canvas id="statusChart"></canvas>
                     </div>
                   </div>
                 </div>
 
-                <!-- Sector Distribution -->
                 <div class="col-md-6">
                   <div class="card h-100">
                     <div class="card-header">
                       <h5 class="mb-0"><i class="fas fa-industry me-2"></i>Top Sectors</h5>
                     </div>
                     <div class="card-body">
-                      <canvas id="sectorChart" height="250"></canvas>
+                      <canvas id="sectorChart"></canvas>
                     </div>
                   </div>
                 </div>
 
-                <!-- County Distribution -->
-                <div class="col-md-6">
-                  <div class="card h-100">
-                    <div class="card-header">
-                      <h5 class="mb-0"><i class="fas fa-map me-2"></i>Projects by County</h5>
-                    </div>
-                    <div class="card-body">
-                      <div class="county-list">
-                        {% for county in county_stats %}
-                        <div class="county-item">
-                          <div class="county-info">
-                            <span class="county-name">{{ county.county }}</span>
-                            <span class="county-count">{{ county.count }} projects</span>
-                          </div>
-                          <div class="progress">
-                            <div class="progress-bar" style="width: {% widthratio county.count total_projects 100 %}%"></div>
-                          </div>
-                        </div>
-                        {% endfor %}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Recent Activity -->
-                <div class="col-md-6">
-                  <div class="card h-100">
-                    <div class="card-header">
-                      <h5 class="mb-0"><i class="fas fa-history me-2"></i>Recent Updates</h5>
-                    </div>
-                    <div class="card-body">
-                      <div class="recent-updates">
-                        {% for update in recent_updates %}
-                        <div class="update-item">
-                          <div class="update-header">
-                            <strong>{{ update.project.name }}</strong>
-                            <small class="text-muted">{{ update.created_at|timesince }} ago</small>
-                          </div>
-                          <p class="update-title">{{ update.title }}</p>
-                          <div class="progress">
-                            <div class="progress-bar" style="width: {{ update.progress_percentage }}%"></div>
-                          </div>
-                          <small>{{ update.progress_percentage }}% Complete</small>
-                        </div>
-                        {% empty %}
-                        <p class="text-center text-muted">No recent updates</p>
-                        {% endfor %}
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <!-- Additional overview content... -->
               </div>
             </div>
 
@@ -448,7 +763,7 @@
                       <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Budget by Status</h5>
                     </div>
                     <div class="card-body">
-                      <canvas id="budgetChart" height="300"></canvas>
+                      <canvas id="budgetChart"></canvas>
                     </div>
                   </div>
                 </div>
@@ -460,84 +775,12 @@
                       <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Project Timeline</h5>
                     </div>
                     <div class="card-body">
-                      <canvas id="timelineChart" height="300"></canvas>
+                      <canvas id="timelineChart"></canvas>
                     </div>
                   </div>
                 </div>
 
-                <!-- Top Budget Projects -->
-                <div class="col-md-6">
-                  <div class="card">
-                    <div class="card-header">
-                      <h5 class="mb-0"><i class="fas fa-arrow-up me-2"></i>Highest Budget Projects</h5>
-                    </div>
-                    <div class="card-body">
-                      <div class="project-list">
-                        {% for project in highest_budget_projects %}
-                        <div class="project-item">
-                          <div class="project-info">
-                            <strong>{{ project.name }}</strong>
-                            <span class="budget">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
-                          </div>
-                          <div class="project-meta">
-                            <span class="county">{{ project.county }}</span>
-                            <span class="sector">{{ project.sector }}</span>
-                            <span class="status badge bg-{{ project.status }}">{{ project.status }}</span>
-                          </div>
-                        </div>
-                        {% endfor %}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Citizen Engagement -->
-                <div class="col-md-6">
-                  <div class="card">
-                    <div class="card-header">
-                      <h5 class="mb-0"><i class="fas fa-users me-2"></i>Citizen Engagement</h5>
-                    </div>
-                    <div class="card-body">
-                      <div class="engagement-stats">
-                        <div class="row text-center mb-3">
-                          <div class="col-3">
-                            <div class="stat">
-                              <h4 class="text-primary">{{ report_counts.progress|default:0 }}</h4>
-                              <small>Progress Reports</small>
-                            </div>
-                          </div>
-                          <div class="col-3">
-                            <div class="stat">
-                              <h4 class="text-warning">{{ report_counts.issue|default:0 }}</h4>
-                              <small>Issue Reports</small>
-                            </div>
-                          </div>
-                          <div class="col-3">
-                            <div class="stat">
-                              <h4 class="text-danger">{{ report_counts.complaint|default:0 }}</h4>
-                              <small>Complaints</small>
-                            </div>
-                          </div>
-                          <div class="col-3">
-                            <div class="stat">
-                              <h4 class="text-info">{{ report_counts.suggestion|default:0 }}</h4>
-                              <small>Suggestions</small>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="approval-rate">
-                          <div class="d-flex justify-content-between">
-                            <span>Approval Rate</span>
-                            <strong>{{ approval_rate|default:0 }}%</strong>
-                          </div>
-                          <div class="progress">
-                            <div class="progress-bar" style="width: {{ approval_rate|default:0 }}%"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <!-- Additional analytics content... -->
               </div>
             </div>
           </div>
@@ -547,83 +790,239 @@
   </div>
 </div>
 
+<!-- Enhanced CSS Styles -->
 <style>
+:root {
+  --kitui-primary: #006600;
+  --kitui-secondary: #004d00;
+  --kitui-accent: #ff6b35;
+  --kitui-light: #f8f9fa;
+  --kitui-dark: #2c3e50;
+  --kitui-success: #28a745;
+  --kitui-warning: #ffc107;
+  --kitui-danger: #dc3545;
+  --kitui-info: #17a2b8;
+}
+
 .kenya-dashboard {
   background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
   min-height: 100vh;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.dashboard-header {
-  background: linear-gradient(135deg, var(--kitui-primary) 0%, #2c3e50 100%);
+/* Notification System */
+.notification-marquee-container {
+  position: fixed;
+  top: 66px;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(90deg, var(--kitui-primary), var(--kitui-secondary));
   color: white;
-  margin-bottom: 0;
-  padding: 2rem 0;
-  border-radius: 0 0 12px 12px;
-  box-shadow: 0 4px 12px var(--kitui-shadow);
+  padding: 8px 0;
+  z-index: 1030;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+#notification-marquee {
+  white-space: nowrap;
+  display: inline-block;
+  padding-left: 100%;
+  animation: scrollText 90s linear infinite;
+}
+
+@keyframes scrollText {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+.notification-item {
+  display: inline-block;
+  margin-right: 50px;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 2px 0;
+}
+
+.notification-item .badge {
+  margin-right: 8px;
+  font-size: 10px;
+  padding: 2px 6px;
+}
+
+.alert-notifications-container {
+  position: fixed;
+  top: 106px;
+  right: 20px;
+  z-index: 1029;
+  max-width: 400px;
+}
+
+.alert-notification {
+  background: white;
+  border-left: 4px solid var(--kitui-danger);
+  border-radius: 4px;
+  padding: 12px 15px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  animation: slideInRight 0.3s ease;
+}
+
+.alert-notification.success {
+  border-left-color: var(--kitui-success);
+}
+
+.alert-notification.warning {
+  border-left-color: var(--kitui-warning);
+}
+
+.alert-notification.info {
+  border-left-color: var(--kitui-info);
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.system-status-bar {
+  background: var(--kitui-light);
+  border-bottom: 1px solid #dee2e6;
+  padding: 8px 0;
+  font-size: 12px;
+  margin-top: 0;
+}
+
+.system-status-bar .badge {
+  font-size: 11px;
+  padding: 4px 8px;
+}
+
+/* Quick Stats Bar */
 .quick-stats-bar {
   background: white;
-  padding: 2rem 0;
-  border-bottom: 1px solid var(--kitui-border);
-  box-shadow: 0 4px 12px var(--kitui-shadow);
-  margin-bottom: 2rem;
+  padding: 1rem 0;
+  border-bottom: 1px solid #e1e1e1;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stats-grid {
+  margin: 0;
 }
 
 .stat-card {
   display: flex;
   align-items: center;
-  padding: 1.5rem;
   background: white;
+  border: 1px solid #e1e1e1;
   border-radius: 12px;
+  padding: 1rem;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  border-left: 4px solid var(--kitui-primary);
   height: 100%;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
 .stat-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
 .stat-icon {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 1.5rem;
-  margin-right: 1.5rem;
-  background: linear-gradient(135deg, var(--kitui-primary) 0%, #2c3e50 100%);
+  font-size: 1.25rem;
+  margin-right: 1rem;
+  background: linear-gradient(135deg, var(--kitui-primary) 0%, var(--kitui-secondary) 100%);
 }
 
 .stat-content h3 {
   margin: 0;
   font-weight: 700;
   color: var(--kitui-dark);
-  font-size: 1.8rem;
-  font-family: 'Montserrat', sans-serif;
+  font-size: 1.5rem;
 }
 
 .stat-content span {
-  color: var(--kitui-muted);
-  font-size: 0.9rem;
+  color: #7f8c8d;
+  font-size: 0.85rem;
   font-weight: 500;
 }
 
+/* Performance Metrics */
+.performance-metrics {
+  padding: 1.5rem 0;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  justify-content: center;
+}
+
+.metric-card {
+  background: white;
+  border: 1px solid #e1e1e1;
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.metric-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  color: white;
+  font-size: 1.5rem;
+  background: linear-gradient(135deg, var(--kitui-primary) 0%, var(--kitui-secondary) 100%);
+}
+
+.metric-content h4 {
+  margin: 0;
+  font-weight: 700;
+  color: var(--kitui-dark);
+  font-size: 1.75rem;
+}
+
+.metric-content p {
+  margin: 0.5rem 0 0 0;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+/* Filters Sidebar */
 .filters-sidebar {
   background: white;
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 4px 12px var(--kitui-shadow);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   height: calc(100vh - 200px);
   overflow-y: auto;
   position: sticky;
   top: 1rem;
-  border: 1px solid var(--kitui-border);
 }
 
 .sidebar-header {
@@ -632,18 +1031,31 @@
   align-items: center;
   margin-bottom: 1.5rem;
   padding-bottom: 1rem;
-  border-bottom: 2px solid var(--kitui-border);
+  border-bottom: 2px solid #e1e1e1;
 }
 
 .sidebar-header h5 {
   color: var(--kitui-primary);
   font-weight: 600;
   margin: 0;
-  font-family: 'Montserrat', sans-serif;
 }
 
+.btn-clear {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+.btn-clear:hover {
+  background: #5a6268;
+}
+
+/* Navigation Tabs */
 .navigation-tabs {
-  background: var(--kitui-light);
+  background: #f8f9fa;
   border-radius: 10px;
   padding: 0.5rem;
   margin-bottom: 1.5rem;
@@ -652,26 +1064,69 @@
 .navigation-tabs .nav-link {
   border-radius: 8px;
   padding: 0.75rem 1rem;
-  color: var(--kitui-muted);
+  color: #6c757d;
   font-weight: 500;
   transition: all 0.3s ease;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  border: none;
 }
 
 .navigation-tabs .nav-link.active {
-  background: linear-gradient(135deg, var(--kitui-primary) 0%, #2c3e50 100%);
+  background: linear-gradient(135deg, var(--kitui-primary) 0%, var(--kitui-secondary) 100%);
   color: white;
-  box-shadow: 0 2px 8px var(--kitui-shadow);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
 }
 
 .navigation-tabs .nav-link:hover:not(.active) {
-  background: rgba(26, 82, 118, 0.1);
+  background: rgba(0, 102, 0, 0.1);
   color: var(--kitui-primary);
 }
 
+/* Location Selection */
+.location-selection {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.location-selection h6 {
+  color: var(--kitui-dark);
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+}
+
+.location-controls {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-location {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #dee2e6;
+  background: white;
+  color: #6c757d;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
+}
+
+.btn-location.active {
+  background: var(--kitui-primary);
+  color: white;
+  border-color: var(--kitui-primary);
+}
+
+.btn-location:hover:not(.active) {
+  background: #e9ecef;
+  color: var(--kitui-primary);
+}
+
+/* Filter Groups */
 .filter-group {
-  border: 1px solid var(--kitui-border);
-  border-radius: 10px;
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
   margin-bottom: 1rem;
   overflow: hidden;
   transition: all 0.3s ease;
@@ -682,7 +1137,7 @@
 }
 
 .filter-header {
-  background: var(--kitui-light);
+  background: #f8f9fa;
   padding: 1rem 1.25rem;
   cursor: pointer;
   display: flex;
@@ -692,19 +1147,19 @@
 }
 
 .filter-header:hover {
-  background: #e8f4f8;
+  background: #e9ecef;
 }
 
 .filter-header h6 {
   margin: 0;
   color: var(--kitui-dark);
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
 .filter-header i {
   transition: transform 0.3s ease;
-  color: var(--kitui-muted);
+  color: #6c757d;
 }
 
 .filter-header[aria-expanded="true"] i {
@@ -719,84 +1174,81 @@
 
 .search-box {
   padding: 0.75rem 1rem;
-  border-bottom: 1px solid var(--kitui-border);
+  border-bottom: 1px solid #e1e1e1;
 }
 
-.search-box input {
-  border: 1px solid var(--kitui-border);
+/* Map Controls */
+.map-controls-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.control-group {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-control {
+  padding: 0.5rem 1rem;
+  border: 1px solid #dee2e6;
+  background: white;
+  color: #6c757d;
   border-radius: 6px;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
 }
 
-.search-box input:focus {
-  border-color: var(--kitui-primary);
-  box-shadow: 0 0 0 0.2rem rgba(26, 82, 118, 0.1);
-}
-
-.form-check {
-  margin-bottom: 0.5rem;
-}
-
-.form-check-input:checked {
-  background-color: var(--kitui-primary);
+.btn-control.active {
+  background: var(--kitui-primary);
+  color: white;
   border-color: var(--kitui-primary);
 }
 
-.form-check-label {
-  color: var(--kitui-dark);
-  font-size: 0.9rem;
+.btn-control:hover:not(.active) {
+  background: #e9ecef;
+  color: var(--kitui-primary);
 }
 
-.form-select {
-  border: 1px solid var(--kitui-border);
-  border-radius: 6px;
-}
-
-.form-select:focus {
-  border-color: var(--kitui-primary);
-  box-shadow: 0 0 0 0.2rem rgba(26, 82, 118, 0.1);
-}
-
-.form-control {
-  border: 1px solid var(--kitui-border);
-  border-radius: 6px;
-}
-
-.form-control:focus {
-  border-color: var(--kitui-primary);
-  box-shadow: 0 0 0 0.2rem rgba(26, 82, 118, 0.1);
-}
-
+/* Map Card */
 .map-card {
   border: none;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 4px 12px var(--kitui-shadow);
-  transition: all 0.3s ease;
-}
-
-.map-card:hover {
-  box-shadow: 0 8px 20px var(--kitui-shadow);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .map-card .card-header {
-  background: linear-gradient(135deg, var(--kitui-primary) 0%, #2c3e50 100%);
+  background: linear-gradient(135deg, var(--kitui-primary) 0%, var(--kitui-secondary) 100%);
   color: white;
-  border-radius: 12px 12px 0 0;
   padding: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .map-card .card-header h5 {
   margin: 0;
   font-weight: 600;
-  font-family: 'Montserrat', sans-serif;
+}
+
+.map-info {
+  font-size: 0.9rem;
+  opacity: 0.9;
 }
 
 #kenya-map {
-  height: 70vh;
+  height: 600px;
   width: 100%;
-  border-radius: 0 0 12px 12px;
 }
 
+/* Map Legends */
 .map-legends {
   position: absolute;
   bottom: 20px;
@@ -804,16 +1256,16 @@
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
+  z-index: 1000;
 }
 
 .map-legend {
   background: white;
   padding: 1rem;
   border-radius: 8px;
-  box-shadow: 0 4px 12px var(--kitui-shadow);
-  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   min-width: 160px;
-  border: 1px solid var(--kitui-border);
+  border: 1px solid #e1e1e1;
 }
 
 .map-legend h6 {
@@ -821,7 +1273,6 @@
   font-weight: 600;
   color: var(--kitui-dark);
   font-size: 0.9rem;
-  font-family: 'Montserrat', sans-serif;
 }
 
 .legend-item {
@@ -839,87 +1290,62 @@
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
 }
 
-.legend-color.completed { background: var(--kitui-accent); }
-.legend-color.ongoing { background: var(--kitui-secondary); }
-.legend-color.delayed { background: #e74c3c; }
-.legend-color.planned { background: var(--kitui-muted); }
+.legend-color.completed { background: var(--kitui-success); }
+.legend-color.ongoing { background: var(--kitui-warning); }
+.legend-color.delayed { background: var(--kitui-danger); }
+.legend-color.planned { background: #6c757d; }
 
 .legend-color.density-0 { background: #f8f9fa; }
 .legend-color.density-1 { background: #a3d9b1; }
 .legend-color.density-2 { background: #48c78e; }
-.legend-color.density-3 { background: var(--kitui-accent); }
+.legend-color.density-3 { background: var(--kitui-primary); }
 
-.map-controls {
+/* Loading Overlay */
+.map-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
   display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  gap: 0.75rem;
+  z-index: 2000;
 }
 
-.btn-kitui-primary {
-  background: linear-gradient(135deg, var(--kitui-primary) 0%, #2c3e50 100%);
-  border: none;
-  color: white;
-  font-weight: 500;
-  transition: all 0.3s ease;
-}
-
-.btn-kitui-primary:hover {
-  background: linear-gradient(135deg, #2c3e50 0%, var(--kitui-primary) 100%);
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.btn-outline-kitui-primary {
-  border: 2px solid var(--kitui-primary);
+.map-loading p {
+  margin-top: 1rem;
   color: var(--kitui-primary);
   font-weight: 500;
-  transition: all 0.3s ease;
-  background: transparent;
 }
 
-.btn-outline-kitui-primary:hover,
-.btn-outline-kitui-primary.active {
-  background: var(--kitui-primary);
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Card enhancements */
-.card {
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px var(--kitui-shadow);
-  transition: all 0.3s ease;
-  margin-bottom: 1.5rem;
+/* Selected Area Summary */
+.selected-area-summary {
   background: white;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px var(--kitui-shadow);
-}
-
-.card-header {
-  background: linear-gradient(135deg, var(--kitui-primary) 0%, #2c3e50 100%);
-  color: white;
-  border-radius: 12px 12px 0 0 !important;
-  padding: 1.25rem;
-  font-weight: 600;
-}
-
-.card-header h5 {
-  margin: 0;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 600;
-}
-
-.card-body {
+  border-radius: 8px;
   padding: 1.5rem;
+  margin-top: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
-/* Project list styles */
+.summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e1e1e1;
+}
+
+.summary-header h6 {
+  margin: 0;
+  color: var(--kitui-dark);
+  font-weight: 600;
+}
+
+/* Project Lists */
 .project-list {
   max-height: 300px;
   overflow-y: auto;
@@ -927,14 +1353,14 @@
 
 .project-item {
   padding: 1rem;
-  border-bottom: 1px solid var(--kitui-border);
+  border-bottom: 1px solid #e1e1e1;
   transition: background-color 0.3s ease;
   border-radius: 6px;
   margin-bottom: 0.5rem;
 }
 
 .project-item:hover {
-  background: var(--kitui-light);
+  background: #f8f9fa;
   transform: translateX(5px);
 }
 
@@ -974,187 +1400,139 @@
   font-size: 0.8rem;
   padding: 0.25rem 0.5rem;
   border-radius: 4px;
-  background: var(--kitui-light);
-  color: var(--kitui-muted);
+  background: #f8f9fa;
+  color: #6c757d;
 }
 
-.project-meta .badge {
-  font-size: 0.75rem;
-  font-weight: 500;
+/* Enhanced Monitoring Styles */
+.monitoring-card {
+  background: white;
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
+  padding: 1rem;
+  height: 100%;
 }
 
-/* County list styles */
-.county-list {
-  max-height: 300px;
-  overflow-y: auto;
+.monitoring-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e1e1e1;
 }
 
-.county-item {
-  margin-bottom: 1.25rem;
+.monitoring-header h6 {
+  margin: 0;
+  color: var(--kitui-dark);
+  font-weight: 600;
+}
+
+.update-item, .report-type-item, .alert-item {
   padding: 0.75rem;
-  border-radius: 6px;
+  border-bottom: 1px solid #f8f9fa;
   transition: background-color 0.3s ease;
 }
 
-.county-item:hover {
-  background: var(--kitui-light);
+.update-item:hover, .report-type-item:hover, .alert-item:hover {
+  background: #f8f9fa;
 }
 
-.county-info {
+.update-item:last-child, .report-type-item:last-child, .alert-item:last-child {
+  border-bottom: none;
+}
+
+.update-info, .alert-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.progress-badge {
+  background: var(--kitui-info);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.health-indicator {
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  min-width: 50px;
+  display: inline-block;
+}
+
+.report-type-info {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 0.5rem;
 }
 
-.county-name {
-  font-weight: 600;
+.report-type {
+  font-weight: 500;
   color: var(--kitui-dark);
 }
 
-.county-count {
-  color: var(--kitui-muted);
-  font-size: 0.85rem;
-  font-weight: 500;
+.report-count {
+  background: #6c757d;
+  color: white;
+  padding: 0.1rem 0.4rem;
+  border-radius: 3px;
+  font-size: 0.7rem;
 }
 
-.progress {
-  height: 6px;
-  background-color: #e9ecef;
+.alert-type {
+  background: var(--kitui-danger);
+  color: white;
+  padding: 0.1rem 0.4rem;
   border-radius: 3px;
+  font-size: 0.7rem;
+}
+
+.update-meta, .alert-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Table enhancements */
+.table-responsive {
+  border-radius: 8px;
   overflow: hidden;
 }
 
-.progress-bar {
-  background: linear-gradient(135deg, var(--kitui-primary) 0%, var(--kitui-accent) 100%);
-  transition: width 0.6s ease;
-}
-
-/* Update styles */
-.recent-updates {
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-.update-item {
-  padding: 1rem;
-  border-bottom: 1px solid var(--kitui-border);
-  transition: background-color 0.3s ease;
-  border-radius: 6px;
-  margin-bottom: 0.75rem;
-}
-
-.update-item:hover {
-  background: var(--kitui-light);
-}
-
-.update-item:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
-}
-
-.update-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-
-.update-header strong {
-  color: var(--kitui-dark);
+.table th {
+  background: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
   font-weight: 600;
-}
-
-.update-header small {
-  color: var(--kitui-muted);
-  font-size: 0.8rem;
-}
-
-.update-title {
-  margin-bottom: 0.75rem;
-  color: var(--kitui-muted);
-  font-size: 0.9rem;
-  line-height: 1.4;
-}
-
-/* Engagement stats */
-.engagement-stats .stat {
-  padding: 0.75rem;
-  text-align: center;
-  border-radius: 8px;
-  transition: background-color 0.3s ease;
-}
-
-.engagement-stats .stat:hover {
-  background: var(--kitui-light);
-}
-
-.engagement-stats h4 {
-  margin: 0;
-  font-weight: 700;
-  font-family: 'Montserrat', sans-serif;
-}
-
-.engagement-stats small {
-  color: var(--kitui-muted);
-  font-size: 0.8rem;
-  font-weight: 500;
-}
-
-.approval-rate {
-  background: var(--kitui-light);
-  padding: 1.25rem;
-  border-radius: 8px;
-  margin-top: 1rem;
-}
-
-.approval-rate .d-flex {
-  margin-bottom: 0.5rem;
-}
-
-.approval-rate span {
   color: var(--kitui-dark);
-  font-weight: 500;
 }
 
-.approval-rate strong {
-  color: var(--kitui-primary);
-  font-weight: 600;
-}
-
-/* Chart container styles */
-canvas {
-  border-radius: 8px;
-}
-
-/* Responsive design */
+/* Responsive Design */
 @media (max-width: 768px) {
-  .dashboard-header {
-    padding: 1.5rem 0;
-  }
-  
-  .dashboard-header h1 {
-    font-size: 1.5rem;
-  }
-  
-  .stat-card {
-    padding: 1rem;
+  .filters-sidebar {
+    height: auto;
+    position: relative;
     margin-bottom: 1rem;
   }
   
-  .stat-icon {
-    width: 50px;
-    height: 50px;
-    font-size: 1.25rem;
-    margin-right: 1rem;
-  }
-  
-  .stat-content h3 {
-    font-size: 1.5rem;
-  }
-  
   #kenya-map {
-    height: 50vh;
+    height: 400px;
   }
   
   .map-legends {
@@ -1165,89 +1543,41 @@ canvas {
     justify-content: center;
   }
   
-  .filters-sidebar {
-    height: auto;
-    position: relative;
-    margin-bottom: 1.5rem;
-  }
-  
-  .map-controls {
+  .map-controls-bar {
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 1rem;
     align-items: stretch;
   }
   
-  .btn-group {
-    width: 100%;
+  .control-group {
+    justify-content: center;
   }
-  
-  .btn-group .btn {
-    flex: 1;
-  }
-}
-
-/* Leaflet marker styles */
-.leaflet-marker-icon {
-  border: 3px solid white;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
-
-.leaflet-popup-content {
-  margin: 15px;
-  min-width: 250px;
-  font-family: 'Open Sans', sans-serif;
-}
-
-.leaflet-popup-content h6 {
-  color: var(--kitui-primary);
-  margin-bottom: 0.75rem;
-  font-weight: 600;
-  font-family: 'Montserrat', sans-serif;
-}
-
-.leaflet-popup-content p {
-  margin-bottom: 0.5rem;
-  color: var(--kitui-dark);
-  font-size: 0.9rem;
-}
-
-.leaflet-popup-content .badge {
-  font-size: 0.75rem;
 }
 
 /* Custom scrollbar */
 .filter-options::-webkit-scrollbar,
-.project-list::-webkit-scrollbar,
-.county-list::-webkit-scrollbar,
-.recent-updates::-webkit-scrollbar {
+.project-list::-webkit-scrollbar {
   width: 6px;
 }
 
 .filter-options::-webkit-scrollbar-track,
-.project-list::-webkit-scrollbar-track,
-.county-list::-webkit-scrollbar-track,
-.recent-updates::-webkit-scrollbar-track {
+.project-list::-webkit-scrollbar-track {
   background: #f1f1f1;
   border-radius: 3px;
 }
 
 .filter-options::-webkit-scrollbar-thumb,
-.project-list::-webkit-scrollbar-thumb,
-.county-list::-webkit-scrollbar-thumb,
-.recent-updates::-webkit-scrollbar-thumb {
+.project-list::-webkit-scrollbar-thumb {
   background: #c1c1c1;
   border-radius: 3px;
 }
 
 .filter-options::-webkit-scrollbar-thumb:hover,
-.project-list::-webkit-scrollbar-thumb:hover,
-.county-list::-webkit-scrollbar-thumb:hover,
-.recent-updates::-webkit-scrollbar-thumb:hover {
+.project-list::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
 
-/* Animation for dashboard elements */
+/* Animation */
 @keyframes fadeInUp {
   from {
     opacity: 0;
@@ -1260,29 +1590,11 @@ canvas {
 }
 
 .stat-card,
+.metric-card,
 .filter-group,
 .card {
   animation: fadeInUp 0.6s ease;
 }
-
-.stat-card:nth-child(1) { animation-delay: 0.1s; }
-.stat-card:nth-child(2) { animation-delay: 0.2s; }
-.stat-card:nth-child(3) { animation-delay: 0.3s; }
-.stat-card:nth-child(4) { animation-delay: 0.4s; }
-.stat-card:nth-child(5) { animation-delay: 0.5s; }
-.stat-card:nth-child(6) { animation-delay: 0.6s; }
-
-/* Utility classes for Kitui theme */
-.text-kitui-primary { color: var(--kitui-primary) !important; }
-.text-kitui-secondary { color: var(--kitui-secondary) !important; }
-.text-kitui-accent { color: var(--kitui-accent) !important; }
-
-.bg-kitui-primary { background-color: var(--kitui-primary) !important; }
-.bg-kitui-secondary { background-color: var(--kitui-secondary) !important; }
-.bg-kitui-accent { background-color: var(--kitui-accent) !important; }
-
-.border-kitui-primary { border-color: var(--kitui-primary) !important; }
-.border-kitui-secondary { border-color: var(--kitui-secondary) !important; }
 </style>
 
 <!-- Leaflet CSS -->
@@ -1291,468 +1603,2431 @@ canvas {
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-// Initialize map with enhanced styling
-function initMap() {
-  // Create map centered on Kenya
-  const map = L.map('kenya-map', {
-    center: [-1.286389, 36.817223],
-    zoom: 7,
-    zoomControl: true,
-    preferCanvas: true
-  });
-  
-  // Add tile layer with multiple options
-  const baseLayers = {
-    "Streets": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-      maxZoom: 19
-    }),
-    "Satellite": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      attribution: 'Tiles © Esri',
-      maxZoom: 19
-    }),
-    "Light": L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      attribution: '© OpenStreetMap contributors © CartoDB',
-      maxZoom: 20
-    })
-  };
-  
-  baseLayers.Streets.addTo(map);
-  
-  // Define status colors with better visual distinction
-  const statusColors = {
-    'completed': '#28a745',
-    'ongoing': '#ffc107', 
-    'delayed': '#dc3545',
-    'planned': '#6c757d'
-  };
-  
-  // Create feature groups for better layer management
-  const projectMarkers = L.featureGroup();
-  const boundaryLayers = {
-    counties: L.featureGroup(),
-    subcounties: L.featureGroup(),
-    wards: L.featureGroup()
-  };
-  
-  // Enhanced marker creation function
-  function createProjectMarker(feature, latlng) {
-    const status = feature.properties.status;
-    const color = statusColors[status] || '#6c757d';
+// Kenya Projects Dashboard - Enhanced JavaScript with Spatial Filtering, Auto-zoom, and Notification Marquee
+
+// Global variables
+let kenyaMap;
+let projectMarkers;
+let boundaryLayers = {
+    counties: null,
+    subcounties: null, 
+    wards: null
+};
+let selectedPolygons = {
+    counties: new Map(),
+    subcounties: new Map(),
+    wards: new Map()
+};
+let currentZoomLevel = 'county';
+let notificationInterval;
+let currentFilters = {};
+
+// Chart instances storage
+let chartInstances = {
+    statusChart: null,
+    sectorChart: null,
+    budgetChart: null,
+    timelineChart: null
+};
+
+// FIXED: Complete filter synchronization system
+function syncAllFilters() {
+    const filters = getCurrentFilters();
+    currentFilters = filters;
     
-    // Create custom circle marker with better styling
-    const marker = L.circleMarker(latlng, {
-      radius: 8,
-      fillColor: color,
-      color: '#ffffff',
-      weight: 2,
-      opacity: 1,
-      fillOpacity: 0.8
-    });
+    console.log('Syncing filters:', filters);
     
-    // Add hover effects
-    marker.on('mouseover', function() {
-      this.setStyle({
-        radius: 10,
-        weight: 3
-      });
-    });
+    // Sync map selections with form
+    syncMapSelectionsToForm();
     
-    marker.on('mouseout', function() {
-      this.setStyle({
-        radius: 8,
-        weight: 2
-      });
-    });
+    // Update all visualizations with current filters
+    updateAllVisualizations();
     
-    // Enhanced popup content
-    const popupContent = `
-      <div class="project-popup">
-        <h6 class="text-kenya-green fw-bold">${feature.properties.name}</h6>
-        <div class="popup-details">
-          <p><strong>Status:</strong> <span class="badge bg-${status}">${status}</span></p>
-          <p><strong>County:</strong> ${feature.properties.county}</p>
-          <p><strong>Sector:</strong> ${feature.properties.sector || 'N/A'}</p>
-          <p><strong>Budget:</strong> Ksh ${parseFloat(feature.properties.budget).toLocaleString('en-KE')}</p>
-          <p><strong>Start Date:</strong> ${feature.properties.start_date || 'N/A'}</p>
-          <p><strong>End Date:</strong> ${feature.properties.end_date || 'N/A'}</p>
-        </div>
-        <div class="text-center mt-2">
-          <a href="/project/${feature.properties.id}/" class="btn btn-sm btn-kenya-green">
-            <i class="fas fa-info-circle me-1"></i>View Details
-          </a>
-        </div>
-      </div>
-    `;
+    // Update URL parameters without page reload
+    updateURLParameters(filters);
     
-    marker.bindPopup(popupContent, {
-      maxWidth: 300,
-      className: 'custom-popup'
-    });
+    // Update notification marquee with filtered data
+    updateNotificationMarquee();
     
-    return marker;
-  }
-  
-  // Load and display projects
-  const projects = {{ geojson|safe }};
-  let validProjects = 0;
-  
-  projects.features.forEach(feature => {
-    if (feature.geometry && feature.geometry.coordinates) {
-      const coords = feature.geometry.coordinates;
-      // Ensure coordinates are in correct order [lng, lat]
-      const latlng = [coords[1], coords[0]];
-      
-      const marker = createProjectMarker(feature, latlng);
-      projectMarkers.addLayer(marker);
-      validProjects++;
+    // FIXED: Use the correct function name
+    updateCharts(filters); // Changed from updateChartsWithFilteredData
+}
+
+// FIXED: Get current filters with proper form values
+function getCurrentFilters() {
+    const statusCheckboxes = document.querySelectorAll('input[name="status"]:checked');
+    const sectorCheckboxes = document.querySelectorAll('input[name="sector"]:checked');
+    
+    return {
+        counties: Array.from(selectedPolygons.counties.keys()),
+        subcounties: Array.from(selectedPolygons.subcounties.keys()),
+        wards: Array.from(selectedPolygons.wards.keys()),
+        status: Array.from(statusCheckboxes).map(c => c.value),
+        sectors: Array.from(sectorCheckboxes).map(c => c.value),
+        min_budget: document.querySelector('input[name="min_budget"]')?.value || '',
+        max_budget: document.querySelector('input[name="max_budget"]')?.value || '',
+        start_date: document.querySelector('input[name="start_date"]')?.value || '',
+        end_date: document.querySelector('input[name="end_date"]')?.value || ''
+    };
+}
+
+// FIXED: Update all visualizations with proper data flow
+function updateAllVisualizations() {
+    const selectedAreas = getAllSelectedAreas();
+    const filters = getCurrentFilters();
+    
+    console.log('Updating visualizations with:', { selectedAreas, filters });
+    
+    // Update map projects
+    filterProjectsOnMap(filters);
+    
+    // Update summary statistics
+    updateSummaryStatistics(filters);
+    
+    // Update charts with filtered data
+    updateChartsWithFilteredData(filters);
+    
+    // Update project lists
+    updateProjectLists(filters);
+    
+    // Update performance metrics
+    updatePerformanceMetrics(filters);
+    
+    // Update heatmap when county is selected
+    updateHeatmapForSelectedCounty();
+}
+
+// Sync map selections to form dropdowns
+function syncMapSelectionsToForm() {
+    const selectedCounties = Array.from(selectedPolygons.counties.keys());
+    const selectedSubcounties = Array.from(selectedPolygons.subcounties.keys());
+    const selectedWards = Array.from(selectedPolygons.wards.keys());
+    
+    // Update county dropdown
+    const countySelect = document.getElementById('county-select');
+    if (countySelect) {
+        if (selectedCounties.length === 0) {
+            countySelect.value = '';
+        } else if (selectedCounties.length === 1) {
+            countySelect.value = selectedCounties[0];
+        }
     }
-  });
-  
-  // Add projects to map
-  projectMarkers.addTo(map);
-  
-  // Fit map to show all markers if there are valid projects
-  if (validProjects > 0) {
-    map.fitBounds(projectMarkers.getBounds(), { padding: [50, 50] });
-  }
-  
-  // Load administrative boundaries with enhanced styling
-  async function loadBoundaryLayers() {
-    try {
-      // Load counties with project counts
-      const countiesResponse = await fetch("{% url 'counties_geojson' %}");
-      const countiesData = await countiesResponse.json();
-      
-      if (countiesData && countiesData.features) {
-        const countyStyle = (feature) => {
-          const projectCount = feature.properties.project_count || 0;
-          return {
-            fillColor: getDensityColor(projectCount),
-            weight: 2,
-            opacity: 1,
-            color: 'white',
-            dashArray: '3',
-            fillOpacity: 0.6
-          };
-        };
-        
-        boundaryLayers.counties = L.geoJSON(countiesData, {
-          style: countyStyle,
-          onEachFeature: (feature, layer) => {
-            const props = feature.properties;
-            layer.bindPopup(`
-              <div class="boundary-popup">
-                <h6>${props.county}</h6>
-                <p><strong>Projects:</strong> ${props.project_count || 0}</p>
-                <p><strong>Population (2009):</strong> ${props.pop_2009 ? props.pop_2009.toLocaleString() : 'N/A'}</p>
-              </div>
-            `);
-          }
+    
+    // Update subcounty dropdown
+    const subcountySelect = document.getElementById('subcounty-select');
+    if (subcountySelect) {
+        if (selectedSubcounties.length === 0) {
+            subcountySelect.value = '';
+        } else if (selectedSubcounties.length === 1) {
+            subcountySelect.value = selectedSubcounties[0];
+        }
+    }
+    
+    // Update ward dropdown
+    const wardSelect = document.getElementById('ward-select');
+    if (wardSelect) {
+        if (selectedWards.length === 0) {
+            wardSelect.value = '';
+        } else if (selectedWards.length === 1) {
+            wardSelect.value = selectedWards[0];
+        }
+    }
+}
+
+// Update URL parameters
+function updateURLParameters(filters) {
+    const urlParams = new URLSearchParams();
+    
+    // Add all filters to URL
+    if (filters.counties.length > 0) {
+        filters.counties.forEach(county => urlParams.append('county', county));
+    }
+    if (filters.subcounties.length > 0) {
+        filters.subcounties.forEach(sc => urlParams.append('subcounty', sc));
+    }
+    if (filters.wards.length > 0) {
+        filters.wards.forEach(ward => urlParams.append('ward', ward));
+    }
+    if (filters.status.length > 0) {
+        filters.status.forEach(status => urlParams.append('status', status));
+    }
+    if (filters.sectors.length > 0) {
+        filters.sectors.forEach(sector => urlParams.append('sector', sector));
+    }
+    if (filters.min_budget) urlParams.append('min_budget', filters.min_budget);
+    if (filters.max_budget) urlParams.append('max_budget', filters.max_budget);
+    if (filters.start_date) urlParams.append('start_date', filters.start_date);
+    if (filters.end_date) urlParams.append('end_date', filters.end_date);
+    
+    // Update URL without reloading page
+    const newUrl = `${window.location.pathname}?${urlParams.toString()}`;
+    window.history.replaceState({}, '', newUrl);
+}
+
+// ENHANCED: Apply filters with AJAX for real-time updates
+function applyFiltersWithAJAX() {
+    const filters = getCurrentFilters();
+    const formData = new FormData();
+    
+    // Add all filter data to FormData
+    Object.keys(filters).forEach(key => {
+        if (Array.isArray(filters[key])) {
+            filters[key].forEach(value => formData.append(key, value));
+        } else if (filters[key]) {
+            formData.append(key, filters[key]);
+        }
+    });
+    
+    showLoadingState();
+    
+    // Send AJAX request for filtered data
+    fetch('?' + new URLSearchParams(formData).toString())
+        .then(response => response.text())
+        .then(html => {
+            // Parse the HTML response to extract updated data
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            // Update statistics and metrics
+            updateStatisticsFromResponse(doc);
+            
+            // Update project lists
+            updateProjectListsFromResponse(doc);
+            
+            hideLoadingState();
+            showNotification('Filters applied successfully', 'success');
+        })
+        .catch(error => {
+            console.error('Filter error:', error);
+            hideLoadingState();
+            showNotification('Error applying filters', 'error');
         });
-      }
-      
-      // Initially show counties
-      boundaryLayers.counties.addTo(map);
-      
-    } catch (error) {
-      console.error('Error loading boundary layers:', error);
+}
+
+// ENHANCED: Clear all filters and map selections
+function clearAllFiltersAndSelections() {
+    // Clear form
+    const filterForm = document.getElementById('filter-form');
+    if (filterForm) {
+        filterForm.reset();
     }
-  }
-  
-  // Helper function for density-based coloring
-  function getDensityColor(projectCount) {
+    
+    // Clear map selections
+    clearAllSelections();
+    
+    // Reset dropdowns
+    updateSubcountyOptions([]);
+    updateWardOptions([]);
+    
+    // Clear URL parameters
+    window.history.replaceState({}, '', window.location.pathname);
+    
+    // Reload page without filters or use AJAX to reset
+    window.location.href = window.location.pathname;
+}
+
+// Initialize notification marquee
+function initNotificationMarquee() {
+    const notificationBar = document.getElementById('notification-marquee');
+    if (!notificationBar) {
+        // Create notification bar if it doesn't exist
+        const marqueeContainer = document.createElement('div');
+        marqueeContainer.id = 'notification-marquee-container';
+        marqueeContainer.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(90deg, var(--kitui-primary), var(--kitui-secondary));
+            color: white;
+            padding: 8px 0;
+            z-index: 9999;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        `;
+        
+        const marqueeContent = document.createElement('div');
+        marqueeContent.id = 'notification-marquee';
+        marqueeContent.style.cssText = `
+            white-space: nowrap;
+            display: inline-block;
+            padding-left: 100%;
+            animation: scrollText 90s linear infinite;
+        `;
+        
+        // Add CSS animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes scrollText {
+                0% { transform: translateX(0); }
+                100% { transform: translateX(-100%); }
+            }
+            .notification-item {
+                display: inline-block;
+                margin-right: 50px;
+                font-size: 14px;
+                font-weight: 500;
+            }
+            .notification-item .badge {
+                margin-right: 8px;
+                font-size: 10px;
+                padding: 2px 6px;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        marqueeContainer.appendChild(marqueeContent);
+        document.body.insertBefore(marqueeContainer, document.body.firstChild);
+    }
+    
+    // Start with initial notifications
+    updateNotificationMarquee();
+    
+    // Update notifications periodically
+    notificationInterval = setInterval(updateNotificationMarquee, 30000);
+}
+
+// ENHANCED: Update notification marquee with filtered data
+function updateNotificationMarquee() {
+    const notificationMarquee = document.getElementById('notification-marquee');
+    if (!notificationMarquee) return;
+    
+    // Generate notification items based on current filters
+    const notifications = generateNotifications();
+    
+    // Create marquee content
+    let marqueeHTML = '';
+    notifications.forEach(notification => {
+        marqueeHTML += `
+            <span class="notification-item">
+                <span class="badge bg-${notification.type}">${notification.badge}</span>
+                ${notification.text}
+            </span>
+        `;
+    });
+    
+    // Add duplicate content for seamless looping
+    marqueeHTML += marqueeHTML;
+    
+    notificationMarquee.innerHTML = marqueeHTML;
+}
+
+// ENHANCED: Generate notifications based on current filtered data
+function generateNotifications() {
+    const notifications = [];
+    const filters = getCurrentFilters();
+    
+    // Calculate filtered statistics
+    const filteredStats = calculateFilteredStatistics();
+    
+    // Add system notifications with filtered data
+    notifications.push({
+        badge: 'LIVE',
+        type: 'success',
+        text: `Kenya Projects Dashboard: Tracking ${filteredStats.totalProjects.toLocaleString()} projects${filters.counties.length > 0 ? ` in ${filters.counties.join(', ')}` : ' nationwide'}`
+    });
+    
+    notifications.push({
+        badge: 'BUDGET',
+        type: 'info',
+        text: `Total Investment: Ksh ${filteredStats.totalBudget.toLocaleString()}`
+    });
+    
+    notifications.push({
+        badge: 'PROGRESS',
+        type: 'primary',
+        text: `Completion Rate: ${filteredStats.completionRate}%`
+    });
+    
+    if (filteredStats.overdueProjects > 0) {
+        notifications.push({
+            badge: 'ALERT',
+            type: 'warning',
+            text: `${filteredStats.overdueProjects} projects require attention`
+        });
+    }
+    
+    if (filteredStats.upcomingDeadlines > 0) {
+        notifications.push({
+            badge: 'DEADLINE',
+            type: 'danger',
+            text: `${filteredStats.upcomingDeadlines} upcoming project deadlines`
+        });
+    }
+    
+    // Add spatial filter information
+    if (filters.counties.length > 0 || filters.subcounties.length > 0 || filters.wards.length > 0) {
+        notifications.push({
+            badge: 'FILTER',
+            type: 'secondary',
+            text: `Active filters: ${getActiveFilterText()}`
+        });
+    }
+    
+    // Add time-based notifications
+    const now = new Date();
+    notifications.push({
+        badge: 'TIME',
+        type: 'secondary',
+        text: `Last updated: ${now.toLocaleTimeString()}`
+    });
+    
+    return notifications;
+}
+
+// Calculate statistics based on current filters
+function calculateFilteredStatistics() {
+    const filters = getCurrentFilters();
+    const selectedAreas = getAllSelectedAreas();
+    
+    let totalProjects = 0;
+    let totalBudget = 0;
+    let completedProjects = 0;
+    let overdueProjects = 0;
+    let upcomingDeadlines = 0;
+    
+    // Calculate based on selected areas
+    selectedAreas.forEach(area => {
+        totalProjects += area.feature.properties.project_count || 0;
+        totalBudget += area.feature.properties.total_budget || 0;
+        completedProjects += area.feature.properties.completed_projects || 0;
+    });
+    
+    // Fallback to global stats if no area selected
+    if (selectedAreas.length === 0) {
+        totalProjects = {{ total_projects|default:0 }};
+        totalBudget = {{ total_budget|default:0 }};
+        completedProjects = Math.round(totalProjects * 0.4); // Estimate
+        overdueProjects = {{ overdue_projects|default:0 }};
+        upcomingDeadlines = {{ upcoming_deadlines|default:0 }};
+    }
+    
+    const completionRate = totalProjects > 0 ? Math.round((completedProjects / totalProjects) * 100) : 0;
+    
+    return {
+        totalProjects,
+        totalBudget,
+        completionRate,
+        overdueProjects,
+        upcomingDeadlines
+    };
+}
+
+// Get text description of active filters
+function getActiveFilterText() {
+    const filters = getCurrentFilters();
+    const parts = [];
+    
+    if (filters.counties.length > 0) {
+        parts.push(`${filters.counties.length} county${filters.counties.length > 1 ? 's' : ''}`);
+    }
+    if (filters.subcounties.length > 0) {
+        parts.push(`${filters.subcounties.length} subcount${filters.subcounties.length > 1 ? 'ies' : 'y'}`);
+    }
+    if (filters.wards.length > 0) {
+        parts.push(`${filters.wards.length} ward${filters.wards.length > 1 ? 's' : ''}`);
+    }
+    if (filters.status.length > 0) {
+        parts.push(`${filters.status.length} status${filters.status.length > 1 ? 'es' : ''}`);
+    }
+    
+    return parts.length > 0 ? parts.join(', ') : 'All areas';
+}
+
+// Initialize map with enhanced functionality
+function initMap() {
+    kenyaMap = L.map('kenya-map', {
+        center: [-1.286389, 36.817223],
+        zoom: 7,
+        zoomControl: true,
+        preferCanvas: true
+    });
+    
+    // Base layers
+    const baseLayers = {
+        "Streets": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }),
+        "Satellite": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles © Esri',
+            maxZoom: 19
+        }),
+        "Light": L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '© OpenStreetMap contributors © CartoDB',
+            maxZoom: 20
+        })
+    };
+    baseLayers.Streets.addTo(kenyaMap);
+
+    // Initialize feature groups
+    projectMarkers = L.featureGroup().addTo(kenyaMap);
+
+    // Load all layers
+    loadLayers();
+    
+    // Initialize location level buttons
+    initLocationLevelButtons();
+}
+
+// Initialize location level selection buttons
+function initLocationLevelButtons() {
+    const locationButtons = document.querySelectorAll('.btn-location');
+    locationButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            locationButtons.forEach(btn => btn.classList.remove('active'));
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            // Set current zoom level
+            currentZoomLevel = this.getAttribute('data-level');
+            
+            // Update map layers based on selection
+            updateMapLayers();
+        });
+    });
+}
+
+// Update map layers based on current zoom level
+function updateMapLayers() {
+    // Remove all boundary layers
+    Object.values(boundaryLayers).forEach(layer => {
+        if (layer) {
+            kenyaMap.removeLayer(layer);
+        }
+    });
+    
+    // Add appropriate layer based on current zoom level
+    switch(currentZoomLevel) {
+        case 'county':
+            if (boundaryLayers.counties) {
+                boundaryLayers.counties.addTo(kenyaMap);
+            }
+            break;
+        case 'subcounty':
+            if (boundaryLayers.subcounties) {
+                boundaryLayers.subcounties.addTo(kenyaMap);
+            }
+            break;
+        case 'ward':
+            if (boundaryLayers.wards) {
+                boundaryLayers.wards.addTo(kenyaMap);
+            }
+            break;
+    }
+}
+
+// Load all geographic layers and projects
+async function loadLayers() {
+    try {
+        // Show loading state
+        document.getElementById('map-loading').style.display = 'flex';
+        
+        // Load counties with enhanced statistics
+        const countiesResponse = await fetch("{% url 'counties_geojson' %}");
+        const countiesData = await countiesResponse.json();
+        boundaryLayers.counties = createCountiesLayer(countiesData);
+
+        // Load subcounties
+        const subResponse = await fetch("{% url 'subcounties_geojson' %}");
+        const subData = await subResponse.json();
+        boundaryLayers.subcounties = createSubcountiesLayer(subData);
+
+        // Load wards
+        const wardsResponse = await fetch("{% url 'wards_geojson' %}");
+        const wardsData = await wardsResponse.json();
+        boundaryLayers.wards = createWardsLayer(wardsData);
+
+        // Load projects with current filters
+        const projectsUrl = "{% url 'project_locations_geojson' %}" + window.location.search;
+        const projectsResponse = await fetch(projectsUrl);
+        const projectsData = await projectsResponse.json();
+        createProjectMarkers(projectsData);
+
+        // Add default layers
+        boundaryLayers.counties.addTo(kenyaMap);
+        updateMapLayers();
+
+        // Add layer controls
+        L.control.layers({
+            "Streets": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'),
+            "Satellite": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'),
+            "Light": L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png')
+        }, {
+            "Projects": projectMarkers,
+            "Counties": boundaryLayers.counties,
+            "Subcounties": boundaryLayers.subcounties,
+            "Wards": boundaryLayers.wards
+        }, { collapsed: false }).addTo(kenyaMap);
+
+        // Fit map to show all projects
+        if (projectMarkers.getLayers().length > 0) {
+            kenyaMap.fitBounds(projectMarkers.getBounds(), { padding: [50, 50] });
+        }
+
+        // Hide loading state
+        document.getElementById('map-loading').style.display = 'none';
+
+        // Initialize with any pre-selected filters
+        handleInitialSelections();
+
+    } catch (err) {
+        console.error("Error loading layers:", err);
+        document.getElementById('map-loading').style.display = 'none';
+        showMapError("Failed to load map data. Please refresh the page.");
+    }
+}
+
+// Create counties layer with enhanced functionality
+function createCountiesLayer(geojsonData) {
+    return L.geoJSON(geojsonData, {
+        style: getCountyStyle,
+        onEachFeature: function(feature, layer) {
+            // Enhanced popup with statistics
+            layer.bindPopup(createCountyPopup(feature));
+            
+            // Click handler for selection
+            layer.on('click', function(e) {
+                handlePolygonSelection(layer, 'counties', feature, e);
+                L.DomEvent.stopPropagation(e);
+            });
+            
+            // Hover effects
+            layer.on('mouseover', function() {
+                if (!selectedPolygons.counties.has(feature.properties.county)) {
+                    layer.setStyle({
+                        weight: 3,
+                        color: '#ff6b35',
+                        fillOpacity: 0.4
+                    });
+                }
+            });
+            
+            layer.on('mouseout', function() {
+                if (!selectedPolygons.counties.has(feature.properties.county)) {
+                    layer.setStyle(getCountyStyle(feature));
+                }
+            });
+        }
+    });
+}
+
+// Create subcounties layer
+function createSubcountiesLayer(geojsonData) {
+    return L.geoJSON(geojsonData, {
+        style: getSubcountyStyle,
+        onEachFeature: function(feature, layer) {
+            layer.bindPopup(createSubcountyPopup(feature));
+            
+            layer.on('click', function(e) {
+                handlePolygonSelection(layer, 'subcounties', feature, e);
+                L.DomEvent.stopPropagation(e);
+            });
+            
+            layer.on('mouseover', function() {
+                if (!selectedPolygons.subcounties.has(feature.properties.subcounty)) {
+                    layer.setStyle({
+                        weight: 2,
+                        color: '#ff6b35',
+                        fillOpacity: 0.3
+                    });
+                }
+            });
+            
+            layer.on('mouseout', function() {
+                if (!selectedPolygons.subcounties.has(feature.properties.subcounty)) {
+                    layer.setStyle(getSubcountyStyle(feature));
+                }
+            });
+        }
+    });
+}
+
+// Create wards layer
+function createWardsLayer(geojsonData) {
+    return L.geoJSON(geojsonData, {
+        style: getWardStyle,
+        onEachFeature: function(feature, layer) {
+            layer.bindPopup(createWardPopup(feature));
+            
+            layer.on('click', function(e) {
+                handlePolygonSelection(layer, 'wards', feature, e);
+                L.DomEvent.stopPropagation(e);
+            });
+            
+            layer.on('mouseover', function() {
+                if (!selectedPolygons.wards.has(feature.properties.ward)) {
+                    layer.setStyle({
+                        weight: 2,
+                        color: '#ff6b35',
+                        fillOpacity: 0.3
+                    });
+                }
+            });
+            
+            layer.on('mouseout', function() {
+                if (!selectedPolygons.wards.has(feature.properties.ward)) {
+                    layer.setStyle(getWardStyle(feature));
+                }
+            });
+        }
+    });
+}
+
+// Style functions
+function getCountyStyle(feature) {
+    const projectCount = feature.properties.project_count || 0;
+    return {
+        weight: 2,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: 0.6,
+        fillColor: getDensityColor(projectCount)
+    };
+}
+
+function getSubcountyStyle(feature) {
+    const projectCount = feature.properties.project_count || 0;
+    return {
+        weight: 1,
+        opacity: 1,
+        color: '#2c7fb8',
+        fillOpacity: 0.3,
+        fillColor: getDensityColor(projectCount)
+    };
+}
+
+function getWardStyle(feature) {
+    const projectCount = feature.properties.project_count || 0;
+    return {
+        weight: 1,
+        opacity: 1,
+        color: '#f03b20',
+        fillOpacity: 0.2,
+        fillColor: getDensityColor(projectCount)
+    };
+}
+
+function getDensityColor(projectCount) {
     if (projectCount === 0) return '#f8f9fa';
     if (projectCount <= 5) return '#c6e48b';
     if (projectCount <= 20) return '#7bc96f';
     return '#196127';
-  }
-  
-  // Map control functions
-  document.getElementById('toggle-projects').addEventListener('click', function() {
-    const isActive = this.classList.contains('active');
-    if (!isActive) {
-      this.classList.add('active');
-      document.getElementById('toggle-boundaries').classList.remove('active');
-      map.addLayer(projectMarkers);
-      map.removeLayer(boundaryLayers.counties);
-      document.querySelector('.project-legend').style.display = 'block';
-      document.querySelector('.boundary-legend').style.display = 'none';
-    }
-  });
-  
-  document.getElementById('toggle-boundaries').addEventListener('click', function() {
-    const isActive = this.classList.contains('active');
-    if (!isActive) {
-      this.classList.add('active');
-      document.getElementById('toggle-projects').classList.remove('active');
-      map.removeLayer(projectMarkers);
-      map.addLayer(boundaryLayers.counties);
-      document.querySelector('.project-legend').style.display = 'none';
-      document.querySelector('.boundary-legend').style.display = 'block';
-    }
-  });
-  
-  // Map style switcher
-  document.getElementById('map-style').addEventListener('change', function(e) {
-    const style = e.target.value;
-    Object.values(baseLayers).forEach(layer => map.removeLayer(layer));
-    baseLayers[style.charAt(0).toUpperCase() + style.slice(1)].addTo(map);
-  });
-  
-  // Initialize boundary layers
-  loadBoundaryLayers();
-  
-  // Store map instance for global access
-  window.kenyaMap = map;
 }
 
-// Initialize charts
-function initCharts() {
-  // Status Distribution Chart
-  const statusCtx = document.getElementById('statusChart');
-  if (statusCtx) {
-    const statusData = {
-      labels: Object.keys({{ status_counts|safe }}).map(status => 
-        '{{ status_labels|get_item:"' + status + '" }}'
-      ),
-      datasets: [{
-        data: Object.values({{ status_counts|safe }}),
-        backgroundColor: ['#28a745', '#ffc107', '#dc3545', '#6c757d'],
-        borderWidth: 2,
-        borderColor: '#ffffff'
-      }]
+// Create project markers
+function createProjectMarkers(geojsonData) {
+    // Clear existing markers
+    projectMarkers.clearLayers();
+    
+    const statusColors = {
+        'completed': '#28a745',
+        'ongoing': '#ffc107', 
+        'delayed': '#dc3545',
+        'planned': '#6c757d'
+    };
+
+    geojsonData.features.forEach(feature => {
+        if (feature.geometry && feature.geometry.coordinates) {
+            const coords = feature.geometry.coordinates;
+            const latlng = [coords[1], coords[0]];
+            const marker = createProjectMarker(feature, latlng, statusColors);
+            projectMarkers.addLayer(marker);
+        }
+    });
+    
+    // Update project count display
+    updateProjectCountDisplay(geojsonData.features.length);
+}
+
+// Update project count in UI
+function updateProjectCountDisplay(count) {
+    const projectCountElements = document.querySelectorAll('.project-count-display');
+    projectCountElements.forEach(element => {
+        element.textContent = count.toLocaleString();
+    });
+    
+    // Update map title with count
+    const mapTitle = document.getElementById('map-title');
+    if (mapTitle) {
+        const currentText = mapTitle.textContent;
+        const baseText = currentText.split(' - ')[0];
+        mapTitle.textContent = `${baseText} - ${count} Projects`;
+    }
+}
+
+// Create individual project marker
+function createProjectMarker(feature, latlng, statusColors) {
+    const status = feature.properties.status;
+    const color = statusColors[status] || '#6c757d';
+    
+    const marker = L.circleMarker(latlng, {
+        radius: getMarkerSize(feature.properties.budget),
+        fillColor: color,
+        color: '#ffffff',
+        weight: 2,
+        opacity: 1,
+        fillOpacity: 0.8
+    });
+    
+    // Hover effects
+    marker.on('mouseover', function() {
+        this.setStyle({ radius: getMarkerSize(feature.properties.budget) + 2, weight: 3 });
+    });
+    
+    marker.on('mouseout', function() {
+        this.setStyle({ radius: getMarkerSize(feature.properties.budget), weight: 2 });
+    });
+    
+    // Click handler for project selection
+    marker.on('click', function(e) {
+        showProjectDetails(feature.properties);
+        L.DomEvent.stopPropagation(e);
+    });
+    
+    // Bind popup
+    marker.bindPopup(createProjectPopup(feature.properties), { 
+        maxWidth: 300, 
+        className: 'project-popup-container' 
+    });
+    
+    return marker;
+}
+
+// Get marker size based on budget
+function getMarkerSize(budget) {
+    if (!budget) return 6;
+    if (budget < 1000000) return 6;
+    if (budget < 5000000) return 8;
+    if (budget < 20000000) return 10;
+    return 12;
+}
+
+// ENHANCED: Handle polygon selection with auto-zoom and hierarchical filtering
+function handlePolygonSelection(layer, layerType, feature, e) {
+    const identifier = getPolygonIdentifier(layerType, feature);
+    
+    // Check if already selected
+    const isSelected = selectedPolygons[layerType].has(identifier);
+    
+    if (isSelected) {
+        // Deselect
+        deselectPolygon(layer, layerType, feature);
+    } else {
+        // Select - support multiple selections with Ctrl key
+        if (!e.ctrlKey && !e.metaKey) {
+            // Clear other selections in the same layer if Ctrl not pressed
+            clearSelectionsInLayer(layerType);
+        }
+        selectPolygon(layer, layerType, feature);
+    }
+    
+    // ENHANCED: Sync filters and update everything
+    syncAllFilters();
+}
+
+// Get unique identifier for polygon
+function getPolygonIdentifier(layerType, feature) {
+    switch(layerType) {
+        case 'counties': return feature.properties.county;
+        case 'subcounties': return feature.properties.subcounty;
+        case 'wards': return feature.properties.ward;
+        default: return feature.properties.id;
+    }
+}
+
+// Select a polygon
+function selectPolygon(layer, layerType, feature) {
+    const identifier = getPolygonIdentifier(layerType, feature);
+    
+    // Apply selected style
+    layer.setStyle({
+        weight: 3,
+        color: '#ff6b35',
+        fillColor: '#ff6b35',
+        fillOpacity: 0.7
+    });
+    
+    // Store selection
+    selectedPolygons[layerType].set(identifier, {
+        layer: layer,
+        feature: feature
+    });
+    
+    // Auto-zoom to selected polygon
+    autoZoomToPolygon(layer);
+    
+    // Update map title
+    updateMapTitle();
+    
+    // Update dropdown selections and hierarchical filtering
+    updateDropdownFromMapSelection(layerType, identifier);
+}
+
+// Deselect a polygon
+function deselectPolygon(layer, layerType, feature) {
+    const identifier = getPolygonIdentifier(layerType, feature);
+    
+    // Reset style
+    switch(layerType) {
+        case 'counties':
+            layer.setStyle(getCountyStyle(feature));
+            break;
+        case 'subcounties':
+            layer.setStyle(getSubcountyStyle(feature));
+            break;
+        case 'wards':
+            layer.setStyle(getWardStyle(feature));
+            break;
+    }
+    
+    // Remove from selection
+    selectedPolygons[layerType].delete(identifier);
+    
+    // Update map title
+    updateMapTitle();
+    
+    // Clear dropdown selection
+    clearDropdownSelection(layerType);
+}
+
+// Clear all selections in a specific layer
+function clearSelectionsInLayer(layerType) {
+    selectedPolygons[layerType].forEach((value, identifier) => {
+        deselectPolygon(value.layer, layerType, value.feature);
+    });
+}
+
+// Auto-zoom to selected polygon
+function autoZoomToPolygon(layer) {
+    const bounds = layer.getBounds();
+    if (bounds.isValid()) {
+        kenyaMap.fitBounds(bounds, { 
+            padding: [20, 20],
+            maxZoom: currentZoomLevel === 'ward' ? 14 : 
+                    currentZoomLevel === 'subcounty' ? 12 : 10
+        });
+    }
+}
+
+// Update dropdown from map selection
+function updateDropdownFromMapSelection(layerType, identifier) {
+    const dropdownMap = {
+        'counties': 'county-select',
+        'subcounties': 'subcounty-select',
+        'wards': 'ward-select'
     };
     
-    new Chart(statusCtx, {
-      type: 'doughnut',
-      data: statusData,
-      options: {
-        responsive: true,
-        plugins: {
-          legend: {
-            position: 'bottom',
-            labels: {
-              padding: 20,
-              usePointStyle: true
+    const dropdownId = dropdownMap[layerType];
+    if (dropdownId) {
+        const dropdown = document.getElementById(dropdownId);
+        if (dropdown) {
+            dropdown.value = identifier;
+            
+            // Trigger hierarchical filtering
+            if (layerType === 'counties') {
+                updateSubcountyOptions([identifier]);
+                updateWardOptions([]); // Clear wards when county changes
+            } else if (layerType === 'subcounties') {
+                // Get county from selected subcounty to update ward options
+                const selectedSubcounty = boundaryLayers.subcounties.getLayers().find(layer => 
+                    layer.feature.properties.subcounty === identifier
+                );
+                if (selectedSubcounty) {
+                    updateWardOptions([identifier]);
+                }
             }
-          }
         }
-      }
-    });
-  }
-  
-  // Sector Distribution Chart
-  const sectorCtx = document.getElementById('sectorChart');
-  if (sectorCtx) {
-    const sectorLabels = {{ sector_data|slice:":8"|safe }}.map(s => s.sector);
-    const sectorCounts = {{ sector_data|slice:":8"|safe }}.map(s => s.count);
+    }
+}
+
+// Clear dropdown selection
+function clearDropdownSelection(layerType) {
+    const dropdownMap = {
+        'counties': 'county-select',
+        'subcounties': 'subcounty-select',
+        'wards': 'ward-select'
+    };
     
-    new Chart(sectorCtx, {
-      type: 'bar',
-      data: {
-        labels: sectorLabels,
-        datasets: [{
-          label: 'Number of Projects',
-          data: sectorCounts,
-          backgroundColor: '#006600',
-          borderColor: '#004d00',
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: true,
-            ticks: {
-              stepSize: 1
+    const dropdownId = dropdownMap[layerType];
+    if (dropdownId) {
+        const dropdown = document.getElementById(dropdownId);
+        if (dropdown) {
+            dropdown.value = '';
+            
+            // Clear dependent dropdowns
+            if (layerType === 'counties') {
+                clearDropdownSelection('subcounties');
+                clearDropdownSelection('wards');
+                updateSubcountyOptions([]);
+                updateWardOptions([]);
+            } else if (layerType === 'subcounties') {
+                clearDropdownSelection('wards');
+                updateWardOptions([]);
             }
-          }
         }
-      }
-    });
-  }
-  
-  // Budget by Status Chart
-  const budgetCtx = document.getElementById('budgetChart');
-  if (budgetCtx) {
-    new Chart(budgetCtx, {
-      type: 'pie',
-      data: {
-        labels: {{ budget_by_status|safe }}.map(item => '{{ status_labels|get_item:"' + item.status + '" }}'),
-        datasets: [{
-          data: {{ budget_by_status|safe }}.map(item => item.total_budget || 0),
-          backgroundColor: ['#28a745', '#ffc107', '#dc3545', '#6c757d']
-        }]
-      }
-    });
-  }
-  
-  // Timeline Chart
-  const timelineCtx = document.getElementById('timelineChart');
-  if (timelineCtx) {
-    const timelineData = {};
-    {% for item in monthly_timeline %}
-      timelineData["{{ item.month|date:'M Y' }}"] = {{ item.count }};
-    {% endfor %}
+    }
+}
+
+// ENHANCED: Get all selected areas across all layers
+function getAllSelectedAreas() {
+    const areas = [];
     
-    new Chart(timelineCtx, {
-      type: 'line',
-      data: {
-        labels: Object.keys(timelineData),
-        datasets: [{
-          label: 'Projects Started',
-          data: Object.values(timelineData),
-          borderColor: '#006600',
-          backgroundColor: 'rgba(0, 102, 0, 0.1)',
-          tension: 0.4,
-          fill: true
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: {
-            beginAtZero: true
-          }
-        }
-      }
+    Object.keys(selectedPolygons).forEach(layerType => {
+        selectedPolygons[layerType].forEach((value, identifier) => {
+            areas.push({
+                type: layerType,
+                feature: value.feature,
+                identifier: identifier
+            });
+        });
     });
-  }
+    
+    return areas;
+}
+
+// Update map title based on selections
+function updateMapTitle() {
+    const mapTitle = document.getElementById('map-title');
+    const selectedCounties = Array.from(selectedPolygons.counties.keys());
+    const selectedSubcounties = Array.from(selectedPolygons.subcounties.keys());
+    const selectedWards = Array.from(selectedPolygons.wards.keys());
+    
+    let title = 'Project Locations - ';
+    
+    if (selectedCounties.length > 0) {
+        title += `${selectedCounties.join(', ')} County`;
+        if (selectedCounties.length > 1) title += 's';
+    } else if (selectedSubcounties.length > 0) {
+        title += `${selectedSubcounties.length} Subcounties`;
+    } else if (selectedWards.length > 0) {
+        title += `${selectedWards.length} Wards`;
+    } else {
+        title += 'All Counties';
+    }
+    
+    mapTitle.textContent = title;
+}
+
+// ENHANCED: Update summary statistics with real filter integration
+function updateSummaryStatistics(filters) {
+    const summaryContent = document.getElementById('summary-content');
+    const selectedAreas = getAllSelectedAreas();
+    
+    if (selectedAreas.length === 0 && (!filters || Object.keys(filters).length === 0)) {
+        summaryContent.innerHTML = `
+            <p class="text-muted">Select an area on the map or from dropdown to view summary</p>
+        `;
+        return;
+    }
+    
+    // Calculate statistics for selected areas
+    const stats = calculateAreaStatistics(selectedAreas);
+    
+    summaryContent.innerHTML = `
+        <div class="selected-area-summary">
+            <h6>Summary for ${selectedAreas.length} Selected Area(s)</h6>
+            <div class="stats-grid mt-3">
+                <div class="stat-item">
+                    <strong>${stats.totalProjects}</strong>
+                    <span>Total Projects</span>
+                </div>
+                <div class="stat-item">
+                    <strong>Ksh ${formatNumber(stats.totalBudget)}</strong>
+                    <span>Total Budget</span>
+                </div>
+                <div class="stat-item">
+                    <strong>${stats.completedProjects}</strong>
+                    <span>Completed</span>
+                </div>
+                <div class="stat-item">
+                    <strong>${stats.ongoingProjects}</strong>
+                    <span>Ongoing</span>
+                </div>
+                <div class="stat-item">
+                    <strong>${stats.delayedProjects}</strong>
+                    <span>Delayed</span>
+                </div>
+                <div class="stat-item">
+                    <strong>${stats.completionRate}%</strong>
+                    <span>Completion Rate</span>
+                </div>
+            </div>
+            <div class="mt-3">
+                <button class="btn btn-sm btn-outline-secondary" onclick="clearAllSelections()">
+                    <i class="fas fa-times me-1"></i>Clear Selections
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Update quick stats bar
+    updateQuickStatsBar(stats);
+}
+
+// Calculate comprehensive statistics for selected areas
+function calculateAreaStatistics(selectedAreas) {
+    let totalProjects = 0;
+    let totalBudget = 0;
+    let completedProjects = 0;
+    let ongoingProjects = 0;
+    let delayedProjects = 0;
+    
+    selectedAreas.forEach(area => {
+        totalProjects += area.feature.properties.project_count || 0;
+        totalBudget += area.feature.properties.total_budget || 0;
+        completedProjects += area.feature.properties.completed_projects || 0;
+        ongoingProjects += area.feature.properties.ongoing_projects || 0;
+        delayedProjects += area.feature.properties.delayed_projects || 0;
+    });
+    
+    const completionRate = totalProjects > 0 ? Math.round((completedProjects / totalProjects) * 100) : 0;
+    
+    return {
+        totalProjects,
+        totalBudget,
+        completedProjects,
+        ongoingProjects,
+        delayedProjects,
+        completionRate
+    };
+}
+
+// Update quick stats bar with filtered data
+function updateQuickStatsBar(stats) {
+    // Update total projects
+    const totalProjectsElement = document.querySelector('.stat-card:nth-child(1) h3');
+    if (totalProjectsElement) {
+        totalProjectsElement.textContent = stats.totalProjects.toLocaleString();
+    }
+    
+    // Update total budget
+    const totalBudgetElement = document.querySelector('.stat-card:nth-child(2) h3');
+    if (totalBudgetElement) {
+        totalBudgetElement.textContent = `Ksh ${formatNumber(stats.totalBudget)}`;
+    }
+    
+    // Update completion rate
+    const completionRateElement = document.querySelector('.stat-card:nth-child(3) h3');
+    if (completionRateElement) {
+        completionRateElement.textContent = `${stats.completionRate}%`;
+    }
+    
+    // Update counties covered
+    const countiesCoveredElement = document.querySelector('.stat-card:nth-child(4) h3');
+    if (countiesCoveredElement) {
+        const selectedCounties = Array.from(selectedPolygons.counties.keys());
+        const countiesCount = selectedCounties.length > 0 ? selectedCounties.length : {{ county_stats|length }};
+        countiesCoveredElement.textContent = countiesCount;
+    }
+    
+    // Update overdue projects
+    const overdueProjectsElement = document.querySelector('.stat-card:nth-child(5) h3');
+    if (overdueProjectsElement) {
+        overdueProjectsElement.textContent = stats.delayedProjects;
+    }
+}
+
+// ENHANCED: Enhanced filtering system
+function updateAllVisualizations() {
+    const selectedAreas = getAllSelectedAreas();
+    const filters = getCurrentFilters();
+    
+    // Update map projects
+    filterProjectsOnMap(filters);
+    
+    // Update summary statistics
+    updateSummaryStatistics(filters);
+    
+    // Update charts and visualizations
+    updateCharts(filters);
+    
+    // Update project lists
+    updateProjectLists(filters);
+    
+    // Update performance metrics
+    updatePerformanceMetrics(filters);
+}
+
+// ENHANCED: Enhanced project filtering on map
+function filterProjectsOnMap(filters) {
+    let visibleCount = 0;
+    
+    projectMarkers.eachLayer(layer => {
+        const projectProps = layer.feature.properties;
+        const isVisible = isProjectMatchingFilters(projectProps, filters);
+        
+        layer.setStyle({
+            opacity: isVisible ? 1 : 0.2,
+            fillOpacity: isVisible ? 0.8 : 0.1,
+            weight: isVisible ? 2 : 1
+        });
+        
+        if (isVisible) {
+            layer.bindPopup(createProjectPopup(projectProps));
+            visibleCount++;
+        }
+    });
+    
+    // Update project count display
+    updateProjectCountDisplay(visibleCount);
+}
+
+// ENHANCED: Enhanced filter matching logic
+function isProjectMatchingFilters(projectProps, filters) {
+    // Area filters
+    const selectedAreas = {
+        counties: filters.counties || [],
+        subcounties: filters.subcounties || [],
+        wards: filters.wards || []
+    };
+    
+    // Check area match
+    let areaMatch = false;
+    if (selectedAreas.counties.length === 0 && selectedAreas.subcounties.length === 0 && selectedAreas.wards.length === 0) {
+        areaMatch = true;
+    } else {
+        areaMatch = selectedAreas.counties.includes(projectProps.county) ||
+                   selectedAreas.subcounties.includes(projectProps.subcounty) ||
+                   selectedAreas.wards.includes(projectProps.ward);
+    }
+    
+    if (!areaMatch) return false;
+    
+    // Status filter
+    if (filters.status && filters.status.length > 0 && !filters.status.includes(projectProps.status)) {
+        return false;
+    }
+    
+    // Sector filter
+    if (filters.sectors && filters.sectors.length > 0 && !filters.sectors.includes(projectProps.sector)) {
+        return false;
+    }
+    
+    // Budget filter
+    if (filters.min_budget && projectProps.budget < parseFloat(filters.min_budget)) {
+        return false;
+    }
+    if (filters.max_budget && projectProps.budget > parseFloat(filters.max_budget)) {
+        return false;
+    }
+    
+    return true;
+}
+
+// ENHANCED: Update all charts based on filters
+function updateCharts(filters) {
+    console.log('Updating charts with filters:', filters);
+    
+    // In a real implementation, you'd make AJAX calls to get filtered data
+    // For now, we'll simulate filtered data by adjusting existing data
+    
+    const filteredData = getFilteredChartData(filters);
+    renderChartsWithData(filteredData);
+}
+
+// Get filtered chart data based on current filters
+function getFilteredChartData(filters) {
+    // This would typically come from an AJAX call
+    // For now, we'll simulate filtered data
+    
+    const baseStatusCounts = window.statusCounts || {};
+    const baseSectorData = window.sectorData || [];
+    
+    // Apply simple filtering logic (in real app, this would be server-side)
+    let filteredStatusCounts = { ...baseStatusCounts };
+    let filteredSectorData = [...baseSectorData];
+    
+    // Reduce counts based on area selection (simplified)
+    const selectedAreas = getAllSelectedAreas();
+    if (selectedAreas.length > 0) {
+        const reductionFactor = Math.max(0.1, 1 - (selectedAreas.length * 0.1));
+        Object.keys(filteredStatusCounts).forEach(status => {
+            filteredStatusCounts[status] = Math.round(filteredStatusCounts[status] * reductionFactor);
+        });
+        
+        filteredSectorData = filteredSectorData.map(sector => ({
+            ...sector,
+            count: Math.round(sector.count * reductionFactor)
+        }));
+    }
+    
+    return {
+        statusCounts: filteredStatusCounts,
+        sectorData: filteredSectorData,
+        budgetByStatus: window.budgetByStatus || [],
+        monthlyTimeline: window.monthlyTimeline || {}
+    };
+}
+
+// Render charts with filtered data
+function renderChartsWithData(chartData) {
+    // Reinitialize charts with filtered data
+    initChartsWithData(chartData);
+}
+
+// ENHANCED: Update project lists with filtered data
+function updateProjectLists(filters) {
+    console.log('Updating project lists with filters:', filters);
+    
+    // In a real implementation, you'd make AJAX calls to get filtered project data
+    // For now, we'll show a loading state and simulate the update
+    
+    showProjectListsLoading();
+    
+    setTimeout(() => {
+        // Simulate filtered data update
+        const filteredProjects = simulateFilteredProjects(filters);
+        renderProjectLists(filteredProjects);
+        hideProjectListsLoading();
+    }, 500);
+}
+
+// Simulate filtered projects (in real app, this would come from server)
+function simulateFilteredProjects(filters) {
+    // This is a simplified simulation
+    const reductionFactor = getAllSelectedAreas().length > 0 ? 0.3 : 1;
+    
+    return {
+        highestBudget: Array.from({length: 5}, (_, i) => ({
+            name: `Filtered Project ${i + 1}`,
+            budget: Math.round((10000000 - i * 1000000) * reductionFactor),
+            county: filters.counties[0] || 'Sample County',
+            sector: filters.sectors[0] || 'Infrastructure',
+            status: filters.status[0] || 'ongoing'
+        })),
+        riskyProjects: Array.from({length: 3}, (_, i) => ({
+            name: `Risky Project ${i + 1}`,
+            budget: Math.round(5000000 * reductionFactor),
+            county: filters.counties[0] || 'Sample County',
+            status: 'delayed',
+            end_date: new Date(Date.now() - 86400000 * (i + 7))
+        }))
+    };
+}
+
+// Render project lists with data
+function renderProjectLists(projects) {
+    // Update highest budget projects
+    const highestBudgetContainer = document.querySelector('.project-list:nth-of-type(1)');
+    if (highestBudgetContainer) {
+        highestBudgetContainer.innerHTML = projects.highestBudget.map(project => `
+            <div class="project-item">
+                <div class="project-info">
+                    <strong>${project.name}</strong>
+                    <span class="budget">Ksh ${formatNumber(project.budget)}</span>
+                </div>
+                <div class="project-meta">
+                    <span class="location">${project.county}</span>
+                    <span class="sector">${project.sector}</span>
+                    <span class="status badge bg-${project.status}">${project.status}</span>
+                </div>
+            </div>
+        `).join('');
+    }
+    
+    // Update risky projects
+    const riskyProjectsContainer = document.querySelector('.project-list:nth-of-type(2)');
+    if (riskyProjectsContainer) {
+        riskyProjectsContainer.innerHTML = projects.riskyProjects.map(project => `
+            <div class="project-item">
+                <div class="project-info">
+                    <strong>${project.name}</strong>
+                    <span class="budget">Ksh ${formatNumber(project.budget)}</span>
+                </div>
+                <div class="project-meta">
+                    <span class="location">${project.county}</span>
+                    <span class="status badge bg-danger">${project.status}</span>
+                    <span class="days-remaining text-danger">
+                        ${Math.floor((new Date() - new Date(project.end_date)) / 86400000)} days overdue
+                    </span>
+                </div>
+            </div>
+        `).join('');
+    }
+}
+
+// Update performance metrics in sidebar
+function updatePerformanceMetrics(filters) {
+    const selectedAreas = getAllSelectedAreas();
+    
+    // Calculate metrics based on selected areas
+    let efficiency = 75;
+    let distribution = 68;
+    let budgetUtilization = 82;
+    let approval = 88;
+    
+    // Adjust metrics based on filter intensity
+    if (selectedAreas.length > 0) {
+        const intensity = Math.min(1, selectedAreas.length / 10);
+        efficiency = Math.round(75 * (1 - intensity * 0.2));
+        distribution = Math.round(68 * (1 - intensity * 0.3));
+        budgetUtilization = Math.round(82 * (1 - intensity * 0.1));
+        approval = Math.round(88 * (1 - intensity * 0.15));
+    }
+    
+    // Update metric cards
+    const metricCards = document.querySelectorAll('.metric-card h4');
+    if (metricCards.length >= 4) {
+        metricCards[0].textContent = `${efficiency}%`;
+        metricCards[1].textContent = `${distribution}%`;
+        metricCards[2].textContent = `${budgetUtilization}%`;
+        metricCards[3].textContent = `${approval}%`;
+    }
+}
+
+// Popup creation functions
+function createCountyPopup(feature) {
+    const props = feature.properties;
+    return `
+        <div class="boundary-popup">
+            <h6 class="text-primary">${props.county}</h6>
+            <div class="popup-stats">
+                <div class="stat-row">
+                    <span>Projects:</span>
+                    <strong>${props.project_count || 0}</strong>
+                </div>
+                <div class="stat-row">
+                    <span>Total Budget:</span>
+                    <strong>Ksh ${formatNumber(props.total_budget || 0)}</strong>
+                </div>
+                <div class="stat-row">
+                    <span>Population:</span>
+                    <strong>${formatNumber(props.pop_2009 || 0)}</strong>
+                </div>
+                <div class="stat-row">
+                    <span>Completion Rate:</span>
+                    <strong>${props.completion_rate || 0}%</strong>
+                </div>
+            </div>
+            <div class="popup-actions mt-2">
+                <button class="btn btn-sm btn-primary w-100" onclick="selectCountyFromPopup('${props.county}')">
+                    <i class="fas fa-crosshairs me-1"></i>Select & Zoom
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function createSubcountyPopup(feature) {
+    const props = feature.properties;
+    return `
+        <div class="boundary-popup">
+            <h6 class="text-info">${props.subcounty}</h6>
+            <div class="popup-stats">
+                <div class="stat-row">
+                    <span>County:</span>
+                    <strong>${props.county}</strong>
+                </div>
+                <div class="stat-row">
+                    <span>Projects:</span>
+                    <strong>${props.project_count || 0}</strong>
+                </div>
+                <div class="stat-row">
+                    <span>Area:</span>
+                    <strong>${formatNumber(props.area_sqkm || 0)} km²</strong>
+                </div>
+            </div>
+            <div class="popup-actions mt-2">
+                <button class="btn btn-sm btn-info w-100" onclick="selectSubcountyFromPopup('${props.subcounty}')">
+                    <i class="fas fa-crosshairs me-1"></i>Select & Zoom
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function createWardPopup(feature) {
+    const props = feature.properties;
+    return `
+        <div class="boundary-popup">
+            <h6 class="text-success">${props.ward}</h6>
+            <div class="popup-stats">
+                <div class="stat-row">
+                    <span>Subcounty:</span>
+                    <strong>${props.subcounty}</strong>
+                </div>
+                <div class="stat-row">
+                    <span>County:</span>
+                    <strong>${props.county}</strong>
+                </div>
+                <div class="stat-row">
+                    <span>Projects:</span>
+                    <strong>${props.project_count || 0}</strong>
+                </div>
+            </div>
+            <div class="popup-actions mt-2">
+                <button class="btn btn-sm btn-success w-100" onclick="selectWardFromPopup('${props.ward}')">
+                    <i class="fas fa-crosshairs me-1"></i>Select & Zoom
+                </button>
+            </div>
+        </div>
+    `;
+}
+
+function createProjectPopup(properties) {
+    return `
+        <div class="project-popup">
+            <h6 class="text-kenya-green fw-bold">${properties.name}</h6>
+            <div class="popup-details">
+                <p><strong>Status:</strong> <span class="badge bg-${properties.status}">${properties.status}</span></p>
+                <p><strong>County:</strong> ${properties.county}</p>
+                <p><strong>Sector:</strong> ${properties.sector || 'N/A'}</p>
+                <p><strong>Budget:</strong> Ksh ${formatNumber(properties.budget)}</p>
+                <p><strong>Start Date:</strong> ${properties.start_date || 'N/A'}</p>
+                <p><strong>End Date:</strong> ${properties.end_date || 'N/A'}</p>
+            </div>
+            <div class="text-center mt-2">
+                <a href="/project/${properties.id}/" class="btn btn-sm btn-kenya-green">
+                    <i class="fas fa-info-circle me-1"></i>View Details
+                </a>
+            </div>
+        </div>
+    `;
+}
+
+// Show detailed project information
+function showProjectDetails(properties) {
+    const summaryContent = document.getElementById('summary-content');
+    summaryContent.innerHTML = `
+        <div class="project-details">
+            <h6 class="text-kenya-green">${properties.name}</h6>
+            <div class="details-grid">
+                <div class="detail-item">
+                    <strong>Project ID:</strong> ${properties.id}
+                </div>
+                <div class="detail-item">
+                    <strong>Status:</strong> <span class="badge bg-${properties.status}">${properties.status}</span>
+                </div>
+                <div class="detail-item">
+                    <strong>County:</strong> ${properties.county}
+                </div>
+                <div class="detail-item">
+                    <strong>Sector:</strong> ${properties.sector || 'N/A'}
+                </div>
+                <div class="detail-item">
+                    <strong>Budget:</strong> Ksh ${formatNumber(properties.budget)}
+                </div>
+                <div class="detail-item">
+                    <strong>Start Date:</strong> ${properties.start_date || 'N/A'}
+                </div>
+                <div class="detail-item">
+                    <strong>End Date:</strong> ${properties.end_date || 'N/A'}
+                </div>
+                <div class="detail-item">
+                    <strong>Health Score:</strong> ${properties.health_score || 'N/A'}
+                </div>
+                <div class="detail-item">
+                    <strong>Risk Level:</strong> <span class="badge bg-${properties.risk_level === 'high' ? 'danger' : properties.risk_level === 'medium' ? 'warning' : 'success'}">${properties.risk_level}</span>
+                </div>
+            </div>
+            <div class="mt-3">
+                <a href="/project/${properties.id}/" class="btn btn-sm btn-primary w-100">
+                    <i class="fas fa-external-link-alt me-1"></i>View Full Details
+                </a>
+            </div>
+        </div>
+    `;
+}
+
+// Selection functions from popups
+function selectCountyFromPopup(countyName) {
+    boundaryLayers.counties.eachLayer(layer => {
+        if (layer.feature.properties.county === countyName) {
+            handlePolygonSelection(layer, 'counties', layer.feature, { ctrlKey: false });
+            return;
+        }
+    });
+}
+
+function selectSubcountyFromPopup(subcountyName) {
+    boundaryLayers.subcounties.eachLayer(layer => {
+        if (layer.feature.properties.subcounty === subcountyName) {
+            handlePolygonSelection(layer, 'subcounties', layer.feature, { ctrlKey: false });
+            return;
+        }
+    });
+}
+
+function selectWardFromPopup(wardName) {
+    boundaryLayers.wards.eachLayer(layer => {
+        if (layer.feature.properties.ward === wardName) {
+            handlePolygonSelection(layer, 'wards', layer.feature, { ctrlKey: false });
+            return;
+        }
+    });
+}
+
+// ENHANCED: Handle dropdown selections with hierarchical filtering
+function handleCountySelection(countyName) {
+    if (!countyName) {
+        clearSelectionsInLayer('counties');
+        updateSubcountyOptions([]);
+        updateWardOptions([]);
+    } else {
+        boundaryLayers.counties.eachLayer(layer => {
+            if (layer.feature.properties.county === countyName) {
+                clearSelectionsInLayer('counties');
+                selectPolygon(layer, 'counties', layer.feature);
+                updateSubcountyOptions([countyName]);
+                updateWardOptions([]);
+                return;
+            }
+        });
+    }
+    syncAllFilters();
+}
+
+function handleSubcountySelection(subcountyName) {
+    if (!subcountyName) {
+        clearSelectionsInLayer('subcounties');
+        updateWardOptions([]);
+    } else {
+        boundaryLayers.subcounties.eachLayer(layer => {
+            if (layer.feature.properties.subcounty === subcountyName) {
+                clearSelectionsInLayer('subcounties');
+                selectPolygon(layer, 'subcounties', layer.feature);
+                updateWardOptions([subcountyName]);
+                return;
+            }
+        });
+    }
+    syncAllFilters();
+}
+
+function handleWardSelection(wardName) {
+    if (!wardName) {
+        clearSelectionsInLayer('wards');
+    } else {
+        boundaryLayers.wards.eachLayer(layer => {
+            if (layer.feature.properties.ward === wardName) {
+                clearSelectionsInLayer('wards');
+                selectPolygon(layer, 'wards', layer.feature);
+                return;
+            }
+        });
+    }
+    syncAllFilters();
+}
+
+// Update subcounty dropdown options based on selected counties
+function updateSubcountyOptions(selectedCounties) {
+    const countySubcounties = window.countySubcounties || {};
+    const subcountySelect = document.getElementById('subcounty-select');
+    
+    if (!subcountySelect) return;
+    
+    subcountySelect.innerHTML = '<option value="">All Subcounties</option>';
+    
+    if (selectedCounties.length === 0) {
+        // Show all subcounties when no county is selected
+        const allSubcounties = new Set();
+        Object.values(countySubcounties).forEach(subcounties => {
+            subcounties.forEach(sc => allSubcounties.add(sc));
+        });
+        Array.from(allSubcounties).sort().forEach(subcounty => {
+            const option = document.createElement('option');
+            option.value = subcounty;
+            option.textContent = subcounty;
+            subcountySelect.appendChild(option);
+        });
+    } else {
+        // Show only subcounties from selected counties
+        const filteredSubcounties = new Set();
+        selectedCounties.forEach(county => {
+            if (countySubcounties[county]) {
+                countySubcounties[county].forEach(sc => filteredSubcounties.add(sc));
+            }
+        });
+        Array.from(filteredSubcounties).sort().forEach(subcounty => {
+            const option = document.createElement('option');
+            option.value = subcounty;
+            option.textContent = subcounty;
+            subcountySelect.appendChild(option);
+        });
+    }
+    
+    // Clear any existing subcounty selection if it's not in the filtered list
+    const currentValue = subcountySelect.value;
+    if (currentValue && !Array.from(subcountySelect.options).some(opt => opt.value === currentValue)) {
+        subcountySelect.value = '';
+        clearSelectionsInLayer('subcounties');
+    }
+}
+
+// Update ward dropdown options based on selected subcounties
+function updateWardOptions(selectedSubcounties) {
+    const subcountyWards = window.subcountyWards || {};
+    const wardSelect = document.getElementById('ward-select');
+    
+    if (!wardSelect) return;
+    
+    wardSelect.innerHTML = '<option value="">All Wards</option>';
+    
+    if (selectedSubcounties.length === 0) {
+        // Show all wards when no subcounty is selected
+        const allWards = new Set();
+        Object.values(subcountyWards).forEach(wards => {
+            wards.forEach(ward => allWards.add(ward));
+        });
+        Array.from(allWards).sort().forEach(ward => {
+            const option = document.createElement('option');
+            option.value = ward;
+            option.textContent = ward;
+            wardSelect.appendChild(option);
+        });
+    } else {
+        // Show only wards from selected subcounties
+        const filteredWards = new Set();
+        selectedSubcounties.forEach(subcounty => {
+            if (subcountyWards[subcounty]) {
+                subcountyWards[subcounty].forEach(ward => filteredWards.add(ward));
+            }
+        });
+        Array.from(filteredWards).sort().forEach(ward => {
+            const option = document.createElement('option');
+            option.value = ward;
+            option.textContent = ward;
+            wardSelect.appendChild(option);
+        });
+    }
+    
+    // Clear any existing ward selection if it's not in the filtered list
+    const currentValue = wardSelect.value;
+    if (currentValue && !Array.from(wardSelect.options).some(opt => opt.value === currentValue)) {
+        wardSelect.value = '';
+        clearSelectionsInLayer('wards');
+    }
+}
+
+// Handle initial selections from URL parameters
+function handleInitialSelections() {
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    const countyParam = urlParams.get('county');
+    if (countyParam) {
+        handleCountySelection(countyParam);
+    }
+    
+    const subcountyParam = urlParams.get('subcounty');
+    if (subcountyParam) {
+        // Need to ensure county is selected first for proper hierarchy
+        if (!countyParam) {
+            // Find which county this subcounty belongs to
+            const subcountyLayer = boundaryLayers.subcounties.getLayers().find(layer => 
+                layer.feature.properties.subcounty === subcountyParam
+            );
+            if (subcountyLayer) {
+                const county = subcountyLayer.feature.properties.county;
+                handleCountySelection(county);
+            }
+        }
+        handleSubcountySelection(subcountyParam);
+    }
+    
+    const wardParam = urlParams.get('ward');
+    if (wardParam) {
+        handleWardSelection(wardParam);
+    }
+}
+
+// ENHANCED: Clear all selections with filter integration
+function clearAllSelections() {
+    Object.keys(selectedPolygons).forEach(layerType => {
+        clearSelectionsInLayer(layerType);
+    });
+    
+    projectMarkers.eachLayer(layer => {
+        layer.setStyle({ opacity: 1, fillOpacity: 0.8 });
+    });
+    
+    updateSummaryStatistics();
+    updateMapTitle();
+    updateAllVisualizations();
+}
+
+// ENHANCED: Project monitoring functions
+function refreshMonitoringData() {
+    const selectedAreas = getAllSelectedAreas();
+    const filters = getCurrentFilters();
+    
+    showLoadingState();
+    
+    // Simulate data refresh
+    setTimeout(() => {
+        updateAllVisualizations();
+        hideLoadingState();
+        showNotification('Monitoring data refreshed successfully', 'success');
+        updateNotificationMarquee();
+    }, 1000);
+}
+
+function showLoadingState() {
+    const monitoringSection = document.querySelector('.monitoring-card');
+    if (monitoringSection) {
+        monitoringSection.style.opacity = '0.7';
+    }
+    
+    // Show loading spinner
+    const loadingSpinner = document.createElement('div');
+    loadingSpinner.className = 'loading-spinner';
+    loadingSpinner.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+    loadingSpinner.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+        background: rgba(255,255,255,0.9);
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    `;
+    
+    document.body.appendChild(loadingSpinner);
+}
+
+function hideLoadingState() {
+    const monitoringSection = document.querySelector('.monitoring-card');
+    if (monitoringSection) {
+        monitoringSection.style.opacity = '1';
+    }
+    
+    // Remove loading spinner
+    const loadingSpinner = document.querySelector('.loading-spinner');
+    if (loadingSpinner) {
+        loadingSpinner.remove();
+    }
+}
+
+function showProjectListsLoading() {
+    const projectLists = document.querySelectorAll('.project-list');
+    projectLists.forEach(list => {
+        list.style.opacity = '0.6';
+        list.innerHTML = '<div class="text-center p-3"><i class="fas fa-spinner fa-spin"></i> Loading projects...</div>';
+    });
+}
+
+function hideProjectListsLoading() {
+    const projectLists = document.querySelectorAll('.project-list');
+    projectLists.forEach(list => {
+        list.style.opacity = '1';
+    });
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `alert alert-${type} alert-dismissible fade show`;
+    notification.style.cssText = `
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        z-index: 1060;
+        min-width: 300px;
+    `;
+    notification.innerHTML = `
+        <div class="d-flex align-items-center">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+            <div>${message}</div>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+        }
+    }, 3000);
+}
+
+function viewProjectDetails(projectId) {
+    window.location.href = `/project/${projectId}/`;
+}
+
+// Utility functions
+function formatNumber(number) {
+    return new Intl.NumberFormat('en-KE').format(number);
+}
+
+function formatCurrency(amount) {
+    return new Intl.NumberFormat('en-KE', {
+        style: 'currency',
+        currency: 'KES',
+        minimumFractionDigits: 0
+    }).format(amount);
+}
+
+function showMapError(message) {
+    const mapContainer = document.getElementById('kenya-map');
+    mapContainer.innerHTML = `
+        <div class="map-error text-center p-4">
+            <i class="fas fa-exclamation-triangle fa-2x text-warning mb-3"></i>
+            <h5>Map Loading Error</h5>
+            <p class="text-muted">${message}</p>
+            <button class="btn btn-sm btn-primary" onclick="location.reload()">
+                <i class="fas fa-redo me-1"></i>Reload Page
+            </button>
+        </div>
+    `;
+}
+
+// FIXED: Chart initialization with proper data handling
+let chartsInitialized = false;
+
+function initCharts() {
+    // Use existing data
+    initChartsWithData({
+        statusCounts: window.statusCounts,
+        sectorData: window.sectorData,
+        budgetByStatus: window.budgetByStatus,
+        monthlyTimeline: window.monthlyTimeline
+    });
+}
+
+function initChartsWithData(chartData) {
+    // Prevent multiple initializations
+    if (chartsInitialized) {
+        console.log('Charts already initialized, reinitializing with new data...');
+    }
+    
+    console.log('Initializing charts with data:', chartData);
+    
+    // Destroy existing chart instances
+    Object.values(chartInstances).forEach(chart => {
+        if (chart) {
+            chart.destroy();
+        }
+    });
+    
+    // Status Distribution Chart
+    const statusCtx = document.getElementById('statusChart');
+    if (statusCtx && chartData.statusCounts && Object.keys(chartData.statusCounts).length > 0) {
+        const statusData = {
+            labels: Object.keys(chartData.statusCounts).map(status => 
+                window.statusLabels ? (window.statusLabels[status] || status) : status
+            ),
+            datasets: [{
+                data: Object.values(chartData.statusCounts),
+                backgroundColor: ['#28a745', '#ffc107', '#dc3545', '#6c757d', '#17a2b8'],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        };
+        
+        chartInstances.statusChart = new Chart(statusCtx, {
+            type: 'doughnut',
+            data: statusData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                            font: {
+                                size: 11
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Sector Distribution Chart
+    const sectorCtx = document.getElementById('sectorChart');
+    if (sectorCtx && chartData.sectorData && chartData.sectorData.length > 0) {
+        console.log('Sector data for chart:', chartData.sectorData);
+        
+        // Sort sectors by count (descending) and take top 8
+        const sortedSectors = chartData.sectorData
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 8);
+        
+        const sectorLabels = sortedSectors.map(s => {
+            return s.sector || s.name || 'Unknown Sector';
+        });
+        
+        const sectorCounts = sortedSectors.map(s => {
+            return s.count || s.value || s.total || 0;
+        });
+        
+        chartInstances.sectorChart = new Chart(sectorCtx, {
+            type: 'bar',
+            data: {
+                labels: sectorLabels,
+                datasets: [{
+                    label: 'Number of Projects',
+                    data: sectorCounts,
+                    backgroundColor: '#006600',
+                    borderColor: '#004d00',
+                    borderWidth: 1,
+                    borderRadius: 4,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            maxRotation: 45,
+                            minRotation: 45
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Budget by Status Chart
+    const budgetCtx = document.getElementById('budgetChart');
+    if (budgetCtx && chartData.budgetByStatus && chartData.budgetByStatus.length > 0) {
+        chartInstances.budgetChart = new Chart(budgetCtx, {
+            type: 'bar',
+            data: {
+                labels: chartData.budgetByStatus.map(item => 
+                    window.statusLabels ? (window.statusLabels[item.status] || item.status) : item.status
+                ),
+                datasets: [{
+                    label: 'Total Budget (KES)',
+                    data: chartData.budgetByStatus.map(item => item.total_budget),
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545', '#6c757d', '#17a2b8'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return 'Ksh ' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Project Timeline Chart
+    const timelineCtx = document.getElementById('timelineChart');
+    if (timelineCtx && chartData.monthlyTimeline && Object.keys(chartData.monthlyTimeline).length > 0) {
+        const labels = Object.keys(chartData.monthlyTimeline);
+        const data = Object.values(chartData.monthlyTimeline);
+        
+        chartInstances.timelineChart = new Chart(timelineCtx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Projects Started',
+                    data: data,
+                    borderColor: '#006600',
+                    backgroundColor: 'rgba(0, 102, 0, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+    
+    chartsInitialized = true;
+    console.log('Charts initialized successfully');
+}
+
+// Real-time filter updates
+function initRealTimeFilters() {
+    // Monitor all filter changes
+    const filterElements = document.querySelectorAll(
+        '#filter-form input, #filter-form select, #filter-form textarea'
+    );
+    
+    filterElements.forEach(element => {
+        element.addEventListener('change', function() {
+            // Small delay to handle multiple rapid changes
+            clearTimeout(window.filterTimeout);
+            window.filterTimeout = setTimeout(() => {
+                syncAllFilters();
+            }, 500);
+        });
+    });
+    
+    // Monitor map interactions
+    if (kenyaMap) {
+        kenyaMap.on('moveend', function() {
+            updateMapBasedFilters();
+        });
+    }
+}
+
+function updateMapBasedFilters() {
+    const bounds = kenyaMap.getBounds();
+    if (bounds.isValid()) {
+        // You could add bounds-based filtering here
+        console.log('Map moved:', bounds);
+    }
 }
 
 // Filter functionality
 function initFilters() {
-  // County selection updates subcounty options
-  const countySelect = document.getElementById('county-select');
-  const subcountySelect = document.getElementById('subcounty-select');
-  const wardSelect = document.getElementById('ward-select');
-  
-  countySelect.addEventListener('change', function() {
-    const selectedCounties = Array.from(this.selectedOptions).map(opt => opt.value);
-    subcountySelect.disabled = selectedCounties.length === 0;
+    const countySelect = document.getElementById('county-select');
+    const subcountySelect = document.getElementById('subcounty-select');
+    const wardSelect = document.getElementById('ward-select');
     
-    if (selectedCounties.length === 0) {
-      wardSelect.disabled = true;
-      wardSelect.innerHTML = '';
+    if (countySelect) {
+        countySelect.addEventListener('change', function() {
+            const selectedCounty = this.value;
+            handleCountySelection(selectedCounty);
+        });
     }
     
-    // Update subcounty options based on selected counties
-    updateSubcountyOptions(selectedCounties);
-  });
-  
-  subcountySelect.addEventListener('change', function() {
-    const selectedSubcounties = Array.from(this.selectedOptions).map(opt => opt.value);
-    wardSelect.disabled = selectedSubcounties.length === 0;
-    
-    if (selectedSubcounties.length > 0) {
-      updateWardOptions(selectedSubcounties);
+    if (subcountySelect) {
+        subcountySelect.addEventListener('change', function() {
+            const selectedSubcounty = this.value;
+            handleSubcountySelection(selectedSubcounty);
+        });
     }
-  });
-  
-  // Sector search functionality
-  document.getElementById('sector-search').addEventListener('input', function(e) {
-    const searchTerm = e.target.value.toLowerCase();
-    document.querySelectorAll('.sector-item').forEach(item => {
-      const label = item.querySelector('label').textContent.toLowerCase();
-      item.style.display = label.includes(searchTerm) ? 'block' : 'none';
+    
+    if (wardSelect) {
+        wardSelect.addEventListener('change', function() {
+            const selectedWard = this.value;
+            handleWardSelection(selectedWard);
+        });
+    }
+    
+    const sectorSearch = document.getElementById('sector-search');
+    if (sectorSearch) {
+        sectorSearch.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            document.querySelectorAll('.sector-item').forEach(item => {
+                const label = item.querySelector('label').textContent.toLowerCase();
+                item.style.display = label.includes(searchTerm) ? 'block' : 'none';
+            });
+        });
+    }
+
+    // Add real-time filter updates
+    const filterInputs = document.querySelectorAll('#filter-form input, #filter-form select');
+    filterInputs.forEach(input => {
+        input.addEventListener('change', function() {
+            syncAllFilters();
+        });
     });
-  });
-}
-
-function updateSubcountyOptions(selectedCounties) {
-  const countySubcounties = {{ county_subcounties_json|safe }};
-  const subcountySelect = document.getElementById('subcounty-select');
-  
-  // Clear existing options
-  subcountySelect.innerHTML = '';
-  
-  // Get unique subcounties from selected counties
-  const allSubcounties = new Set();
-  selectedCounties.forEach(county => {
-    if (countySubcounties[county]) {
-      countySubcounties[county].forEach(sc => allSubcounties.add(sc));
-    }
-  });
-  
-  // Add options
-  Array.from(allSubcounties).sort().forEach(subcounty => {
-    const option = document.createElement('option');
-    option.value = subcounty;
-    option.textContent = subcounty;
-    subcountySelect.appendChild(option);
-  });
-}
-
-function updateWardOptions(selectedSubcounties) {
-  const subcountyWards = {{ subcounty_wards_json|safe }};
-  const wardSelect = document.getElementById('ward-select');
-  
-  // Clear existing options
-  wardSelect.innerHTML = '';
-  
-  // Get unique wards from selected subcounties
-  const allWards = new Set();
-  selectedSubcounties.forEach(subcounty => {
-    if (subcountyWards[subcounty]) {
-      subcountyWards[subcounty].forEach(ward => allWards.add(ward));
-    }
-  });
-  
-  // Add options
-  Array.from(allWards).sort().forEach(ward => {
-    const option = document.createElement('option');
-    option.value = ward;
-    option.textContent = ward;
-    wardSelect.appendChild(option);
-  });
 }
 
 function clearAllFilters() {
-  document.getElementById('filter-form').reset();
-  document.getElementById('county-select').selectedIndex = -1;
-  document.getElementById('subcounty-select').selectedIndex = -1;
-  document.getElementById('ward-select').selectedIndex = -1;
-  document.getElementById('subcounty-select').disabled = true;
-  document.getElementById('ward-select').disabled = true;
+    clearAllFiltersAndSelections();
 }
 
 function exportData() {
-  // Simple export functionality - could be enhanced with proper file generation
-  const filters = {
-    counties: Array.from(document.getElementById('county-select').selectedOptions).map(o => o.value),
-    sectors: Array.from(document.querySelectorAll('input[name="sector"]:checked')).map(c => c.value),
-    statuses: Array.from(document.querySelectorAll('input[name="status"]:checked')).map(c => c.value)
-  };
-  
-  alert(`Exporting data with filters:\nCounties: ${filters.counties.join(', ') || 'All'}\nSectors: ${filters.sectors.join(', ') || 'All'}\nStatuses: ${filters.statuses.join(', ') || 'All'}`);
+    const filters = getCurrentFilters();
+    
+    alert(`Exporting data with filters:\nCounties: ${filters.counties.join(', ') || 'All'}\nSubcounties: ${filters.subcounties.join(', ') || 'All'}\nWards: ${filters.wards.join(', ') || 'All'}\nSectors: ${filters.sectors.join(', ') || 'All'}\nStatuses: ${filters.status.join(', ') || 'All'}`);
+}
+
+// FIXED: Tab navigation functionality
+function initTabNavigation() {
+    const tabButtons = document.querySelectorAll('.nav-link');
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Only initialize charts once when switching to chart tabs
+            if ((this.id === 'v-pills-overview-tab' || this.id === 'v-pills-analytics-tab') && !chartsInitialized) {
+                setTimeout(initCharts, 300);
+            }
+        });
+    });
+}
+
+// Collapsible filter sections
+function initCollapsibleFilters() {
+    const filterHeaders = document.querySelectorAll('.filter-header');
+    
+    filterHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-bs-target');
+            const target = document.querySelector(targetId);
+            
+            if (target) {
+                const isCollapsed = target.classList.contains('show');
+                
+                if (isCollapsed) {
+                    target.classList.remove('show');
+                } else {
+                    target.classList.add('show');
+                }
+                
+                const icon = this.querySelector('i');
+                if (icon) {
+                    icon.style.transform = isCollapsed ? 'rotate(0deg)' : 'rotate(180deg)';
+                }
+            }
+        });
+    });
+}
+
+// Update statistics from AJAX response
+function updateStatisticsFromResponse(doc) {
+    // This would parse the HTML response and update statistics
+    // For now, we'll simulate the update
+    console.log('Updating statistics from response');
+}
+
+// Update project lists from AJAX response  
+function updateProjectListsFromResponse(doc) {
+    // This would parse the HTML response and update project lists
+    // For now, we'll simulate the update
+    console.log('Updating project lists from response');
 }
 
 // Initialize everything when page loads
 document.addEventListener('DOMContentLoaded', function() {
-  initMap();
-  initCharts();
-  initFilters();
-  
-  // Pre-select any existing filters from URL parameters
-  const selectedCounties = {{ selected_counties_json|safe }};
-  if (selectedCounties.length > 0) {
-    document.getElementById('county-select').value = selectedCounties;
-    updateSubcountyOptions(selectedCounties);
-  }
-  
-  const selectedSubcounties = {{ selected_subcounties_json|safe }};
-  if (selectedSubcounties.length > 0) {
-    document.getElementById('subcounty-select').value = selectedSubcounties;
-    updateWardOptions(selectedSubcounties);
-  }
-  
-  const selectedWards = {{ selected_wards_json|safe }};
-  if (selectedWards.length > 0) {
-    document.getElementById('ward-select').value = selectedWards;
-  }
-});
-</script>
+    // Initialize notification marquee first
+    initNotificationMarquee();
+    
+    // Set chart data from Django context with debugging
+    console.log('Setting chart data from Django...');
 
+    window.statusCounts = {{ status_counts_json|safe }};
+    console.log('statusCounts:', window.statusCounts);
+
+    window.statusLabels = {{ status_labels_json|safe }};
+    console.log('statusLabels:', window.statusLabels);
+
+    window.sectorData = {{ sector_data_json|safe }};
+    console.log('sectorData:', window.sectorData);
+
+    window.budgetByStatus = {{ budget_by_status_json|safe }};
+    console.log('budgetByStatus:', window.budgetByStatus);
+
+    window.monthlyTimeline = {{ monthly_timeline_json|safe }};
+    console.log('monthlyTimeline:', window.monthlyTimeline);
+
+    window.countySubcounties = {{ county_subcounties_json|safe }};
+    window.subcountyWards = {{ subcounty_wards_json|safe }};
+    
+    if (document.getElementById('kenya-map')) {
+        if (typeof L === 'undefined') {
+            const leafletScript = document.createElement('script');
+            leafletScript.src = 'https://unpkg.com/leaflet/dist/leaflet.js';
+            leafletScript.onload = initMap;
+            document.head.appendChild(leafletScript);
+        } else {
+            initMap();
+        }
+    }
+    
+    initCharts();
+    initFilters();
+    initTabNavigation();
+    initCollapsibleFilters();
+    initRealTimeFilters();
+    
+    // Initialize dropdowns with all options
+    updateSubcountyOptions([]);
+    updateWardOptions([]);
+    
+    const selectedCounties = {{ selected_subcounties_json|safe }} || [];
+    if (selectedCounties.length > 0) {
+        const countySelect = document.getElementById('county-select');
+        if (countySelect) countySelect.value = selectedCounties;
+        updateSubcountyOptions(selectedCounties);
+    }
+    
+    const selectedSubcounties = {{ selected_subcounties_json|safe }} || [];
+    if (selectedSubcounties.length > 0) {
+        const subcountySelect = document.getElementById('subcounty-select');
+        if (subcountySelect) subcountySelect.value = selectedSubcounties;
+        updateWardOptions(selectedSubcounties);
+    }
+    
+    const selectedWards = {{ selected_wards_json|safe }} || [];
+    if (selectedWards.length > 0) {
+        const wardSelect = document.getElementById('ward-select');
+        if (wardSelect) wardSelect.value = selectedWards;
+    }
+    
+    // FIXED: Form submission handling
+    const filterForm = document.getElementById('filter-form');
+    if (filterForm) {
+        filterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('Form submitted with filters');
+            applyFiltersWithAJAX();
+        });
+    }
+    
+    // Initialize with current filters
+    setTimeout(() => {
+        syncAllFilters();
+    }, 1000);
+});
+
+// Selection functions for popup buttons
+function selectCounty(countyName) {
+    if (window.kenyaMap && window.kenyaMap.eachLayer) {
+        window.kenyaMap.eachLayer(layer => {
+            if (layer.feature && layer.feature.properties && 
+                layer.feature.properties.county === countyName) {
+                layer.fire('click');
+                return;
+            }
+        });
+    }
+}
+
+function selectSubcounty(subcountyName) {
+    if (window.kenyaMap && window.kenyaMap.eachLayer) {
+        window.kenyaMap.eachLayer(layer => {
+            if (layer.feature && layer.feature.properties && 
+                layer.feature.properties.subcounty === subcountyName) {
+                layer.fire('click');
+                return;
+            }
+        });
+    }
+}
+
+function selectWard(wardName) {
+    if (window.kenyaMap && window.kenyaMap.eachLayer) {
+        window.kenyaMap.eachLayer(layer => {
+            if (layer.feature && layer.feature.properties && 
+                layer.feature.properties.ward === wardName) {
+                layer.fire('click');
+                return;
+            }
+        });
+    }
+}
+
+// Clear all selections function
+function clearAllSelections() {
+    if (window.kenyaMap && window.kenyaMap.eachLayer) {
+        window.kenyaMap.eachLayer(layer => {
+            if (layer.feature && layer.feature.properties) {
+                const props = layer.feature.properties;
+                if (props.county) {
+                    layer.setStyle({
+                        weight: 2,
+                        opacity: 1,
+                        color: 'white',
+                        dashArray: '3',
+                        fillOpacity: 0.6,
+                        fillColor: getDensityColor(props.project_count || 0)
+                    });
+                } else if (props.subcounty) {
+                    layer.setStyle({
+                        weight: 1,
+                        opacity: 1,
+                        color: '#2c7fb8',
+                        fillOpacity: 0.3,
+                        fillColor: getDensityColor(props.project_count || 0)
+                    });
+                } else if (props.ward) {
+                    layer.setStyle({
+                        weight: 1,
+                        opacity: 1,
+                        color: '#f03b20',
+                        fillOpacity: 0.2,
+                        fillColor: getDensityColor(props.project_count || 0)
+                    });
+                }
+            }
+        });
+    }
+    
+    if (window.selectedPolygons) {
+        window.selectedPolygons.counties.clear();
+        window.selectedPolygons.subcounties.clear();
+        window.selectedPolygons.wards.clear();
+    }
+    
+    if (window.updateSummaryStatistics) {
+        window.updateSummaryStatistics();
+    }
+}
+
+// Export functions for global use
+window.clearAllFilters = clearAllFilters;
+window.exportData = exportData;
+window.updateSubcountyOptions = updateSubcountyOptions;
+window.updateWardOptions = updateWardOptions;
+window.selectCountyFromPopup = selectCountyFromPopup;
+window.selectSubcountyFromPopup = selectSubcountyFromPopup;
+window.selectWardFromPopup = selectWardFromPopup;
+window.clearAllSelections = clearAllSelections;
+window.handleCountySelection = handleCountySelection;
+window.handleSubcountySelection = handleSubcountySelection;
+window.handleWardSelection = handleWardSelection;
+window.refreshMonitoringData = refreshMonitoringData;
+window.viewProjectDetails = viewProjectDetails;
+window.initCharts = initCharts;
+window.syncAllFilters = syncAllFilters;
+window.applyFiltersWithAJAX = applyFiltersWithAJAX;
+window.clearAllFiltersAndSelections = clearAllFiltersAndSelections;
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {});
+} else {
+    setTimeout(function() {
+        if (document.getElementById('kenya-map') && typeof L !== 'undefined') {
+            initMap();
+        }
+        initCharts();
+        initFilters();
+        initRealTimeFilters();
+    }, 100);
+}
+
+// Temporary test - force charts to show after page load
+setTimeout(function() {
+    console.log('=== FORCING CHART INITIALIZATION ===');
+    initCharts();
+}, 2000);
+</script>
 {% endblock %}

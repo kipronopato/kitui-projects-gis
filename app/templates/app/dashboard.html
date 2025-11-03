@@ -13,766 +13,1012 @@
 <!-- Leaflet MarkerCluster -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css">
+
 <style>
-    :root {
-        --kenya-green: #006600;
-        --kenya-red: #DE2910;
-        --kenya-black: #000000;
-        --kenya-gray: #999999;
-    }
-    
-    .dashboard-card {
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        transition: all 0.3s ease;
-        border: 1px solid rgba(0,102,0,0.1);
-        height: 100%;
-    }
-    
-    .dashboard-card:hover {
-        box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-        transform: translateY(-2px);
-    }
-    
-    .dashboard-card-header {
-        background: var(--kenya-green);
-        color: white;
-        font-weight: 600;
-        padding: 0.75rem 1rem;
-        border-top-left-radius: 10px !important;
-        border-top-right-radius: 10px !important;
-    }
-    
-    .stat-card {
-        text-align: center;
-        padding: 1rem 0.5rem;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .stat-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        background: linear-gradient(90deg, var(--kenya-green), var(--kenya-red));
-        opacity: 0.7;
-    }
-    
-    .stat-number {
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: var(--kenya-green);
-        margin-bottom: 0.25rem;
-    }
-    
-    .stat-label {
-        font-size: 0.85rem;
-        color: #666;
-        font-weight: 500;
-    }
-    
-    .stat-trend {
-        font-size: 0.75rem;
-        font-weight: 500;
-    }
-    
-    .trend-up {
-        color: #28a745;
-    }
-    
-    .trend-down {
-        color: #dc3545;
-    }
-    
-    .filter-section {
-        background: #f8f9fa;
-        border-radius: 8px;
-        padding: 1rem;
-        margin-bottom: 1rem;
-        border: 1px solid #e9ecef;
-    }
-    
-    .filter-title {
-        font-weight: 600;
-        margin-bottom: 0.75rem;
-        color: var(--kenya-green);
-        font-size: 0.9rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-    
-    .chart-container {
-        position: relative;
-        height: 250px;
-        width: 100%;
-    }
-    
-    .mini-chart-container {
-        position: relative;
-        height: 120px;
-        width: 100%;
-    }
-    
-    .project-status-badge {
-        font-size: 0.75rem;
-        padding: 0.35em 0.65em;
-        border-radius: 50rem;
-    }
-    
-    .data-table th {
-        background-color: var(--kenya-green);
-        color: white;
-        font-weight: 600;
-    }
-    
-    .custom-toggle {
-        position: relative;
-        display: inline-block;
-        width: 50px;
-        height: 24px;
-    }
-    
-    .custom-toggle input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
-    
-    .custom-toggle-slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: #ccc;
-        transition: .4s;
-        border-radius: 34px;
-    }
-    
-    .custom-toggle-slider:before {
-        position: absolute;
-        content: "";
-        height: 18px;
-        width: 18px;
-        left: 3px;
-        bottom: 3px;
-        background-color: white;
-        transition: .4s;
-        border-radius: 50%;
-    }
-    
-    input:checked + .custom-toggle-slider {
-        background-color: var(--kenya-green);
-    }
-    
-    input:checked + .custom-toggle-slider:before {
-        transform: translateX(26px);
-    }
-    
-    /* Custom range slider */
-    .range-slider {
-        -webkit-appearance: none;
-        width: 100%;
-        height: 8px;
-        border-radius: 5px;
-        background: #d7dcdf;
-        outline: none;
-    }
-    
-    .range-slider::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        background: var(--kenya-green);
-        cursor: pointer;
-    }
-    
-    .range-slider::-moz-range-thumb {
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        background: var(--kenya-green);
-        cursor: pointer;
-    }
-    
-    /* Leaflet map enhancements */
-    .leaflet-bottom.leaflet-right {
-        margin-bottom: 10px;
-        margin-right: 10px;
-    }
-    
-    .map-legend {
-        background: white;
-        padding: 10px;
-        border-radius: 5px;
-        box-shadow: 0 1px 5px rgba(0,0,0,0.4);
-        line-height: 1.5;
-        font-size: 0.85rem;
-        position: absolute;
-        bottom: 20px;
-        right: 10px;
-        z-index: 1000;
-    }
-    
-    .map-legend i {
-        width: 18px;
-        height: 18px;
-        float: left;
-        margin-right: 8px;
-        opacity: 0.8;
-        border-radius: 50%;
-    }
-    
-    /* Dashboard grid layout */
-    .grid-item {
-        margin-bottom: 1.5rem;
-    }
-    
-    /* Bootstrap select adjustments */
-    .bootstrap-select .btn {
-        padding: 0.25rem 0.5rem;
-        font-size: 0.875rem;
-    }
-    
-    /* KPI indicator dots */
-    .kpi-dot {
-        height: 10px;
-        width: 10px;
-        border-radius: 50%;
-        display: inline-block;
-        margin-right: 5px;
-    }
-    
-    /* Responsive adjustments */
-    @media (max-width: 768px) {
-        .stat-number {
-            font-size: 1.5rem;
-        }
-        
-        .chart-container {
-            height: 200px;
-        }
-        
-        .map-legend {
-            bottom: 10px;
-            right: 10px;
-            font-size: 0.75rem;
-        }
-    }
-    
-    /* Custom tabs */
-    .dashboard-tabs .nav-link {
-        color: #495057;
-        font-weight: 500;
-        border: none;
-        border-bottom: 2px solid transparent;
-        padding: 0.5rem 1rem;
-    }
-    
-    .dashboard-tabs .nav-link.active {
-        color: var(--kenya-green);
-        background: transparent;
-        border-bottom: 2px solid var(--kenya-green);
-    }
-    
-    /* Info cards */
-    .info-card {
-        border-left: 4px solid var(--kenya-green);
-        padding: 0.75rem 1rem;
-        margin-bottom: 0.75rem;
-        background: #f8f9fa;
-        border-radius: 4px;
-    }
-    
-    .info-card h6 {
-        margin-bottom: 0.25rem;
-        font-weight: 600;
-    }
-    
-    .info-card p {
-        margin-bottom: 0;
-        font-size: 0.85rem;
-        color: #6c757d;
-    }
+:root {
+  --kitui-primary: #006600;
+  --kitui-secondary: #004d00;
+  --kitui-accent: #ff6b35;
+  --kitui-light: #f8f9fa;
+  --kitui-dark: #2c3e50;
+  --kitui-success: #28a745;
+  --kitui-warning: #ffc107;
+  --kitui-danger: #dc3545;
+  --kitui-info: #17a2b8;
+  --kitui-border: #dee2e6;
+  --kitui-shadow: rgba(0,0,0,0.08);
+}
+
+.kenya-dashboard {
+  background: linear-gradient(135deg, #f8fafc 0%, #e8f0f8 100%);
+  min-height: 100vh;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 0.875rem;
+}
+
+/* System Status Bar - Compact */
+.system-status-bar {
+  background: #f1f5f9;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 6px 0;
+  font-size: 0.75rem;
+  margin-top: 0;
+}
+
+.system-status-bar .badge {
+  font-size: 0.7rem;
+  padding: 3px 6px;
+}
+
+/* Quick Stats Bar - Compact */
+.quick-stats-bar {
+  background: white;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.stats-grid {
+  margin: 0;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.6rem;
+  transition: all 0.2s ease;
+  height: 100%;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  min-height: 60px;
+}
+
+.stat-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stat-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.8rem;
+  margin-right: 0.6rem;
+  background: linear-gradient(135deg, var(--kitui-primary) 0%, var(--kuiti-secondary) 100%);
+}
+
+.stat-content h3 {
+  margin: 0;
+  font-weight: 700;
+  color: var(--kitui-dark);
+  font-size: 1rem;
+  line-height: 1.1;
+}
+
+.stat-content span {
+  color: #64748b;
+  font-size: 0.7rem;
+  font-weight: 500;
+  line-height: 1.1;
+}
+
+/* Dashboard Cards - Compact */
+.dashboard-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px var(--kitui-shadow);
+  transition: all 0.2s ease;
+  border: 1px solid var(--kitui-border);
+  height: 100%;
+  margin-bottom: 1rem;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px var(--kitui-shadow);
+}
+
+.dashboard-card-header {
+  background: linear-gradient(135deg, var(--kitui-primary) 0%, var(--kitui-secondary) 100%);
+  color: white;
+  font-weight: 600;
+  padding: 0.75rem 1rem;
+  border-top-left-radius: 8px !important;
+  border-top-right-radius: 8px !important;
+  border-bottom: 2px solid var(--kitui-accent);
+  font-size: 0.8rem;
+}
+
+/* Enhanced Filters Sidebar - Compact */
+.filters-sidebar {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  height: calc(100vh - 160px);
+  overflow-y: auto;
+  position: sticky;
+  top: 0.5rem;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.sidebar-header h5 {
+  color: var(--kitui-primary);
+  font-weight: 600;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.btn-clear {
+  background: #64748b;
+  color: white;
+  border: none;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+}
+
+.btn-clear:hover {
+  background: #475569;
+}
+
+/* Filter Groups - Compact */
+.filter-group {
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.filter-group:hover {
+  border-color: var(--kitui-primary);
+}
+
+.filter-header {
+  background: #f8fafc;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+.filter-header:hover {
+  background: #f1f5f9;
+}
+
+.filter-header h6 {
+  margin: 0;
+  color: var(--kitui-dark);
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.filter-header i {
+  transition: transform 0.2s ease;
+  color: #64748b;
+  font-size: 0.7rem;
+}
+
+.filter-header[aria-expanded="true"] i {
+  transform: rotate(180deg);
+}
+
+.filter-options {
+  padding: 1rem;
+}
+
+/* Chart Containers - Compact */
+.chart-container {
+  position: relative;
+  height: 180px;
+  width: 100%;
+}
+
+/* Project Status Badges - Compact */
+.project-status-badge {
+  font-size: 0.7rem;
+  padding: 0.3em 0.6em;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+/* Data Tables - Compact */
+.data-table th {
+  background: linear-gradient(135deg, var(--kitui-primary) 0%, var(--kitui-secondary) 100%);
+  color: white;
+  font-weight: 600;
+  border: none;
+  font-size: 0.75rem;
+  padding: 0.5rem 0.4rem;
+}
+
+.data-table td {
+  border-color: var(--kitui-border);
+  font-size: 0.75rem;
+  padding: 0.4rem;
+}
+
+/* Kitui-themed buttons - Compact */
+.btn-kitui-outline {
+  border: 1px solid var(--kitui-primary);
+  color: var(--kitui-primary);
+  background: transparent;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-size: 0.75rem;
+  padding: 0.3rem 0.6rem;
+}
+
+.btn-kitui-outline:hover {
+  background: var(--kitui-primary);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-kitui-primary {
+  background: linear-gradient(135deg, var(--kitui-primary) 0%, var(--kitui-secondary) 100%);
+  color: white;
+  border: none;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  font-size: 0.75rem;
+  padding: 0.3rem 0.6rem;
+}
+
+.btn-kitui-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 102, 0, 0.2);
+}
+
+/* Form controls - Compact */
+.form-control-sm {
+  font-size: 0.75rem;
+  padding: 0.3rem 0.6rem;
+}
+
+.form-select-sm {
+  font-size: 0.75rem;
+  padding: 0.3rem 0.6rem;
+}
+
+/* Custom range slider - Compact */
+.range-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--kitui-light), var(--kitui-accent));
+  outline: none;
+  margin: 8px 0;
+}
+
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--kitui-primary);
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.range-slider::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--kitui-primary);
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+/* Leaflet map enhancements - Compact */
+.leaflet-bottom.leaflet-right {
+  margin-bottom: 10px;
+  margin-right: 10px;
+}
+
+.map-legend {
+  background: white;
+  padding: 8px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px var(--kitui-shadow);
+  line-height: 1.3;
+  font-size: 0.7rem;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 1000;
+  border: 1px solid var(--kitui-border);
+}
+
+.map-legend i {
+  width: 12px;
+  height: 12px;
+  float: left;
+  margin-right: 6px;
+  opacity: 0.9;
+  border-radius: 50%;
+  border: 1px solid white;
+}
+
+/* Dashboard grid layout */
+.grid-item {
+  margin-bottom: 1rem;
+}
+
+/* Risk indicators */
+.risk-high { 
+  background: linear-gradient(135deg, #e74c3c, #c0392b); 
+  color: white; 
+}
+.risk-medium { 
+  background: linear-gradient(135deg, #f39c12, #e67e22); 
+  color: white; 
+}
+.risk-low { 
+  background: linear-gradient(135deg, var(--kitui-accent), #2ecc71); 
+  color: white; 
+}
+
+/* Search box - Compact */
+.search-box {
+  position: relative;
+}
+
+.search-box input {
+  padding-left: 1.8rem;
+  border: 1px solid var(--kitui-border);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  height: calc(1.5em + 0.6rem + 2px);
+}
+
+.search-box i {
+  position: absolute;
+  left: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--kitui-primary);
+  font-size: 0.8rem;
+}
+
+/* Filter badge - Compact */
+.filter-badge {
+  background: linear-gradient(135deg, var(--kitui-primary), var(--kitui-accent));
+  color: white;
+  padding: 0.15rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  margin: 0.15rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.filter-badge .close {
+  color: white;
+  opacity: 0.8;
+  margin-left: 0.15rem;
+  font-size: 0.7rem;
+}
+
+.filter-badge .close:hover {
+  opacity: 1;
+}
+
+/* Card body padding - Compact */
+.card-body {
+  padding: 0.75rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .filters-sidebar {
+    height: auto;
+    position: relative;
+    margin-bottom: 0.75rem;
+  }
+  
+  .chart-container {
+    height: 160px;
+  }
+  
+  .map-legend {
+    bottom: 8px;
+    right: 8px;
+    font-size: 0.65rem;
+    padding: 6px;
+  }
+  
+  .dashboard-card-header {
+    padding: 0.6rem 0.8rem;
+  }
+  
+  .stat-card {
+    min-height: 55px;
+    padding: 0.5rem;
+  }
+  
+  .stat-icon {
+    width: 28px;
+    height: 28px;
+    margin-right: 0.5rem;
+  }
+}
+
+/* Custom scrollbar - Compact */
+.filters-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.filters-sidebar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 2px;
+}
+
+.filters-sidebar::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 2px;
+}
+
+.filters-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stat-card,
+.dashboard-card,
+.filter-group {
+  animation: fadeInUp 0.4s ease;
+}
+
+/* Table responsive container */
+.table-responsive {
+  font-size: 0.75rem;
+}
+
+/* Quick Actions - Compact */
+.quick-actions {
+  margin-top: 1rem;
+}
+
+.actions-header h6 {
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+  color: var(--kitui-dark);
+}
+
+/* Main content spacing */
+.main-content {
+  padding-top: 0.5rem;
+}
+
+/* Container fluid padding */
+.container-fluid {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+/* Row margins */
+.row {
+  margin-left: -0.375rem;
+  margin-right: -0.375rem;
+}
+
+.row > * {
+  padding-left: 0.375rem;
+  padding-right: 0.375rem;
+}
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid mt-3">
-    <!-- Dashboard Header -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <h2 class="text-kenya-green fw-bold">Project Monitoring Dashboard</h2>
-            <p class="text-muted">Comprehensive overview of all development projects across Kenya</p>
-        </div>
-        <div class="col-md-6 text-md-end">
-            <div class="btn-group">
-                <button class="btn btn-kenya-green" id="exportBtn">
-                    <i class="fas fa-download me-1"></i> Export Report
-                </button>
-                <button class="btn btn-outline-kenya-green" data-bs-toggle="modal" data-bs-target="#settingsModal">
-                    <i class="fas fa-cog me-1"></i> Settings
-                </button>
+<div class="kenya-dashboard">
+    <!-- System Status Bar -->
+    <div class="system-status-bar">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <span class="text-muted">
+                        <i class="fas fa-sync-alt me-1"></i>
+                        Last updated: <span id="last-updated-time">{{ current_time|date:"H:i:s" }}</span>
+                    </span>
+                </div>
+                <div class="col-md-6 text-end">
+                    <span class="badge bg-success me-1">
+                        <i class="fas fa-circle me-1"></i>Online
+                    </span>
+                    <span class="badge bg-info me-1">
+                        <i class="fas fa-database me-1"></i>{{ total_projects|intcomma }}
+                    </span>
+                    <span class="badge bg-warning">
+                        <i class="fas fa-filter me-1"></i>{{ projects.count }}
+                    </span>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Filters Form -->
-    <form method="get" action="{% url 'dashboard' %}" id="filterForm">
-        <!-- Filters Row -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="dashboard-card">
-                    <div class="card-body p-3">
-                        <div class="row g-3">
-                            <div class="col-lg-3 col-md-6">
-                                <div class="filter-section">
-                                    <div class="filter-title">Date Range</div>
-                                    <input type="text" name="date_range" id="dateRangePicker" class="form-control form-control-sm" placeholder="Select date range" autocomplete="off">
-                                    <input type="hidden" name="start_date" id="startDate">
-                                    <input type="hidden" name="end_date" id="endDate">
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6">
-                                <div class="filter-section">
-                                    <div class="filter-title">Project Status</div>
-                                    <select class="form-select selectpicker"
-                                            id="statusFilter"
-                                            name="status"
-                                            multiple
-                                            data-live-search="true"
-                                            data-size="5"
-                                            data-actions-box="true"
-                                            title="Select statuses...">
-                                        {% for status in status_choices %}
-                                            <option value="{{ status.0 }}"
-                                                    {% if status.0 in selected_statuses %}selected{% endif %}>
-                                                {{ status.1 }}
-                                            </option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6">
-                                <div class="filter-section">
-                                    <div class="filter-title">County</div>
-                                    <select class="form-select selectpicker"
-                                            id="countyFilter"
-                                            name="county"
-                                            multiple
-                                            data-live-search="true"
-                                            data-size="5"
-                                            data-actions-box="true"
-                                            title="Select counties...">
-                                        {% for county in counties %}
-                                            <option value="{{ county }}"
-                                                    {% if county in selected_counties %}selected{% endif %}>
-                                                {{ county }}
-                                            </option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-lg-3 col-md-6">
-                                <div class="filter-section">
-                                    <div class="filter-title">Budget Range (KES)</div>
-                                    <div class="d-flex align-items-center">
-                                        <input type="number" class="form-control form-control-sm me-1" id="minBudget" name="min_budget" placeholder="Min" value="{{ request.GET.min_budget }}">
-                                        <span class="mx-1">-</span>
-                                        <input type="number" class="form-control form-control-sm ms-1" id="maxBudget" name="max_budget" placeholder="Max" value="{{ request.GET.max_budget }}">
-                                    </div>
-                                    <div class="mt-2">
-                                        <input type="range" class="range-slider" id="budgetRange" min="0" max="1000000000" step="1000000">
-                                    </div>
-                                </div>
-                            </div>
+    <!-- Quick Stats Bar -->
+    <div class="quick-stats-bar">
+        <div class="container-fluid">
+            <div class="row g-1 stats-grid">
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-project-diagram"></i>
                         </div>
-                        <div class="row mt-2">
-                            <div class="col-12 text-end">
-                                <button type="submit" class="btn btn-sm btn-kenya-green me-1" id="applyFilters">
-                                    <i class="fas fa-filter me-1"></i> Apply Filters
+                        <div class="stat-content">
+                            <h3>{{ total_projects|intcomma }}</h3>
+                            <span>Total Projects</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Ksh {{ total_budget|floatformat:0|intcomma }}</h3>
+                            <span>Total Budget</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>{{ completion_rate }}%</h3>
+                            <span>Completion Rate</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>{{ counties|length }}</h3>
+                            <span>Counties Covered</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>{{ high_risk_projects }}</h3>
+                            <span>High Risk</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-2 col-md-4 col-sm-6">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>{{ upcoming_deadlines }}</h3>
+                            <span>Upcoming Deadlines</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="row">
+                
+                <!-- Enhanced Filters Sidebar -->
+                <div class="col-xl-3 col-lg-4">
+                    <div class="filters-sidebar">
+                        <div class="sidebar-header">
+                            <h5><i class="fas fa-filter me-2"></i>Advanced Filters</h5>
+                            <button class="btn btn-sm btn-clear" onclick="clearAllFilters()">
+                                Clear All
+                            </button>
+                        </div>
+
+                        <form method="get" action="{% url 'dashboard' %}" id="filterForm">
+                            
+                            <!-- Date Range Filter -->
+                            <div class="filter-group">
+                                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#dateFilter">
+                                    <h6><i class="fas fa-calendar-alt me-2"></i>Date Range</h6>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="collapse show" id="dateFilter">
+                                    <div class="filter-options">
+                                        <input type="text" name="date_range" id="dateRangePicker" class="form-control form-control-sm" placeholder="Select date range" autocomplete="off">
+                                        <input type="hidden" name="start_date" id="startDate">
+                                        <input type="hidden" name="end_date" id="endDate">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Status Filter -->
+                            <div class="filter-group">
+                                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#statusFilter">
+                                    <h6><i class="fas fa-tasks me-2"></i>Project Status</h6>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="collapse show" id="statusFilter">
+                                    <div class="filter-options">
+                                        <select class="form-select form-select-sm selectpicker"
+                                                name="status"
+                                                multiple
+                                                data-live-search="true"
+                                                data-size="5"
+                                                data-actions-box="true"
+                                                title="Select statuses...">
+                                            {% for status in status_choices %}
+                                                <option value="{{ status.0 }}"
+                                                        {% if status.0 in selected_statuses %}selected{% endif %}>
+                                                    {{ status.1 }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- County Filter -->
+                            <div class="filter-group">
+                                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#countyFilter">
+                                    <h6><i class="fas fa-map me-2"></i>County</h6>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="collapse show" id="countyFilter">
+                                    <div class="filter-options">
+                                        <select class="form-select form-select-sm selectpicker"
+                                                name="county"
+                                                multiple
+                                                data-live-search="true"
+                                                data-size="5"
+                                                data-actions-box="true"
+                                                title="Select counties...">
+                                            {% for county in counties %}
+                                                <option value="{{ county }}"
+                                                        {% if county in selected_counties %}selected{% endif %}>
+                                                    {{ county }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sector Filter -->
+                            <div class="filter-group">
+                                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#sectorFilter">
+                                    <h6><i class="fas fa-layer-group me-2"></i>Sector</h6>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="collapse show" id="sectorFilter">
+                                    <div class="filter-options">
+                                        <select class="form-select form-select-sm selectpicker"
+                                                name="sector"
+                                                multiple
+                                                data-live-search="true"
+                                                data-size="5"
+                                                data-actions-box="true"
+                                                title="Select sectors...">
+                                            {% for sector in sectors %}
+                                                <option value="{{ sector }}"
+                                                        {% if sector in selected_sectors %}selected{% endif %}>
+                                                    {{ sector }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Budget Filter -->
+                            <div class="filter-group">
+                                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#budgetFilter">
+                                    <h6><i class="fas fa-money-bill-wave me-2"></i>Budget Range (KES)</h6>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="collapse show" id="budgetFilter">
+                                    <div class="filter-options">
+                                        <div class="row g-1 mb-2">
+                                            <div class="col-6">
+                                                <input type="number" class="form-control form-control-sm" id="minBudget" name="min_budget" placeholder="Min" value="{{ min_budget }}">
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="number" class="form-control form-control-sm" id="maxBudget" name="max_budget" placeholder="Max" value="{{ max_budget }}">
+                                            </div>
+                                        </div>
+                                        <input type="range" class="range-slider" id="budgetRange" min="0" max="1000000000" step="1000000" value="{{ max_budget|default:'500000000' }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-kitui-primary w-100 mt-2">
+                                <i class="fas fa-filter me-1"></i> Apply Filters
+                            </button>
+                        </form>
+
+                        <!-- Quick Actions -->
+                        <div class="quick-actions">
+                            <div class="actions-header">
+                                <h6><i class="fas fa-bolt me-2"></i>Quick Actions</h6>
+                            </div>
+                            <div class="d-grid gap-1">
+                                <button class="btn btn-kitui-outline btn-sm" id="exportBtn">
+                                    <i class="fas fa-download me-1"></i> Export Data
                                 </button>
-                                <button type="button" class="btn btn-sm btn-outline-kenya-green" id="resetFilters">
-                                    <i class="fas fa-sync-alt me-1"></i> Reset
+                                <button class="btn btn-kitui-outline btn-sm" id="refreshData">
+                                    <i class="fas fa-sync-alt me-1"></i> Refresh
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </form>
 
-    <!-- Key Metrics Row -->
-    <div class="row mb-4">
-        <div class="col-xl-2 col-md-4 col-sm-6 grid-item">
-            <div class="dashboard-card">
-                <div class="card-body stat-card">
-                    <div class="stat-number">{{ total_projects|intcomma }}</div>
-                    <div class="stat-label">TOTAL PROJECTS</div>
-                    <div class="stat-trend">
-                        <span class="kpi-dot bg-success"></span>
-                        <span class="trend-up">+5.2% from last quarter</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-md-4 col-sm-6 grid-item">
-            <div class="dashboard-card">
-                <div class="card-body stat-card">
-                    <div class="stat-number">Ksh {{ total_budget|floatformat:0|intcomma }}</div>
-                    <div class="stat-label">TOTAL BUDGET</div>
-                    <div class="stat-trend">
-                        <span class="kpi-dot bg-success"></span>
-                        <span class="trend-up">+12.7% from last year</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-md-4 col-sm-6 grid-item">
-            <div class="dashboard-card">
-                <div class="card-body stat-card">
-                    <div class="stat-number">{{ completion_rate }}%</div>
-                    <div class="stat-label">COMPLETION RATE</div>
-                    <div class="stat-trend">
-                        <span class="kpi-dot bg-{% if completion_rate > 70 %}success{% else %}warning{% endif %}"></span>
-                        <span class="trend-{% if completion_rate > 70 %}up{% else %}down{% endif %}">
-                            {% if completion_rate > 70 %}+{% else %}-{% endif %}{{ completion_rate|floatformat:1 }}% overall
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-md-4 col-sm-6 grid-item">
-            <div class="dashboard-card">
-                <div class="card-body stat-card">
-                    <div class="stat-number">Ksh {{ avg_budget|floatformat:0|intcomma }}</div>
-                    <div class="stat-label">AVG. PROJECT BUDGET</div>
-                    <div class="stat-trend">
-                        <span class="kpi-dot bg-info"></span>
-                        <span>Compared to Ksh 25M national average</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-md-4 col-sm-6 grid-item">
-            <div class="dashboard-card">
-                <div class="card-body stat-card">
-                    <div class="stat-number">{{ behind_schedule }}</div>
-                    <div class="stat-label">BEHIND SCHEDULE</div>
-                    <div class="stat-trend">
-                        <span class="kpi-dot bg-danger"></span>
-                        <span class="trend-down">{% widthratio behind_schedule total_projects 100 %}% of projects</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-xl-2 col-md-4 col-sm-6 grid-item">
-            <div class="dashboard-card">
-                <div class="card-body stat-card">
-                    <div class="stat-number">{{ ahead_of_schedule }}</div>
-                    <div class="stat-label">AHEAD OF SCHEDULE</div>
-                    <div class="stat-trend">
-                        <span class="kpi-dot bg-success"></span>
-                        <span class="trend-up">{% widthratio ahead_of_schedule total_projects 100 %}% of projects</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Charts and Visualizations -->
-    <div class="row mb-4">
-        <!-- Status Distribution Chart -->
-        <div class="col-xl-3 col-lg-6 grid-item">
-            <div class="dashboard-card">
-                <div class="dashboard-card-header">Project Status Distribution</div>
-                <div class="card-body">
-                    <div class="chart-container">
-                        <canvas id="statusChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Budget Allocation Chart -->
-        <div class="col-xl-3 col-lg-6 grid-item">
-            <div class="dashboard-card">
-                <div class="dashboard-card-header">Budget Allocation by Sector</div>
-                <div class="card-body">
-                    <div class="chart-container">
-                        <canvas id="sectorBudgetChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- County Distribution Chart -->
-        <div class="col-xl-3 col-lg-6 grid-item">
-            <div class="dashboard-card">
-                <div class="dashboard-card-header">Projects by County (Top 10)</div>
-                <div class="card-body">
-                    <div class="chart-container">
-                        <canvas id="countyChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Completion Rate by County -->
-        <div class="col-xl-3 col-lg-6 grid-item">
-            <div class="dashboard-card">
-                <div class="dashboard-card-header">Completion Rate by County (Top 5)</div>
-                <div class="card-body">
-                    <div class="chart-container">
-                        <canvas id="performanceChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Project Timeline -->
-        <div class="col-xl-6 grid-item">
-            <div class="dashboard-card">
-                <div class="dashboard-card-header">Project Timeline</div>
-                <div class="card-body">
-                    <div class="chart-container">
-                        <canvas id="timelineChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Budget by Status -->
-        <div class="col-xl-6 grid-item">
-            <div class="dashboard-card">
-                <div class="dashboard-card-header">Budget Allocation by Status</div>
-                <div class="card-body">
-                    <div class="chart-container">
-                        <canvas id="budgetStatusChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Geospatial Map -->
-        <div class="col-xl-8 grid-item">
-            <div class="dashboard-card h-100">
-                <div class="dashboard-card-header d-flex justify-content-between align-items-center">
-                    <span>Project Geographical Distribution</span>
-                    <div class="d-flex align-items-center">
-                        <select id="map-layer-select" class="form-select form-select-sm me-2" style="width: auto;">
-                            <option value="street">Street Map</option>
-                            <option value="satellite">Satellite</option>
-                            <option value="terrain">Terrain</option>
-                        </select>
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="clusterToggle" checked>
-                            <label class="form-check-label text-white" for="clusterToggle">Cluster</label>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body p-0 position-relative">
-                    <div id="project-map" style="height: 400px; width: 100%;"></div>
-                    <div class="map-legend">
-                        <strong>Legend</strong><br>
-                        <i style="background: #006600"></i> Completed<br>
-                        <i style="background: #DE2910"></i> Ongoing<br>
-                        <i style="background: #000000"></i> Delayed<br>
-                        <i style="background: #999999"></i> Planned
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Project Details Panel -->
-        <div class="col-xl-4 grid-item">
-            <div class="dashboard-card h-100">
-                <div class="dashboard-card-header d-flex justify-content-between align-items-center">
-                    <span>Project Details</span>
-                    <div class="btn-group">
-                        <button class="btn btn-sm btn-outline-light" id="prevProject">
-                            <i class="fas fa-chevron-left"></i>
-                        </button>
-                        <button class="btn btn-sm btn-outline-light" id="nextProject">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body" id="project-detail-panel" style="overflow-y: auto; max-height: 400px;">
-                    <div class="text-center text-muted py-5">
-                        <i class="fas fa-map-marker-alt fa-2x mb-2 text-kenya-green"></i>
-                        <p class="mb-0">Select a project on the map to view details.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Additional Information Row -->
-    <div class="row mb-4">
-        <!-- Recent Updates -->
-        <div class="col-xl-6 grid-item">
-            <div class="dashboard-card h-100">
-                <div class="dashboard-card-header">Recent Project Updates</div>
-                <div class="card-body" style="max-height: 300px; overflow-y: auto;">
-                    {% if recent_updates %}
-                        {% for update in recent_updates %}
-                        <div class="info-card">
-                            <h6>{{ update.title }}</h6>
-                            <p class="mb-1">{{ update.description|truncatewords:20 }}</p>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <small class="text-muted">{{ update.project.name }}</small>
-                                <div class="d-flex align-items-center">
-                                    <div class="progress me-2" style="height: 5px; width: 60px;">
-                                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ update.progress_percentage }}%;" aria-valuenow="{{ update.progress_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                    </div>
-                                    <small>{{ update.progress_percentage }}%</small>
-                                </div>
-                            </div>
-                            <small class="text-muted">{{ update.created_at|timesince }} ago</small>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="text-center text-muted py-4">
-                            <i class="fas fa-info-circle fa-2x mb-2"></i>
-                            <p>No recent updates available</p>
-                        </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-        
-        <!-- Citizen Reports Summary -->
-        <div class="col-xl-6 grid-item">
-            <div class="dashboard-card h-100">
-                <div class="dashboard-card-header">Citizen Reports Summary</div>
-                <div class="card-body">
-                    <div class="chart-container">
-                        <canvas id="reportsChart"></canvas>
-                    </div>
-                    <div class="mt-3">
-                        {% for report in report_summary %}
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span>{{ report.report_type|title }} Reports</span>
-                            <div>
-                                <span class="badge bg-kenya-green">{{ report.approved }} approved</span>
-                                <span class="badge bg-secondary ms-1">{{ report.count }} total</span>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Projects Table -->
-    <div class="row">
-        <div class="col-12 grid-item">
-            <div class="dashboard-card">
-                <div class="dashboard-card-header d-flex justify-content-between align-items-center">
-                    <span>All Projects ({{ projects.count }})</span>
-                    <div class="d-flex align-items-center">
-                        <input type="text" class="form-control form-control-sm me-2" id="tableSearch" placeholder="Search projects...">
-                        <button class="btn btn-sm btn-outline-light" id="toggleColumns">
-                            <i class="fas fa-columns"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table id="projectsTable" class="table table-striped table-hover mb-0 data-table">
-                            <thead>
-                                <tr>
-                                    <th>Project ID</th>
-                                    <th>Name</th>
-                                    <th>County</th>
-                                    <th>Sector</th>
-                                    <th>Status</th>
-                                    <th>Budget (KES)</th>
-                                    <th>Start Date</th>
-                                    <th>End Date</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for project in projects|slice:":10" %}
-                                <tr>
-                                    <td>{{ project.project_id|default:"N/A" }}</td>
-                                    <td>{{ project.name }}</td>
-                                    <td>{{ project.county }}</td>
-                                    <td>{{ project.sector|default:"N/A" }}</td>
-                                    <td>
-                                        <span class="project-status-badge badge 
-                                            {% if project.status == 'completed' %}bg-success
-                                            {% elif project.status == 'ongoing' %}bg-warning text-dark
-                                            {% elif project.status == 'delayed' %}bg-danger
-                                            {% else %}bg-secondary{% endif %}">
-                                            {{ project.get_status_display }}
+                <!-- Main Dashboard Content -->
+                <div class="col-xl-9 col-lg-8">
+                    <!-- Active Filters Display -->
+                    <div class="row mb-2" id="activeFilters" style="display: none;">
+                        <div class="col-12">
+                            <div class="dashboard-card">
+                                <div class="card-body py-1">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span class="fw-bold text-kitui-primary" style="font-size: 0.8rem;">
+                                            <i class="fas fa-filter me-2"></i>Active Filters:
                                         </span>
-                                    </td>
-                                    <td>Ksh {{ project.budget|floatformat:0|intcomma|default:"N/A" }}</td>
-                                    <td>{{ project.start_date|date:"M d, Y" }}</td>
-                                    <td>{{ project.end_date|date:"M d, Y" }}</td>
-                                    <td>
-                                        <a href="{% url 'project_detail' project.id %}" class="btn btn-sm btn-kenya-green">
-                                            <i class="fas fa-eye"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
+                                        <button class="btn btn-sm btn-kitui-outline" id="clearAllFilters">
+                                            <i class="fas fa-times me-1"></i> Clear All
+                                        </button>
+                                    </div>
+                                    <div id="filterBadges" class="mt-1"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Visualization Row -->
+                    <div class="row mb-3">
+                        <!-- Status Distribution -->
+                        <div class="col-xl-3 col-lg-6 grid-item">
+                            <div class="dashboard-card">
+                                <div class="dashboard-card-header">Project Status</div>
+                                <div class="card-body">
+                                    <div class="chart-container">
+                                        <canvas id="statusChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Budget by Sector -->
+                        <div class="col-xl-3 col-lg-6 grid-item">
+                            <div class="dashboard-card">
+                                <div class="dashboard-card-header">Budget by Sector</div>
+                                <div class="card-body">
+                                    <div class="chart-container">
+                                        <canvas id="sectorBudgetChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- County Distribution -->
+                        <div class="col-xl-3 col-lg-6 grid-item">
+                            <div class="dashboard-card">
+                                <div class="dashboard-card-header">Projects by County</div>
+                                <div class="card-body">
+                                    <div class="chart-container">
+                                        <canvas id="countyChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Risk Analysis -->
+                        <div class="col-xl-3 col-lg-6 grid-item">
+                            <div class="dashboard-card">
+                                <div class="dashboard-card-header">Risk Analysis</div>
+                                <div class="card-body">
+                                    <div class="chart-container">
+                                        <canvas id="riskChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Second Visualization Row -->
+                    <div class="row mb-3">
+                        <!-- Project Timeline -->
+                        <div class="col-xl-6 grid-item">
+                            <div class="dashboard-card">
+                                <div class="dashboard-card-header">Project Timeline</div>
+                                <div class="card-body">
+                                    <div class="chart-container">
+                                        <canvas id="timelineChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Performance Metrics -->
+                        <div class="col-xl-6 grid-item">
+                            <div class="dashboard-card">
+                                <div class="dashboard-card-header">Performance Metrics</div>
+                                <div class="card-body">
+                                    <div class="chart-container">
+                                        <canvas id="performanceChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Geospatial Map -->
+                    <div class="row mb-3">
+                        <div class="col-12 grid-item">
+                            <div class="dashboard-card">
+                                <div class="dashboard-card-header d-flex justify-content-between align-items-center">
+                                    <span><i class="fas fa-map-marked-alt me-2"></i>Project Geographical Distribution</span>
+                                    <div class="d-flex align-items-center">
+                                        <select id="map-layer-select" class="form-select form-select-sm me-1" style="width: auto; font-size: 0.7rem;">
+                                            <option value="street">Street Map</option>
+                                            <option value="satellite">Satellite</option>
+                                            <option value="terrain">Terrain</option>
+                                        </select>
+                                        <div class="form-check form-switch mb-0">
+                                            <input class="form-check-input" type="checkbox" id="clusterToggle" checked style="font-size: 0.7rem;">
+                                            <label class="form-check-label text-white mb-0" for="clusterToggle" style="font-size: 0.7rem;">Cluster</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body p-0 position-relative">
+                                    <div id="project-map" style="height: 300px; width: 100%;"></div>
+                                    <div class="map-legend">
+                                        <strong><i class="fas fa-legend me-1"></i>Legend</strong><br>
+                                        <i style="background: #28a745"></i> Completed<br>
+                                        <i style="background: #ffc107"></i> Ongoing<br>
+                                        <i style="background: #dc3545"></i> Delayed<br>
+                                        <i style="background: #6c757d"></i> Planned
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Projects Data Table -->
+                    <div class="row">
+                        <div class="col-12 grid-item">
+                            <div class="dashboard-card">
+                                <div class="dashboard-card-header d-flex justify-content-between align-items-center">
+                                    <span>Projects Overview ({{ total_projects }} Projects)</span>
+                                    <div class="d-flex align-items-center">
+                                        <div class="search-box me-1">
+                                            <i class="fas fa-search"></i>
+                                            <input type="text" class="form-control form-control-sm" id="tableSearch" placeholder="Search projects...">
+                                        </div>
+                                        <button class="btn btn-sm btn-kitui-outline" id="toggleColumns">
+                                            <i class="fas fa-columns me-1"></i> Columns
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body p-0">
+                                    <div class="table-responsive">
+                                        <table id="projectsTable" class="table table-striped table-hover mb-0 data-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Project ID</th>
+                                                    <th>Name</th>
+                                                    <th>County</th>
+                                                    <th>Sector</th>
+                                                    <th>Status</th>
+                                                    <th>Budget (KES)</th>
+                                                    <th>Start Date</th>
+                                                    <th>End Date</th>
+                                                    <th>Risk Level</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for project in projects %}
+                                                <tr>
+                                                    <td>{{ project.project_id|default:"N/A" }}</td>
+                                                    <td>{{ project.name }}</td>
+                                                    <td>{{ project.county }}</td>
+                                                    <td>{{ project.sector|default:"N/A" }}</td>
+                                                    <td>
+                                                        {% if project.status == "completed" %}
+                                                            <span class="project-status-badge badge bg-success">Completed</span>
+                                                        {% elif project.status == "ongoing" %}
+                                                            <span class="project-status-badge badge bg-warning text-dark">Ongoing</span>
+                                                        {% elif project.status in "delayed,stalled,behind_schedule" %}
+                                                            <span class="project-status-badge badge bg-danger">Delayed</span>
+                                                        {% else %}
+                                                            <span class="project-status-badge badge bg-secondary">Planned</span>
+                                                        {% endif %}
+                                                    </td>
+                                                    <td>Ksh {{ project.budget|floatformat:0|intcomma|default:"N/A" }}</td>
+                                                    <td>{{ project.start_date|date:"M d, Y"|default:"N/A" }}</td>
+                                                    <td>{{ project.end_date|date:"M d, Y"|default:"N/A" }}</td>
+                                                    <td>
+                                                        <span class="badge risk-{{ project.risk_level|default:'low' }}">
+                                                            {{ project.risk_level|default:'low'|title }}
+                                                        </span>
+                                                    </td>
+                                                    <td>
+                                                        <a href="{% url 'project_detail' project.id %}" class="btn btn-sm btn-kitui-primary">
+                                                            <i class="fas fa-eye"></i>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                {% empty %}
+                                                <tr>
+                                                    <td colspan="10" class="text-center py-3">
+                                                        <div class="text-muted">
+                                                            <i class="fas fa-search fa-lg mb-2"></i>
+                                                            <h6>No projects found</h6>
+                                                            <p class="mb-2" style="font-size: 0.8rem;">Try adjusting your filters or search criteria</p>
+                                                            <button class="btn btn-kitui-outline btn-sm" onclick="window.location.href='{% url 'dashboard' %}'">
+                                                                Clear All Filters
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Settings Modal -->
-<div class="modal fade" id="settingsModal" tabindex="-1" aria-labelledby="settingsModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="settingsModalLabel">Dashboard Settings</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label class="form-label">Refresh Interval</label>
-                    <select class="form-select">
-                        <option value="5">5 minutes</option>
-                        <option value="15" selected>15 minutes</option>
-                        <option value="30">30 minutes</option>
-                        <option value="60">1 hour</option>
-                        <option value="0">Never (manual refresh)</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Default Date Range</label>
-                    <select class="form-select">
-                        <option value="7">Last 7 days</option>
-                        <option value="30" selected>Last 30 days</option>
-                        <option value="90">Last 90 days</option>
-                        <option value="365">Last year</option>
-                    </select>
-                </div>
-                <div class="form-check form-switch mb-3">
-                    <input class="form-check-input" type="checkbox" id="notificationsSwitch" checked>
-                    <label class="form-check-label" for="notificationsSwitch">Enable notifications</label>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-kenya-green">Save changes</button>
             </div>
         </div>
     </div>
@@ -798,20 +1044,51 @@
 <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 
 <script>
-    // Initialize DataTable
+    // Kitui County Dashboard - Compact & Optimized JavaScript
+    
+    // Global variables
+    let map;
+    let markers;
+    let charts = {};
+
+    // Initialize everything when document is ready
     $(document).ready(function() {
+        initializeDataTable();
+        initializeFilters();
+        initializeMap();
+        initializeCharts();
+        setupEventListeners();
+        updateActiveFilters();
+    });
+
+    // Initialize DataTable
+    function initializeDataTable() {
         $('#projectsTable').DataTable({
-            pageLength: 10,
-            lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "All"]],
+            pageLength: 20,
+            lengthMenu: [[10, 20, 50, 100, -1], [10, 20, 50, 100, "All"]],
             order: [[0, 'desc']],
             responsive: true,
-            dom: '<"row"<"col-md-6"l><"col-md-6"f>>rtip'
+            dom: '<"row"<"col-md-6"l><"col-md-6"f>>rtip',
+            language: {
+                search: "_INPUT_",
+                searchPlaceholder: "Search projects...",
+                lengthMenu: "_MENU_"
+            },
+            drawCallback: function() {
+                // Update any dynamic content after table redraw
+            }
         });
-        
+    }
+
+    // Initialize filters
+    function initializeFilters() {
         // Initialize multiselect
         $('.selectpicker').selectpicker();
         
         // Initialize date range picker
+        const startDate = $('#startDate').val() || moment().subtract(29, 'days').format('YYYY-MM-DD');
+        const endDate = $('#endDate').val() || moment().format('YYYY-MM-DD');
+        
         $('#dateRangePicker').daterangepicker({
             ranges: {
                 'Today': [moment(), moment()],
@@ -821,222 +1098,147 @@
                 'This Month': [moment().startOf('month'), moment().endOf('month')],
                 'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
             },
-            startDate: moment().subtract(29, 'days'),
-            endDate: moment()
+            startDate: moment(startDate),
+            endDate: moment(endDate),
+            opens: 'left',
+            alwaysShowCalendars: true,
+            autoUpdateInput: false
         }, function(start, end) {
             $('#startDate').val(start.format('YYYY-MM-DD'));
             $('#endDate').val(end.format('YYYY-MM-DD'));
+            $('#dateRangePicker').val(start.format('MMM D, YYYY') + ' - ' + end.format('MMM D, YYYY'));
+            applyFilters();
+        });
+
+        // Set initial date values
+        $('#startDate').val(startDate);
+        $('#endDate').val(endDate);
+        if (! $('#dateRangePicker').val()) {
+            $('#dateRangePicker').val(moment(startDate).format('MMM D, YYYY') + ' - ' + moment(endDate).format('MMM D, YYYY'));
+        }
+    }
+
+    // Initialize map
+    function initializeMap() {
+        map = L.map('project-map', {
+            center: [-1.286389, 36.817223], // Nairobi coordinates
+            zoom: 7,
+            zoomControl: false
         });
         
-        // Table search functionality
-        $('#tableSearch').on('keyup', function() {
-            $('#projectsTable').DataTable().search(this.value).draw();
+        // Add zoom control
+        L.control.zoom({
+            position: 'topright'
+        }).addTo(map);
+        
+        // Define tile layers
+        const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         });
         
-        // Reset filters
-        $('#resetFilters').on('click', function() {
-            window.location.href = "{% url 'dashboard' %}";
+        const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 19,
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
         });
         
-        // Export functionality
-        $('#exportBtn').on('click', function() {
-            // Get current filters
-            const params = new URLSearchParams(window.location.search);
+        const terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            maxZoom: 17,
+            attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://openttopomap.org">OpenTopoMap</a>'
+        });
+        
+        // Add default layer
+        streetLayer.addTo(map);
+        
+        // Layer switcher
+        document.getElementById('map-layer-select').addEventListener('change', function(e) {
+            const selected = e.target.value;
+            map.eachLayer(function(layer) {
+                if (layer instanceof L.TileLayer) map.removeLayer(layer);
+            });
             
-            // Redirect to export endpoint with current filters
-            window.location.href = `/api/export/?${params.toString()}`;
-        });
-    });
-    
-    // Initialize map with better styling
-    var map = L.map('project-map', {
-        center: [-1.286389, 36.817223], // Nairobi coordinates
-        zoom: 7,
-        zoomControl: false
-    });
-    
-    // Add zoom control to top-right
-    L.control.zoom({
-        position: 'topright'
-    }).addTo(map);
-    
-    // Define tile layers
-    var streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    });
-    
-    var satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        maxZoom: 19,
-        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
-    });
-    
-    var terrainLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-        maxZoom: 17,
-        attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://openttopomap.org">OpenTopoMap</a>'
-    });
-    
-    // Add default layer
-    streetLayer.addTo(map);
-    
-    // Layer switcher functionality
-    document.getElementById('map-layer-select').addEventListener('change', function(e) {
-        var selected = e.target.value;
-        map.eachLayer(function(layer) {
-            if (layer instanceof L.TileLayer) map.removeLayer(layer);
+            if (selected === 'street') streetLayer.addTo(map);
+            else if (selected === 'satellite') satelliteLayer.addTo(map);
+            else if (selected === 'terrain') terrainLayer.addTo(map);
         });
         
-        if (selected === 'street') streetLayer.addTo(map);
-        else if (selected === 'satellite') satelliteLayer.addTo(map);
-        else if (selected === 'terrain') terrainLayer.addTo(map);
-    });
-    
+        // Load projects data and create markers
+        loadProjectMarkers();
+    }
+
     // Function to determine marker color based on status
     function getColor(status) {
-        if (status === 'completed') return '#006600';
-        if (status === 'ongoing') return '#DE2910';
-        if (status === 'delayed') return '#000000';
-        return '#999999';
+        const colors = {
+            'completed': '#28a745',
+            'ongoing': '#ffc107',
+            'delayed': '#dc3545',
+            'planned': '#6c757d'
+        };
+        return colors[status] || '#999999';
     }
-    
-    // Create a marker cluster group
-    var markers = L.markerClusterGroup({
-        maxClusterRadius: 50,
-        spiderfyOnMaxZoom: true,
-        showCoverageOnHover: false,
-        zoomToBoundsOnClick: true
-    });
-    
-    // Projects data
-    var projects = {{ geojson|safe }};
-    var currentProjectIndex = 0;
-    
-    // Add markers for each project
-    projects.features.forEach(function(feature, index) {
-        var marker = L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
-            color: '#fff',
-            weight: 1.5,
-            fillColor: getColor(feature.properties.status),
-            fillOpacity: 0.8,
-            radius: 8
-        });
+
+    // Load project markers
+    function loadProjectMarkers() {
+        const projects = {{ geojson|safe }};
         
-        // Format budget with thousand separators
-        var budget = feature.properties.budget ? new Intl.NumberFormat().format(feature.properties.budget) : 'N/A';
-        
-        // Bind popup to marker
-        marker.bindPopup(`
-            <div class="p-2">
-                <h6 class="text-kenya-green mb-1">${feature.properties.name}</h6>
-                <p class="mb-1"><strong>Status:</strong> <span style="color:${getColor(feature.properties.status)}">${feature.properties.status}</span></p>
-                <p class="mb-1"><strong>County:</strong> ${feature.properties.county}</p>
-                <p class="mb-1"><strong>Budget:</strong> Ksh ${budget}</p>
-                <div class="text-center mt-2">
-                    <a href='/project/${feature.properties.id}/' class='btn btn-sm btn-kenya-green'>View Details</a>
-                </div>
-            </div>
-        `);
-        
-        // Add click event to show details in panel
-        marker.on('click', function() {
-            currentProjectIndex = index;
-            updateProjectDetailPanel(feature.properties);
-        });
-        
-        // Add marker to the cluster group
-        markers.addLayer(marker);
-    });
-    
-    // Add marker cluster group to map
-    map.addLayer(markers);
-    
-    // Fit map to show all markers
-    if (projects.features.length > 0) {
-        map.fitBounds(markers.getBounds(), { padding: [30, 30] });
-    }
-    
-    // Toggle clustering
-    document.getElementById('clusterToggle').addEventListener('change', function(e) {
-        if (e.target.checked) {
-            map.addLayer(markers);
-        } else {
+        // Clear existing markers
+        if (markers) {
             map.removeLayer(markers);
-            // Add individual markers if not clustering
-            projects.features.forEach(function(feature, index) {
-                var marker = L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
-                    color: '#fff',
-                    weight: 1.5,
-                    fillColor: getColor(feature.properties.status),
-                    fillOpacity: 0.8,
-                    radius: 8
-                }).addTo(map);
-                
-                // Bind popup and click events
-                marker.bindPopup(`
-                    <div class="p-2">
-                        <h6 class="text-kenya-green mb-1">${feature.properties.name}</h6>
-                        <p class="mb-1"><strong>Status:</strong> <span style="color:${getColor(feature.properties.status)}">${feature.properties.status}</span></p>
-                        <p class="mb-1"><strong>County:</strong> ${feature.properties.county}</p>
-                        <p class="mb-1"><strong>Budget:</strong> Ksh ${feature.properties.budget ? new Intl.NumberFormat().format(feature.properties.budget) : 'N/A'}</p>
-                        <div class="text-center mt-2">
-                            <a href='/project/${feature.properties.id}/' class='btn btn-sm btn-kenya-green'>View Details</a>
-                        </div>
-                    </div>
-                `);
-                marker.on('click', function() {
-                    currentProjectIndex = index;
-                    updateProjectDetailPanel(feature.properties);
-                });
+        }
+        
+        // Create a marker cluster group
+        markers = L.markerClusterGroup({
+            maxClusterRadius: 40,
+            spiderfyOnMaxZoom: true,
+            showCoverageOnHover: false,
+            zoomToBoundsOnClick: true,
+            disableClusteringAtZoom: 12
+        });
+        
+        // Add markers for each project
+        projects.features.forEach(function(feature, index) {
+            const marker = L.circleMarker([feature.geometry.coordinates[1], feature.geometry.coordinates[0]], {
+                color: '#fff',
+                weight: 1,
+                fillColor: getColor(feature.properties.status),
+                fillOpacity: 0.8,
+                radius: 6
             });
+            
+            // Format budget
+            const budget = feature.properties.budget ? new Intl.NumberFormat().format(feature.properties.budget) : 'N/A';
+            
+            // Bind popup
+            marker.bindPopup(`
+                <div class="p-1" style="min-width: 200px;">
+                    <h6 class="fw-bold mb-1 text-kitui-primary" style="font-size: 0.8rem;">${feature.properties.name}</h6>
+                    <p class="mb-1" style="font-size: 0.7rem;"><strong>Status:</strong> <span style="color:${getColor(feature.properties.status)}">${feature.properties.status}</span></p>
+                    <p class="mb-1" style="font-size: 0.7rem;"><strong>County:</strong> ${feature.properties.county}</p>
+                    <p class="mb-1" style="font-size: 0.7rem;"><strong>Sector:</strong> ${feature.properties.sector || 'N/A'}</p>
+                    <p class="mb-1" style="font-size: 0.7rem;"><strong>Budget:</strong> Ksh ${budget}</p>
+                    <p class="mb-2" style="font-size: 0.7rem;"><strong>Risk Level:</strong> <span class="badge risk-${feature.properties.risk_level}">${feature.properties.risk_level}</span></p>
+                    <div class="text-center mt-1">
+                        <a href='/project/${feature.properties.id}/' class='btn btn-sm btn-kitui-primary' style="font-size: 0.7rem;">View Details</a>
+                    </div>
+                </div>
+            `);
+            
+            markers.addLayer(marker);
+        });
+        
+        // Add marker cluster group to map
+        map.addLayer(markers);
+        
+        // Fit map to show all markers
+        if (projects.features.length > 0) {
+            map.fitBounds(markers.getBounds(), { padding: [20, 20] });
         }
-    });
-    
-    // Function to update project detail panel
-    function updateProjectDetailPanel(properties) {
-        var budget = properties.budget ? new Intl.NumberFormat().format(properties.budget) : 'N/A';
-        var html = `
-            <h6 class="text-kenya-green fw-bold">${properties.name}</h6>
-            <p class="mb-1"><strong>Status:</strong> <span class="badge bg-${properties.status === 'completed' ? 'success' : properties.status === 'ongoing' ? 'warning' : 'dark'}">${properties.status}</span></p>
-            <p class="mb-1"><strong>County:</strong> ${properties.county}</p>
-            <p class="mb-1"><strong>Sector:</strong> ${properties.sector || 'N/A'}</p>
-            <p class="mb-1"><strong>Budget:</strong> Ksh ${budget}</p>
-            <p class="mb-1"><strong>Start Date:</strong> ${properties.start_date || 'N/A'}</p>
-            <p class="mb-1"><strong>End Date:</strong> ${properties.end_date || 'N/A'}</p>
-            <p class="mb-2"><strong>Description:</strong> ${properties.description || 'No description provided.'}</p>
-            <div class="text-center">
-                <a href='/project/${properties.id}/' class='btn btn-kenya-green btn-sm'>Full Details</a>
-            </div>`;
-        document.getElementById('project-detail-panel').innerHTML = html;
     }
-    
-    // Navigation between projects
-    document.getElementById('nextProject').addEventListener('click', function() {
-        if (projects.features.length > 0) {
-            currentProjectIndex = (currentProjectIndex + 1) % projects.features.length;
-            updateProjectDetailPanel(projects.features[currentProjectIndex].properties);
-            
-            // Pan to the project
-            var coords = projects.features[currentProjectIndex].geometry.coordinates;
-            map.panTo([coords[1], coords[0]]);
-        }
-    });
-    
-    document.getElementById('prevProject').addEventListener('click', function() {
-        if (projects.features.length > 0) {
-            currentProjectIndex = (currentProjectIndex - 1 + projects.features.length) % projects.features.length;
-            updateProjectDetailPanel(projects.features[currentProjectIndex].properties);
-            
-            // Pan to the project
-            var coords = projects.features[currentProjectIndex].geometry.coordinates;
-            map.panTo([coords[1], coords[0]]);
-        }
-    });
-    
-    // Initialize charts with real data
-    document.addEventListener('DOMContentLoaded', function() {
+
+    // Initialize charts
+    function initializeCharts() {
         // Status Distribution Chart
-        var statusCtx = document.getElementById('statusChart').getContext('2d');
-        var statusChart = new Chart(statusCtx, {
+        charts.statusChart = new Chart(document.getElementById('statusChart').getContext('2d'), {
             type: 'doughnut',
             data: {
                 labels: ['Completed', 'Ongoing', 'Delayed', 'Planned'],
@@ -1047,8 +1249,9 @@
                         {{ status_data.delayed|default:0 }},
                         {{ status_data.planned|default:0 }}
                     ],
-                    backgroundColor: ['#006600', '#DE2910', '#000000', '#999999'],
-                    borderWidth: 1
+                    backgroundColor: ['#28a745', '#ffc107', '#dc3545', '#6c757d'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
                 }]
             },
             options: {
@@ -1056,23 +1259,31 @@
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: 'bottom'
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            usePointStyle: true,
+                            font: {
+                                size: 9
+                            }
+                        }
                     }
-                }
+                },
+                cutout: '60%'
             }
         });
-        
+
         // Sector Budget Chart
-        var sectorBudgetCtx = document.getElementById('sectorBudgetChart').getContext('2d');
-        var sectorBudgetChart = new Chart(sectorBudgetCtx, {
+        charts.sectorBudgetChart = new Chart(document.getElementById('sectorBudgetChart').getContext('2d'), {
             type: 'bar',
             data: {
                 labels: {{ sector_labels|safe }},
                 datasets: [{
                     label: 'Budget (KES)',
-                    data: {{ sector_values|safe }},
+                    data: {{ sector_budgets|safe }},
                     backgroundColor: '#006600',
-                    borderWidth: 0
+                    borderWidth: 0,
+                    borderRadius: 2
                 }]
             },
             options: {
@@ -1089,24 +1300,43 @@
                                     return 'Ksh ' + (value / 1000).toFixed(1) + 'K';
                                 }
                                 return 'Ksh ' + value;
+                            },
+                            font: {
+                                size: 8
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                size: 8
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            font: {
+                                size: 9
                             }
                         }
                     }
                 }
             }
         });
-        
+
         // County Distribution Chart
-        var countyCtx = document.getElementById('countyChart').getContext('2d');
-        var countyChart = new Chart(countyCtx, {
+        charts.countyChart = new Chart(document.getElementById('countyChart').getContext('2d'), {
             type: 'bar',
             data: {
                 labels: {{ county_labels|safe }},
                 datasets: [{
                     label: 'Number of Projects',
-                    data: {{ county_values|safe }},
-                    backgroundColor: '#006600',
-                    borderWidth: 0
+                    data: {{ county_counts|safe }},
+                    backgroundColor: '#004d00',
+                    borderWidth: 0,
+                    borderRadius: 2
                 }]
             },
             options: {
@@ -1115,48 +1345,47 @@
                 indexAxis: 'y',
                 scales: {
                     x: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-        
-        // Timeline Chart
-        var timelineCtx = document.getElementById('timelineChart').getContext('2d');
-        var timelineChart = new Chart(timelineCtx, {
-            type: 'line',
-            data: {
-                labels: {{ timeline_labels|safe }},
-                datasets: [{
-                    label: 'Projects Started',
-                    data: {{ timeline_values|safe }},
-                    borderColor: '#006600',
-                    backgroundColor: 'rgba(0, 102, 0, 0.1)',
-                    tension: 0.3,
-                    fill: true
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
+                        beginAtZero: true,
+                        ticks: {
+                            font: {
+                                size: 8
+                            }
+                        }
+                    },
                     y: {
-                        beginAtZero: true
+                        ticks: {
+                            font: {
+                                size: 8
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            font: {
+                                size: 9
+                            }
+                        }
                     }
                 }
             }
         });
-        
-        // Budget by Status Chart
-        var budgetStatusCtx = document.getElementById('budgetStatusChart').getContext('2d');
-        var budgetStatusChart = new Chart(budgetStatusCtx, {
-            type: 'pie',
+
+        // Risk Chart
+        charts.riskChart = new Chart(document.getElementById('riskChart').getContext('2d'), {
+            type: 'doughnut',
             data: {
-                labels: {{ budget_status_labels|safe }},
+                labels: ['High Risk', 'Medium Risk', 'Low Risk'],
                 datasets: [{
-                    data: {{ budget_status_values|safe }},
-                    backgroundColor: ['#006600', '#DE2910', '#000000', '#999999'],
-                    borderWidth: 1
+                    data: [
+                        {{ high_risk_projects }},
+                        {{ medium_risk_projects }},
+                        {{ total_projects|add:high_risk_projects|add:medium_risk_projects }}
+                    ],
+                    backgroundColor: ['#e74c3c', '#f39c12', '#27ae60'],
+                    borderWidth: 1,
+                    borderColor: '#fff'
                 }]
             },
             options: {
@@ -1164,23 +1393,78 @@
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: 'bottom'
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            usePointStyle: true,
+                            font: {
+                                size: 9
+                            }
+                        }
+                    }
+                },
+                cutout: '60%'
+            }
+        });
+
+        // Timeline Chart
+        charts.timelineChart = new Chart(document.getElementById('timelineChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: {{ timeline_labels|safe }},
+                datasets: [{
+                    label: 'Projects Started',
+                    data: {{ timeline_counts|safe }},
+                    borderColor: '#006600',
+                    backgroundColor: 'rgba(0, 102, 0, 0.1)',
+                    tension: 0.3,
+                    fill: true,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            font: {
+                                size: 8
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                size: 8
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            font: {
+                                size: 9
+                            }
+                        }
                     }
                 }
             }
         });
-        
+
         // Performance Chart
-        var performanceCtx = document.getElementById('performanceChart').getContext('2d');
-        var performanceChart = new Chart(performanceCtx, {
+        charts.performanceChart = new Chart(document.getElementById('performanceChart').getContext('2d'), {
             type: 'bar',
             data: {
-                labels: {{ performance_labels|safe }},
+                labels: {{ county_labels|safe }},
                 datasets: [{
                     label: 'Completion Rate (%)',
-                    data: {{ performance_values|safe }},
-                    backgroundColor: '#006600',
-                    borderWidth: 0
+                    data: {{ county_completion|safe }},
+                    backgroundColor: '#28a745',
+                    borderWidth: 0,
+                    borderRadius: 2
                 }]
             },
             options: {
@@ -1193,43 +1477,134 @@
                         ticks: {
                             callback: function(value) {
                                 return value + '%';
+                            },
+                            font: {
+                                size: 8
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            font: {
+                                size: 8
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        labels: {
+                            font: {
+                                size: 9
                             }
                         }
                     }
                 }
             }
         });
-        
-        // Reports Chart
-        var reportsCtx = document.getElementById('reportsChart').getContext('2d');
-        var reportsChart = new Chart(reportsCtx, {
-            type: 'doughnut',
-            data: {
-                labels: [
-                    {% for report in report_summary %}
-                    '{{ report.report_type|title }}'{% if not forloop.last %},{% endif %}
-                    {% endfor %}
-                ],
-                datasets: [{
-                    data: [
-                        {% for report in report_summary %}
-                        {{ report.count }}{% if not forloop.last %},{% endif %}
-                        {% endfor %}
-                    ],
-                    backgroundColor: ['#006600', '#DE2910', '#000000', '#999999', '#FFC107'],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom'
-                    }
-                }
+    }
+
+    // Setup event listeners
+    function setupEventListeners() {
+        // Real-time filtering
+        const filterInputs = [
+            '#statusFilter', '#countyFilter', '#sectorFilter',
+            '#minBudget', '#maxBudget', '#searchInput'
+        ];
+
+        filterInputs.forEach(selector => {
+            $(selector).on('change input', function() {
+                applyFilters();
+            });
+        });
+
+        // Budget range slider
+        $('#budgetRange').on('input', function() {
+            const value = $(this).val();
+            $('#maxBudget').val(value);
+            applyFilters();
+        });
+
+        // Table search
+        $('#tableSearch').on('keyup', function() {
+            $('#projectsTable').DataTable().search(this.value).draw();
+        });
+
+        // Reset filters
+        $('#resetFilters').on('click', function() {
+            window.location.href = "{% url 'dashboard' %}";
+        });
+
+        // Clear all filters
+        $('#clearAllFilters').on('click', function() {
+            window.location.href = "{% url 'dashboard' %}";
+        });
+
+        // Export functionality
+        $('#exportBtn').on('click', function() {
+            const params = new URLSearchParams(window.location.search);
+            window.location.href = `/api/export/?${params.toString()}`;
+        });
+
+        // Refresh data
+        $('#refreshData').on('click', function() {
+            window.location.reload();
+        });
+
+        // Toggle clustering
+        $('#clusterToggle').on('change', function(e) {
+            if (e.target.checked) {
+                map.addLayer(markers);
+            } else {
+                map.removeLayer(markers);
             }
         });
-    });
+    }
+
+    // Apply filters function
+    function applyFilters() {
+        updateActiveFilters();
+        
+        // Submit the form
+        $('#filterForm').submit();
+    }
+
+    // Update active filters display
+    function updateActiveFilters() {
+        const activeFilters = [];
+        const filterBadges = $('#filterBadges');
+        
+        // Check each filter and add to display if active
+        if ($('#statusFilter').val().length > 0) {
+            activeFilters.push(`Status: ${$('#statusFilter').val().join(', ')}`);
+        }
+        if ($('#countyFilter').val().length > 0) {
+            activeFilters.push(`County: ${$('#countyFilter').val().join(', ')}`);
+        }
+        if ($('#sectorFilter').val().length > 0) {
+            activeFilters.push(`Sector: ${$('#sectorFilter').val().join(', ')}`);
+        }
+        if ($('#minBudget').val() || $('#maxBudget').val()) {
+            activeFilters.push(`Budget: ${$('#minBudget').val() || '0'} - ${$('#maxBudget').val() || 'Max'}`);
+        }
+
+        // Update display
+        if (activeFilters.length > 0) {
+            $('#activeFilters').show();
+            filterBadges.empty();
+            activeFilters.forEach(filter => {
+                filterBadges.append(`<span class="filter-badge">${filter} <span class="close">&times;</span></span>`);
+            });
+        } else {
+            $('#activeFilters').hide();
+        }
+    }
+
+    function clearAllFilters() {
+        window.location.href = "{% url 'dashboard' %}";
+    }
+
+    // Initialize active filters on page load
+    updateActiveFilters();
 </script>
 {% endblock %}

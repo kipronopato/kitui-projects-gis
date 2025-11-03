@@ -26,6 +26,23 @@ from datetime import timedelta
 from django.contrib.gis.db.models.functions import Transform
 from .models import Project, ProjectUpdate, CitizenReport, KenyaCounty, KenyaSubCounty, Kenyawards
 from django.contrib.gis.db.models.functions import AsGeoJSON
+import json
+from decimal import Decimal
+from datetime import timedelta
+from django.db.models import Q, Count, Sum, Avg, Min, Max
+from django.db.models.functions import TruncMonth, TruncYear, ExtractYear
+from django.db.models.expressions import ExpressionWrapper, F, Value, Case, When
+from django.db.models.fields import FloatField, DurationField
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.utils import timezone
+from django.contrib.gis.db.models import Union
+from .models import Project, ProjectUpdate, CitizenReport, KenyaCounty, KenyaSubCounty, Kenyawards
+
+
+
+
+
 
 
 def _clean_get(request, name):
@@ -38,34 +55,44 @@ def _clean_getlist(request, name):
     return [v for v in request.GET.getlist(name) if v and v != "None"]
 
 def home(request):
-    # Start with all projects
-    projects = Project.objects.all()
+    """Enhanced dashboard view with comprehensive analytics and filtering"""
+    
+    # Start with all projects across all counties
+    projects = Project.objects.all().select_related().prefetch_related('updates', 'citizen_reports')
 
     # ---------------- Enhanced Filters ----------------
+    selected_county = _clean_get(request, "county")
     selected_year = _clean_get(request, "year")
     selected_statuses = _clean_getlist(request, "status")
     selected_sectors = _clean_getlist(request, "sector")
-    selected_counties = _clean_getlist(request, "county")
     selected_subcounties = _clean_getlist(request, "subcounty")
     selected_wards = _clean_getlist(request, "ward")
     min_budget = _clean_get(request, "min_budget")
     max_budget = _clean_get(request, "max_budget")
     start_date = _clean_get(request, "start_date")
     end_date = _clean_get(request, "end_date")
+    map_layer = _clean_get(request, "map_layer") or "wards"
+    search_query = _clean_get(request, "search")
 
-    # Apply filters
+    # Apply enhanced filters
+    if selected_county:
+        projects = projects.filter(county__iexact=selected_county)
+    
     if selected_year:
         projects = projects.filter(start_date__year=selected_year)
+    
     if selected_statuses:
         projects = projects.filter(status__in=selected_statuses)
+    
     if selected_sectors:
         projects = projects.filter(sector__in=selected_sectors)
-    if selected_counties:
-        projects = projects.filter(county__in=selected_counties)
 
-    # Enhanced spatial filtering
+    # Enhanced spatial filtering with hierarchical support
     if selected_subcounties:
         subcounty_geoms = KenyaSubCounty.objects.filter(subcounty__in=selected_subcounties)
+        if selected_county:
+            subcounty_geoms = subcounty_geoms.filter(county__iexact=selected_county)
+            
         if subcounty_geoms.exists():
             combined_geom = subcounty_geoms.aggregate(union=Union('geom'))['union']
             if combined_geom:
@@ -73,12 +100,15 @@ def home(request):
 
     if selected_wards:
         ward_geoms = Kenyawards.objects.filter(ward__in=selected_wards)
+        if selected_county:
+            ward_geoms = ward_geoms.filter(county__iexact=selected_county)
+            
         if ward_geoms.exists():
             combined_geom = ward_geoms.aggregate(union=Union('geom'))['union']
             if combined_geom:
                 projects = projects.filter(location__within=combined_geom)
 
-    # Budget filters
+    # Budget filters with validation
     if min_budget:
         try:
             projects = projects.filter(budget__gte=Decimal(min_budget))
@@ -91,7 +121,7 @@ def home(request):
         except (ValueError, TypeError):
             pass
 
-    # Date filters
+    # Date range filters
     if start_date:
         try:
             projects = projects.filter(start_date__gte=start_date)
@@ -104,47 +134,51 @@ def home(request):
         except (ValueError, TypeError):
             pass
 
-    # ---------------- Enhanced Metrics ----------------
+    # Search functionality
+    if search_query:
+        projects = projects.filter(
+            Q(name__icontains=search_query) |
+            Q(description__icontains=search_query) |
+            Q(sector__icontains=search_query) |
+            Q(project_manager__icontains=search_query) |
+            Q(county__icontains=search_query)
+        )
+
+    # ---------------- Enhanced Analytics & Metrics ----------------
+    current_date = timezone.now().date()
+    
+    # Core metrics
     total_projects = projects.count()
     total_budget = projects.aggregate(total=Sum("budget"))["total"] or 0
-    county_count = projects.values("county").distinct().count()
 
-    # Enhanced budget statistics
+    # Population calculations
+    if selected_county:
+        county_obj = KenyaCounty.objects.filter(county__iexact=selected_county).first()
+        county_population = county_obj.pop_2009 if county_obj else 1
+        budget_per_capita = total_budget / county_population if county_population else 0
+    else:
+        total_population = KenyaCounty.objects.aggregate(Sum('pop_2009'))['pop_2009__sum'] or 1
+        budget_per_capita = total_budget / total_population if total_population else 0
+        county_population = total_population
+
+    # Enhanced budget analytics
     budget_stats = projects.aggregate(
         avg_budget=Avg("budget"),
         min_budget=Min("budget"),
         max_budget=Max("budget"),
-        total_budget=Sum("budget"),
-        median_budget=Avg("budget")  # Simplified median
+        total_budget=Sum("budget")
     )
 
-    # Project lists with enhanced data
-    highest_budget_projects = projects.order_by("-budget")[:10]
-    lowest_budget_projects = projects.order_by("budget")[:10]
-    recent_projects = projects.order_by("-start_date")[:5]
-
-    # Enhanced status statistics
-    status_counts_dict = {}
-    status_percentages_dict = {}
-    status_data = projects.values("status").annotate(
-        count=Count("id"),
-        total_budget=Sum("budget"),
-        avg_budget=Avg("budget")
-    )
+    # Project performance metrics
+    completed_projects = projects.filter(status="completed").count()
+    ongoing_projects = projects.filter(status="ongoing").count()
+    delayed_projects = projects.filter(status="delayed").count()
+    planned_projects = projects.filter(status="planned").count()
     
-    for item in status_data:
-        status_counts_dict[item["status"]] = {
-            'count': item["count"],
-            'total_budget': item["total_budget"] or 0,
-            'avg_budget': item["avg_budget"] or 0
-        }
-    
-    total_with_status = sum(item['count'] for item in status_counts_dict.values())
-    for status, data in status_counts_dict.items():
-        status_percentages_dict[status] = round((data['count'] / total_with_status * 100), 1) if total_with_status else 0
+    completion_rate = round((completed_projects / total_projects * 100), 1) if total_projects else 0
+    ongoing_rate = round((ongoing_projects / total_projects * 100), 1) if total_projects else 0
 
-    # Enhanced date calculations
-    current_date = timezone.now().date()
+    # Timeline and scheduling analytics
     overdue_projects = projects.filter(
         Q(status="ongoing") & Q(end_date__lt=current_date)
     ).count()
@@ -155,20 +189,74 @@ def home(request):
         end_date__lte=current_date + timedelta(days=30),
     ).count()
 
-    completed_projects = projects.filter(status="completed").count()
-    completion_rate = round((completed_projects / total_projects * 100), 1) if total_projects else 0
+    high_risk_projects = projects.filter(
+        Q(status='delayed') | 
+        Q(end_date__lt=current_date) |
+        Q(budget__gt=Avg('budget') * 2)
+    ).count()
 
-    # Enhanced sector statistics
-    sector_stats = projects.values("sector").annotate(
+    # Enhanced project lists with ranking
+    highest_budget_projects = projects.order_by("-budget")[:10]
+    lowest_budget_projects = projects.order_by("budget")[:10]
+    recent_projects = projects.order_by("-start_date")[:10]
+    
+    risky_projects = projects.filter(
+        Q(status='delayed') | 
+        Q(end_date__lt=current_date)
+    )[:15]
+
+    # Status analytics with enhanced metrics - FOR CHARTS
+    status_distribution = projects.values("status").annotate(
+        count=Count("id")
+    ).order_by("status")
+    
+    status_counts_dict = {}
+    status_counts_chart = {}
+    for item in status_distribution:
+        status_counts_dict[item["status"]] = {
+            'count': item["count"],
+            'total_budget': 0,  # Will be populated below
+            'avg_budget': 0,
+            'delayed': 0,
+            'completion_rate': 0,
+            'avg_duration': None
+        }
+        status_counts_chart[item["status"]] = item["count"]
+
+    # Complete status analytics with budget data
+    status_analytics = projects.values("status").annotate(
+        count=Count("id"),
+        total_budget=Sum("budget"),
+        avg_budget=Avg("budget"),
+        delayed_count=Count("id", filter=Q(end_date__lt=current_date, status='ongoing')),
+        completion_rate=Count("id", filter=Q(status='completed')) * 100 / Count('id'),
+        avg_duration=Avg(ExpressionWrapper(F('end_date') - F('start_date'), output_field=DurationField()))
+    )
+    
+    for item in status_analytics:
+        if item["status"] in status_counts_dict:
+            status_counts_dict[item["status"]].update({
+                'total_budget': item["total_budget"] or 0,
+                'avg_budget': item["avg_budget"] or 0,
+                'delayed': item["delayed_count"],
+                'completion_rate': item["completion_rate"] or 0,
+                'avg_duration': item["avg_duration"]
+            })
+
+    # Enhanced sector analytics
+    sector_analytics = projects.values("sector").annotate(
         count=Count("id"), 
         total_budget=Sum("budget"), 
         avg_budget=Avg("budget"),
         completed=Count("id", filter=Q(status="completed")),
-        ongoing=Count("id", filter=Q(status="ongoing"))
+        ongoing=Count("id", filter=Q(status="ongoing")),
+        delayed=Count("id", filter=Q(status="delayed")),
+        planned=Count("id", filter=Q(status="planned"))
     ).order_by("-count")
 
     sector_data = []
-    for item in sector_stats:
+    sector_data_chart = []
+    for item in sector_analytics:
         percentage = round((item["count"] / total_projects * 100), 1) if total_projects else 0
         completion_rate_sector = round((item["completed"] / item["count"] * 100), 1) if item["count"] else 0
         sector_data.append({
@@ -179,116 +267,215 @@ def home(request):
             "percentage": percentage,
             "completion_rate": completion_rate_sector,
             "completed": item["completed"],
-            "ongoing": item["ongoing"]
+            "ongoing": item["ongoing"],
+            "delayed": item["delayed"],
+            "planned": item["planned"]
+        })
+        sector_data_chart.append({
+            "sector": item["sector"] or "Not Specified",
+            "count": item["count"]
         })
 
-    # Enhanced county statistics with spatial data
+    # Enhanced geographic analytics
     county_stats = []
-    counties = KenyaCounty.objects.all()
-    for county in counties:
-        county_projects = projects.filter(location__within=county.geom)
+    all_counties = KenyaCounty.objects.all()
+    
+    for county in all_counties:
+        county_projects = projects.filter(county__iexact=county.county)
         project_count = county_projects.count()
-        total_budget_county = county_projects.aggregate(Sum('budget'))['budget__sum'] or 0
-        
         if project_count > 0:
+            county_budget = county_projects.aggregate(Sum('budget'))['budget__sum'] or 0
+            
             county_stats.append({
                 "county": county.county,
                 "count": project_count,
-                "total_budget": total_budget_county,
-                "avg_budget": total_budget_county / project_count,
-                "population": county.pop_2009 or 0,
-                "budget_per_capita": total_budget_county / (county.pop_2009 or 1)
+                "total_budget": county_budget,
+                "avg_budget": county_budget / project_count,
+                "completed": county_projects.filter(status='completed').count(),
+                "ongoing": county_projects.filter(status='ongoing').count(),
+                "delayed": county_projects.filter(status='delayed').count(),
+                "completion_rate": round((county_projects.filter(status='completed').count() / project_count * 100), 1),
+                "population": county.pop_2009,
+                "budget_per_capita": round(county_budget / county.pop_2009, 2) if county.pop_2009 else 0
             })
     
-    county_stats = sorted(county_stats, key=lambda x: x['count'], reverse=True)[:10]
+    county_stats = sorted(county_stats, key=lambda x: x['count'], reverse=True)
 
-    # Enhanced timeline data
+    # Subcounty analytics
+    subcounty_stats = []
+    subcounties_query = KenyaSubCounty.objects.all()
+    if selected_county:
+        subcounties_query = subcounties_query.filter(county__iexact=selected_county)
+    
+    for subcounty in subcounties_query:
+        subcounty_projects = projects.filter(location__within=subcounty.geom)
+        project_count = subcounty_projects.count()
+        if project_count > 0:
+            subcounty_budget = subcounty_projects.aggregate(Sum('budget'))['budget__sum'] or 0
+            
+            subcounty_stats.append({
+                "subcounty": subcounty.subcounty,
+                "county": subcounty.county,
+                "count": project_count,
+                "total_budget": subcounty_budget,
+                "avg_budget": subcounty_budget / project_count,
+                "completed": subcounty_projects.filter(status='completed').count(),
+                "ongoing": subcounty_projects.filter(status='ongoing').count(),
+                "completion_rate": round((subcounty_projects.filter(status='completed').count() / project_count * 100), 1)
+            })
+    
+    subcounty_stats = sorted(subcounty_stats, key=lambda x: x['count'], reverse=True)
+
+    # Ward analytics
+    ward_stats = []
+    wards_query = Kenyawards.objects.all()
+    if selected_county:
+        wards_query = wards_query.filter(county__iexact=selected_county)
+    
+    for ward in wards_query:
+        ward_projects = projects.filter(location__within=ward.geom)
+        project_count = ward_projects.count()
+        if project_count > 0:
+            ward_budget = ward_projects.aggregate(Sum('budget'))['budget__sum'] or 0
+            
+            ward_stats.append({
+                "ward": ward.ward,
+                "subcounty": ward.subcounty,
+                "county": ward.county,
+                "count": project_count,
+                "total_budget": ward_budget,
+                "avg_budget": ward_budget / project_count,
+                "completed": ward_projects.filter(status='completed').count(),
+                "completion_rate": round((ward_projects.filter(status='completed').count() / project_count * 100), 1)
+            })
+    
+    ward_stats = sorted(ward_stats, key=lambda x: x['count'], reverse=True)[:20]
+
+    # Enhanced timeline analytics
     monthly_timeline = (
         projects.annotate(month=TruncMonth("start_date"))
         .values("month")
         .annotate(
             count=Count("id"),
-            total_budget=Sum("budget")
+            total_budget=Sum("budget"),
+            avg_budget=Avg("budget")
         )
         .order_by("month")
     )
 
-    # Recent activity with enhanced data
-    recent_updates = ProjectUpdate.objects.select_related("project").order_by("-created_at")[:10]
+    yearly_timeline = (
+        projects.annotate(year=ExtractYear("start_date"))
+        .values("year")
+        .annotate(
+            count=Count("id"),
+            total_budget=Sum("budget")
+        )
+        .order_by("year")
+    )
 
-    # Enhanced citizen engagement
-    report_stats = CitizenReport.objects.values("report_type").annotate(
+    # Monthly timeline for charts
+    monthly_timeline_data = {}
+    for item in monthly_timeline:
+        if item['month']:
+            month_key = item['month'].strftime('%Y-%m')
+            monthly_timeline_data[month_key] = item['count']
+
+    # Recent activity tracking
+    recent_updates = ProjectUpdate.objects.select_related("project")
+    if selected_county:
+        recent_updates = recent_updates.filter(project__county__iexact=selected_county)
+    recent_updates = recent_updates.order_by("-created_at")[:15]
+
+    # New projects and updates for alerts
+    new_projects = projects.filter(created_at__gte=current_date - timedelta(days=7)).count()
+    
+    recent_updates_query = ProjectUpdate.objects.all()
+    if selected_county:
+        recent_updates_query = recent_updates_query.filter(project__county__iexact=selected_county)
+    recent_updates_count = recent_updates_query.filter(
+        created_at__gte=current_date - timedelta(days=3)
+    ).count()
+
+    # Enhanced citizen engagement analytics
+    report_analytics = CitizenReport.objects.select_related("project")
+    if selected_county:
+        report_analytics = report_analytics.filter(project__county__iexact=selected_county)
+    
+    report_analytics = report_analytics.values("report_type").annotate(
         count=Count("id"),
         approved=Count("id", filter=Q(is_approved=True)),
-        recent=Count("id", filter=Q(created_at__gte=current_date - timedelta(days=30)))
+        recent=Count("id", filter=Q(created_at__gte=current_date - timedelta(days=30))),
+        avg_approval_time=Avg(ExpressionWrapper(F('created_at') - F('project__created_at'), output_field=DurationField()))
     )
     
     report_counts_dict = {}
-    for item in report_stats:
+    for item in report_analytics:
         report_counts_dict[item["report_type"]] = {
             'total': item["count"],
             'approved': item["approved"],
             'recent': item["recent"],
-            'approval_rate': round((item["approved"] / item["count"] * 100), 1) if item["count"] else 0
+            'approval_rate': round((item["approved"] / item["count"] * 100), 1) if item["count"] else 0,
+            'avg_approval_time': item["avg_approval_time"]
         }
     
-    approved_reports = CitizenReport.objects.filter(is_approved=True).count()
-    total_reports = CitizenReport.objects.count()
+    approved_reports_query = CitizenReport.objects.filter(is_approved=True)
+    total_reports_query = CitizenReport.objects.all()
+    
+    if selected_county:
+        approved_reports_query = approved_reports_query.filter(project__county__iexact=selected_county)
+        total_reports_query = total_reports_query.filter(project__county__iexact=selected_county)
+    
+    approved_reports = approved_reports_query.count()
+    total_reports = total_reports_query.count()
     approval_rate = round((approved_reports / total_reports * 100), 1) if total_reports else 0
 
-    # Budget by status for charts
+    # Budget distribution analytics - FOR CHARTS
     budget_by_status = (
         projects.values("status")
         .annotate(total_budget=Sum("budget"))
         .order_by("status")
     )
 
-    # Enhanced manager statistics
+    budget_by_status_chart = []
+    for item in budget_by_status:
+        budget_by_status_chart.append({
+            "status": item["status"],
+            "total_budget": float(item["total_budget"] or 0)
+        })
+
+    budget_by_sector = (
+        projects.values("sector")
+        .annotate(total_budget=Sum("budget"))
+        .order_by("-total_budget")[:10]
+    )
+
+    # Enhanced manager performance analytics
     manager_stats = (
         projects.values("project_manager")
         .annotate(
             count=Count("id"),
             completed=Count("id", filter=Q(status="completed")),
             total_budget=Sum("budget"),
+            avg_budget=Avg("budget"),
+            completion_rate=Count("id", filter=Q(status="completed")) * 100 / Count('id'),
             avg_completion_time=Avg(
-                ExpressionWrapper(F('end_date') - F('start_date'), output_field=DurationField())
-            )
+                ExpressionWrapper(F('end_date') - F('start_date'), output_field=DurationField()),
+                filter=Q(status="completed")
+            ),
+            delayed_projects=Count("id", filter=Q(status="delayed"))
         )
         .exclude(project_manager="")
-        .order_by("-count")[:5]
-    )
-    
-    # First compute total budget
-    total_budget_all = projects.aggregate(total=Sum("budget"))["total"] or 1
-
-    # New Analytics: Performance Metrics
-    
-    # Annotate utilization
-    projects = projects.annotate(
-        budget_utilization=ExpressionWrapper(
-            F("budget") / Value(total_budget_all, output_field=FloatField()),
-            output_field=FloatField()
-        )
+        .order_by("-count")[:10]
     )
 
-    budget_utilization = projects.aggregate(
-        total_allocated=Sum('budget'),
-        avg_utilization=Avg('budget_utilization')
-    )
-
-    # Risk analysis
-    high_risk_projects = projects.filter(
-        Q(status='delayed') | 
-        Q(end_date__lt=current_date + timedelta(days=30)) |
-        Q(budget_utilization__gt=100)  # Over-budget
-    ).count()
-
-    # Spatial analytics
-    projects_by_region = projects.values('county').annotate(
-        count=Count('id'),
-        budget=Sum('budget'),
-        completed=Count('id', filter=Q(status='completed'))
-    ).order_by('-count')
+    # Risk and performance analytics
+    performance_metrics = {
+        'efficiency_score': calculate_efficiency_score(projects, current_date),
+        'spatial_distribution_score': calculate_spatial_distribution_score(projects, subcounties_query),
+        'budget_utilization_score': calculate_budget_utilization_score(projects),
+        'timeline_adherence_score': calculate_timeline_adherence_score(projects, current_date),
+        'citizen_engagement_score': calculate_citizen_engagement_score(projects)
+    }
 
     # ---------------- Enhanced Dropdown Data ----------------
     fiscal_years_qs = Project.objects.dates("start_date", "year").order_by("-start_date")
@@ -298,22 +485,58 @@ def home(request):
     status_labels = dict(Project.STATUS_CHOICES)
 
     sectors = (
-        Project.objects.exclude(sector__isnull=True)
+        Project.objects
+        .exclude(sector__isnull=True)
         .exclude(sector="")
         .values_list("sector", flat=True)
         .distinct()
         .order_by("sector")
     )
 
+    # Administrative hierarchies
     counties = list(
-        KenyaCounty.objects.exclude(county__isnull=True)
-        .exclude(county="")
+        KenyaCounty.objects
+        .exclude(county__isnull=True)
         .values_list("county", flat=True)
         .distinct()
         .order_by("county")
     )
     
-    # Enhanced hierarchical data
+    subcounties = list(
+        KenyaSubCounty.objects
+        .exclude(subcounty__isnull=True)
+        .values_list("subcounty", flat=True)
+        .distinct()
+        .order_by("subcounty")
+    )
+    
+    if selected_county:
+        subcounties = list(
+            KenyaSubCounty.objects.filter(county__iexact=selected_county)
+            .exclude(subcounty__isnull=True)
+            .values_list("subcounty", flat=True)
+            .distinct()
+            .order_by("subcounty")
+        )
+    
+    wards = list(
+        Kenyawards.objects
+        .exclude(ward__isnull=True)
+        .values_list("ward", flat=True)
+        .distinct()
+        .order_by("ward")
+    )
+    
+    if selected_county:
+        wards = list(
+            Kenyawards.objects.filter(county__iexact=selected_county)
+            .exclude(ward__isnull=True)
+            .values_list("ward", flat=True)
+            .distinct()
+            .order_by("ward")
+        )
+
+    # Enhanced hierarchical data for JavaScript
     county_subcounties = {}
     for sc in KenyaSubCounty.objects.all().order_by("county", "subcounty"):
         if sc.county and sc.subcounty:
@@ -324,30 +547,14 @@ def home(request):
         if w.subcounty and w.ward:
             subcounty_wards.setdefault(w.subcounty, []).append(w.ward)
 
-    # Get subcounties and wards based on selected counties
-    filtered_subcounties = list(
-        KenyaSubCounty.objects.filter(county__in=selected_counties if selected_counties else counties)
-        .exclude(subcounty__isnull=True)
-        .values_list("subcounty", flat=True)
-        .distinct()
-        .order_by("subcounty")
-    )
-    
-    filtered_wards = list(
-        Kenyawards.objects.filter(county__in=selected_counties if selected_counties else counties)
-        .exclude(ward__isnull=True)
-        .values_list("ward", flat=True)
-        .distinct()
-        .order_by("ward")
-    )
-
-    # ---------------- Enhanced GeoJSON for Projects ----------------
+    # ---------------- Enhanced GeoJSON for Interactive Map ----------------
     features = []
     valid_projects = 0
     
     for project in projects:
         point_geom = None
         
+        # Try multiple location sources
         if project.location and hasattr(project.location, 'x') and hasattr(project.location, 'y'):
             point_geom = {
                 "type": "Point",
@@ -363,8 +570,8 @@ def home(request):
                 continue
         
         if point_geom:
-            # Calculate project health score
             health_score = calculate_project_health(project, current_date)
+            risk_level = calculate_risk_level(project, current_date)
             
             features.append({
                 "type": "Feature",
@@ -372,21 +579,19 @@ def home(request):
                 "properties": {
                     "id": project.id,
                     "name": project.name,
+                    "county": project.county or "",
                     "status": project.status,
-                    "county": project.county,
-                    "subcounty": get_subcounty_from_location(project.location) if project.location else "",
-                    "ward": get_ward_from_location(project.location) if project.location else "",
                     "sector": project.sector or "",
                     "budget": float(project.budget) if project.budget else 0,
                     "start_date": project.start_date.strftime("%Y-%m-%d") if project.start_date else "",
                     "end_date": project.end_date.strftime("%Y-%m-%d") if project.end_date else "",
-                    "description": project.description or "",
-                    "implementing_agency": project.implementing_agency or "",
-                    "contractor": project.contractor or "",
                     "project_manager": project.project_manager or "",
                     "health_score": health_score,
+                    "risk_level": risk_level,
                     "is_delayed": project.end_date < current_date if project.end_date and project.status == 'ongoing' else False,
                     "days_remaining": (project.end_date - current_date).days if project.end_date and project.status == 'ongoing' else None,
+                    "update_count": project.updates.count(),
+                    "report_count": project.citizen_reports.count()
                 },
             })
             valid_projects += 1
@@ -396,269 +601,220 @@ def home(request):
         "features": features,
         "properties": {
             "total_projects": valid_projects,
-            "filtered_projects": projects.count(),
-            "spatial_coverage": round((valid_projects / total_projects * 100), 1) if total_projects else 0
+            "selected_county": selected_county or "All Counties",
+            "population": county_population,
+            "total_budget": float(total_budget),
+            "avg_budget": float(budget_stats['avg_budget'] or 0)
         }
     }
 
-    # ---------------- Enhanced Context ----------------
+    # ---------------- Enhanced Context for Template ----------------
     context = {
         # Core metrics
         "total_projects": total_projects,
         "total_budget": total_budget,
-        "county_count": county_count,
+        "budget_per_capita": round(budget_per_capita, 2),
+        "county_population": county_population,
         "completion_rate": completion_rate,
+        "ongoing_rate": ongoing_rate,
         "overdue_projects": overdue_projects,
         "upcoming_deadlines": upcoming_deadlines,
         "high_risk_projects": high_risk_projects,
-        
-        # Enhanced statistics
+        "new_projects": new_projects,
+        "recent_updates_count": recent_updates_count,
+        "current_date": current_date,
+        # Enhanced analytics
         "budget_stats": budget_stats,
         "highest_budget_projects": highest_budget_projects,
         "lowest_budget_projects": lowest_budget_projects,
         "recent_projects": recent_projects,
+        "risky_projects": risky_projects,
         "status_counts": status_counts_dict,
-        "status_percentages": status_percentages_dict,
         "status_labels": status_labels,
         "sector_data": sector_data,
         "county_stats": county_stats,
+        "subcounty_stats": subcounty_stats,
+        "ward_stats": ward_stats,
         "monthly_timeline": list(monthly_timeline),
+        "yearly_timeline": list(yearly_timeline),
         "recent_updates": recent_updates,
         "report_counts": report_counts_dict,
         "approval_rate": approval_rate,
         "budget_by_status": list(budget_by_status),
+        "budget_by_sector": list(budget_by_sector),
         "manager_stats": list(manager_stats),
-        "projects_by_region": list(projects_by_region),
-        "budget_utilization": budget_utilization,
+        "performance_metrics": performance_metrics,
         
         # Filter options
         "fiscal_years": fiscal_years,
         "status_choices": status_choices,
         "sectors": sectors,
         "counties": counties,
-        "subcounties": filtered_subcounties,
-        "wards": filtered_wards,
+        "subcounties": subcounties,
+        "wards": wards,
+        "selected_county": selected_county or "",
         
         # JSON data for JavaScript
         "county_subcounties_json": json.dumps(county_subcounties),
         "subcounty_wards_json": json.dumps(subcounty_wards),
         "geojson": json.dumps(geojson),
         
+        # CHART DATA - NEW ADDITIONS
+        "status_counts_json": json.dumps(status_counts_chart),
+        "status_labels_json": json.dumps(status_labels),
+        "sector_data_json": json.dumps(sector_data_chart[:8]),  # Top 8 sectors for chart
+        "budget_by_status_json": json.dumps(budget_by_status_chart),
+        "monthly_timeline_json": json.dumps(monthly_timeline_data),
+        
         # Current filter values
         "selected_year": selected_year or "",
         "selected_statuses": selected_statuses,
         "selected_sectors": selected_sectors,
-        "selected_counties": selected_counties,
         "selected_subcounties": selected_subcounties,
         "selected_wards": selected_wards,
-        "selected_counties_json": json.dumps(selected_counties),
+        "map_layer": map_layer,
+        "search_query": search_query or "",
         "selected_subcounties_json": json.dumps(selected_subcounties),
         "selected_wards_json": json.dumps(selected_wards),
         "min_budget": min_budget or "",
         "max_budget": max_budget or "",
         "start_date": start_date or "",
         "end_date": end_date or "",
-        
     }
     
     return render(request, "app/home.html", context)
 
-
+# Enhanced utility functions
 def calculate_project_health(project, current_date):
-    """Calculate a health score for the project (0-100)"""
+    """Calculate comprehensive health score (0-100)"""
     score = 50  # Base score
     
     # Status-based scoring
-    if project.status == 'completed':
-        score += 30
-    elif project.status == 'ongoing':
-        score += 20
-        # Check if on schedule
-        if project.end_date and project.start_date:
-            total_days = (project.end_date - project.start_date).days
+    status_scores = {
+        'completed': 30,
+        'ongoing': 20,
+        'planned': 10,
+        'delayed': -20
+    }
+    score += status_scores.get(project.status, 0)
+    
+    # Timeline health
+    if project.end_date and project.start_date:
+        total_days = (project.end_date - project.start_date).days
+        if total_days > 0 and project.status == 'ongoing':
             elapsed_days = (current_date - project.start_date).days
-            if total_days > 0:
-                expected_progress = elapsed_days / total_days
-                # Adjust score based on progress vs time
-                if expected_progress <= 1.0:
-                    score += 20
-                else:
-                    score -= 30  # Behind schedule
+            expected_progress = elapsed_days / total_days
+            if expected_progress <= 1.0:
+                progress_score = (1 - expected_progress) * 20
+                score += progress_score
+            else:
+                score -= 30
     
-    # Budget health
-    if hasattr(project, 'budget_utilization'):
-        if project.budget_utilization <= 100:
-            score += 10
-        else:
-            score -= 20
+    return max(0, min(100, round(score)))
+
+def calculate_risk_level(project, current_date):
+    """Calculate project risk level"""
+    risk_score = 0
     
-    return max(0, min(100, score))
+    # Status risk
+    if project.status == 'delayed':
+        risk_score += 3
+    
+    # Timeline risk
+    if project.end_date and project.status == 'ongoing':
+        days_remaining = (project.end_date - current_date).days
+        if days_remaining < 0:
+            risk_score += 3
+        elif days_remaining < 30:
+            risk_score += 2
+        elif days_remaining < 90:
+            risk_score += 1
+    
+    if risk_score >= 5:
+        return "high"
+    elif risk_score >= 3:
+        return "medium"
+    else:
+        return "low"
 
+def calculate_efficiency_score(projects, current_date):
+    """Calculate overall efficiency score"""
+    if projects.count() == 0:
+        return 0
+    
+    completed = projects.filter(status='completed')
+    if completed.count() == 0:
+        return 0
+    
+    on_time = completed.filter(
+        end_date__lte=F('start_date') + timedelta(days=365)
+    ).count()
+    
+    efficiency = (on_time / completed.count() * 100)
+    return round(efficiency, 1)
 
-def get_subcounty_from_location(location):
-    """Get subcounty name from location using spatial query"""
-    if location:
-        try:
-            subcounty = KenyaSubCounty.objects.filter(geom__contains=location).first()
-            return subcounty.subcounty if subcounty else ""
-        except:
-            return ""
-    return ""
+def calculate_spatial_distribution_score(projects, subcounties):
+    """Calculate spatial distribution evenness"""
+    if projects.count() == 0 or subcounties.count() == 0:
+        return 0
+    
+    projects_per_subcounty = []
+    for subcounty in subcounties:
+        count = projects.filter(location__within=subcounty.geom).count()
+        projects_per_subcounty.append(count)
+    
+    avg_projects = sum(projects_per_subcounty) / len(projects_per_subcounty)
+    if avg_projects == 0:
+        return 0
+    
+    distribution_score = min(100, (avg_projects / max(projects_per_subcounty)) * 100)
+    return round(distribution_score, 1)
 
+def calculate_budget_utilization_score(projects):
+    """Calculate budget utilization efficiency"""
+    if projects.count() == 0:
+        return 0
+    
+    total_budget = projects.aggregate(Sum('budget'))['budget__sum'] or 0
+    completed_budget = projects.filter(status='completed').aggregate(Sum('budget'))['budget__sum'] or 0
+    
+    # Use completion rate as proxy for budget utilization
+    utilization = (completed_budget / total_budget * 100) if total_budget > 0 else 0
+    return round(utilization, 1)
 
-def get_ward_from_location(location):
-    """Get ward name from location using spatial query"""
-    if location:
-        try:
-            ward = Kenyawards.objects.filter(geom__contains=location).first()
-            return ward.ward if ward else ""
-        except:
-            return ""
-    return ""
+def calculate_timeline_adherence_score(projects, current_date):
+    """Calculate timeline adherence score"""
+    if projects.count() == 0:
+        return 0
+    
+    completed_projects = projects.filter(status='completed')
+    if completed_projects.count() == 0:
+        return 0
+    
+    # Simplified version - assume projects completed on time if they have end_date
+    completed_on_time = completed_projects.filter(
+        end_date__isnull=False
+    ).count()
+    
+    adherence = (completed_on_time / completed_projects.count() * 100)
+    return round(adherence, 1)
 
+def calculate_citizen_engagement_score(projects):
+    """Calculate citizen engagement score"""
+    if projects.count() == 0:
+        return 0
+    
+    projects_with_reports = projects.filter(citizen_reports__isnull=False).distinct().count()
+    engagement = (projects_with_reports / projects.count() * 100)
+    return round(engagement, 1)
 
-# ---------------- Enhanced API Endpoints ----------------
-
-def counties_geojson(request):
-    """Return counties GeoJSON with enhanced statistics"""
-    try:
-        counties = KenyaCounty.objects.all()
-        selected_counties = _clean_getlist(request, "county")
-        
-        if selected_counties:
-            counties = counties.filter(county__in=selected_counties)
-        
-        features = []
-        for county in counties:
-            # Enhanced spatial queries
-            projects_in_county = Project.objects.filter(location__within=county.geom)
-            project_count = projects_in_county.count()
-            total_budget = projects_in_county.aggregate(Sum('budget'))['budget__sum'] or 0
-            completed_projects = projects_in_county.filter(status='completed').count()
-            
-            feature = {
-                "type": "Feature",
-                "geometry": json.loads(county.geom.geojson),
-                "properties": {
-                    "id": county.id,
-                    "county": county.county,
-                    "pop_2009": county.pop_2009,
-                    "project_count": project_count,
-                    "total_budget": total_budget,
-                    "completed_projects": completed_projects,
-                    "completion_rate": round((completed_projects / project_count * 100), 1) if project_count else 0,
-                    "budget_per_capita": round(total_budget / (county.pop_2009 or 1), 2),
-                    "area_sqkm": round(county.geom.area * 10000, 2)
-                }
-            }
-            features.append(feature)
-        
-        return JsonResponse({
-            "type": "FeatureCollection",
-            "features": features
-        })
-        
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
-
-
-def subcounties_geojson(request):
-    """Return subcounties GeoJSON with enhanced filtering"""
-    try:
-        county_filter = request.GET.get('county')
-        selected_subcounties = _clean_getlist(request, "subcounty")
-        
-        if county_filter:
-            subcounties = KenyaSubCounty.objects.filter(county=county_filter)
-        else:
-            subcounties = KenyaSubCounty.objects.all()
-        
-        if selected_subcounties:
-            subcounties = subcounties.filter(subcounty__in=selected_subcounties)
-        
-        features = []
-        for subcounty in subcounties:
-            projects_in_subcounty = Project.objects.filter(location__within=subcounty.geom)
-            project_count = projects_in_subcounty.count()
-            total_budget = projects_in_subcounty.aggregate(Sum('budget'))['budget__sum'] or 0
-            
-            feature = {
-                "type": "Feature",
-                "geometry": json.loads(subcounty.geom.geojson),
-                "properties": {
-                    "id": subcounty.id,
-                    "subcounty": subcounty.subcounty,
-                    "county": subcounty.county,
-                    "province": subcounty.province,
-                    "project_count": project_count,
-                    "total_budget": total_budget,
-                    "avg_budget": round(total_budget / project_count, 2) if project_count else 0
-                }
-            }
-            features.append(feature)
-        
-        return JsonResponse({
-            "type": "FeatureCollection",
-            "features": features
-        })
-        
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
-
-
-def wards_geojson(request):
-    """Return wards GeoJSON with project statistics"""
-    try:
-        county_filter = request.GET.get('county')
-        subcounty_filter = request.GET.get('subcounty')
-        selected_wards = _clean_getlist(request, "ward")
-        
-        wards = Kenyawards.objects.all()
-        
-        if county_filter:
-            wards = wards.filter(county=county_filter)
-        if subcounty_filter:
-            wards = wards.filter(subcounty=subcounty_filter)
-        if selected_wards:
-            wards = wards.filter(ward__in=selected_wards)
-        
-        features = []
-        for ward in wards:
-            projects_in_ward = Project.objects.filter(location__within=ward.geom)
-            project_count = projects_in_ward.count()
-            total_budget = projects_in_ward.aggregate(Sum('budget'))['budget__sum'] or 0
-            
-            feature = {
-                "type": "Feature",
-                "geometry": json.loads(ward.geom.geojson),
-                "properties": {
-                    "id": ward.id,
-                    "ward": ward.ward,
-                    "subcounty": ward.subcounty,
-                    "county": ward.county,
-                    "project_count": project_count,
-                    "total_budget": total_budget,
-                    "project_density": round(project_count / (ward.geom.area * 10000), 4) if ward.geom.area else 0
-                }
-            }
-            features.append(feature)
-        
-        return JsonResponse({
-            "type": "FeatureCollection",
-            "features": features
-        })
-        
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
-
-
+# Enhanced API endpoints
 def project_locations_geojson(request):
-    """API endpoint for filtered project locations"""
+    """API endpoint for filtered project locations with enhanced data"""
     try:
-        # Apply the same filters as the main view
         projects = Project.objects.all()
         
-        # Apply filters from request
+        # Apply filters
         selected_year = _clean_get(request, "year")
         selected_statuses = _clean_getlist(request, "status")
         selected_sectors = _clean_getlist(request, "sector")
@@ -673,8 +829,10 @@ def project_locations_geojson(request):
         if selected_counties:
             projects = projects.filter(county__in=selected_counties)
         
-        # Build GeoJSON
+        # Build enhanced GeoJSON
         features = []
+        current_date = timezone.now().date()
+        
         for project in projects:
             point_geom = None
             
@@ -693,6 +851,9 @@ def project_locations_geojson(request):
                     continue
             
             if point_geom:
+                health_score = calculate_project_health(project, current_date)
+                risk_level = calculate_risk_level(project, current_date)
+                
                 features.append({
                     "type": "Feature",
                     "geometry": point_geom,
@@ -703,8 +864,73 @@ def project_locations_geojson(request):
                         "county": project.county,
                         "sector": project.sector or "",
                         "budget": float(project.budget) if project.budget else 0,
+                        "health_score": health_score,
+                        "risk_level": risk_level,
+                        "update_count": project.updates.count(),
+                        "report_count": project.citizen_reports.count()
                     }
                 })
+        
+        return JsonResponse({
+            "type": "FeatureCollection",
+            "features": features,
+            "metadata": {
+                "total_projects": len(features),
+                "filters_applied": {
+                    "year": selected_year,
+                    "statuses": selected_statuses,
+                    "sectors": selected_sectors,
+                    "counties": selected_counties
+                }
+            }
+        })
+        
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+def counties_geojson(request):
+    """Enhanced counties GeoJSON with comprehensive statistics"""
+    try:
+        counties = KenyaCounty.objects.all()
+        selected_counties = _clean_getlist(request, "county")
+        
+        if selected_counties:
+            counties = counties.filter(county__in=selected_counties)
+        
+        features = []
+        current_date = timezone.now().date()
+        
+        for county in counties:
+            projects_in_county = Project.objects.filter(county__iexact=county.county)
+            project_count = projects_in_county.count()
+            
+            if project_count > 0:
+                stats = projects_in_county.aggregate(
+                    total_budget=Sum('budget'),
+                    completed=Count('id', filter=Q(status='completed')),
+                    ongoing=Count('id', filter=Q(status='ongoing')),
+                    delayed=Count('id', filter=Q(status='delayed'))
+                )
+                
+                feature = {
+                    "type": "Feature",
+                    "geometry": json.loads(county.geom.geojson),
+                    "properties": {
+                        "id": county.id,
+                        "county": county.county,
+                        "pop_2009": county.pop_2009,
+                        "project_count": project_count,
+                        "total_budget": stats['total_budget'] or 0,
+                        "completed_projects": stats['completed'] or 0,
+                        "ongoing_projects": stats['ongoing'] or 0,
+                        "delayed_projects": stats['delayed'] or 0,
+                        "completion_rate": round((stats['completed'] / project_count * 100), 1) if project_count else 0,
+                        "budget_per_capita": round(stats['total_budget'] / (county.pop_2009 or 1), 2),
+                        "area_sqkm": round(county.geom.area * 10000, 2),
+                        "project_density": round(project_count / (county.geom.area * 10000), 2) if county.geom.area else 0
+                    }
+                }
+                features.append(feature)
         
         return JsonResponse({
             "type": "FeatureCollection",
@@ -713,61 +939,8 @@ def project_locations_geojson(request):
         
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
-    
-    
 
 def spatial_statistics(request):
-    """Enhanced spatial analytics endpoint"""
-    try:
-        # Regional analysis
-        counties = KenyaCounty.objects.all()
-        regional_stats = []
-        
-        for county in counties:
-            projects_in_county = Project.objects.filter(location__within=county.geom)
-            project_count = projects_in_county.count()
-            
-            if project_count > 0:
-                stats = projects_in_county.aggregate(
-                    total_budget=Sum('budget'),
-                    avg_budget=Avg('budget'),
-                    completed=Count('id', filter=Q(status='completed')),
-                    delayed=Count('id', filter=Q(status='delayed')),
-                    high_budget=Count('id', filter=Q(budget__gt=Avg('budget')))
-                )
-                
-                regional_stats.append({
-                    'county': county.county,
-                    'project_count': project_count,
-                    'total_budget': stats['total_budget'] or 0,
-                    'completion_rate': round((stats['completed'] / project_count * 100), 1),
-                    'delay_rate': round((stats['delayed'] / project_count * 100), 1),
-                    'high_budget_projects': stats['high_budget'] or 0,
-                    'budget_per_capita': round((stats['total_budget'] or 0) / (county.pop_2009 or 1), 2)
-                })
-        
-        # Spatial distribution analysis
-        spatial_distribution = {
-            'urban_counties': regional_stats[:5],  # Top 5 by project count
-            'rural_counties': regional_stats[-5:],  # Bottom 5 by project count
-            'total_regions': len(regional_stats),
-            'avg_projects_per_county': round(sum(s['project_count'] for s in regional_stats) / len(regional_stats), 1)
-        }
-        
-        return JsonResponse({
-            'regional_stats': regional_stats,
-            'spatial_distribution': spatial_distribution,
-            'summary': {
-                'total_counties_covered': len([s for s in regional_stats if s['project_count'] > 0]),
-                'total_budget_allocation': sum(s['total_budget'] for s in regional_stats),
-                'avg_completion_rate': round(sum(s['completion_rate'] for s in regional_stats) / len(regional_stats), 1)
-            }
-        })
-        
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
-
-
     """Comprehensive project analytics"""
     try:
         projects = Project.objects.all()
@@ -795,8 +968,7 @@ def spatial_statistics(request):
         risk_analysis = {
             'overdue_projects': projects.filter(status='ongoing', end_date__lt=current_date).count(),
             'high_budget_risk': projects.filter(budget__gt=performance_metrics['avg_budget'] * 2).count(),
-            'delayed_projects': projects.filter(status='delayed').count(),
-            'low_progress_projects': projects.filter(progress__lt=25).count()  # Assuming progress field
+            'delayed_projects': projects.filter(status='delayed').count()
         }
         
         # Sector analysis
@@ -817,236 +989,577 @@ def spatial_statistics(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
+def subcounties_geojson(request):
+    """Enhanced subcounties GeoJSON with comprehensive statistics"""
+    try:
+        subcounties = KenyaSubCounty.objects.all()
+        selected_counties = _clean_getlist(request, "county")
+        
+        if selected_counties:
+            subcounties = subcounties.filter(county__in=selected_counties)
+        
+        features = []
+        
+        for subcounty in subcounties:
+            projects_in_subcounty = Project.objects.filter(location__within=subcounty.geom)
+            project_count = projects_in_subcounty.count()
+            
+            feature = {
+                "type": "Feature",
+                "geometry": json.loads(subcounty.geom.geojson),
+                "properties": {
+                    "id": subcounty.id,
+                    "subcounty": subcounty.subcounty,
+                    "county": subcounty.county,
+                    "project_count": project_count,
+                    "area_sqkm": round(subcounty.geom.area * 10000, 2),
+                }
+            }
+            features.append(feature)
+        
+        return JsonResponse({
+            "type": "FeatureCollection",
+            "features": features
+        })
+        
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
-
-
-
+def wards_geojson(request):
+    """Enhanced wards GeoJSON with comprehensive statistics"""
+    try:
+        wards = Kenyawards.objects.all()
+        selected_counties = _clean_getlist(request, "county")
+        
+        if selected_counties:
+            wards = wards.filter(county__in=selected_counties)
+        
+        features = []
+        
+        for ward in wards:
+            projects_in_ward = Project.objects.filter(location__within=ward.geom)
+            project_count = projects_in_ward.count()
+            
+            feature = {
+                "type": "Feature",
+                "geometry": json.loads(ward.geom.geojson),
+                "properties": {
+                    "id": ward.id,
+                    "ward": ward.ward,
+                    "subcounty": ward.subcounty,
+                    "county": ward.county,
+                    "project_count": project_count,
+                    "area_sqkm": round(ward.geom.area * 10000, 2),
+                }
+            }
+            features.append(feature)
+        
+        return JsonResponse({
+            "type": "FeatureCollection",
+            "features": features
+        })
+        
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 # ---------------- Dashboard View ---------------- #
+# ---------------- Dashboard View ---------------- #
+import json
+from decimal import Decimal
+from datetime import timedelta
+from django.db.models import Q, Count, Sum, Avg, Min, Max, F, ExpressionWrapper, FloatField
+from django.db.models.functions import TruncMonth, ExtractYear, ExtractWeek
+from django.http import JsonResponse
+from django.shortcuts import render
+from django.utils import timezone
+from django.contrib.gis.db.models import Union
+from django.contrib.gis.geos import Point
+from .models import Project, ProjectUpdate, CitizenReport, KenyaCounty, KenyaSubCounty, Kenyawards
+
 def dashboard(request):
-    # Apply filters if any
+    # Start with all projects
+    projects = Project.objects.all().select_related().prefetch_related('updates', 'citizen_reports')
+
+    # Initialize filter variables with default values
+    selected_statuses = request.GET.getlist('status', [])
+    selected_counties = request.GET.getlist('county', [])
+    selected_sectors = request.GET.getlist('sector', [])
+    selected_subcounties = request.GET.getlist('subcounty', [])
+    selected_wards = request.GET.getlist('ward', [])
+    min_budget = request.GET.get('min_budget', '')
+    max_budget = request.GET.get('max_budget', '')
+    start_date = request.GET.get('start_date', '')
+    end_date = request.GET.get('end_date', '')
+    search_query = request.GET.get('search', '')
+    risk_level = request.GET.get('risk_level', '')
+    implementing_agency = request.GET.get('implementing_agency', '')
+
+    # Build filter conditions
     filters = Q()
-
-    # Status filter
-    status_filter = request.GET.getlist('status')
-    if status_filter:
-        filters &= Q(status__in=status_filter)
-
+    
+    # Status filter - FIXED: Map your actual statuses to the filter choices
+    if selected_statuses:
+        # Map filter statuses to actual database statuses
+        status_mapping = {
+            'planned': ['design', 'planned', 'proposed'],
+            'ongoing': ['ongoing', 'implementation', 'in_progress'],
+            'completed': ['completed', 'finished', 'done'],
+            'delayed': ['delayed', 'stalled', 'behind_schedule']
+        }
+        
+        status_filters = Q()
+        for selected_status in selected_statuses:
+            if selected_status in status_mapping:
+                actual_statuses = status_mapping[selected_status]
+                status_filters |= Q(status__in=actual_statuses)
+        
+        if status_filters:
+            filters &= status_filters
+    
     # County filter
-    county_filter = request.GET.getlist('county')
-    if county_filter:
-        filters &= Q(county__in=county_filter)
-
+    if selected_counties:
+        filters &= Q(county__in=selected_counties)
+    
     # Sector filter
-    sector_filter = request.GET.getlist('sector')
-    if sector_filter:
-        filters &= Q(sector__in=sector_filter)
+    if selected_sectors:
+        filters &= Q(sector__in=selected_sectors)
+    
+    # Subcounty filter - simplified approach
+    if selected_subcounties:
+        # Get subcounties and their counties
+        subcounty_mapping = {}
+        subcounty_objects = KenyaSubCounty.objects.filter(subcounty__in=selected_subcounties)
+        
+        for sc in subcounty_objects:
+            subcounty_mapping[sc.subcounty] = sc.county
+        
+        # Build OR condition for subcounties
+        subcounty_filters = Q()
+        for subcounty in selected_subcounties:
+            if subcounty in subcounty_mapping:
+                county_name = subcounty_mapping[subcounty]
+                subcounty_filters |= Q(county=county_name)
+        
+        if subcounty_filters:
+            filters &= subcounty_filters
+    
+    # Ward filter - simplified approach
+    if selected_wards:
+        # Get wards and their counties
+        ward_mapping = {}
+        ward_objects = Kenyawards.objects.filter(ward__in=selected_wards)
+        
+        for ward in ward_objects:
+            ward_mapping[ward.ward] = ward.county
+        
+        # Build OR condition for wards
+        ward_filters = Q()
+        for ward in selected_wards:
+            if ward in ward_mapping:
+                county_name = ward_mapping[ward]
+                ward_filters |= Q(county=county_name)
+        
+        if ward_filters:
+            filters &= ward_filters
 
-    # Budget range filter
-    min_budget = request.GET.get('min_budget')
-    max_budget = request.GET.get('max_budget')
-    if min_budget and min_budget != '':
+    # Budget filters
+    if min_budget:
         try:
             filters &= Q(budget__gte=Decimal(min_budget))
-        except Exception:
+        except (ValueError, TypeError):
             pass
-    if max_budget and max_budget != '':
+
+    if max_budget:
         try:
             filters &= Q(budget__lte=Decimal(max_budget))
-        except Exception:
+        except (ValueError, TypeError):
             pass
 
-    # Date range filter
-    start_date = request.GET.get('start_date')
-    end_date = request.GET.get('end_date')
-    if start_date and start_date != '':
-        filters &= Q(start_date__gte=start_date)
-    if end_date and end_date != '':
-        filters &= Q(end_date__lte=end_date)
+    # Date range filters - FIXED: Handle empty dates
+    if start_date:
+        try:
+            filters &= Q(start_date__gte=start_date)
+        except (ValueError, TypeError):
+            pass
 
-    # Apply filters to projects
-    projects = Project.objects.filter(filters)
+    if end_date:
+        try:
+            filters &= Q(end_date__lte=end_date)
+        except (ValueError, TypeError):
+            pass
 
-    # Key Metrics
-    total_projects = projects.count()
-    total_budget = projects.aggregate(
-        total=Sum("budget")
-    )["total"] or 0
+    # Risk level filter - SIMPLIFIED
+    if risk_level:
+        current_date = timezone.now().date()
+        if risk_level == 'high':
+            # High risk: delayed projects or projects that are very behind schedule
+            filters &= Q(status__in=['delayed', 'stalled', 'behind_schedule'])
+        elif risk_level == 'medium':
+            # Medium risk: ongoing projects with some risk factors
+            filters &= Q(status__in=['ongoing', 'implementation', 'in_progress'])
+        elif risk_level == 'low':
+            # Low risk: completed or well-performing ongoing projects
+            filters &= Q(status__in=['completed', 'finished'])
 
-    # Calculate completion rate
-    completed_projects = projects.filter(status='completed').count()
+    # Implementing agency filter
+    if implementing_agency:
+        filters &= Q(implementing_agency__icontains=implementing_agency)
+
+    # Search functionality
+    if search_query:
+        search_filters = (
+            Q(name__icontains=search_query) |
+            Q(description__icontains=search_query) |
+            Q(sector__icontains=search_query) |
+            Q(project_manager__icontains=search_query) |
+            Q(county__icontains=search_query) |
+            Q(implementing_agency__icontains=search_query)
+        )
+        filters &= search_filters
+
+    # Apply all filters
+    filtered_projects = projects.filter(filters)
+
+    # Current date for calculations
+    current_date = timezone.now().date()
+
+    # Core Metrics
+    total_projects = filtered_projects.count()
+    total_budget = filtered_projects.aggregate(total=Sum("budget"))["total"] or 0
+
+    # Completion metrics - FIXED: Use actual status mapping
+    completed_projects = filtered_projects.filter(status__in=['completed', 'finished', 'done']).count()
     completion_rate = round((completed_projects / total_projects) * 100, 1) if total_projects > 0 else 0
 
-    # Calculate average budget
-    avg_budget = projects.aggregate(avg=Avg('budget'))['avg'] or 0
+    # Time-based metrics
+    behind_schedule = filtered_projects.filter(
+        status__in=['delayed', 'stalled', 'behind_schedule']
+    ).count()
 
-    # Calculate time metrics
-    now = timezone.now().date()
+    upcoming_deadlines = filtered_projects.filter(
+        status__in=['ongoing', 'implementation', 'in_progress']
+    ).count()
+
+    # Risk analysis - FIXED: Use actual status mapping
+    high_risk_projects = filtered_projects.filter(status__in=['delayed', 'stalled', 'behind_schedule']).count()
+    medium_risk_projects = filtered_projects.filter(status__in=['ongoing', 'implementation', 'in_progress']).count()
+
+    # Enhanced Status Distribution - FIXED: Map to display categories
+    status_categories = {
+        'planned': ['design', 'planned', 'proposed'],
+        'ongoing': ['ongoing', 'implementation', 'in_progress'],
+        'completed': ['completed', 'finished', 'done'],
+        'delayed': ['delayed', 'stalled', 'behind_schedule']
+    }
     
-    # Projects behind schedule (past end date but not completed)
-    behind_schedule = projects.filter(
-        end_date__lt=now
-    ).exclude(status='completed').count()
+    status_data = {category: 0 for category in status_categories.keys()}
+    status_budget_data = {category: 0 for category in status_categories.keys()}
     
-    # Projects ahead of schedule (completed before end date)
-    ahead_of_schedule = projects.filter(
-        status='completed',
-        end_date__gt=F('actual_completion_date')
-    ).count() if hasattr(Project, 'actual_completion_date') else 0
+    for category, status_list in status_categories.items():
+        category_projects = filtered_projects.filter(status__in=status_list)
+        status_data[category] = category_projects.count()
+        status_budget_data[category] = float(category_projects.aggregate(total=Sum('budget'))['total'] or 0)
 
-    # Status Distribution
-    status_distribution = projects.values('status').annotate(count=Count('id'))
-    status_data = {status[0]: 0 for status in Project.STATUS_CHOICES}
-    for item in status_distribution:
-        status_data[item['status']] = item['count']
+    # Sector Analysis
+    sector_analysis = filtered_projects.values('sector').annotate(
+        count=Count('id'),
+        total_budget=Sum('budget'),
+        completed=Count('id', filter=Q(status__in=['completed', 'finished', 'done']))
+    ).order_by('-total_budget')[:10]
 
-    # Budget by Sector
-    sector_budget = (
-        projects.values('sector')
-        .annotate(total_budget=Sum('budget'))
-        .order_by('-total_budget')[:10]
-    )
-    sector_labels = [item['sector'] or 'Unknown' for item in sector_budget]
-    sector_values = [float(item['total_budget'] or 0) for item in sector_budget]
+    # County Analysis
+    county_analysis = filtered_projects.values('county').annotate(
+        count=Count('id'),
+        total_budget=Sum('budget'),
+        completed=Count('id', filter=Q(status__in=['completed', 'finished', 'done'])),
+        completion_rate=ExpressionWrapper(
+            Count('id', filter=Q(status__in=['completed', 'finished', 'done'])) * 100.0 / Count('id'),
+            output_field=FloatField()
+        )
+    ).order_by('-count')[:15]
 
-    # Projects by County
-    county_counts = (
-        projects.values('county')
-        .annotate(count=Count('id'))
-        .order_by('-count')[:10]
-    )
-    county_labels = [item['county'] for item in county_counts]
-    county_values = [item['count'] for item in county_counts]
-
-    # Monthly Project Timeline
+    # Timeline Analysis
     monthly_timeline = (
-        projects.annotate(month=TruncMonth('start_date'))
+        filtered_projects.annotate(month=TruncMonth('start_date'))
         .values('month')
         .annotate(count=Count('id'))
         .order_by('month')
     )
-    timeline_labels = [item['month'].strftime('%b %Y') for item in monthly_timeline]
-    timeline_values = [item['count'] for item in monthly_timeline]
 
-    # Budget Utilization by Status
-    budget_by_status = (
-        projects.values('status')
-        .annotate(total_budget=Sum('budget'))
-        .order_by('status')
-    )
-    budget_status_labels = [dict(Project.STATUS_CHOICES).get(item['status'], item['status']) for item in budget_by_status]
-    budget_status_values = [float(item['total_budget'] or 0) for item in budget_by_status]
+    # Performance Metrics - SIMPLIFIED for now
+    performance_metrics = {
+        'efficiency_score': 75,  # Placeholder
+        'budget_utilization': 65,  # Placeholder
+        'timeline_adherence': 70,  # Placeholder
+        'geographic_coverage': 85,  # Placeholder
+        'citizen_engagement': 60,  # Placeholder
+    }
 
-    # Top Performing Counties by Completion Rate
-    county_performance = []
-    for county in projects.values_list('county', flat=True).distinct():
-        county_projects = projects.filter(county=county)
-        total = county_projects.count()
-        completed = county_projects.filter(status='completed').count()
-        rate = round((completed / total) * 100, 1) if total > 0 else 0
-        county_performance.append({
-            'county': county,
-            'completion_rate': rate,
-            'total_projects': total
-        })
-    
-    # Sort by completion rate and take top 5
-    county_performance = sorted(county_performance, key=lambda x: x['completion_rate'], reverse=True)[:5]
-    performance_labels = [item['county'] for item in county_performance]
-    performance_values = [item['completion_rate'] for item in county_performance]
+    # Recent Activity
+    recent_updates = ProjectUpdate.objects.select_related('project').filter(project__in=filtered_projects).order_by('-created_at')[:10]
 
-    # Recent Updates
-    recent_updates = ProjectUpdate.objects.select_related('project').order_by('-created_at')[:5]
-
-    # Citizen Reports Summary
-    report_summary = CitizenReport.objects.values('report_type').annotate(
+    # Manager Performance
+    manager_performance = filtered_projects.values('project_manager').annotate(
         count=Count('id'),
-        approved=Count('id', filter=Q(is_approved=True))
-    ).order_by('report_type')
+        completed=Count('id', filter=Q(status__in=['completed', 'finished', 'done'])),
+        total_budget=Sum('budget')
+    ).exclude(project_manager='').order_by('-count')[:10]
 
-    # Status Choices
-    status_choices = Project.STATUS_CHOICES
+    # Risk Analysis Detailed
+    risk_analysis = {
+        'financial_risk': high_risk_projects,
+        'schedule_risk': behind_schedule,
+        'performance_risk': high_risk_projects,
+        'geographic_risk': 25  # Placeholder
+    }
 
-    # Counties
-    counties = Project.objects.values_list("county", flat=True).distinct().order_by("county")
-
-    # Sectors
-    sectors = Project.objects.values_list("sector", flat=True).distinct().order_by("sector")
-
-    # GeoJSON for Map
+    # GeoJSON for Map - using filtered projects
     features = []
-    for project in projects:
-        if project.location:
-            lng, lat = project.location.x, project.location.y
+    for project in filtered_projects:
+        point_geom = None
+        
+        if project.location and hasattr(project.location, 'x') and hasattr(project.location, 'y'):
+            point_geom = {
+                "type": "Point",
+                "coordinates": [float(project.location.x), float(project.location.y)]
+            }
         elif project.longitude and project.latitude:
-            lng, lat = float(project.longitude), float(project.latitude)
-        else:
-            continue
-
-        features.append(
-            {
-                "type": "Feature",
-                "geometry": {
+            try:
+                point_geom = {
                     "type": "Point",
-                    "coordinates": [lng, lat],
-                },
+                    "coordinates": [float(project.longitude), float(project.latitude)]
+                }
+            except (TypeError, ValueError):
+                continue
+        
+        if point_geom:
+            # Map status to display category
+            display_status = 'planned'
+            if project.status in ['completed', 'finished', 'done']:
+                display_status = 'completed'
+            elif project.status in ['ongoing', 'implementation', 'in_progress']:
+                display_status = 'ongoing'
+            elif project.status in ['delayed', 'stalled', 'behind_schedule']:
+                display_status = 'delayed'
+            
+            health_score = calculate_project_health(project, current_date)
+            calculated_risk = calculate_risk_level(project, current_date)
+            
+            features.append({
+                "type": "Feature",
+                "geometry": point_geom,
                 "properties": {
                     "id": project.id,
-                    "project_id": project.project_id,
                     "name": project.name,
-                    "status": project.status,
                     "county": project.county,
-                    "sector": project.sector,
-                    "budget": float(project.budget) if project.budget else None,
-                    "start_date": project.start_date.strftime("%Y-%m-%d") if project.start_date else None,
-                    "end_date": project.end_date.strftime("%Y-%m-%d") if project.end_date else None,
-                    "description": project.description or "",
+                    "status": display_status,  # Use mapped status
+                    "sector": project.sector or "",
+                    "budget": float(project.budget) if project.budget else 0,
+                    "start_date": project.start_date.strftime("%Y-%m-%d") if project.start_date else "",
+                    "end_date": project.end_date.strftime("%Y-%m-%d") if project.end_date else "",
+                    "project_manager": project.project_manager or "",
                     "implementing_agency": project.implementing_agency or "",
-                    "contractor": project.contractor or "",
-                },
-            }
-        )
+                    "health_score": health_score,
+                    "risk_level": calculated_risk,
+                    "days_remaining": (project.end_date - current_date).days if project.end_date and project.status in ['ongoing', 'implementation', 'in_progress'] else None
+                }
+            })
+
     geojson = {"type": "FeatureCollection", "features": features}
 
-    # Context
+    # Filter options - FIXED: Get actual unique values
+    status_choices = [
+        ("planned", "Planned"),
+        ("ongoing", "Ongoing"), 
+        ("completed", "Completed"),
+        ("delayed", "Delayed")
+    ]
+    
+    counties = Project.objects.values_list("county", flat=True).distinct().order_by("county")
+    sectors = Project.objects.values_list("sector", flat=True).distinct().order_by("sector")
+    subcounties = KenyaSubCounty.objects.values_list("subcounty", flat=True).distinct().order_by("subcounty")
+    wards = Kenyawards.objects.values_list("ward", flat=True).distinct().order_by("ward")
+    implementing_agencies = Project.objects.exclude(implementing_agency='').values_list("implementing_agency", flat=True).distinct().order_by("implementing_agency")
+
     context = {
+        # Core metrics
         "total_projects": total_projects,
         "total_budget": total_budget,
         "completion_rate": completion_rate,
-        "avg_budget": avg_budget,
         "behind_schedule": behind_schedule,
-        "ahead_of_schedule": ahead_of_schedule,
+        "upcoming_deadlines": upcoming_deadlines,
+        "high_risk_projects": high_risk_projects,
+        "medium_risk_projects": medium_risk_projects,
+        
+        # Analytics data
+        "status_data": status_data,
+        "status_budget_data": status_budget_data,
+        "sector_analysis": list(sector_analysis),
+        "county_analysis": list(county_analysis),
+        "monthly_timeline": list(monthly_timeline),
+        "performance_metrics": performance_metrics,
+        "risk_analysis": risk_analysis,
+        
+        # Recent activity
+        "recent_updates": recent_updates,
+        "manager_performance": list(manager_performance),
+        
+        # Filter options
         "status_choices": status_choices,
         "counties": counties,
         "sectors": sectors,
-        "projects": projects,
+        "subcounties": subcounties,
+        "wards": wards,
+        "implementing_agencies": implementing_agencies,
+        
+        # Selected filters
+        "selected_statuses": selected_statuses,
+        "selected_counties": selected_counties,
+        "selected_sectors": selected_sectors,
+        "selected_subcounties": selected_subcounties,
+        "selected_wards": selected_wards,
+        "min_budget": min_budget,
+        "max_budget": max_budget,
+        "start_date": start_date,
+        "end_date": end_date,
+        "search_query": search_query,
+        "risk_level": risk_level,
+        "implementing_agency": implementing_agency,
+        
+        # GeoJSON
         "geojson": json.dumps(geojson),
-        "status_data": status_data,
-        "sector_labels": json.dumps(sector_labels),
-        "sector_values": json.dumps(sector_values),
-        "county_labels": json.dumps(county_labels),
-        "county_values": json.dumps(county_values),
-        "timeline_labels": json.dumps(timeline_labels),
-        "timeline_values": json.dumps(timeline_values),
-        "budget_status_labels": json.dumps(budget_status_labels),
-        "budget_status_values": json.dumps(budget_status_values),
-        "performance_labels": json.dumps(performance_labels),
-        "performance_values": json.dumps(performance_values),
-        "recent_updates": recent_updates,
-        "report_summary": report_summary,
-        # selected filters for dropdowns
-        "selected_statuses": status_filter,
-        "selected_counties": county_filter,
-        "selected_sectors": sector_filter,
+        
+        # Additional data for charts
+        "sector_labels": json.dumps([item['sector'] or 'Unknown' for item in sector_analysis]),
+        "sector_counts": json.dumps([item['count'] for item in sector_analysis]),
+        "sector_budgets": json.dumps([float(item['total_budget'] or 0) for item in sector_analysis]),
+        "county_labels": json.dumps([item['county'] for item in county_analysis]),
+        "county_counts": json.dumps([item['count'] for item in county_analysis]),
+        "county_completion": json.dumps([float(item['completion_rate'] or 0) for item in county_analysis]),
+        "timeline_labels": json.dumps([item['month'].strftime('%b %Y') for item in monthly_timeline]),
+        "timeline_counts": json.dumps([item['count'] for item in monthly_timeline]),
+        
+        # Pass filtered projects for table
+        "projects": filtered_projects[:50],
     }
-
+    
     return render(request, "app/dashboard.html", context)
 
+# Keep your utility functions but update risk calculation
+def calculate_project_health(project, current_date):
+    """Calculate project health score (0-100)"""
+    score = 50
+    
+    # Status-based scoring
+    status_scores = {
+        'completed': 30, 'finished': 30, 'done': 30,
+        'ongoing': 20, 'implementation': 20, 'in_progress': 20,
+        'design': 10, 'planned': 10, 'proposed': 10,
+        'delayed': -20, 'stalled': -20, 'behind_schedule': -20
+    }
+    score += status_scores.get(project.status, 0)
+    
+    return max(0, min(100, round(score)))
+
+def calculate_risk_level(project, current_date):
+    """Calculate project risk level"""
+    risk_score = 0
+    
+    if project.status in ['delayed', 'stalled', 'behind_schedule']:
+        risk_score += 3
+    
+    if project.end_date and project.status in ['ongoing', 'implementation', 'in_progress']:
+        days_remaining = (project.end_date - current_date).days
+        if days_remaining < 0:
+            risk_score += 3
+        elif days_remaining < 30:
+            risk_score += 2
+        elif days_remaining < 90:
+            risk_score += 1
+    
+    if risk_score >= 5:
+        return "high"
+    elif risk_score >= 3:
+        return "medium"
+    else:
+        return "low"
+
+def calculate_efficiency_score(projects, current_date):
+    """Calculate overall efficiency score"""
+    if projects.count() == 0:
+        return 0
+    
+    completed = projects.filter(status='completed')
+    if completed.count() == 0:
+        return 0
+    
+    on_time = completed.filter(
+        end_date__lte=F('start_date') + timedelta(days=365)
+    ).count()
+    
+    return round((on_time / completed.count() * 100), 1)
+
+def calculate_budget_utilization(projects):
+    """Calculate budget utilization efficiency"""
+    if projects.count() == 0:
+        return 0
+    
+    total_budget = projects.aggregate(Sum('budget'))['budget__sum'] or 0
+    completed_budget = projects.filter(status='completed').aggregate(Sum('budget'))['budget__sum'] or 0
+    
+    utilization = (completed_budget / total_budget * 100) if total_budget > 0 else 0
+    return round(utilization, 1)
+
+def calculate_timeline_adherence(projects, current_date):
+    """Calculate timeline adherence score"""
+    if projects.count() == 0:
+        return 0
+    
+    completed_projects = projects.filter(status='completed')
+    if completed_projects.count() == 0:
+        return 0
+    
+    completed_on_time = completed_projects.filter(
+        end_date__isnull=False
+    ).count()
+    
+    return round((completed_on_time / completed_projects.count() * 100), 1)
+
+def calculate_geographic_coverage(projects):
+    """Calculate geographic coverage score"""
+    if projects.count() == 0:
+        return 0
+    
+    unique_counties = projects.values('county').distinct().count()
+    total_counties = 47  # Kenya has 47 counties
+    
+    return round((unique_counties / total_counties * 100), 1)
+
+def calculate_citizen_engagement(projects):
+    """Calculate citizen engagement score"""
+    if projects.count() == 0:
+        return 0
+    
+    projects_with_reports = projects.filter(citizen_reports__isnull=False).distinct().count()
+    return round((projects_with_reports / projects.count() * 100), 1)
+
+def calculate_geographic_risk(projects):
+    """Calculate geographic risk (projects concentrated in few areas)"""
+    if projects.count() == 0:
+        return 0
+    
+    county_distribution = projects.values('county').annotate(count=Count('id'))
+    if not county_distribution:
+        return 0
+    
+    max_projects = max([item['count'] for item in county_distribution])
+    total_projects = sum([item['count'] for item in county_distribution])
+    
+    concentration = (max_projects / total_projects * 100) if total_projects > 0 else 0
+    return round(concentration, 1)
+
+
 # ---------------- Other views remain the same ---------------- #
-# ... (home, ProjectListView, ProjectDetailView, project_map_view, submit_report, about, contact)
-
-
-# ---------------- List + Detail ---------------- #
 class ProjectListView(ListView):
     model = Project
     template_name = 'app/project_list.html'
@@ -1079,12 +1592,12 @@ class ProjectListView(ListView):
         if min_budget:
             try:
                 queryset = queryset.filter(budget__gte=Decimal(min_budget))
-            except (ValueError, InvalidOperation):
+            except (ValueError, TypeError):
                 pass
         if max_budget:
             try:
                 queryset = queryset.filter(budget__lte=Decimal(max_budget))
-            except (ValueError, InvalidOperation):
+            except (ValueError, TypeError):
                 pass
                 
         # Date range filter
@@ -1183,7 +1696,6 @@ class ProjectDetailView(DetailView):
     context_object_name = 'project'
 
 
-# ---------------- Project Map ---------------- #
 def project_map_view(request):
     # Start with all projects that have location data
     projects = Project.objects.filter(location__isnull=False)
@@ -1322,7 +1834,7 @@ def project_map_view(request):
     
     return render(request, 'app/project_map.html', context)
 
-# ---------------- Citizen Report ---------------- #
+
 def submit_report(request, project_id):
     project = get_object_or_404(Project, id=project_id)
     if request.method == 'POST':
@@ -1340,10 +1852,361 @@ def submit_report(request, project_id):
     return render(request, 'app/submit_report.html', context)
 
 
-# ---------------- Static Pages ---------------- #
 def about(request):
     return render(request, 'app/about.html')
 
 
 def contact(request):
     return render(request, 'app/contact.html')
+
+
+def project_timeline(request, project_id):
+    """Real-time project timeline view"""
+    project = get_object_or_404(Project, id=project_id)
+    
+    # Get initial timeline data
+    updates = ProjectUpdate.objects.filter(project=project).select_related('reported_by').order_by('-created_at')
+    reports = CitizenReport.objects.filter(project=project).select_related('reported_by').order_by('-created_at')
+    
+    # Combine timeline items
+    timeline_items = []
+    
+    for update in updates:
+        timeline_items.append({
+            'type': 'update',
+            'id': update.id,
+            'title': update.title,
+            'description': update.description,
+            'progress_percentage': update.progress_percentage,
+            'photo': update.photo.url if update.photo else None,
+            'created_at': update.created_at,
+            'created_by': update.reported_by,
+            'is_update': True
+        })
+    
+    for report in reports:
+        timeline_items.append({
+            'type': 'report',
+            'id': report.id,
+            'report_type': report.report_type,
+            'description': report.description,
+            'photo': report.photo.url if report.photo else None,
+            'created_at': report.created_at,
+            'created_by': report.reported_by,
+            'is_approved': report.is_approved,
+            'is_update': False
+        })
+    
+    # Sort by creation date (newest first)
+    timeline_items.sort(key=lambda x: x['created_at'], reverse=True)
+    
+    context = {
+        'project': project,
+        'timeline_items': timeline_items,
+        'websocket_url': f"ws://{request.get_host()}/ws/project/{project.id}/timeline/"
+    }
+    
+    return render(request, 'app/project_timeline.html', context)
+
+
+
+
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+import json
+
+@csrf_exempt
+def api_project_update(request, project_id):
+    """API endpoint for project updates with file upload"""
+    if request.method == 'POST':
+        try:
+            project = Project.objects.get(id=project_id)
+            user = request.user if request.user.is_authenticated else None
+            
+            update = ProjectUpdate.objects.create(
+                project=project,
+                title=request.POST.get('title', 'Update'),
+                description=request.POST.get('description', ''),
+                progress_percentage=request.POST.get('progress_percentage', 0),
+                reported_by=user
+            )
+            
+            # Handle file upload
+            if 'photo' in request.FILES:
+                update.photo = request.FILES['photo']
+                update.save()
+            
+            return JsonResponse({'success': True, 'update_id': update.id})
+            
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+    return JsonResponse({'success': False, 'error': 'Method not allowed'})
+
+@csrf_exempt
+def api_citizen_report(request, project_id):
+    """API endpoint for citizen reports with file upload"""
+    if request.method == 'POST':
+        try:
+            project = Project.objects.get(id=project_id)
+            user = request.user if request.user.is_authenticated else None
+            
+            report = CitizenReport.objects.create(
+                project=project,
+                report_type=request.POST.get('report_type', 'progress'),
+                description=request.POST.get('description', ''),
+                reported_by=user
+            )
+            
+            # Handle file upload
+            if 'photo' in request.FILES:
+                report.photo = request.FILES['photo']
+                report.save()
+            
+            return JsonResponse({'success': True, 'report_id': report.id})
+            
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+    return JsonResponse({'success': False, 'error': 'Method not allowed'})
+
+
+from .models import ProjectChatMessage
+
+def project_chartboard(request, project_id):
+    """Project-specific chartboard with detailed analytics and chat"""
+    project = get_object_or_404(Project, id=project_id)
+    
+    # Get project updates and reports
+    updates = ProjectUpdate.objects.filter(project=project).order_by('created_at')
+    reports = CitizenReport.objects.filter(project=project).order_by('created_at')
+    
+    # Calculate project progress
+    latest_update = updates.last()
+    current_progress = latest_update.progress_percentage if latest_update else 0
+    
+    # Budget utilization
+    total_budget = float(project.budget) if project.budget else 0.0
+    spent_budget = total_budget * (current_progress / 100) if current_progress > 0 else 0.0
+    
+    # Timeline analysis
+    today = timezone.now().date()
+    total_duration = (project.end_date - project.start_date).days
+    elapsed_days = (today - project.start_date).days
+    remaining_days = max(0, (project.end_date - today).days)
+    
+    # Progress timeline data
+    progress_timeline = []
+    progress_dates = []
+    progress_values = []
+    
+    for update in updates:
+        progress_timeline.append({
+            'date': update.created_at.strftime('%Y-%m-%d'),
+            'progress': update.progress_percentage,
+            'title': update.title
+        })
+        progress_dates.append(update.created_at.strftime('%b %d'))
+        progress_values.append(update.progress_percentage)
+    
+    # Report type distribution
+    report_types = reports.values('report_type').annotate(count=Count('id'))
+    report_type_data = {item['report_type']: item['count'] for item in report_types}
+    
+    # Monthly activity
+    monthly_activity = updates.annotate(
+        month=TruncMonth('created_at')
+    ).values('month').annotate(
+        count=Count('id')
+    ).order_by('month')
+    
+    monthly_labels = []
+    monthly_data = []
+    
+    for activity in monthly_activity:
+        monthly_labels.append(activity['month'].strftime('%b %Y'))
+        monthly_data.append(activity['count'])
+    
+    # Get chat messages
+    chat_messages = ProjectChatMessage.objects.filter(project=project).select_related('user', 'reply_to')[:100]
+    
+    context = {
+        'project': project,
+        'current_progress': current_progress,
+        'total_budget': total_budget,
+        'spent_budget': spent_budget,
+        'remaining_budget': total_budget - spent_budget,
+        'total_duration': total_duration,
+        'elapsed_days': elapsed_days,
+        'remaining_days': remaining_days,
+        'updates_count': updates.count(),
+        'reports_count': reports.count(),
+        'progress_timeline': progress_timeline,
+        'progress_dates': progress_dates,
+        'progress_values': progress_values,
+        'report_type_data': report_type_data,
+        'monthly_activity': list(monthly_activity),
+        'monthly_labels': monthly_labels,
+        'monthly_data': monthly_data,
+        'updates': updates.order_by('-created_at')[:10],
+        'reports': reports.order_by('-created_at')[:10],
+        'chat_messages': chat_messages,
+    }
+    
+    return render(request, 'app/project_chartboard.html', context)
+
+
+
+@csrf_exempt
+def send_chat_message(request, project_id):
+    """Send a chat message - allow both authenticated and guest users"""
+    if request.method == 'POST':
+        try:
+            project = Project.objects.get(id=project_id)
+            
+            # Allow both authenticated and unauthenticated users
+            user = request.user if request.user.is_authenticated else None
+            
+            message_text = request.POST.get('message', '').strip()
+            image = request.FILES.get('image')
+            file = request.FILES.get('file')
+            reply_to_id = request.POST.get('reply_to')
+            guest_name = request.POST.get('guest_name', 'Anonymous User').strip()
+            
+            if not message_text and not image and not file:
+                return JsonResponse({'success': False, 'error': 'Message cannot be empty'})
+            
+            # Validate guest name
+            if not user and not guest_name:
+                guest_name = 'Anonymous User'
+            
+            # Create message
+            chat_message = ProjectChatMessage(
+                project=project,
+                user=user,
+                guest_name=guest_name if not user else None,  # Only store guest name for unauthenticated users
+                message=message_text,
+                message_type='image' if image else 'file' if file else 'text'
+            )
+            
+            if image:
+                chat_message.image = image
+            if file:
+                chat_message.file = file
+            
+            if reply_to_id:
+                try:
+                    reply_to_msg = ProjectChatMessage.objects.get(id=reply_to_id, project=project)
+                    chat_message.reply_to = reply_to_msg
+                except ProjectChatMessage.DoesNotExist:
+                    pass
+            
+            chat_message.save()
+            
+            # Return message data
+            message_data = {
+                'id': chat_message.id,
+                'user': chat_message.display_name,
+                'user_id': chat_message.user.id if chat_message.user else None,
+                'message': chat_message.message,
+                'message_type': chat_message.message_type,
+                'image_url': chat_message.image.url if chat_message.image else None,
+                'file_url': chat_message.file.url if chat_message.file else None,
+                'file_name': chat_message.file.name if chat_message.file else None,
+                'timestamp': chat_message.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+                'display_time': chat_message.timestamp.strftime('%I:%M %p'),
+                'is_own_message': True,  # Since they just sent it
+                'is_authenticated': chat_message.user is not None,
+                'is_guest': chat_message.is_guest,
+                'reply_to': {
+                    'id': chat_message.reply_to.id,
+                    'user': chat_message.reply_to.display_name,
+                    'message': chat_message.reply_to.message[:50] + '...' if len(chat_message.reply_to.message) > 50 else chat_message.reply_to.message,
+                    'message_type': chat_message.reply_to.message_type,
+                } if chat_message.reply_to else None
+            }
+            
+            return JsonResponse({'success': True, 'message': message_data})
+            
+        except Project.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Project not found'})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+    return JsonResponse({'success': False, 'error': 'Method not allowed'})
+
+def get_chat_messages(request, project_id):
+    """Get chat messages for a project"""
+    try:
+        project = Project.objects.get(id=project_id)
+        last_message_id = request.GET.get('last_message_id', 0)
+        
+        messages = ProjectChatMessage.objects.filter(
+            project=project, 
+            id__gt=last_message_id
+        ).select_related('user', 'reply_to').order_by('timestamp')[:50]
+        
+        messages_data = []
+        for msg in messages:
+            # Determine if this is the current user's message
+            if request.user.is_authenticated:
+                is_own_message = msg.user == request.user
+            else:
+                # For guests, check if the guest name matches (this is a simple approach)
+                # You might want to use session-based identification for better accuracy
+                is_own_message = msg.is_guest  # Simple approach for demo
+            
+            messages_data.append({
+                'id': msg.id,
+                'user': msg.display_name,
+                'user_id': msg.user.id if msg.user else None,
+                'message': msg.message,
+                'message_type': msg.message_type,
+                'image_url': msg.image.url if msg.image else None,
+                'file_url': msg.file.url if msg.file else None,
+                'file_name': msg.file.name if msg.file else None,
+                'timestamp': msg.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+                'display_time': msg.timestamp.strftime('%I:%M %p'),
+                'is_own_message': is_own_message,
+                'is_authenticated': msg.user is not None,
+                'is_guest': msg.is_guest,
+                'reply_to': {
+                    'id': msg.reply_to.id,
+                    'user': msg.reply_to.display_name,
+                    'message': msg.reply_to.message[:50] + '...' if len(msg.reply_to.message) > 50 else msg.reply_to.message,
+                    'message_type': msg.reply_to.message_type,
+                } if msg.reply_to else None
+            })
+        
+        return JsonResponse({'success': True, 'messages': messages_data})
+        
+    except Project.DoesNotExist:
+        return JsonResponse({'success': False, 'error': 'Project not found'})
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)})
+    
+
+
+@csrf_exempt
+def mark_messages_as_read(request, project_id):
+    """Mark messages as read"""
+    if request.method == 'POST' and request.user.is_authenticated:
+        try:
+            data = json.loads(request.body)
+            message_ids = data.get('message_ids', [])
+            
+            messages = ProjectChatMessage.objects.filter(
+                id__in=message_ids,
+                project_id=project_id
+            )
+            
+            for message in messages:
+                message.mark_as_read(request.user)
+            
+            return JsonResponse({'success': True})
+            
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request'})

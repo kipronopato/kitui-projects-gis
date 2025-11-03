@@ -188,3 +188,13 @@ def get_projects_count(year_value, projects_qs):
         return cnt
     except Exception:
         return 0
+@register.filter
+def is_high(value, threshold=70):
+    return value >= threshold
+
+@register.filter
+def divide(value, arg):
+    try:
+        return int(value) // int(arg)
+    except (ValueError, ZeroDivisionError, TypeError):
+        return 0

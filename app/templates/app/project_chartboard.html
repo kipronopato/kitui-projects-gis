@@ -1,0 +1,1401 @@
+{% extends "base.html" %}
+{% load static humanize %}
+
+{% block title %}{{ project.name }} - Chartboard{% endblock %}
+
+{% block extra_css %}
+<style>
+/* General Layout and Background */
+.chartboard-container {
+    background: linear-gradient(135deg, #f0f4f8 0%, #e9eff4 100%);
+    min-height: 100vh;
+    padding: 30px 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container {
+    max-width: 1400px; /* Wider container for better desktop view */
+}
+
+/* Main Grid Structure */
+.main-content-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 420px; /* Slightly wider chat panel */
+    gap: 2rem;
+    align-items: start;
+}
+
+.left-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.right-panel {
+    position: sticky;
+    top: 30px; /* Adjusted sticky top */
+}
+
+/* Header Styling */
+.chartboard-header {
+    background: white;
+    border-radius: 15px;
+    padding: 2.5rem;
+    box-shadow: 0 8px 20px rgba(44, 62, 80, 0.08);
+    margin-bottom: 2rem;
+}
+
+.project-title {
+    color: #2c3e50;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    font-size: 2.2rem;
+}
+
+.project-meta {
+    color: #7f8c8d;
+    font-size: 1.05rem;
+}
+
+/* Stats Cards */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem 1rem;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-top: 4px solid #008000; /* Subtle green accent */
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,102,0,0.15);
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #006600; /* Primary Green */
+    margin-bottom: 0.3rem;
+}
+
+.stat-label {
+    color: #546e7a;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+/* Charts Section */
+.charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two columns for charts on wider screens */
+    gap: 1.5rem;
+}
+
+.chart-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+    transition: box-shadow 0.3s ease;
+}
+
+.chart-card:hover {
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #ecf0f1;
+}
+
+.chart-title {
+    color: #2c3e50;
+    font-weight: 700;
+    margin: 0;
+    font-size: 1.25rem;
+}
+
+.chart-container {
+    height: 280px; /* Increased height for better visualization */
+    position: relative;
+}
+
+/* Progress Chart Specifics */
+.progress-container {
+    margin-bottom: 1rem;
+}
+
+.progress-bar {
+    height: 12px;
+    background: #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #008000, #38b038);
+    border-radius: 6px;
+    transition: width 0.5s ease;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #7f8c8d;
+}
+
+/* Budget Breakdown */
+.budget-breakdown {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.budget-item {
+    text-align: center;
+    padding: 1rem;
+    background: #f7f9fb;
+    border-radius: 10px;
+    border: 1px solid #ecf0f1;
+}
+
+.budget-amount {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: #006600;
+}
+
+.budget-label {
+    font-size: 0.8rem;
+    color: #7f8c8d;
+    text-transform: uppercase;
+}
+
+/* Timeline Section */
+.activity-timeline {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+}
+
+.timeline-item {
+    display: flex;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-left: 3px solid #ecf0f1; /* Timeline line */
+    position: relative;
+    padding-left: 1.5rem;
+}
+
+.timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -7px; /* Center icon on the line */
+    top: 0;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: #006600;
+    border: 3px solid white;
+    z-index: 1;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-left: 3px solid transparent; /* Remove line after last item */
+}
+
+.timeline-item:last-child::before {
+    background: #aaa; /* Grey out the last icon dot */
+}
+
+.timeline-icon {
+    /* Removed as it's better to use the ::before for the line effect */
+    display: none; 
+}
+
+.timeline-content {
+    flex: 1;
+}
+
+.timeline-title {
+    font-weight: 700;
+    color: #34495e;
+    margin-bottom: 0.25rem;
+    font-size: 1.05rem;
+}
+
+.timeline-description {
+    color: #7f8c8d;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.timeline-meta {
+    font-size: 0.8rem;
+    color: #95a5a6;
+}
+
+.section-title {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    font-size: 1.4rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 3px solid #38b038; /* Brighter green line */
+}
+
+/* Back Button */
+.back-button {
+    background: #6c757d;
+    color: white !important;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.3s ease, transform 0.1s;
+}
+
+.back-button:hover {
+    background: #5a6268;
+    color: white !important;
+    transform: translateY(-1px);
+}
+
+/* --- Chat Widget Styling (WhatsApp-like) --- */
+.chat-container {
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    overflow: hidden;
+    height: auto;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-header {
+    background: #006600;
+    color: white;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+.chat-header h3 {
+    margin: 0;
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+.chat-messages {
+    height: 60vh; /* Fixed height for scrolling, less than max-height */
+    min-height: 400px;
+    overflow-y: auto;
+    padding: 1rem;
+    /* Lighter, subtle background pattern */
+    background: #f9f9f9;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm-6 60c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%239C92AC' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+    flex: 1;
+}
+
+.message {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.message.own-message {
+    align-items: flex-end;
+}
+
+.message.other-message {
+    align-items: flex-start;
+}
+
+.message-bubble {
+    max-width: 75%;
+    padding: 0.8rem 1.2rem;
+    border-radius: 20px;
+    position: relative;
+    word-wrap: break-word;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+}
+
+.own-message .message-bubble {
+    background: #dcf8c6; /* Light WhatsApp green */
+    border-bottom-right-radius: 8px;
+    color: #1c1e21;
+}
+
+.other-message .message-bubble {
+    background: white;
+    border-bottom-left-radius: 8px;
+    color: #1c1e21;
+}
+
+.reply-message {
+    background: rgba(255, 255, 255, 0.7); /* Slightly transparent white */
+    border-left: 3px solid #006600;
+    padding: 0.6rem;
+    margin-bottom: 0.5rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+}
+
+.reply-message .reply-user {
+    font-weight: 700;
+    color: #006600;
+    font-size: 0.75rem;
+}
+
+.message-content {
+    margin-bottom: 0.3rem;
+    line-height: 1.4;
+}
+
+.message-image {
+    max-width: 180px;
+    max-height: 180px;
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+    cursor: pointer;
+    border: 1px solid #ccc;
+}
+
+.message-file {
+    display: flex;
+    align-items: center;
+    padding: 0.7rem;
+    background: rgba(0,0,0,0.05);
+    border-radius: 10px;
+    margin-bottom: 0.5rem;
+    border: 1px solid #eee;
+}
+
+.message-file i {
+    font-size: 1.5rem;
+    margin-right: 0.75rem;
+    color: #006600;
+}
+
+.message-meta {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-size: 0.75rem;
+    color: #999;
+    gap: 0.3rem;
+}
+
+.message-time {
+    font-size: 0.75rem;
+    color: #999;
+}
+
+.message-status {
+    font-size: 0.85rem;
+    color: #006600;
+}
+
+/* Chat Input Area */
+.chat-input-container {
+    padding: 1rem 1.5rem;
+    background: #f9f9f9;
+    border-top: 1px solid #e1e1e1;
+    flex-shrink: 0;
+}
+
+.chat-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.chat-input-actions {
+    display: flex;
+    gap: 0.3rem;
+}
+
+.chat-action-btn {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+}
+
+.chat-action-btn:hover {
+    background: #e9ecef;
+}
+
+.chat-input {
+    flex: 1;
+    border: 1px solid #ddd;
+    border-radius: 28px;
+    padding: 0.8rem 1.2rem;
+    outline: none;
+    resize: none;
+    max-height: 120px;
+    font-family: inherit;
+    font-size: 1rem;
+}
+
+.chat-input:focus {
+    border-color: #006600;
+    box-shadow: 0 0 0 0.25rem rgba(0, 102, 0, 0.25);
+}
+
+.send-btn {
+    background: #006600;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s;
+}
+
+.send-btn:hover {
+    background: #004d00;
+    transform: scale(1.05);
+}
+
+.send-btn:disabled {
+    background: #a0a0a0;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Reply/Typing Indicators */
+.reply-indicator {
+    background: #f0f4f8;
+    padding: 0.75rem 1.5rem;
+    border-top: 1px solid #ccc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.reply-indicator-content {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.reply-indicator-close {
+    background: none;
+    border: none;
+    color: #666;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0.2rem;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.reply-indicator-close:hover {
+    background-color: #e0e0e0;
+}
+
+.typing-indicator {
+    padding: 0.5rem 1.5rem;
+    font-style: italic;
+    color: #666;
+    font-size: 0.9rem;
+    background: #f9f9f9;
+    border-top: 1px solid #e1e1e1;
+}
+
+/* Guest Name Input */
+.guest-name-update {
+    margin-bottom: 1rem;
+    padding: 0.75rem;
+    background-color: #fffbe6;
+    border: 1px solid #ffe08a;
+    border-radius: 8px;
+}
+
+.guest-name-update .input-group-text {
+    background-color: #fff3cd;
+    border-color: #ffe08a;
+}
+
+.file-upload-input {
+    display: none;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+    .main-content-wrapper {
+        grid-template-columns: 1fr;
+    }
+    
+    .right-panel {
+        position: static;
+    }
+    
+    .chat-container {
+        margin-top: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr 1fr; /* Two columns on small screens */
+    }
+    
+    .budget-breakdown {
+        grid-template-columns: 1fr;
+    }
+    
+    .message-bubble {
+        max-width: 90%;
+    }
+    
+    .chat-messages {
+        height: 350px; /* Adjust chat height for smaller viewports */
+    }
+    
+    .project-title {
+        font-size: 1.8rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="chartboard-container">
+    <div class="container">
+        <div class="chartboard-header">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <h1 class="project-title">{{ project.name }}</h1>
+                    <p class="project-meta">
+                        <i class="fas fa-map-marker-alt me-1"></i>{{ project.county }} County • 
+                        <i class="fas fa-industry me-1"></i>{{ project.sector }} • 
+                        <span class="badge bg-{% if project.status == 'completed' %}success{% elif project.status == 'ongoing' %}warning{% else %}secondary{% endif %}">
+                            {{ project.get_status_display }}
+                        </span>
+                    </p>
+                </div>
+                <a href="{% url 'project_detail' project.id %}" class="back-button">
+                    <i class="fas fa-arrow-left"></i> Back to Details
+                </a>
+            </div>
+        </div>
+
+        <div class="main-content-wrapper">
+            <div class="left-panel">
+                
+                <div>
+                    <h3 class="section-title">Project Overview</h3>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">{{ current_progress|default:0 }}%</div>
+                            <div class="stat-label">Overall Progress</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">Ksh {{ total_budget|default:0|floatformat:0|intcomma }}</div>
+                            <div class="stat-label">Total Budget</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">{{ updates_count|default:0 }}</div>
+                            <div class="stat-label">Project Updates</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">{{ reports_count|default:0 }}</div>
+                            <div class="stat-label">Citizen Reports</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">{{ elapsed_days|default:0 }}</div>
+                            <div class="stat-label">Days Elapsed</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">{{ remaining_days|default:0 }}</div>
+                            <div class="stat-label">Days Remaining</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="section-title">Charts & Analytics</h3>
+                    <div class="charts-grid">
+                        
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">Project Progress Timeline</h3>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: {{ current_progress }}%"></div>
+                                </div>
+                                <div class="progress-info">
+                                    <span>Start: {{ project.start_date|date:"M d, Y" }}</span>
+                                    <span>{{ current_progress }}% Complete</span>
+                                    <span>End: {{ project.end_date|date:"M d, Y" }}</span>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="progressTimelineChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">Budget Utilization</h3>
+                            </div>
+                            <div class="budget-breakdown">
+                                <div class="budget-item">
+                                    <div class="budget-amount">Ksh {{ spent_budget|floatformat:0|intcomma }}</div>
+                                    <div class="budget-label">Spent</div>
+                                </div>
+                                <div class="budget-item">
+                                    <div class="budget-amount">Ksh {{ remaining_budget|floatformat:0|intcomma }}</div>
+                                    <div class="budget-label">Remaining</div>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="budgetChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">Report Types</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="reportTypesChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="chart-card">
+                            <div class="chart-header">
+                                <h3 class="chart-title">Monthly Activity</h3>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="monthlyActivityChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="activity-timeline">
+                    <h3 class="section-title">Recent Activity</h3>
+                    
+                    <h5 class="mb-3 fw-bold text-secondary">Project Updates</h5>
+                    {% for update in updates %}
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-title">
+                                {{ update.title }} 
+                                <span class="badge bg-primary ms-2">{{ update.progress_percentage }}%</span>
+                            </div>
+                            <div class="timeline-description">{{ update.description }}</div>
+                            <div class="timeline-meta">
+                                <i class="fas fa-calendar me-1"></i>{{ update.created_at|date:"M d, Y" }}
+                                {% if update.reported_by %}
+                                • <i class="fas fa-user me-1"></i>{{ update.reported_by.username }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted p-2">No updates yet.</p>
+                    {% endfor %}
+
+                    <h5 class="mb-3 mt-4 fw-bold text-secondary">Citizen Reports</h5>
+                    {% for report in reports %}
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-title">
+                                {{ report.get_report_type_display }}
+                                <span class="badge {% if report.is_approved %}bg-success{% else %}bg-warning text-dark{% endif %} ms-2">
+                                    {% if report.is_approved %}Approved{% else %}Pending{% endif %}
+                                </span>
+                            </div>
+                            <div class="timeline-description">{{ report.description }}</div>
+                            <div class="timeline-meta">
+                                <i class="fas fa-calendar me-1"></i>{{ report.created_at|date:"M d, Y" }}
+                                {% if report.reported_by %}
+                                • <i class="fas fa-user me-1"></i>{{ report.reported_by.username }}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <p class="text-muted p-2">No reports yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="right-panel">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <h3><i class="fas fa-comments me-2"></i>Project Chat</h3>
+                        <span class="badge bg-light text-dark">{{ chat_messages|length }} messages</span>
+                    </div>
+                    
+                    <div class="chat-messages" id="chatMessages">
+                        {% for message in chat_messages %}
+                        <div class="message {% if message.user == request.user %}own-message{% else %}other-message{% endif %}" data-message-id="{{ message.id }}">
+                            {% if message.reply_to %}
+                            <div class="reply-message">
+                                <div class="reply-user">{{ message.reply_to.user.username|default:"Anonymous User" }}</div>
+                                <div class="reply-content">
+                                    {% if message.reply_to.message_type == 'image' %}
+                                    <i class="fas fa-image"></i> Photo
+                                    {% elif message.reply_to.message_type == 'file' %}
+                                    <i class="fas fa-file"></i> File
+                                    {% else %}
+                                    {{ message.reply_to.message|truncatechars:50 }}
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="message-bubble">
+                                {% if message.message_type == 'image' and message.image %}
+                                <img src="{{ message.image.url }}" alt="Shared image" class="message-image" onclick="openImageModal('{{ message.image.url }}')">
+                                {% elif message.message_type == 'file' and message.file %}
+                                <div class="message-file">
+                                    <i class="fas fa-file-download"></i>
+                                    <div>
+                                        <div class="file-name">{{ message.file.name|cut:"chat_files/" }}</div>
+                                        <a href="{{ message.file.url }}" download class="text-small text-primary">Download</a>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                
+                                <div class="message-content">
+                                    {% if not message.user and not request.user.is_authenticated %}
+                                        {{ message.message }}
+                                    {% else %}
+                                        {{ message.message }}
+                                    {% endif %}
+                                </div>
+                                <div class="message-meta">
+                                    <span class="message-time">{{ message.timestamp|time:"H:i" }}</span>
+                                    {% if message.user == request.user %}
+                                    <span class="message-status">
+                                        {% if message.is_read %}✓✓{% else %}✓{% endif %}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-comments fa-3x mb-3 text-success"></i>
+                            <p>No messages yet. Start the conversation!</p>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    {% if not user.is_authenticated %}
+                    <div class="alert alert-warning m-3 mb-0 p-2 small" style="border-radius: 8px;">
+                        <i class="fas fa-info-circle me-1"></i>
+                        You are chatting as a guest. 
+                        <a href="{% url 'login' %}?next={{ request.path }}" class="alert-link fw-bold">Login</a> 
+                        to use your username.
+                    </div>
+                    {% endif %}
+
+                    <div class="reply-indicator" id="replyIndicator" style="display: none;">
+                        <div class="reply-indicator-content">
+                            <div class="reply-user" id="replyUser"></div>
+                            <div class="reply-content" id="replyContent"></div>
+                        </div>
+                        <button class="reply-indicator-close" id="cancelReply" title="Cancel Reply">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                        <span id="typingUsers"></span> is typing...
+                    </div>
+
+                    <div class="chat-input-container">
+                        <form id="chatForm" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="reply_to" id="replyTo">
+                            <input type="hidden" name="guest_name" id="guestName" value="Anonymous User">
+                            
+                            {% if not user.is_authenticated %}
+                            <div class="guest-name-update mb-2">
+                                <label class="form-label mb-1" for="guestNameInput"><small>Your Chat Name:</small></label>
+                                <div class="input-group input-group-sm">
+                                    <span class="input-group-text">
+                                        <i class="fas fa-user"></i>
+                                    </span>
+                                    <input type="text" class="form-control" id="guestNameInput" 
+                                        placeholder="Enter your name (max 50 chars)" maxlength="50"
+                                        value="Anonymous User">
+                                    <button type="button" class="btn btn-outline-secondary" id="updateGuestName">
+                                        Set
+                                    </button>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="chat-input-wrapper">
+                                <div class="chat-input-actions">
+                                    <button type="button" class="chat-action-btn" id="attachBtn" title="Attach File">
+                                        <i class="fas fa-paperclip"></i>
+                                    </button>
+                                    <button type="button" class="chat-action-btn" id="imageBtn" title="Send Image">
+                                        <i class="fas fa-image"></i>
+                                    </button>
+                                </div>
+                                
+                                <textarea 
+                                    class="chat-input" 
+                                    id="messageInput" 
+                                    placeholder="Type a message..." 
+                                    rows="1"></textarea>
+                                
+                                <button type="submit" class="send-btn" id="sendBtn" disabled>
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                            
+                            <input type="file" id="imageInput" class="file-upload-input" accept="image/*">
+                            <input type="file" id="fileInput" class="file-upload-input" accept="*/*">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// --- Charting Logic ---
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // --- Chart Initialization ---
+    const initializeCharts = () => {
+        const progressCtx = document.getElementById('progressTimelineChart');
+        if (progressCtx) {
+            new Chart(progressCtx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: {{ progress_dates|default:"[]"|safe }},
+                    datasets: [{
+                        label: 'Progress %',
+                        data: {{ progress_values|default:"[]"|safe }},
+                        borderColor: '#006600',
+                        backgroundColor: 'rgba(0, 102, 0, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#006600'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    label += context.parsed.y + '%';
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            title: { display: true, text: 'Progress %' },
+                            grid: { color: '#e0e0e0' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        const budgetCtx = document.getElementById('budgetChart');
+        if (budgetCtx) {
+            new Chart(budgetCtx.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Spent Budget', 'Remaining Budget'],
+                    datasets: [{
+                        data: [{{ spent_budget|default:0 }}, {{ remaining_budget|default:0 }}],
+                        backgroundColor: ['#008000', '#a0a0a0'],
+                        borderWidth: 3,
+                        borderColor: '#fff',
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { padding: 20 } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.parsed.toLocaleString('en-US');
+                                    return `${label}: Ksh ${value}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        const reportCtx = document.getElementById('reportTypesChart');
+        if (reportCtx) {
+            new Chart(reportCtx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: Object.keys({{ report_type_data|default:"{}"|safe }}),
+                    datasets: [{
+                        label: 'Number of Reports',
+                        data: Object.values({{ report_type_data|default:"{}"|safe }}),
+                        backgroundColor: ['#006600', '#ffc107', '#dc3545', '#17a2b8', '#6c757d'],
+                        borderWidth: 1,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', // Horizontal bar chart for better label readability
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Number of Reports' }
+                        }
+                    }
+                }
+            });
+        }
+
+        const monthlyCtx = document.getElementById('monthlyActivityChart');
+        if (monthlyCtx) {
+            new Chart(monthlyCtx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: {{ monthly_labels|default:"[]"|safe }},
+                    datasets: [{
+                        label: 'Updates per Month',
+                        data: {{ monthly_data|default:"[]"|safe }},
+                        backgroundColor: '#006600',
+                        borderWidth: 1,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Number of Updates' }
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    // --- Chat Logic ---
+    const chatMessages = document.getElementById('chatMessages');
+    const messageInput = document.getElementById('messageInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const chatForm = document.getElementById('chatForm');
+    const attachBtn = document.getElementById('attachBtn');
+    const imageBtn = document.getElementById('imageBtn');
+    const imageInput = document.getElementById('imageInput');
+    const fileInput = document.getElementById('fileInput');
+    const replyIndicator = document.getElementById('replyIndicator');
+    const cancelReply = document.getElementById('cancelReply');
+    const replyTo = document.getElementById('replyTo');
+    const guestNameInput = document.getElementById('guestNameInput');
+    const updateGuestNameBtn = document.getElementById('updateGuestName');
+    const guestNameField = document.getElementById('guestName');
+    
+    let currentReplyMessage = null;
+    let typingTimer = null;
+    let isTyping = false;
+
+    // Initial chart setup
+    initializeCharts();
+
+    // --- Guest Name Update ---
+    if (updateGuestNameBtn && guestNameInput) {
+        updateGuestNameBtn.addEventListener('click', function() {
+            const newName = guestNameInput.value.trim().substring(0, 50) || 'Anonymous User';
+            guestNameField.value = newName;
+            guestNameInput.value = newName;
+            showToast('Name updated to: ' + newName);
+        });
+        
+        guestNameInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                updateGuestNameBtn.click();
+            }
+        });
+    }
+
+    // --- Utility Functions ---
+    function showToast(message) {
+        const toastContainer = document.createElement('div');
+        toastContainer.className = 'position-fixed bottom-0 end-0 p-3';
+        toastContainer.style.zIndex = '1200';
+        
+        const toast = document.createElement('div');
+        toast.className = 'toast show bg-success text-white';
+        toast.style.opacity = 1;
+        toast.innerHTML = `<div class="toast-body">${message}</div>`;
+        
+        toastContainer.appendChild(toast);
+        document.body.appendChild(toastContainer);
+        
+        setTimeout(() => {
+            toastContainer.remove();
+        }, 3000);
+    }
+
+    function scrollToBottom() {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function formatTime(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    window.openImageModal = function(imageUrl) {
+        const modal = document.createElement('div');
+        modal.className = 'modal fade show d-block';
+        modal.style.backgroundColor = 'rgba(0,0,0,0.9)';
+        modal.innerHTML = `
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content bg-transparent border-0">
+                    <div class="modal-header border-0">
+                        <button type="button" class="btn-close btn-close-white" onclick="this.closest('.modal').remove()"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <img src="${imageUrl}" alt="Full size image" class="img-fluid" style="max-height: 80vh; border-radius: 10px;">
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        modal.addEventListener('click', function(e) {
+            if (e.target === this || e.target.classList.contains('btn-close-white')) {
+                this.remove();
+            }
+        });
+    }
+
+    function setReplyMessage(messageData) {
+        currentReplyMessage = messageData;
+        replyTo.value = messageData.id;
+        
+        document.getElementById('replyUser').textContent = messageData.user || 'System';
+        document.getElementById('replyContent').textContent = 
+            messageData.message_type === 'image' ? 'Photo' :
+            messageData.message_type === 'file' ? 'File' :
+            messageData.message.length > 50 ? messageData.message.substring(0, 50) + '...' : messageData.message;
+        
+        replyIndicator.style.display = 'flex';
+        messageInput.focus();
+    }
+
+    cancelReply.addEventListener('click', function() {
+        currentReplyMessage = null;
+        replyTo.value = '';
+        replyIndicator.style.display = 'none';
+    });
+
+    // --- Message Rendering ---
+    function addMessage(messageData) {
+        if (document.querySelector(`[data-message-id="${messageData.id}"]`)) {
+            return;
+        }
+
+        const messageDiv = document.createElement('div');
+        const isOwn = messageData.is_own_message;
+        messageDiv.className = `message ${isOwn ? 'own-message' : 'other-message'}`;
+        messageDiv.dataset.messageId = messageData.id;
+
+        let messageHTML = '';
+
+        // Reply section
+        if (messageData.reply_to) {
+            messageHTML += `
+                <div class="reply-message">
+                    <div class="reply-user">${messageData.reply_to.user || 'System'}</div>
+                    <div class="reply-content">
+                        ${messageData.reply_to.message_type === 'image' ? 
+                        '<i class="fas fa-image"></i> Photo' : 
+                        messageData.reply_to.message_type === 'file' ?
+                        '<i class="fas fa-file"></i> File' :
+                        messageData.reply_to.message.substring(0, 50)}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Message bubble wrapper
+        messageHTML += '<div class="message-bubble">';
+
+        // Media content
+        if (messageData.message_type === 'image' && messageData.image_url) {
+            messageHTML += `<img src="${messageData.image_url}" alt="Shared image" class="message-image" onclick="openImageModal('${messageData.image_url}')">`;
+        } else if (messageData.message_type === 'file' && messageData.file_url) {
+            messageHTML += `
+                <div class="message-file">
+                    <i class="fas fa-file-download"></i>
+                    <div>
+                        <div class="file-name">${messageData.file_name || 'File'}</div>
+                        <a href="${messageData.file_url}" download class="text-small text-primary">Download</a>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Text content
+        messageHTML += `
+            <div class="message-content">${messageData.message || ''}</div>
+            <div class="message-meta">
+                <span class="message-time">${formatTime(messageData.timestamp)}</span>
+                ${isOwn && messageData.is_authenticated ? 
+                `<span class="message-status">${messageData.is_read ? '✓✓' : '✓'}</span>` : 
+                ''}
+            </div>
+        </div>`;
+
+        messageDiv.innerHTML = messageHTML;
+        
+        // Add reply context menu listener
+        messageDiv.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            // Ensure messageData.user is correctly set for guests in the mock data
+            const userDisplay = messageData.user || (isOwn ? guestNameField.value : 'Anonymous User');
+            const replyData = { ...messageData, user: userDisplay };
+            setReplyMessage(replyData);
+        });
+
+        chatMessages.appendChild(messageDiv);
+        scrollToBottom();
+    }
+
+    // --- Polling ---
+    function pollForNewMessages() {
+        const lastMessageElement = chatMessages.lastElementChild;
+        // Find the last message element that actually has a message ID, ignoring indicators
+        let lastMessageId = 0;
+        const messageElements = chatMessages.querySelectorAll('.message');
+        if (messageElements.length > 0) {
+             lastMessageId = messageElements[messageElements.length - 1].dataset.messageId;
+        }
+        
+        fetch(`/project/{{ project.id }}/chat/messages/?last_message_id=${lastMessageId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.messages.length > 0) {
+                data.messages.forEach(message => {
+                    if (!document.querySelector(`[data-message-id="${message.id}"]`)) {
+                        const currentGuestName = guestNameField.value;
+                        // Heuristic to correctly set 'is_own_message' for guests arriving via poll
+                        if (!message.is_authenticated) {
+                            message.is_own_message = (message.user === currentGuestName);
+                            message.user = message.user || (message.is_own_message ? currentGuestName : 'Anonymous User');
+                        }
+                        addMessage(message);
+                    }
+                });
+            }
+        })
+        .catch(error => console.error('Error polling messages:', error));
+    }
+    
+    // Initial message load and set up for polling
+    scrollToBottom();
+    setInterval(pollForNewMessages, 3000);
+
+    // --- Input Handling ---
+    
+    // Auto-resize textarea and enable/disable send button
+    messageInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+        
+        const hasContent = this.value.trim().length > 0;
+        const hasFile = imageInput.files[0] || fileInput.files[0];
+        sendBtn.disabled = !(hasContent || hasFile);
+        
+        if (hasContent && !hasFile) {
+            messageInput.placeholder = 'Type a message...';
+        } else if (hasFile && !hasContent) {
+            messageInput.placeholder = imageInput.files[0] ? `Image: ${imageInput.files[0].name}` : `File: ${fileInput.files[0].name}`;
+        } else if (hasFile && hasContent) {
+             messageInput.placeholder = 'Message and file attached...';
+        } else {
+             messageInput.placeholder = 'Type a message...';
+        }
+
+        // Simple typing indicator simulation (No actual backend integration here)
+        if (this.value.trim().length > 0 && !isTyping) {
+            isTyping = true;
+            // Simulate typing start by showing indicator
+        } else if (this.value.trim().length === 0 && isTyping) {
+            isTyping = false;
+            // Simulate typing end
+        }
+    });
+
+    // File attachment handlers
+    imageBtn.addEventListener('click', function() {
+        imageInput.click();
+    });
+
+    attachBtn.addEventListener('click', function() {
+        fileInput.click();
+    });
+
+    imageInput.addEventListener('change', function() {
+        if (this.files[0]) {
+            sendBtn.disabled = false;
+            messageInput.focus();
+        }
+    });
+
+    fileInput.addEventListener('change', function() {
+        if (this.files[0]) {
+            sendBtn.disabled = false;
+            messageInput.focus();
+        }
+    });
+
+    // --- Send Message ---
+    chatForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if (sendBtn.disabled) return;
+
+        const formData = new FormData(this);
+        formData.append('message', messageInput.value.trim());
+        
+        if (imageInput.files[0]) {
+            formData.append('image', imageInput.files[0]);
+        }
+        
+        if (fileInput.files[0]) {
+            formData.append('file', fileInput.files[0]);
+        }
+
+        // Temporarily disable input during send
+        sendBtn.disabled = true;
+        messageInput.disabled = true;
+        
+        fetch(`/project/{{ project.id }}/chat/send/`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Add message to chat (using data.message which should be the full new message object)
+                addMessage(data.message);
+                
+                // Reset form state
+                messageInput.value = '';
+                messageInput.style.height = 'auto';
+                imageInput.value = '';
+                fileInput.value = '';
+                
+                // Clear reply
+                cancelReply.click();
+
+                // Re-evaluate button state based on empty input/files
+                const hasFile = imageInput.files[0] || fileInput.files[0];
+                sendBtn.disabled = !hasFile;
+                messageInput.placeholder = 'Type a message...';
+            } else {
+                alert('Error sending message: ' + (data.error || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Network error sending message.');
+        })
+        .finally(() => {
+             // Re-enable input and button based on current state
+            messageInput.disabled = false;
+            const hasContent = messageInput.value.trim().length > 0;
+            const hasFile = imageInput.files[0] || fileInput.files[0];
+            sendBtn.disabled = !(hasContent || hasFile);
+        });
+    });
+});
+</script>
+{% endblock %}
