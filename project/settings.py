@@ -53,8 +53,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.humanize",
     "django.contrib.gis",   # GIS support
-    "leaflet",
-    "channels",             # 👇 ADDED: for WebSocket support
+    "leaflet",             # 👇 ADDED: for WebSocket support
     "app",                  # your main app
 ]
 
