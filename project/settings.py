@@ -38,11 +38,7 @@ CSRF_COOKIE_SECURE = True
 DB_LIVE = os.getenv("DB_LIVE", "False").lower() in ["true", "1", "yes"]
 
 # Allowed hosts
-ALLOWED_HOSTS = [
-    'kitui-projects-gis-3.onrender.com',
-    'localhost',
-    '127.0.0.1'
-]
+ALLOWED_HOSTS = [*]
 
 # CSRF trusted origins
 CSRF_TRUSTED_ORIGINS = [
