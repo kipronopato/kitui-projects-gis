@@ -5,10 +5,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TCP Kenya - e-Government Procurement Portal</title>
+    <title>Kenya National Geospatial Project Monitoring System</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
@@ -16,7 +19,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/custom.css' %}" />
@@ -25,510 +28,486 @@
 
     <style>
       :root {
-        --kenya-green: #006400;        /* Kenya green from flag */
-        --kenya-red: #BB0000;          /* Kenya red from flag */
-        --kenya-black: #000000;        /* Kenya black from flag */
-        --kenya-gold: #D4AF37;         /* Accent gold */
+        --kenya-primary: #1a5276;      /* Deep blue */
+        --kenya-secondary: #d4af37;    /* Gold */
+        --kenya-accent: #27ae60;       /* Green */
         --kenya-light: #f8f9fa;        /* Light background */
         --kenya-dark: #2c3e50;         /* Dark text */
-        --kenya-muted: #6c757d;        /* Muted text */
-        --kenya-border: #dee2e6;       /* Border color */
+        --kenya-muted: #7f8c8d;        /* Muted text */
+        --kenya-border: #e0e0e0;       /* Border color */
+        --kenya-shadow: rgba(26, 82, 118, 0.15); /* Shadow color */
       }
 
       /* Global Styles */
       body {
         font-family: 'Open Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: #f5f5f5;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
         color: var(--kenya-dark);
-        padding-top: 0;
+        padding-top: 80px;
         font-size: 0.95rem;
         line-height: 1.6;
       }
 
-      h1, h2, h3, h4, h5, h6 {
-        font-family: 'Roboto', sans-serif;
+      h1, h2, h3, h4, h5, h6, .navbar-brand {
+        font-family: 'Montserrat', sans-serif;
         font-weight: 600;
-        color: var(--kenya-green);
       }
 
-      /* Kenya Flag Inspired Header */
-      .kenya-header {
+      /* National Header Strip */
+      .national-header {
+        height: 6px;
         background: linear-gradient(
           90deg,
-          var(--kenya-black) 0%,
-          var(--kenya-black) 33%,
-          var(--kenya-red) 33%,
-          var(--kenya-red) 66%,
-          var(--kenya-green) 66%,
-          var(--kenya-green) 100%
+          var(--kenya-primary) 0%,
+          var(--kenya-secondary) 50%,
+          var(--kenya-accent) 100%
         );
-        height: 8px;
+        position: fixed;
+        top: 0;
         width: 100%;
+        z-index: 1031;
       }
 
-      /* Main Header */
-      .main-header {
-        background: white;
-        border-bottom: 3px solid var(--kenya-green);
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      }
-
-      .logo-section {
-        padding: 1rem 0;
-      }
-
-      .kenya-logo {
-        height: 60px;
-        width: auto;
-      }
-
-      .system-title {
-        color: var(--kenya-green);
-        font-weight: 700;
-        font-size: 1.4rem;
-        margin: 0;
-      }
-
-      .system-subtitle {
-        color: var(--kenya-red);
-        font-size: 0.9rem;
-        margin: 0;
-        font-weight: 500;
-      }
-
-      /* Top Navigation */
-      .top-nav {
-        background: var(--kenya-green);
+      /* Enhanced Navbar */
+      .navbar {
+        background: linear-gradient(135deg, var(--kenya-primary) 0%, #2c3e50 100%) !important;
+        box-shadow: 0 4px 12px var(--kenya-shadow);
         padding: 0.5rem 0;
-      }
-
-      .top-nav .nav-link {
-        color: white !important;
-        font-size: 0.85rem;
-        padding: 0.3rem 0.8rem;
+        min-height: 60px;
         transition: all 0.3s ease;
       }
 
-      .top-nav .nav-link:hover {
-        color: var(--kenya-gold) !important;
-        text-decoration: underline;
+      .navbar.scrolled {
+        padding: 0.3rem 0;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
       }
 
-      /* Main Navigation */
-      .main-nav {
-        background: white;
-        border-bottom: 1px solid var(--kenya-border);
-      }
-
-      .main-nav .nav-link {
-        color: var(--kenya-dark) !important;
-        font-weight: 500;
-        padding: 0.8rem 1.2rem;
-        border-radius: 4px;
-        transition: all 0.3s ease;
-        font-size: 0.9rem;
-      }
-
-      .main-nav .nav-link:hover {
-        background: var(--kenya-green);
-        color: white !important;
-      }
-
-      .main-nav .nav-item.active .nav-link {
-        background: var(--kenya-green);
-        color: white !important;
-      }
-
-      /* Content Area */
-      .content-section {
-        background: white;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-        margin: 2rem 0;
-        padding: 2rem;
-        border-top: 4px solid var(--kenya-green);
-      }
-
-      .page-title {
-        color: var(--kenya-green);
+      .navbar-brand {
         font-weight: 700;
-        margin-bottom: 1.5rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid var(--kenya-gold);
-      }
-
-      /* Supplier Registration Steps */
-      .registration-steps {
-        display: flex;
-        justify-content: space-between;
-        margin: 2rem 0;
-        position: relative;
-      }
-
-      .registration-steps::before {
-        content: '';
-        position: absolute;
-        top: 20px;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: var(--kenya-border);
-        z-index: 1;
-      }
-
-      .step {
-        text-align: center;
-        position: relative;
-        z-index: 2;
-        flex: 1;
-      }
-
-      .step-number {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: var(--kenya-green);
-        color: white;
+        font-size: 1.3rem;
         display: flex;
         align-items: center;
-        justify-content: center;
-        margin: 0 auto 0.5rem;
-        font-weight: bold;
-        font-size: 1.1rem;
+        color: white !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
       }
 
-      .step.active .step-number {
-        background: var(--kenya-red);
+      .logo-container {
+        display: flex;
+        align-items: center;
+        height: 44px;
+        width: 44px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+        overflow: hidden;
+        margin-right: 12px;
+        padding: 4px;
+        transition: all 0.3s ease;
       }
 
-      .step-label {
-        font-size: 0.85rem;
-        color: var(--kenya-muted);
+      .navbar-brand:hover .logo-container {
+        transform: scale(1.05);
+      }
+
+      .navbar-brand img {
+        height: 36px;
+        width: auto;
+        display: block;
+        margin: auto;
+      }
+
+      .nav-link {
+        color: rgba(255, 255, 255, 0.9) !important;
         font-weight: 500;
+        margin: 0 4px;
+        transition: all 0.3s ease;
+        border-radius: 6px;
+        padding: 0.5rem 0.8rem !important;
+        font-size: 0.9rem;
+        position: relative;
+        overflow: hidden;
       }
 
-      .step.active .step-label {
-        color: var(--kenya-red);
-        font-weight: 600;
+      .nav-link::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
       }
 
-      /* Footer */
-      .main-footer {
-        background: var(--kenya-dark);
+      .nav-link:hover::before {
+        left: 100%;
+      }
+
+      .nav-link:hover,
+      .nav-link:focus {
+        color: var(--kenya-secondary) !important;
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+      }
+
+      .nav-item.active .nav-link {
+        background: rgba(255, 255, 255, 0.15);
+        color: var(--kenya-secondary) !important;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .nav-link i {
+        margin-right: 6px;
+        font-size: 0.9rem;
+      }
+
+      /* Main Content Area */
+      main {
+        min-height: calc(100vh - 200px);
+        padding: 2rem 0;
+      }
+
+      .page-header {
+        background: linear-gradient(135deg, var(--kenya-primary) 0%, #2c3e50 100%);
         color: white;
-        padding: 2rem 0 1rem;
-        margin-top: 3rem;
+        padding: 2rem 0;
+        margin-bottom: 2rem;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 4px 12px var(--kenya-shadow);
       }
 
-      .footer-title {
-        color: var(--kenya-gold);
-        font-weight: 600;
-        margin-bottom: 1rem;
-        font-size: 1.1rem;
+      .page-header h1 {
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       }
 
-      .footer-links {
-        list-style: none;
+      .page-header .breadcrumb {
+        background: transparent;
+        margin-bottom: 0;
         padding: 0;
       }
 
-      .footer-links li {
-        margin-bottom: 0.5rem;
+      .page-header .breadcrumb-item a {
+        color: var(--kenya-secondary);
       }
 
-      .footer-links a {
+      .page-header .breadcrumb-item.active {
         color: rgba(255, 255, 255, 0.8);
+      }
+
+      /* Enhanced Footer */
+      footer {
+        background: linear-gradient(135deg, var(--kenya-dark) 0%, #1a252f 100%);
+        color: white;
+        padding: 2rem 0 1rem;
+        font-size: 0.85rem;
+      }
+
+      footer a {
+        color: var(--kenya-secondary);
         text-decoration: none;
         transition: all 0.3s ease;
         font-size: 0.85rem;
       }
 
-      .footer-links a:hover {
-        color: var(--kenya-gold);
-        padding-left: 5px;
+      footer a:hover {
+        color: white;
+        text-decoration: underline;
+        transform: translateY(-1px);
+      }
+
+      .footer-logo {
+        max-height: 60px;
+        margin-bottom: 1rem;
+        filter: brightness(0) invert(1);
+      }
+
+      .footer-section {
+        margin-bottom: 1.5rem;
+      }
+
+      .footer-section h5 {
+        color: var(--kenya-secondary);
+        font-weight: 600;
+        margin-bottom: 1rem;
+        font-size: 1rem;
+      }
+
+      .footer-section ul {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      .footer-section ul li {
+        margin-bottom: 0.5rem;
+      }
+
+      .social-links a {
+        display: inline-block;
+        margin-right: 10px;
+        font-size: 1.2rem;
       }
 
       .copyright {
         border-top: 1px solid rgba(255, 255, 255, 0.1);
         padding-top: 1rem;
-        margin-top: 2rem;
+        margin-top: 1rem;
         text-align: center;
         font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.6);
+        color: rgba(255, 255, 255, 0.7);
       }
 
-      /* Buttons */
-      .btn-kenya {
-        background: var(--kenya-green);
+      /* Custom utility classes */
+      .bg-kenya-primary {
+        background-color: var(--kenya-primary) !important;
+      }
+
+      .bg-kenya-secondary {
+        background-color: var(--kenya-secondary) !important;
+      }
+
+      .bg-kenya-accent {
+        background-color: var(--kenya-accent) !important;
+      }
+
+      .bg-kenya-light {
+        background-color: var(--kenya-light) !important;
+      }
+
+      .text-kenya-primary {
+        color: var(--kenya-primary) !important;
+      }
+
+      .text-kenya-secondary {
+        color: var(--kenya-secondary) !important;
+      }
+
+      .text-kenya-accent {
+        color: var(--kenya-accent) !important;
+      }
+
+      .border-kenya-primary {
+        border-color: var(--kenya-primary) !important;
+      }
+
+      .border-kenya-secondary {
+        border-color: var(--kenya-secondary) !important;
+      }
+
+      .btn-kenya-primary {
+        background: linear-gradient(135deg, var(--kenya-primary) 0%, #2c3e50 100%);
         color: white;
         border: none;
-        padding: 0.5rem 1.5rem;
-        border-radius: 4px;
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
         font-weight: 500;
         transition: all 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       }
 
-      .btn-kenya:hover {
-        background: var(--kenya-red);
+      .btn-kenya-primary:hover {
+        background: linear-gradient(135deg, #2c3e50 0%, var(--kenya-primary) 100%);
         color: white;
         transform: translateY(-2px);
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
       }
 
-      .btn-outline-kenya {
-        border: 2px solid var(--kenya-green);
-        color: var(--kenya-green);
-        background: transparent;
-        padding: 0.5rem 1.5rem;
-        border-radius: 4px;
+      .btn-outline-kenya-primary {
+        border: 2px solid var(--kenya-primary);
+        color: var(--kenya-primary);
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
         font-weight: 500;
         transition: all 0.3s ease;
+        background: transparent;
       }
 
-      .btn-outline-kenya:hover {
-        background: var(--kenya-green);
+      .btn-outline-kenya-primary:hover {
+        background-color: var(--kenya-primary);
         color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       }
 
-      /* Cards */
-      .kenya-card {
-        border: 1px solid var(--kenya-border);
-        border-radius: 6px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+      /* Card enhancements */
+      .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px var(--kenya-shadow);
         transition: all 0.3s ease;
         margin-bottom: 1.5rem;
       }
 
-      .kenya-card:hover {
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        transform: translateY(-3px);
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px var(--kenya-shadow);
       }
 
-      .kenya-card-header {
-        background: var(--kenya-green);
+      .card-header {
+        background: linear-gradient(135deg, var(--kenya-primary) 0%, #2c3e50 100%);
         color: white;
-        padding: 1rem;
-        border-radius: 6px 6px 0 0;
+        border-radius: 10px 10px 0 0 !important;
+        padding: 1rem 1.25rem;
         font-weight: 600;
-      }
-
-      .kenya-card-body {
-        padding: 1.5rem;
       }
 
       /* Responsive adjustments */
       @media (max-width: 768px) {
-        .kenya-logo {
-          height: 50px;
+        body {
+          padding-top: 70px;
+          font-size: 0.9rem;
         }
         
-        .system-title {
-          font-size: 1.2rem;
+        .navbar-brand {
+          font-size: 1.1rem;
         }
         
-        .main-nav .nav-link {
-          padding: 0.6rem 0.8rem;
-          font-size: 0.85rem;
+        .logo-container {
+          height: 40px;
+          width: 40px;
         }
         
-        .content-section {
-          padding: 1.5rem;
-          margin: 1rem 0;
+        .navbar-brand img {
+          height: 32px;
         }
         
-        .registration-steps {
-          flex-wrap: wrap;
-        }
-        
-        .step {
-          flex: 0 0 33.333%;
-          margin-bottom: 1rem;
+        .page-header {
+          padding: 1.5rem 0;
         }
       }
 
-      @media (max-width: 576px) {
-        .step {
-          flex: 0 0 50%;
-        }
+      /* Animation for page transitions */
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      
+      main {
+        animation: fadeIn 0.5s ease;
       }
     </style>
   </head>
 
   <body>
-    <!-- Kenya Flag Inspired Header Strip -->
-    <div class="kenya-header"></div>
+    <!-- National Header Strip -->
+    <div class="national-header"></div>
 
-    <!-- Main Header -->
-    <header class="main-header">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
       <div class="container">
-        <div class="row align-items-center logo-section">
-          <div class="col-md-2">
+        <a class="navbar-brand" href="{% url 'home' %}">
+          <div class="logo-container">
             <img
               src="{% static 'img/kenya-logo.png' %}"
-              alt="Government of Kenya"
-              class="kenya-logo"
-              onerror="this.style.display='none'"
+              alt="Kenya Logo"
+              onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-map-marked-alt\' style=\'color: var(--kenya-primary); font-size: 24px;\'></i>';"
             />
           </div>
-          <div class="col-md-8 text-center">
-            <h1 class="system-title">TCP Kenya</h1>
-            <p class="system-subtitle">e-Government Procurement Portal</p>
-          </div>
-          <div class="col-md-2 text-end">
-            <a href="#" class="btn btn-outline-kenya">
-              <i class="fas fa-user me-1"></i> Login
-            </a>
-          </div>
+          <span>National Geospatial Project Monitoring</span>
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'home' %}"
+                ><i class="fas fa-home"></i> Home</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'project_list' %}"
+                ><i class="fas fa-list"></i> Projects</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'dashboard' %}"
+                ><i class="fas fa-tachometer-alt"></i> Dashboard</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'project_map' %}"
+                ><i class="fas fa-map-marked-alt"></i> Map</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'about' %}"
+                ><i class="fas fa-info-circle"></i> About</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'contact' %}"
+                ><i class="fas fa-envelope"></i> Contact</a
+              >
+            </li>
+          </ul>
         </div>
       </div>
-    </header>
-
-    <!-- Top Navigation -->
-    <nav class="top-nav">
-      <div class="container">
-        <ul class="nav justify-content-center">
-          <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fas fa-home me-1"></i> Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fas fa-question-circle me-1"></i> Help & Support</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fas fa-info-circle me-1"></i> About e-GP</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fas fa-user-plus me-1"></i> Register as Supplier</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fas fa-newspaper me-1"></i> News</a>
-          </li>
-        </ul>
-      </div>
     </nav>
-
-    <!-- Main Navigation -->
-    <nav class="main-nav">
-      <div class="container">
-        <ul class="nav justify-content-center">
-          <li class="nav-item">
-            <a class="nav-link active" href="#"><i class="fas fa-gavel me-1"></i> Tenders</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fas fa-file-contract me-1"></i> Contracts</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fas fa-building me-1"></i> Procuring Entities</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fas fa-users me-1"></i> Suppliers</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fas fa-clipboard-list me-1"></i> Procurement Plans</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fas fa-trash-alt me-1"></i> Disposal Plans</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fas fa-gavel me-1"></i> e-Auction</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#"><i class="fas fa-book me-1"></i> e-Catalogue</a>
-          </li>
-        </ul>
-      </div>
-    </nav>
-
+    
     <!-- Main Content -->
-    <main class="container">
-      <div class="content-section">
-        <h2 class="page-title">Supplier Registration</h2>
-        
-        <div class="alert alert-info">
-          <i class="fas fa-question-circle me-2"></i>
-          <strong>Need help with Registration?</strong>
-          <a href="#" class="alert-link ms-2">Click here for assistance</a>
-        </div>
-        
-        <div class="mb-4">
-          <small class="text-muted"><i class="fas fa-asterisk text-danger me-1"></i> Mandatory Fields</small>
-        </div>
-        
-        <!-- Registration Steps -->
-        <div class="registration-steps">
-          <div class="step active">
-            <div class="step-number">1</div>
-            <div class="step-label">Company Details</div>
-          </div>
-          <div class="step">
-            <div class="step-number">2</div>
-            <div class="step-label">Contact Information</div>
-          </div>
-          <div class="step">
-            <div class="step-number">3</div>
-            <div class="step-label">Business Classification</div>
-          </div>
-          <div class="step">
-            <div class="step-number">4</div>
-            <div class="step-label">Document Upload</div>
-          </div>
-        </div>
-        
-        <!-- Dynamic content block -->
-        {% block content %}{% endblock %}
-      </div>
+    <main class="container-fluid px-3 px-md-4">
+      {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
-    <footer class="main-footer">
+    <!-- Enhanced Footer -->
+    <footer>
       <div class="container">
         <div class="row">
-          <div class="col-md-4 mb-4">
-            <h5 class="footer-title">TCP Kenya</h5>
-            <p>Government of Kenya's official e-Procurement portal providing transparency and efficiency in public procurement.</p>
-            <div class="mt-3">
-              <a href="#" class="text-warning me-3"><i class="fab fa-twitter fa-lg"></i></a>
-              <a href="#" class="text-warning me-3"><i class="fab fa-facebook fa-lg"></i></a>
-              <a href="#" class="text-warning me-3"><i class="fab fa-linkedin fa-lg"></i></a>
-              <a href="#" class="text-warning"><i class="fab fa-youtube fa-lg"></i></a>
+          <div class="col-lg-4 col-md-6 footer-section">
+            <img src="{% static 'img/kenya-logo.png' %}" alt="Kenya Logo" class="footer-logo" onerror="this.style.display='none'">
+            <h5>Kenya Geospatial Monitoring System</h5>
+            <p>Transparency and accountability in development projects across Kenya.</p>
+            <div class="social-links">
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-facebook"></i></a>
+              <a href="#"><i class="fab fa-linkedin"></i></a>
+              <a href="#"><i class="fab fa-youtube"></i></a>
             </div>
           </div>
-          <div class="col-md-2 mb-4">
-            <h5 class="footer-title">Quick Links</h5>
-            <ul class="footer-links">
-              <li><a href="#">Home</a></li>
-              <li><a href="#">Tenders</a></li>
-              <li><a href="#">Contracts</a></li>
-              <li><a href="#">Suppliers</a></li>
-              <li><a href="#">Procurement Plans</a></li>
+          <div class="col-lg-2 col-md-6 footer-section">
+            <h5>Quick Links</h5>
+            <ul>
+              <li><a href="{% url 'home' %}">Home</a></li>
+              <li><a href="{% url 'project_list' %}">Projects</a></li>
+              <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+              <li><a href="{% url 'project_map' %}">Interactive Map</a></li>
             </ul>
           </div>
-          <div class="col-md-3 mb-4">
-            <h5 class="footer-title">Resources</h5>
-            <ul class="footer-links">
-              <li><a href="#">Help & Support</a></li>
-              <li><a href="#">About e-GP</a></li>
-              <li><a href="#">Supplier Registration</a></li>
-              <li><a href="#">News & Updates</a></li>
-              <li><a href="#">Contact Us</a></li>
+          <div class="col-lg-3 col-md-6 footer-section">
+            <h5>Resources</h5>
+            <ul>
+              <li><a href="{% url 'about' %}">About Us</a></li>
+              <li><a href="{% url 'contact' %}">Contact</a></li>
+              <li><a href="#">Government Portal</a></li>
+              <li><a href="#">Data Privacy</a></li>
             </ul>
           </div>
-          <div class="col-md-3 mb-4">
-            <h5 class="footer-title">Contact Information</h5>
-            <ul class="footer-links">
-              <li><i class="fas fa-map-marker-alt me-2"></i> Treasury Building, Nairobi</li>
-              <li><i class="fas fa-phone me-2"></i> +254 20 225 2299</li>
-              <li><i class="fas fa-envelope me-2"></i> info@tcp.go.ke</li>
-              <li><i class="fas fa-clock me-2"></i> Mon - Fri: 8:00 AM - 5:00 PM</li>
+          <div class="col-lg-3 col-md-6 footer-section">
+            <h5>Contact Info</h5>
+            <ul>
+              <li><i class="fas fa-map-marker-alt me-2"></i> Government Headquarters</li>
+              <li><i class="fas fa-phone me-2"></i> +254 20 123 4567</li>
+              <li><i class="fas fa-envelope me-2"></i> info@geospatial.go.ke</li>
+              <li><i class="fas fa-clock me-2"></i> Mon - Fri, 8:00 AM - 5:00 PM</li>
             </ul>
           </div>
         </div>
         <div class="copyright">
           <div class="row align-items-center">
             <div class="col-md-6 text-center text-md-start">
-              <span>&copy; 2025 Government of Kenya. All Rights Reserved.</span>
+              <span>&copy; 2025 Government of Kenya. All rights reserved.</span>
             </div>
-            <div class="col-md-6 text-center text-md-end">
-              <span>Promoting Transparency in Public Procurement</span>
+            <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
+              <span>Transparency in National Development</span>
             </div>
           </div>
         </div>
@@ -537,17 +516,27 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     
     <!-- Custom JavaScript -->
     <script>
-      // Add active class to current navigation item
+      // Navbar scroll effect
+      window.addEventListener('scroll', function() {
+        if (window.scrollY > 10) {
+          document.querySelector('.navbar').classList.add('scrolled');
+        } else {
+          document.querySelector('.navbar').classList.remove('scrolled');
+        }
+      });
+
+      // Add active class to current page in navigation
       document.addEventListener('DOMContentLoaded', function() {
         const currentLocation = location.pathname;
         const navLinks = document.querySelectorAll('.nav-link');
         
         navLinks.forEach(link => {
           if(link.getAttribute('href') === currentLocation) {
-            link.classList.add('active');
+            link.parentElement.classList.add('active');
           }
         });
       });
