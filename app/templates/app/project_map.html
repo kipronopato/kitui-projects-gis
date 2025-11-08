@@ -8,111 +8,109 @@
 <!-- Leaflet MarkerCluster -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+
 <style>
-    /* Ultra-thin spacing theme */
-    :root {
-        --kenya-green: #006600;
-        --kenya-red: #DE2910;
-        --kenya-black: #000000;
-    }
-    
     /* Map container */
     #map {
         height: 65vh;
         width: 100%;
-        border-radius: 4px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        border-radius: 6px;
+        box-shadow: 0 2px 4px var(--shadow);
     }
     
-    /* Filter panel - ultra thin */
+    /* Filter panel */
     .filter-panel {
         background: white;
-        padding: 8px;
-        border-radius: 4px;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        margin-bottom: 8px;
+        padding: 1rem;
+        border-radius: 6px;
+        box-shadow: 0 2px 4px var(--shadow);
+        margin-bottom: 1rem;
+        border: 1px solid var(--border);
     }
     
-    /* Insight cards - ultra thin */
+    /* Insight cards */
     .insight-card {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        border-radius: 4px;
-        padding: 8px;
-        margin-bottom: 8px;
-        border-left: 2px solid var(--kenya-green);
-        transition: transform 0.2s ease;
+        background: white;
+        border-radius: 6px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-left: 3px solid var(--primary);
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px var(--shadow);
+        border: 1px solid var(--border);
     }
     
     .insight-card:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px var(--shadow);
     }
     
     /* Custom marker clusters */
     .marker-cluster-small {
-        background-color: rgba(0, 102, 0, 0.6);
+        background-color: rgba(74, 144, 226, 0.6);
     }
     .marker-cluster-small div {
-        background-color: rgba(0, 102, 0, 0.6);
+        background-color: rgba(74, 144, 226, 0.6);
     }
     
     .marker-cluster-medium {
-        background-color: rgba(222, 41, 16, 0.6);
+        background-color: rgba(126, 211, 33, 0.6);
     }
     .marker-cluster-medium div {
-        background-color: rgba(222, 41, 16, 0.6);
+        background-color: rgba(126, 211, 33, 0.6);
     }
     
     .marker-cluster-large {
-        background-color: rgba(0, 0, 0, 0.6);
+        background-color: rgba(255, 107, 107, 0.6);
     }
     .marker-cluster-large div {
-        background-color: rgba(0, 0, 0, 0.6);
+        background-color: rgba(255, 107, 107, 0.6);
     }
     
-    /* Popup styling - thin */
+    /* Popup styling */
     .leaflet-popup-content {
-        margin: 8px;
-        line-height: 1.3;
+        margin: 12px;
+        line-height: 1.4;
         min-width: 250px;
-        font-size: 0.9em;
+        font-size: 0.85rem;
     }
     
     .popup-header {
-        border-bottom: 1px solid #006600;
-        padding-bottom: 4px;
-        margin-bottom: 4px;
+        border-bottom: 1px solid var(--primary);
+        padding-bottom: 8px;
+        margin-bottom: 8px;
     }
     
     .popup-detail {
-        margin-bottom: 3px;
-        padding: 2px 0;
-        border-bottom: 1px solid #f0f0f0;
+        margin-bottom: 6px;
+        padding: 4px 0;
+        border-bottom: 1px solid var(--border);
     }
     
     .popup-budget {
-        font-weight: bold;
-        color: #006600;
-        font-size: 1em;
+        font-weight: 600;
+        color: var(--primary);
+        font-size: 0.9rem;
     }
     
     .popup-impact {
-        background: #e8f5e8;
-        padding: 3px;
-        border-radius: 2px;
-        margin-top: 3px;
-        font-size: 0.8em;
-    }
-    
-    /* Legend styling - thin */
-    .map-legend {
-        background: white;
+        background: rgba(126, 211, 33, 0.1);
         padding: 6px;
         border-radius: 4px;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-        line-height: 1.3;
+        margin-top: 6px;
+        font-size: 0.8rem;
+    }
+    
+    /* Legend styling */
+    .map-legend {
+        background: white;
+        padding: 8px;
+        border-radius: 6px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        line-height: 1.4;
         max-width: 180px;
-        font-size: 0.8em;
+        font-size: 0.8rem;
+        border: 1px solid var(--border);
     }
     
     .map-legend i {
@@ -125,29 +123,21 @@
         border: 1px solid white;
     }
     
-    /* Progress bars - thin */
+    /* Progress bars */
     .progress {
-        height: 4px;
-        margin: 3px 0;
+        height: 6px;
+        margin: 6px 0;
     }
     
     /* Badge styling */
     .badge-impact {
-        background: linear-gradient(45deg, #006600, #00a86b);
+        background: linear-gradient(45deg, var(--primary), var(--secondary));
         color: white;
     }
     
-    /* Ultra-thin spacing utilities */
-    .thin-mb-0 { margin-bottom: 0 !important; }
-    .thin-mb-1 { margin-bottom: 4px !important; }
-    .thin-mb-2 { margin-bottom: 8px !important; }
-    .thin-mt-1 { margin-top: 4px !important; }
-    .thin-p-1 { padding: 4px !important; }
-    .thin-p-2 { padding: 8px !important; }
-    
-    /* Form controls - thin */
+    /* Form controls */
     .form-check {
-        margin-bottom: 3px;
+        margin-bottom: 6px;
         padding-left: 1.5em;
     }
     
@@ -157,13 +147,15 @@
     }
     
     .form-label {
-        margin-bottom: 4px;
-        font-size: 0.9em;
+        margin-bottom: 6px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--dark);
     }
     
     .form-select {
-        padding: 3px 6px;
-        font-size: 0.85em;
+        padding: 6px 8px;
+        font-size: 0.85rem;
     }
     
     /* Responsive adjustments */
@@ -173,18 +165,18 @@
         }
         
         .filter-panel {
-            padding: 6px;
+            padding: 0.8rem;
         }
         
         .insight-card {
-            padding: 6px;
+            padding: 0.8rem;
         }
     }
     
     /* Animation for insights */
     @keyframes pulse {
         0% { transform: scale(1); }
-        50% { transform: scale(1.01); }
+        50% { transform: scale(1.02); }
         100% { transform: scale(1); }
     }
     
@@ -192,43 +184,71 @@
         animation: pulse 1.5s ease-in-out;
     }
     
-    /* Card header thin */
+    /* Card header */
     .card-header {
-        padding: 6px 8px !important;
+        padding: 0.8rem 1rem !important;
+        background: linear-gradient(135deg, var(--primary), var(--secondary)) !important;
     }
     
-    /* Button thin */
+    /* Button styling */
     .btn {
-        padding: 3px 8px;
-        font-size: 0.85em;
+        padding: 6px 12px;
+        font-size: 0.85rem;
+        font-weight: 500;
     }
     
-    /* Heading thin */
+    /* Heading styling */
     h2, h3, h4, h5, h6 {
-        margin-bottom: 4px !important;
+        margin-bottom: 8px !important;
     }
     
-    /* Text muted small */
+    /* Text muted */
     .text-muted {
-        font-size: 0.8em;
+        font-size: 0.85rem;
+    }
+
+    /* Custom colors for status */
+    .bg-completed { background: #28a745 !important; }
+    .bg-ongoing { background: #ffc107 !important; color: #000 !important; }
+    .bg-delayed { background: #dc3545 !important; }
+    .bg-planned { background: #6c757d !important; }
+
+    /* Custom button styles */
+    .btn-primary {
+        background: var(--primary);
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background: #3a80d2;
+    }
+
+    .btn-outline-primary {
+        border: 1px solid var(--primary);
+        color: var(--primary);
+    }
+
+    .btn-outline-primary:hover {
+        background: var(--primary);
+        color: white;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="container-fluid thin-mt-1">
+<div class="container-fluid mt-2">
     <!-- Header -->
-    <div class="row thin-mb-2">
+    <div class="row mb-3">
         <div class="col-md-8">
-            <h4 class="text-kenya-green fw-bold thin-mb-0">Kenya Projects Geographical Intelligence Map</h4>
-            <p class="text-muted thin-mb-0">Deep insights and spatial analysis of development projects across Kenya</p>
+            <h4 class="fw-bold mb-1" style="color: var(--primary);">Kenya Projects Geographical Intelligence Map</h4>
+            <p class="text-muted mb-0">Deep insights and spatial analysis of development projects across Kenya</p>
         </div>
         <div class="col-md-4 text-end">
             <div class="btn-group">
-                <button class="btn btn-kenya-green btn-sm" onclick="exportInsights()">
+                <button class="btn btn-primary btn-sm" onclick="exportInsights()">
                     <i class="fas fa-download me-1"></i> Export
                 </button>
-                <button class="btn btn-outline-kenya-green btn-sm" onclick="resetFilters()">
+                <button class="btn btn-outline-primary btn-sm" onclick="resetFilters()">
                     <i class="fas fa-sync-alt me-1"></i> Reset
                 </button>
             </div>
@@ -236,18 +256,18 @@
     </div>
 
     <!-- Quick Stats Row -->
-    <div class="row thin-mb-2">
+    <div class="row mb-3">
         <div class="col-xl-3 col-md-6">
             <div class="insight-card">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h5 class="fw-bold text-kenya-green thin-mb-0">{{ total_projects|intcomma }}</h5>
-                        <p class="text-muted thin-mb-0">Total Projects</p>
+                        <h5 class="fw-bold mb-0" style="color: var(--primary);">{{ total_projects|intcomma }}</h5>
+                        <p class="text-muted mb-0">Total Projects</p>
                     </div>
-                    <i class="fas fa-map-marked-alt fa-lg text-kenya-green"></i>
+                    <i class="fas fa-map-marked-alt fa-lg" style="color: var(--primary);"></i>
                 </div>
-                <div class="progress thin-mt-1">
-                    <div class="progress-bar bg-kenya-green" style="width: 100%"></div>
+                <div class="progress mt-2">
+                    <div class="progress-bar" style="width: 100%; background: var(--primary);"></div>
                 </div>
             </div>
         </div>
@@ -255,13 +275,13 @@
             <div class="insight-card">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h5 class="fw-bold text-kenya-green thin-mb-0">Ksh {{ total_budget|floatformat:0|intcomma }}</h5>
-                        <p class="text-muted thin-mb-0">Total Investment</p>
+                        <h5 class="fw-bold mb-0" style="color: var(--primary);">Ksh {{ total_budget|floatformat:0|intcomma }}</h5>
+                        <p class="text-muted mb-0">Total Investment</p>
                     </div>
-                    <i class="fas fa-money-bill-wave fa-lg text-kenya-green"></i>
+                    <i class="fas fa-money-bill-wave fa-lg" style="color: var(--primary);"></i>
                 </div>
-                <div class="progress thin-mt-1">
-                    <div class="progress-bar bg-kenya-green" style="width: 100%"></div>
+                <div class="progress mt-2">
+                    <div class="progress-bar" style="width: 100%; background: var(--primary);"></div>
                 </div>
             </div>
         </div>
@@ -269,14 +289,13 @@
             <div class="insight-card">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h5 class="fw-bold text-kenya-green thin-mb-0">Ksh {{ budget_stats.avg_budget|floatformat:0|intcomma }}</h5>
-                        <p class="text-muted thin-mb-0">Avg Budget</p>
+                        <h5 class="fw-bold mb-0" style="color: var(--primary);">Ksh {{ budget_stats.avg_budget|floatformat:0|intcomma }}</h5>
+                        <p class="text-muted mb-0">Avg Budget</p>
                     </div>
-                    <i class="fas fa-chart-line fa-lg text-kenya-green"></i>
+                    <i class="fas fa-chart-line fa-lg" style="color: var(--primary);"></i>
                 </div>
-                <div class="progress thin-mt-1">
-                    <div class="progress-bar bg-kenya-green" 
-                         style="width: {% widthratio budget_stats.avg_budget budget_stats.max_budget 100 %}%"></div>
+                <div class="progress mt-2">
+                    <div class="progress-bar" style="width: {% widthratio budget_stats.avg_budget budget_stats.max_budget 100 %}%; background: var(--primary);"></div>
                 </div>
             </div>
         </div>
@@ -284,29 +303,28 @@
             <div class="insight-card">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h5 class="fw-bold text-kenya-green thin-mb-0">{{ counties|length }}</h5>
-                        <p class="text-muted thin-mb-0">Counties</p>
+                        <h5 class="fw-bold mb-0" style="color: var(--primary);">{{ counties|length }}</h5>
+                        <p class="text-muted mb-0">Counties</p>
                     </div>
-                    <i class="fas fa-globe-africa fa-lg text-kenya-green"></i>
+                    <i class="fas fa-globe-africa fa-lg" style="color: var(--primary);"></i>
                 </div>
-                <div class="progress thin-mt-1">
-                    <div class="progress-bar bg-kenya-green" 
-                         style="width: {% widthratio counties|length 47 100 %}%"></div>
+                <div class="progress mt-2">
+                    <div class="progress-bar" style="width: {% widthratio counties|length 47 100 %}%; background: var(--primary);"></div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Filters and Map -->
-    <div class="row thin-mb-2">
+    <div class="row mb-3">
         <div class="col-lg-3">
             <!-- Filters Panel -->
             <div class="filter-panel">
-                <h6 class="text-kenya-green thin-mb-1"><i class="fas fa-filter me-1"></i>Filter Projects</h6>
+                <h6 class="mb-2" style="color: var(--primary);"><i class="fas fa-filter me-1"></i>Filter Projects</h6>
                 
                 <!-- Status Filter -->
-                <div class="thin-mb-1">
-                    <label class="form-label fw-bold">Status</label>
+                <div class="mb-3">
+                    <label class="form-label">Status</label>
                     {% for status in status_choices %}
                     <div class="form-check">
                         <input class="form-check-input" type="checkbox" name="status" value="{{ status }}"
@@ -319,8 +337,8 @@
                 </div>
 
                 <!-- County Filter -->
-                <div class="thin-mb-1">
-                    <label class="form-label fw-bold">County</label>
+                <div class="mb-3">
+                    <label class="form-label">County</label>
                     <select name="county" class="form-select" multiple size="4">
                         {% for county in counties %}
                         <option value="{{ county }}" {% if county in selected_counties %}selected{% endif %}>
@@ -331,8 +349,8 @@
                 </div>
 
                 <!-- Sector Filter -->
-                <div class="thin-mb-1">
-                    <label class="form-label fw-bold">Sector</label>
+                <div class="mb-3">
+                    <label class="form-label">Sector</label>
                     <select name="sector" class="form-select" multiple size="4">
                         {% for sector in sectors %}
                         <option value="{{ sector }}" {% if sector in selected_sectors %}selected{% endif %}>
@@ -342,55 +360,54 @@
                     </select>
                 </div>
 
-                <button type="submit" class="btn btn-kenya-green btn-sm w-100 thin-mt-1">
+                <button type="submit" class="btn btn-primary btn-sm w-100 mt-2">
                     <i class="fas fa-filter me-1"></i> Apply
                 </button>
             </div>
 
             <!-- Deep Insights Panel -->
-            <div class="filter-panel thin-mt-1">
-                <h6 class="text-kenya-green thin-mb-1"><i class="fas fa-chart-line me-1"></i>Key Insights</h6>
+            <div class="filter-panel mt-3">
+                <h6 class="mb-2" style="color: var(--primary);"><i class="fas fa-chart-line me-1"></i>Key Insights</h6>
                 
                 <!-- Top Counties -->
-                <h6 class="fw-bold thin-mb-1">Top Counties</h6>
+                <h6 class="fw-bold mb-2">Top Counties</h6>
                 {% for county in county_distribution|slice:":3" %}
-                <div class="d-flex justify-content-between align-items-center thin-mb-1">
-                    <span class="text-truncate" style="max-width: 60%; font-size: 0.8em;">{{ county.county }}</span>
-                    <span class="badge bg-kenya-green" style="font-size: 0.7em;">{{ county.count }}</span>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-truncate" style="max-width: 60%; font-size: 0.85rem;">{{ county.county }}</span>
+                    <span class="badge" style="background: var(--primary); font-size: 0.75rem;">{{ county.count }}</span>
                 </div>
-                <div class="progress thin-mb-1" style="height: 3px;">
-                    <div class="progress-bar bg-kenya-green" 
-                         style="width: {% widthratio county.count total_projects 100 %}%"></div>
+                <div class="progress mb-2" style="height: 4px;">
+                    <div class="progress-bar" style="width: {% widthratio county.count total_projects 100 %}%; background: var(--primary);"></div>
                 </div>
                 {% endfor %}
 
                 <!-- Budget Distribution -->
-                <h6 class="fw-bold thin-mt-1 thin-mb-1">Budget Range</h6>
+                <h6 class="fw-bold mt-3 mb-2">Budget Range</h6>
                 <div class="text-center">
-                    <span class="badge bg-kenya-green" style="font-size: 0.7em;">Min: Ksh {{ budget_stats.min_budget|floatformat:0|intcomma }}</span>
-                    <span class="badge bg-kenya-red mx-1" style="font-size: 0.7em;">Max: Ksh {{ budget_stats.max_budget|floatformat:0|intcomma }}</span>
+                    <span class="badge me-1" style="background: var(--primary); font-size: 0.75rem;">Min: Ksh {{ budget_stats.min_budget|floatformat:0|intcomma }}</span>
+                    <span class="badge" style="background: var(--accent); font-size: 0.75rem;">Max: Ksh {{ budget_stats.max_budget|floatformat:0|intcomma }}</span>
                 </div>
             </div>
         </div>
 
         <div class="col-lg-9">
             <!-- Map Container -->
-            <div class="card border-kenya-green">
-                <div class="card-header bg-kenya-green text-white d-flex justify-content-between align-items-center thin-p-1">
-                    <span style="font-size: 0.9em;">Geographical Intelligence Map</span>
+            <div class="card" style="border-color: var(--primary);">
+                <div class="card-header text-white d-flex justify-content-between align-items-center">
+                    <span style="font-size: 0.9rem;">Geographical Intelligence Map</span>
                     <div class="d-flex align-items-center">
-                        <select id="map-layer-select" class="form-select form-select-sm me-1" style="width: auto; font-size: 0.8em;">
+                        <select id="map-layer-select" class="form-select form-select-sm me-2" style="width: auto; font-size: 0.8rem;">
                             <option value="street">Street</option>
                             <option value="satellite">Satellite</option>
                             <option value="terrain">Terrain</option>
                         </select>
-                        <div class="form-check form-switch thin-mb-0">
-                            <input class="form-check-input" type="checkbox" id="clusterToggle" checked style="font-size: 0.8em;">
-                            <label class="form-check-label text-white" for="clusterToggle" style="font-size: 0.8em;">Cluster</label>
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input" type="checkbox" id="clusterToggle" checked style="font-size: 0.8rem;">
+                            <label class="form-check-label text-white" for="clusterToggle" style="font-size: 0.8rem;">Cluster</label>
                         </div>
                     </div>
                 </div>
-                <div class="card-body thin-p-0">
+                <div class="card-body p-0">
                     <div id="map"></div>
                 </div>
             </div>
@@ -401,42 +418,41 @@
     <div class="row">
         <div class="col-12">
             <div class="filter-panel">
-                <h5 class="text-kenya-green thin-mb-1"><i class="fas fa-brain me-1"></i>Spatial Insights</h5>
+                <h5 class="mb-3" style="color: var(--primary);"><i class="fas fa-brain me-1"></i>Spatial Insights</h5>
                 
                 <div class="row">
                     <!-- Sector Analysis -->
                     <div class="col-md-6">
-                        <h6 class="fw-bold thin-mb-1">Sector Investment</h6>
+                        <h6 class="fw-bold mb-3">Sector Investment</h6>
                         {% for sector in sector_analysis %}
-                        <div class="d-flex justify-content-between align-items-center thin-mb-1">
-                            <span style="font-size: 0.8em;">{{ sector.sector|default:"Unknown" }}</span>
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span style="font-size: 0.85rem;">{{ sector.sector|default:"Unknown" }}</span>
                             <div>
-                                <span class="badge bg-kenya-green me-1" style="font-size: 0.7em;">{{ sector.count }}</span>
-                                <span class="text-muted" style="font-size: 0.7em;">Ksh {{ sector.total_budget|floatformat:0|intcomma }}</span>
+                                <span class="badge me-2" style="background: var(--primary); font-size: 0.75rem;">{{ sector.count }}</span>
+                                <span class="text-muted" style="font-size: 0.75rem;">Ksh {{ sector.total_budget|floatformat:0|intcomma }}</span>
                             </div>
                         </div>
-                        <div class="progress thin-mb-1" style="height: 4px;">
-                            <div class="progress-bar bg-kenya-green" 
-                                 style="width: {% widthratio sector.total_budget total_budget 100 %}%"></div>
+                        <div class="progress mb-3" style="height: 6px;">
+                            <div class="progress-bar" style="width: {% widthratio sector.total_budget total_budget 100 %}%; background: var(--primary);"></div>
                         </div>
                         {% endfor %}
                     </div>
 
                     <!-- High Impact Projects -->
                     <div class="col-md-6">
-                        <h6 class="fw-bold thin-mb-1">High Impact</h6>
+                        <h6 class="fw-bold mb-3">High Impact</h6>
                         {% for project in high_impact_projects %}
-                        <div class="border-bottom thin-pb-1 thin-mb-1">
-                            <h6 class="fw-bold text-kenya-green" style="font-size: 0.85em;">{{ project.name }}</h6>
-                            <div class="d-flex justify-content-between">
-                                <span class="badge bg-{% if project.status == 'completed' %}success{% elif project.status == 'ongoing' %}warning{% else %}secondary{% endif %}" style="font-size: 0.7em;">
+                        <div class="border-bottom pb-2 mb-3">
+                            <h6 class="fw-bold mb-1" style="font-size: 0.9rem; color: var(--primary);">{{ project.name }}</h6>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="badge bg-{% if project.status == 'completed' %}success{% elif project.status == 'ongoing' %}warning{% else %}secondary{% endif %}" style="font-size: 0.75rem;">
                                     {{ project.get_status_display }}
                                 </span>
-                                <span class="badge badge-impact" style="font-size: 0.7em;">
+                                <span class="badge badge-impact" style="font-size: 0.75rem;">
                                     Ksh {{ project.budget|floatformat:0|intcomma }}
                                 </span>
                             </div>
-                            <small class="text-muted" style="font-size: 0.7em;">{{ project.county }} • {{ project.sector }}</small>
+                            <small class="text-muted" style="font-size: 0.75rem;">{{ project.county }} • {{ project.sector }}</small>
                         </div>
                         {% endfor %}
                     </div>
@@ -499,10 +515,10 @@
     
     // Function to determine marker color based on status
     function getColor(status) {
-        if (status === 'completed') return '#006600';
-        if (status === 'ongoing') return '#DE2910';
-        if (status === 'delayed') return '#000000';
-        return '#999999';
+        if (status === 'completed') return '#28a745';
+        if (status === 'ongoing') return '#ffc107';
+        if (status === 'delayed') return '#dc3545';
+        return '#6c757d';
     }
     
     // Function to get marker size based on budget impact
@@ -551,8 +567,8 @@
         // Create detailed popup content with insights
         var popupContent = `
             <div class="popup-header">
-                <h6 class="text-kenya-green fw-bold thin-mb-0">${feature.properties.name}</h6>
-                <span class="badge bg-${feature.properties.status === 'completed' ? 'success' : feature.properties.status === 'ongoing' ? 'warning' : 'dark'}">
+                <h6 class="fw-bold mb-0" style="color: var(--primary);">${feature.properties.name}</h6>
+                <span class="badge bg-${feature.properties.status === 'completed' ? 'success' : feature.properties.status === 'ongoing' ? 'warning' : feature.properties.status === 'delayed' ? 'danger' : 'secondary'}">
                     ${feature.properties.status}
                 </span>
             </div>
@@ -574,8 +590,8 @@
                 <small><i class="fas fa-chart-pie me-1"></i>Represents ${budgetPercentage}</small>
             </div>
             
-            <div class="text-center thin-mt-1">
-                <a href="/project/${feature.properties.id}/" class="btn btn-kenya-green btn-sm">
+            <div class="text-center mt-2">
+                <a href="/project/${feature.properties.id}/" class="btn btn-primary btn-sm">
                     <i class="fas fa-eye me-1"></i> View Details
                 </a>
             </div>
@@ -627,8 +643,8 @@
                 
                 var popupContent = `
                     <div class="popup-header">
-                        <h6 class="text-kenya-green fw-bold thin-mb-0">${feature.properties.name}</h6>
-                        <span class="badge bg-${feature.properties.status === 'completed' ? 'success' : feature.properties.status === 'ongoing' ? 'warning' : 'dark'}">
+                        <h6 class="fw-bold mb-0" style="color: var(--primary);">${feature.properties.name}</h6>
+                        <span class="badge bg-${feature.properties.status === 'completed' ? 'success' : feature.properties.status === 'ongoing' ? 'warning' : feature.properties.status === 'delayed' ? 'danger' : 'secondary'}">
                             ${feature.properties.status}
                         </span>
                     </div>
@@ -641,8 +657,8 @@
                         <strong>Budget:</strong> <span class="popup-budget">${budget}</span>
                     </div>
                     
-                    <div class="text-center thin-mt-1">
-                        <a href="/project/${feature.properties.id}/" class="btn btn-kenya-green btn-sm">
+                    <div class="text-center mt-2">
+                        <a href="/project/${feature.properties.id}/" class="btn btn-primary btn-sm">
                             View Details
                         </a>
                     </div>
@@ -658,12 +674,12 @@
     legend.onAdd = function(map) {
         var div = L.DomUtil.create('div', 'map-legend');
         div.innerHTML = `
-            <h6 class="thin-mb-1 fw-bold">Legend</h6>
-            <div><i style="background: #006600"></i> Completed</div>
-            <div><i style="background: #DE2910"></i> Ongoing</div>
-            <div><i style="background: #000000"></i> Delayed</div>
-            <div><i style="background: #999999"></i> Planned</div>
-            <hr class="thin-my-1">
+            <h6 class="mb-2 fw-bold">Legend</h6>
+            <div><i style="background: #28a745"></i> Completed</div>
+            <div><i style="background: #ffc107"></i> Ongoing</div>
+            <div><i style="background: #dc3545"></i> Delayed</div>
+            <div><i style="background: #6c757d"></i> Planned</div>
+            <hr class="my-2">
             <small>Size = Budget Impact</small>
         `;
         return div;
