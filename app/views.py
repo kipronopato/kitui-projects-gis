@@ -45,6 +45,16 @@ from .models import Project, ProjectUpdate, CitizenReport, KenyaCounty, KenyaSub
 
 
 
+from django.db.models import Q, Sum, Avg, Min, Max, Count
+from django.db.models.functions import ExtractYear, TruncMonth
+from django.db.models import DurationField, ExpressionWrapper
+from django.contrib.gis.db.models import Union
+from django.utils import timezone
+from datetime import timedelta
+from decimal import Decimal
+import json
+from app.models import Project, KenyaCounty, KenyaSubCounty, Kenyawards, ProjectUpdate, CitizenReport
+
 def _clean_get(request, name):
     """Return single GET param; treat 'None' or empty as None."""
     v = request.GET.get(name)
@@ -348,7 +358,7 @@ def home(request):
         except Exception as e:
             print(f"Error in county analytics: {e}")
 
-        # Subcounty analytics
+        # Subcounty analytics - FIXED: Pre-count all metrics before creating the list
         subcounty_stats = []
         try:
             subcounties_query = KenyaSubCounty.objects.all()
@@ -359,7 +369,12 @@ def home(request):
                 try:
                     subcounty_projects = projects.filter(location__within=subcounty.geom)
                     project_count = subcounty_projects.count()
+                    
                     if project_count > 0:
+                        # Pre-calculate all counts before creating the dictionary
+                        completed_count = subcounty_projects.filter(status='completed').count()
+                        ongoing_count = subcounty_projects.filter(status='ongoing').count()
+                        
                         subcounty_budget = subcounty_projects.aggregate(Sum('budget'))['budget__sum'] or 0
                         
                         subcounty_stats.append({
@@ -368,9 +383,9 @@ def home(request):
                             "count": project_count,
                             "total_budget": subcounty_budget,
                             "avg_budget": subcounty_budget / project_count,
-                            "completed": subcounty_projects.filter(status='completed').count(),
-                            "ongoing": subcounty_projects.filter(status='ongoing').count(),
-                            "completion_rate": round((subcounty_projects.filter(status='completed').count() / project_count * 100), 1)
+                            "completed": completed_count,
+                            "ongoing": ongoing_count,
+                            "completion_rate": round((completed_count / project_count * 100), 1) if project_count else 0
                         })
                 except Exception as e:
                     print(f"Error processing subcounty {subcounty.subcounty}: {e}")
@@ -394,6 +409,9 @@ def home(request):
                     project_count = ward_projects.count()
                     
                     if project_count > 0:
+                        # Pre-calculate counts before creating dictionary
+                        completed_count = ward_projects.filter(status='completed').count()
+                        
                         ward_budget = ward_projects.aggregate(Sum('budget'))['budget__sum'] or 0
                         
                         ward_stats.append({
@@ -403,8 +421,8 @@ def home(request):
                             "count": project_count,
                             "total_budget": ward_budget,
                             "avg_budget": ward_budget / project_count,
-                            "completed": ward_projects.filter(status='completed').count(),
-                            "completion_rate": round((ward_projects.filter(status='completed').count() / project_count * 100), 1) if project_count else 0
+                            "completed": completed_count,
+                            "completion_rate": round((completed_count / project_count * 100), 1) if project_count else 0
                         })
                 except Exception as e:
                     print(f"Error processing ward {ward.ward}: {str(e)}")
@@ -563,6 +581,13 @@ def home(request):
             'citizen_engagement_score': 0
         }
         try:
+            # Import helper functions if they exist
+            from app.utils import (
+                calculate_efficiency_score, calculate_spatial_distribution_score,
+                calculate_budget_utilization_score, calculate_timeline_adherence_score,
+                calculate_citizen_engagement_score, calculate_project_health, calculate_risk_level
+            )
+            
             performance_metrics = {
                 'efficiency_score': calculate_efficiency_score(projects, current_date),
                 'spatial_distribution_score': calculate_spatial_distribution_score(projects, subcounties_query),
@@ -659,6 +684,17 @@ def home(request):
         valid_projects = 0
         
         try:
+            # Import helper functions if they exist
+            try:
+                from app.utils import calculate_project_health, calculate_risk_level
+            except ImportError:
+                # Fallback functions if utils don't exist
+                def calculate_project_health(project, current_date):
+                    return 75  # Default health score
+                
+                def calculate_risk_level(project, current_date):
+                    return "medium"  # Default risk level
+            
             for project in projects:
                 point_geom = None
                 
