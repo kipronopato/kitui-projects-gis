@@ -1,0 +1,25 @@
+ of the buffer (or marked region) will be piped to the command.  If
+ you just need another blank buffer, do not enter any command.
+
+ You can also pick one of four tools, or cut a large piece of the
+ buffer, or put the editor to sleep.
+
+ The following function keys are available in Execute Command mode:
+
+^G     (F1)      Display this help text
+^C               Cancel the current function
+
+M-F              Toggle the use of a new buffer
+M-\              Pipe the current buffer (or marked region) to the
+		   command
+
+^S     (^T)      Invoke the spell checker, if available
+^Y               Invoke the linter, if available
+
+^J               Justify the entire file
+^O               Invoke a program to format/arrange/manipulate the
+		   buffer
+
+^V               Cut from the cursor position to the end of the file
+
+^Z               Suspend the editor (return to the shell)
