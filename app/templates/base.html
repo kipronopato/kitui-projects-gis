@@ -28,20 +28,22 @@
 
     <style>
       :root {
-        --kenya-primary: #1a5276;      /* Deep blue */
-        --kenya-secondary: #d4af37;    /* Gold */
-        --kenya-accent: #27ae60;       /* Green */
-        --kenya-light: #f8f9fa;        /* Light background */
-        --kenya-dark: #2c3e50;         /* Dark text */
-        --kenya-muted: #7f8c8d;        /* Muted text */
-        --kenya-border: #e0e0e0;       /* Border color */
-        --kenya-shadow: rgba(26, 82, 118, 0.15); /* Shadow color */
+        --kenya-primary: #006400;      /* Deep forest green */
+        --kenya-secondary: #FFD700;    /* Gold */
+        --kenya-accent: #32CD32;       /* Lime green accent */
+        --kenya-light: #f8fdf8;        /* Very light green background */
+        --kenya-dark: #1a331a;         /* Dark green text */
+        --kenya-muted: #5a735a;        /* Muted green text */
+        --kenya-border: #c8e6c8;       /* Light green border */
+        --kenya-shadow: rgba(0, 100, 0, 0.1); /* Green shadow */
+        --kenya-gradient: linear-gradient(135deg, #006400 0%, #004d00 100%);
+        --kenya-light-gradient: linear-gradient(135deg, #f8fdf8 0%, #e8f5e8 100%);
       }
 
       /* Global Styles */
       body {
         font-family: 'Open Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+        background: var(--kenya-light-gradient);
         color: var(--kenya-dark);
         padding-top: 80px;
         font-size: 0.95rem;
@@ -55,7 +57,7 @@
 
       /* National Header Strip */
       .national-header {
-        height: 6px;
+        height: 8px;
         background: linear-gradient(
           90deg,
           var(--kenya-primary) 0%,
@@ -66,172 +68,203 @@
         top: 0;
         width: 100%;
         z-index: 1031;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
       }
 
       /* Enhanced Navbar */
       .navbar {
-        background: linear-gradient(135deg, var(--kenya-primary) 0%, #2c3e50 100%) !important;
-        box-shadow: 0 4px 12px var(--kenya-shadow);
-        padding: 0.5rem 0;
-        min-height: 60px;
+        background: var(--kenya-gradient) !important;
+        box-shadow: 0 4px 20px var(--kenya-shadow);
+        padding: 0.6rem 0;
+        min-height: 64px;
         transition: all 0.3s ease;
+        border-bottom: 3px solid var(--kenya-secondary);
       }
 
       .navbar.scrolled {
-        padding: 0.3rem 0;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        padding: 0.4rem 0;
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
       }
 
       .navbar-brand {
         font-weight: 700;
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         display: flex;
         align-items: center;
         color: white !important;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        letter-spacing: 0.5px;
       }
 
       .logo-container {
         display: flex;
         align-items: center;
-        height: 44px;
-        width: 44px;
+        height: 48px;
+        width: 48px;
         background: white;
-        border-radius: 8px;
-        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         overflow: hidden;
-        margin-right: 12px;
-        padding: 4px;
+        margin-right: 14px;
+        padding: 5px;
         transition: all 0.3s ease;
+        border: 2px solid var(--kenya-secondary);
       }
 
       .navbar-brand:hover .logo-container {
-        transform: scale(1.05);
+        transform: scale(1.08);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
       }
 
       .navbar-brand img {
-        height: 36px;
+        height: 38px;
         width: auto;
         display: block;
         margin: auto;
       }
 
       .nav-link {
-        color: rgba(255, 255, 255, 0.9) !important;
+        color: rgba(255, 255, 255, 0.95) !important;
         font-weight: 500;
-        margin: 0 4px;
+        margin: 0 5px;
         transition: all 0.3s ease;
-        border-radius: 6px;
-        padding: 0.5rem 0.8rem !important;
-        font-size: 0.9rem;
+        border-radius: 8px;
+        padding: 0.6rem 1rem !important;
+        font-size: 0.92rem;
         position: relative;
         overflow: hidden;
+        border: 1px solid transparent;
       }
 
-      .nav-link::before {
+      .nav-link::after {
         content: '';
         position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transition: left 0.5s;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: var(--kenya-secondary);
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
       }
 
-      .nav-link:hover::before {
-        left: 100%;
+      .nav-link:hover::after,
+      .nav-item.active .nav-link::after {
+        width: 80%;
       }
 
       .nav-link:hover,
       .nav-link:focus {
         color: var(--kenya-secondary) !important;
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.12);
         transform: translateY(-2px);
+        border-color: rgba(255, 215, 0, 0.3);
       }
 
       .nav-item.active .nav-link {
         background: rgba(255, 255, 255, 0.15);
         color: var(--kenya-secondary) !important;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        border-color: rgba(255, 215, 0, 0.5);
       }
 
       .nav-link i {
-        margin-right: 6px;
-        font-size: 0.9rem;
+        margin-right: 8px;
+        font-size: 0.95rem;
       }
 
       /* Main Content Area */
       main {
-        min-height: calc(100vh - 200px);
-        padding: 2rem 0;
+        min-height: calc(100vh - 220px);
+        padding: 2.5rem 0;
       }
 
       .page-header {
-        background: linear-gradient(135deg, var(--kenya-primary) 0%, #2c3e50 100%);
+        background: var(--kenya-gradient);
         color: white;
-        padding: 2rem 0;
-        margin-bottom: 2rem;
-        border-radius: 0 0 12px 12px;
-        box-shadow: 0 4px 12px var(--kenya-shadow);
+        padding: 2.5rem 0;
+        margin-bottom: 2.5rem;
+        border-radius: 0 0 15px 15px;
+        box-shadow: 0 6px 20px var(--kenya-shadow);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23004d00' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+        opacity: 0.3;
       }
 
       .page-header h1 {
         font-weight: 700;
         margin-bottom: 0.5rem;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+        position: relative;
       }
 
       .page-header .breadcrumb {
         background: transparent;
         margin-bottom: 0;
         padding: 0;
+        position: relative;
       }
 
       .page-header .breadcrumb-item a {
         color: var(--kenya-secondary);
+        font-weight: 500;
       }
 
       .page-header .breadcrumb-item.active {
-        color: rgba(255, 255, 255, 0.8);
+        color: rgba(255, 255, 255, 0.9);
       }
 
       /* Enhanced Footer */
       footer {
-        background: linear-gradient(135deg, var(--kenya-dark) 0%, #1a252f 100%);
+        background: linear-gradient(135deg, #1a331a 0%, #0d1f0d 100%);
         color: white;
-        padding: 2rem 0 1rem;
-        font-size: 0.85rem;
+        padding: 3rem 0 1.5rem;
+        font-size: 0.87rem;
+        border-top: 4px solid var(--kenya-secondary);
       }
 
       footer a {
         color: var(--kenya-secondary);
         text-decoration: none;
         transition: all 0.3s ease;
-        font-size: 0.85rem;
+        font-size: 0.87rem;
+        font-weight: 500;
       }
 
       footer a:hover {
         color: white;
-        text-decoration: underline;
-        transform: translateY(-1px);
+        text-decoration: none;
+        transform: translateX(5px);
       }
 
       .footer-logo {
-        max-height: 60px;
-        margin-bottom: 1rem;
+        max-height: 70px;
+        margin-bottom: 1.2rem;
         filter: brightness(0) invert(1);
       }
 
       .footer-section {
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
       }
 
       .footer-section h5 {
         color: var(--kenya-secondary);
         font-weight: 600;
-        margin-bottom: 1rem;
-        font-size: 1rem;
+        margin-bottom: 1.2rem;
+        font-size: 1.1rem;
+        border-bottom: 2px solid var(--kenya-secondary);
+        padding-bottom: 0.5rem;
+        display: inline-block;
       }
 
       .footer-section ul {
@@ -240,21 +273,47 @@
       }
 
       .footer-section ul li {
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.7rem;
+        padding-left: 0;
+        transition: all 0.3s ease;
+      }
+
+      .footer-section ul li:hover {
+        transform: translateX(5px);
+      }
+
+      .footer-section ul li i {
+        width: 20px;
+        color: var(--kenya-accent);
       }
 
       .social-links a {
-        display: inline-block;
-        margin-right: 10px;
-        font-size: 1.2rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+        font-size: 1.3rem;
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+      }
+
+      .social-links a:hover {
+        background: var(--kenya-secondary);
+        color: var(--kenya-dark) !important;
+        transform: translateY(-3px);
+        border-color: var(--kenya-secondary);
       }
 
       .copyright {
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        padding-top: 1rem;
-        margin-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        padding-top: 1.5rem;
+        margin-top: 2rem;
         text-align: center;
-        font-size: 0.8rem;
+        font-size: 0.82rem;
         color: rgba(255, 255, 255, 0.7);
       }
 
@@ -296,30 +355,47 @@
       }
 
       .btn-kenya-primary {
-        background: linear-gradient(135deg, var(--kenya-primary) 0%, #2c3e50 100%);
+        background: var(--kenya-gradient);
         color: white;
         border: none;
-        font-size: 0.9rem;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
+        font-size: 0.92rem;
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
         font-weight: 500;
         transition: all 0.3s ease;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn-kenya-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s;
+      }
+
+      .btn-kenya-primary:hover::before {
+        left: 100%;
       }
 
       .btn-kenya-primary:hover {
-        background: linear-gradient(135deg, #2c3e50 0%, var(--kenya-primary) 100%);
+        background: linear-gradient(135deg, #004d00 0%, var(--kenya-primary) 100%);
         color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
       }
 
       .btn-outline-kenya-primary {
         border: 2px solid var(--kenya-primary);
         color: var(--kenya-primary);
-        font-size: 0.9rem;
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
+        font-size: 0.92rem;
+        padding: 0.6rem 1.2rem;
+        border-radius: 8px;
         font-weight: 500;
         transition: all 0.3s ease;
         background: transparent;
@@ -328,65 +404,147 @@
       .btn-outline-kenya-primary:hover {
         background-color: var(--kenya-primary);
         color: white;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
       }
 
       /* Card enhancements */
       .card {
         border: none;
-        border-radius: 10px;
-        box-shadow: 0 4px 12px var(--kenya-shadow);
+        border-radius: 12px;
+        box-shadow: 0 6px 15px var(--kenya-shadow);
         transition: all 0.3s ease;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.8rem;
+        border: 1px solid var(--kenya-border);
+        background: white;
       }
 
       .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 20px var(--kenya-shadow);
+        transform: translateY(-7px);
+        box-shadow: 0 12px 25px var(--kenya-shadow);
       }
 
       .card-header {
-        background: linear-gradient(135deg, var(--kenya-primary) 0%, #2c3e50 100%);
+        background: var(--kenya-gradient);
         color: white;
-        border-radius: 10px 10px 0 0 !important;
-        padding: 1rem 1.25rem;
+        border-radius: 12px 12px 0 0 !important;
+        padding: 1.2rem 1.5rem;
         font-weight: 600;
+        border-bottom: 2px solid var(--kenya-secondary);
+      }
+
+      /* Form enhancements */
+      .form-control {
+        border: 2px solid var(--kenya-border);
+        border-radius: 8px;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+        font-size: 0.92rem;
+      }
+
+      .form-control:focus {
+        border-color: var(--kenya-primary);
+        box-shadow: 0 0 0 0.2rem rgba(0, 100, 0, 0.15);
+      }
+
+      /* Table enhancements */
+      .table {
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px var(--kenya-shadow);
+      }
+
+      .table thead th {
+        background: var(--kenya-gradient);
+        color: white;
+        border: none;
+        padding: 1rem;
+        font-weight: 600;
+      }
+
+      .table tbody td {
+        padding: 0.9rem 1rem;
+        border-color: var(--kenya-border);
+      }
+
+      /* Alert enhancements */
+      .alert {
+        border-radius: 10px;
+        border: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        font-weight: 500;
       }
 
       /* Responsive adjustments */
       @media (max-width: 768px) {
         body {
-          padding-top: 70px;
+          padding-top: 72px;
           font-size: 0.9rem;
         }
         
         .navbar-brand {
-          font-size: 1.1rem;
+          font-size: 1.15rem;
         }
         
         .logo-container {
-          height: 40px;
-          width: 40px;
+          height: 42px;
+          width: 42px;
         }
         
         .navbar-brand img {
-          height: 32px;
+          height: 34px;
         }
         
         .page-header {
+          padding: 2rem 0;
+        }
+        
+        .nav-link {
+          padding: 0.5rem 0.8rem !important;
+          margin: 2px 0;
+        }
+      }
+
+      @media (max-width: 576px) {
+        main {
           padding: 1.5rem 0;
+        }
+        
+        .page-header {
+          padding: 1.8rem 0;
+          margin-bottom: 2rem;
+        }
+        
+        .card {
+          margin-bottom: 1.5rem;
         }
       }
 
       /* Animation for page transitions */
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
+      @keyframes fadeInUp {
+        from { 
+          opacity: 0; 
+          transform: translateY(20px); 
+        }
+        to { 
+          opacity: 1; 
+          transform: translateY(0); 
+        }
       }
       
       main {
-        animation: fadeIn 0.5s ease;
+        animation: fadeInUp 0.6s ease;
+      }
+
+      /* Loading animation */
+      @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+      }
+
+      .loading {
+        animation: pulse 2s infinite;
       }
     </style>
   </head>
@@ -403,7 +561,7 @@
             <img
               src="{% static 'img/kenya-logo.png' %}"
               alt="Kenya Logo"
-              onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-map-marked-alt\' style=\'color: var(--kenya-primary); font-size: 24px;\'></i>';"
+              onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-map-marked-alt\' style=\'color: var(--kenya-primary); font-size: 26px;\'></i>';"
             />
           </div>
           <span>National Geospatial Project Monitoring</span>
@@ -465,39 +623,41 @@
           <div class="col-lg-4 col-md-6 footer-section">
             <img src="{% static 'img/kenya-logo.png' %}" alt="Kenya Logo" class="footer-logo" onerror="this.style.display='none'">
             <h5>Kenya Geospatial Monitoring System</h5>
-            <p>Transparency and accountability in development projects across Kenya.</p>
+            <p>Transparency and accountability in development projects across Kenya through advanced geospatial technology and real-time monitoring.</p>
             <div class="social-links">
-              <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-facebook"></i></a>
-              <a href="#"><i class="fab fa-linkedin"></i></a>
-              <a href="#"><i class="fab fa-youtube"></i></a>
+              <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
+              <a href="#" title="Facebook"><i class="fab fa-facebook"></i></a>
+              <a href="#" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+              <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
             </div>
           </div>
           <div class="col-lg-2 col-md-6 footer-section">
             <h5>Quick Links</h5>
             <ul>
-              <li><a href="{% url 'home' %}">Home</a></li>
-              <li><a href="{% url 'project_list' %}">Projects</a></li>
-              <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-              <li><a href="{% url 'project_map' %}">Interactive Map</a></li>
+              <li><a href="{% url 'home' %}"><i class="fas fa-chevron-right"></i> Home</a></li>
+              <li><a href="{% url 'project_list' %}"><i class="fas fa-chevron-right"></i> Projects</a></li>
+              <li><a href="{% url 'dashboard' %}"><i class="fas fa-chevron-right"></i> Dashboard</a></li>
+              <li><a href="{% url 'project_map' %}"><i class="fas fa-chevron-right"></i> Interactive Map</a></li>
             </ul>
           </div>
           <div class="col-lg-3 col-md-6 footer-section">
             <h5>Resources</h5>
             <ul>
-              <li><a href="{% url 'about' %}">About Us</a></li>
-              <li><a href="{% url 'contact' %}">Contact</a></li>
-              <li><a href="#">Government Portal</a></li>
-              <li><a href="#">Data Privacy</a></li>
+              <li><a href="{% url 'about' %}"><i class="fas fa-chevron-right"></i> About Us</a></li>
+              <li><a href="{% url 'contact' %}"><i class="fas fa-chevron-right"></i> Contact</a></li>
+              <li><a href="#"><i class="fas fa-chevron-right"></i> Government Portal</a></li>
+              <li><a href="#"><i class="fas fa-chevron-right"></i> Data Privacy</a></li>
+              <li><a href="#"><i class="fas fa-chevron-right"></i> Documentation</a></li>
             </ul>
           </div>
           <div class="col-lg-3 col-md-6 footer-section">
             <h5>Contact Info</h5>
             <ul>
-              <li><i class="fas fa-map-marker-alt me-2"></i> Government Headquarters</li>
+              <li><i class="fas fa-map-marker-alt me-2"></i> Government Headquarters, Nairobi</li>
               <li><i class="fas fa-phone me-2"></i> +254 20 123 4567</li>
               <li><i class="fas fa-envelope me-2"></i> info@geospatial.go.ke</li>
               <li><i class="fas fa-clock me-2"></i> Mon - Fri, 8:00 AM - 5:00 PM</li>
+              <li><i class="fas fa-globe me-2"></i> www.geospatial.go.ke</li>
             </ul>
           </div>
         </div>
@@ -507,7 +667,7 @@
               <span>&copy; 2025 Government of Kenya. All rights reserved.</span>
             </div>
             <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
-              <span>Transparency in National Development</span>
+              <span>Promoting Transparency in National Development</span>
             </div>
           </div>
         </div>
@@ -537,6 +697,30 @@
         navLinks.forEach(link => {
           if(link.getAttribute('href') === currentLocation) {
             link.parentElement.classList.add('active');
+          }
+        });
+
+        // Add loading animation to buttons on click
+        document.querySelectorAll('.btn').forEach(button => {
+          button.addEventListener('click', function() {
+            this.classList.add('loading');
+            setTimeout(() => {
+              this.classList.remove('loading');
+            }, 2000);
+          });
+        });
+      });
+
+      // Smooth scrolling for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
           }
         });
       });
