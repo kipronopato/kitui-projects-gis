@@ -19,7 +19,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/custom.css' %}" />
@@ -28,243 +28,198 @@
 
     <style>
       :root {
-        --kenya-primary: #006400;      /* Deep forest green */
-        --kenya-secondary: #FFD700;    /* Gold */
-        --kenya-accent: #32CD32;       /* Lime green accent */
-        --kenya-light: #f8fdf8;        /* Very light green background */
-        --kenya-dark: #1a331a;         /* Dark green text */
-        --kenya-muted: #5a735a;        /* Muted green text */
-        --kenya-border: #c8e6c8;       /* Light green border */
-        --kenya-shadow: rgba(0, 100, 0, 0.1); /* Green shadow */
-        --kenya-gradient: linear-gradient(135deg, #006400 0%, #004d00 100%);
-        --kenya-light-gradient: linear-gradient(135deg, #f8fdf8 0%, #e8f5e8 100%);
+        --primary: #4A90E2;      /* Soft blue */
+        --secondary: #7ED321;    /* Light green */
+        --accent: #FF6B6B;       /* Coral accent */
+        --light: #FAFBFC;        /* Very light background */
+        --dark: #2C3E50;         /* Dark text */
+        --muted: #7F8C8D;        /* Muted text */
+        --border: #E1E8ED;       /* Light border */
+        --shadow: rgba(74, 144, 226, 0.08); /* Subtle shadow */
+        --card-bg: #FFFFFF;      /* Card background */
       }
 
       /* Global Styles */
       body {
-        font-family: 'Open Sans', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: var(--kenya-light-gradient);
-        color: var(--kenya-dark);
-        padding-top: 80px;
-        font-size: 0.95rem;
-        line-height: 1.6;
+        font-family: 'Source Sans Pro', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: var(--light);
+        color: var(--dark);
+        padding-top: 70px;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        font-weight: 400;
       }
 
       h1, h2, h3, h4, h5, h6, .navbar-brand {
-        font-family: 'Montserrat', sans-serif;
+        font-family: 'Inter', sans-serif;
         font-weight: 600;
       }
 
-      /* National Header Strip */
+      /* Thin Header Strip */
       .national-header {
-        height: 8px;
+        height: 4px;
         background: linear-gradient(
           90deg,
-          var(--kenya-primary) 0%,
-          var(--kenya-secondary) 50%,
-          var(--kenya-accent) 100%
+          var(--primary) 0%,
+          var(--secondary) 50%,
+          var(--accent) 100%
         );
         position: fixed;
         top: 0;
         width: 100%;
         z-index: 1031;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
       }
 
-      /* Enhanced Navbar */
+      /* Slim Navbar */
       .navbar {
-        background: var(--kenya-gradient) !important;
-        box-shadow: 0 4px 20px var(--kenya-shadow);
-        padding: 0.6rem 0;
-        min-height: 64px;
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 2px 12px var(--shadow);
+        padding: 0.4rem 0;
+        min-height: 56px;
         transition: all 0.3s ease;
-        border-bottom: 3px solid var(--kenya-secondary);
+        border-bottom: 1px solid var(--border);
       }
 
       .navbar.scrolled {
-        padding: 0.4rem 0;
-        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+        padding: 0.3rem 0;
+        box-shadow: 0 4px 20px var(--shadow);
       }
 
       .navbar-brand {
-        font-weight: 700;
-        font-size: 1.4rem;
+        font-weight: 600;
+        font-size: 1.1rem;
         display: flex;
         align-items: center;
-        color: white !important;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        letter-spacing: 0.5px;
+        color: var(--dark) !important;
+        letter-spacing: -0.2px;
       }
 
       .logo-container {
         display: flex;
         align-items: center;
-        height: 48px;
-        width: 48px;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        height: 36px;
+        width: 36px;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        border-radius: 6px;
         overflow: hidden;
-        margin-right: 14px;
-        padding: 5px;
+        margin-right: 10px;
+        padding: 3px;
         transition: all 0.3s ease;
-        border: 2px solid var(--kenya-secondary);
       }
 
       .navbar-brand:hover .logo-container {
-        transform: scale(1.08);
-        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        transform: scale(1.05);
       }
 
       .navbar-brand img {
-        height: 38px;
+        height: 28px;
         width: auto;
         display: block;
         margin: auto;
       }
 
       .nav-link {
-        color: rgba(255, 255, 255, 0.95) !important;
+        color: var(--dark) !important;
         font-weight: 500;
-        margin: 0 5px;
-        transition: all 0.3s ease;
-        border-radius: 8px;
-        padding: 0.6rem 1rem !important;
-        font-size: 0.92rem;
+        margin: 0 2px;
+        transition: all 0.2s ease;
+        border-radius: 5px;
+        padding: 0.4rem 0.8rem !important;
+        font-size: 0.85rem;
         position: relative;
-        overflow: hidden;
-        border: 1px solid transparent;
-      }
-
-      .nav-link::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        width: 0;
-        height: 2px;
-        background: var(--kenya-secondary);
-        transition: all 0.3s ease;
-        transform: translateX(-50%);
-      }
-
-      .nav-link:hover::after,
-      .nav-item.active .nav-link::after {
-        width: 80%;
       }
 
       .nav-link:hover,
       .nav-link:focus {
-        color: var(--kenya-secondary) !important;
-        background: rgba(255, 255, 255, 0.12);
-        transform: translateY(-2px);
-        border-color: rgba(255, 215, 0, 0.3);
+        color: var(--primary) !important;
+        background: rgba(74, 144, 226, 0.05);
+        transform: none;
       }
 
       .nav-item.active .nav-link {
-        background: rgba(255, 255, 255, 0.15);
-        color: var(--kenya-secondary) !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        border-color: rgba(255, 215, 0, 0.5);
+        background: rgba(74, 144, 226, 0.1);
+        color: var(--primary) !important;
+        font-weight: 600;
       }
 
       .nav-link i {
-        margin-right: 8px;
-        font-size: 0.95rem;
+        margin-right: 6px;
+        font-size: 0.8rem;
+        width: 16px;
+        text-align: center;
       }
 
       /* Main Content Area */
       main {
-        min-height: calc(100vh - 220px);
-        padding: 2.5rem 0;
+        min-height: calc(100vh - 180px);
+        padding: 1.5rem 0;
       }
 
       .page-header {
-        background: var(--kenya-gradient);
-        color: white;
-        padding: 2.5rem 0;
-        margin-bottom: 2.5rem;
-        border-radius: 0 0 15px 15px;
-        box-shadow: 0 6px 20px var(--kenya-shadow);
-        position: relative;
-        overflow: hidden;
-      }
-
-      .page-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23004d00' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
-        opacity: 0.3;
+        background: linear-gradient(135deg, rgba(74, 144, 226, 0.05), rgba(126, 211, 33, 0.05));
+        color: var(--dark);
+        padding: 1.5rem 0;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid var(--border);
       }
 
       .page-header h1 {
-        font-weight: 700;
-        margin-bottom: 0.5rem;
-        text-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
-        position: relative;
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        font-size: 1.5rem;
       }
 
       .page-header .breadcrumb {
         background: transparent;
         margin-bottom: 0;
         padding: 0;
-        position: relative;
+        font-size: 0.8rem;
       }
 
       .page-header .breadcrumb-item a {
-        color: var(--kenya-secondary);
-        font-weight: 500;
+        color: var(--primary);
       }
 
       .page-header .breadcrumb-item.active {
-        color: rgba(255, 255, 255, 0.9);
+        color: var(--muted);
       }
 
-      /* Enhanced Footer */
+      /* Slim Footer */
       footer {
-        background: linear-gradient(135deg, #1a331a 0%, #0d1f0d 100%);
-        color: white;
-        padding: 3rem 0 1.5rem;
-        font-size: 0.87rem;
-        border-top: 4px solid var(--kenya-secondary);
+        background: var(--card-bg);
+        color: var(--dark);
+        padding: 2rem 0 1rem;
+        font-size: 0.8rem;
+        border-top: 1px solid var(--border);
       }
 
       footer a {
-        color: var(--kenya-secondary);
+        color: var(--primary);
         text-decoration: none;
-        transition: all 0.3s ease;
-        font-size: 0.87rem;
-        font-weight: 500;
+        transition: all 0.2s ease;
+        font-size: 0.8rem;
       }
 
       footer a:hover {
-        color: white;
+        color: var(--secondary);
         text-decoration: none;
-        transform: translateX(5px);
       }
 
       .footer-logo {
-        max-height: 70px;
-        margin-bottom: 1.2rem;
-        filter: brightness(0) invert(1);
+        max-height: 45px;
+        margin-bottom: 0.8rem;
       }
 
       .footer-section {
-        margin-bottom: 2rem;
+        margin-bottom: 1.2rem;
       }
 
       .footer-section h5 {
-        color: var(--kenya-secondary);
+        color: var(--dark);
         font-weight: 600;
-        margin-bottom: 1.2rem;
-        font-size: 1.1rem;
-        border-bottom: 2px solid var(--kenya-secondary);
-        padding-bottom: 0.5rem;
-        display: inline-block;
+        margin-bottom: 0.8rem;
+        font-size: 0.9rem;
       }
 
       .footer-section ul {
@@ -273,298 +228,268 @@
       }
 
       .footer-section ul li {
-        margin-bottom: 0.7rem;
-        padding-left: 0;
-        transition: all 0.3s ease;
-      }
-
-      .footer-section ul li:hover {
-        transform: translateX(5px);
-      }
-
-      .footer-section ul li i {
-        width: 20px;
-        color: var(--kenya-accent);
+        margin-bottom: 0.4rem;
       }
 
       .social-links a {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 12px;
-        font-size: 1.3rem;
-        width: 40px;
-        height: 40px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
-        transition: all 0.3s ease;
-        border: 1px solid transparent;
+        display: inline-block;
+        margin-right: 8px;
+        font-size: 1rem;
+        color: var(--muted);
+        transition: all 0.2s ease;
       }
 
       .social-links a:hover {
-        background: var(--kenya-secondary);
-        color: var(--kenya-dark) !important;
-        transform: translateY(-3px);
-        border-color: var(--kenya-secondary);
+        color: var(--primary);
+        transform: translateY(-1px);
       }
 
       .copyright {
-        border-top: 1px solid rgba(255, 255, 255, 0.15);
-        padding-top: 1.5rem;
-        margin-top: 2rem;
+        border-top: 1px solid var(--border);
+        padding-top: 1rem;
+        margin-top: 1rem;
         text-align: center;
-        font-size: 0.82rem;
-        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.75rem;
+        color: var(--muted);
       }
 
       /* Custom utility classes */
-      .bg-kenya-primary {
-        background-color: var(--kenya-primary) !important;
+      .bg-primary {
+        background-color: var(--primary) !important;
       }
 
-      .bg-kenya-secondary {
-        background-color: var(--kenya-secondary) !important;
+      .bg-secondary {
+        background-color: var(--secondary) !important;
       }
 
-      .bg-kenya-accent {
-        background-color: var(--kenya-accent) !important;
+      .bg-accent {
+        background-color: var(--accent) !important;
       }
 
-      .bg-kenya-light {
-        background-color: var(--kenya-light) !important;
+      .text-primary {
+        color: var(--primary) !important;
       }
 
-      .text-kenya-primary {
-        color: var(--kenya-primary) !important;
+      .text-secondary {
+        color: var(--secondary) !important;
       }
 
-      .text-kenya-secondary {
-        color: var(--kenya-secondary) !important;
+      .text-accent {
+        color: var(--accent) !important;
       }
 
-      .text-kenya-accent {
-        color: var(--kenya-accent) !important;
-      }
-
-      .border-kenya-primary {
-        border-color: var(--kenya-primary) !important;
-      }
-
-      .border-kenya-secondary {
-        border-color: var(--kenya-secondary) !important;
-      }
-
-      .btn-kenya-primary {
-        background: var(--kenya-gradient);
+      .btn-primary {
+        background: var(--primary);
         color: white;
         border: none;
-        font-size: 0.92rem;
-        padding: 0.6rem 1.2rem;
-        border-radius: 8px;
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
         font-weight: 500;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        position: relative;
-        overflow: hidden;
+        transition: all 0.2s ease;
       }
 
-      .btn-kenya-primary::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transition: left 0.5s;
-      }
-
-      .btn-kenya-primary:hover::before {
-        left: 100%;
-      }
-
-      .btn-kenya-primary:hover {
-        background: linear-gradient(135deg, #004d00 0%, var(--kenya-primary) 100%);
+      .btn-primary:hover {
+        background: #3a80d2;
         color: white;
-        transform: translateY(-3px);
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
       }
 
-      .btn-outline-kenya-primary {
-        border: 2px solid var(--kenya-primary);
-        color: var(--kenya-primary);
-        font-size: 0.92rem;
-        padding: 0.6rem 1.2rem;
-        border-radius: 8px;
+      .btn-outline-primary {
+        border: 1px solid var(--primary);
+        color: var(--primary);
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
         font-weight: 500;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
         background: transparent;
       }
 
-      .btn-outline-kenya-primary:hover {
-        background-color: var(--kenya-primary);
+      .btn-outline-primary:hover {
+        background-color: var(--primary);
         color: white;
-        transform: translateY(-3px);
-        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
       }
 
       /* Card enhancements */
       .card {
-        border: none;
-        border-radius: 12px;
-        box-shadow: 0 6px 15px var(--kenya-shadow);
-        transition: all 0.3s ease;
-        margin-bottom: 1.8rem;
-        border: 1px solid var(--kenya-border);
-        background: white;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        box-shadow: 0 2px 8px var(--shadow);
+        transition: all 0.2s ease;
+        margin-bottom: 1.2rem;
+        background: var(--card-bg);
       }
 
       .card:hover {
-        transform: translateY(-7px);
-        box-shadow: 0 12px 25px var(--kenya-shadow);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px var(--shadow);
       }
 
       .card-header {
-        background: var(--kenya-gradient);
-        color: white;
-        border-radius: 12px 12px 0 0 !important;
-        padding: 1.2rem 1.5rem;
+        background: rgba(255, 255, 255, 0.9);
+        color: var(--dark);
+        border-radius: 8px 8px 0 0 !important;
+        padding: 0.8rem 1rem;
         font-weight: 600;
-        border-bottom: 2px solid var(--kenya-secondary);
+        border-bottom: 1px solid var(--border);
+        font-size: 0.9rem;
       }
 
       /* Form enhancements */
       .form-control {
-        border: 2px solid var(--kenya-border);
-        border-radius: 8px;
-        padding: 0.75rem 1rem;
-        transition: all 0.3s ease;
-        font-size: 0.92rem;
+        border: 1px solid var(--border);
+        border-radius: 5px;
+        padding: 0.5rem 0.8rem;
+        transition: all 0.2s ease;
+        font-size: 0.85rem;
       }
 
       .form-control:focus {
-        border-color: var(--kenya-primary);
-        box-shadow: 0 0 0 0.2rem rgba(0, 100, 0, 0.15);
+        border-color: var(--primary);
+        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
       }
 
       /* Table enhancements */
       .table {
-        border-radius: 10px;
+        border-radius: 6px;
         overflow: hidden;
-        box-shadow: 0 4px 12px var(--kenya-shadow);
+        box-shadow: 0 1px 4px var(--shadow);
+        font-size: 0.85rem;
       }
 
       .table thead th {
-        background: var(--kenya-gradient);
-        color: white;
+        background: rgba(74, 144, 226, 0.05);
+        color: var(--dark);
         border: none;
-        padding: 1rem;
+        padding: 0.7rem 0.8rem;
         font-weight: 600;
+        font-size: 0.8rem;
       }
 
       .table tbody td {
-        padding: 0.9rem 1rem;
-        border-color: var(--kenya-border);
+        padding: 0.6rem 0.8rem;
+        border-color: var(--border);
       }
 
       /* Alert enhancements */
       .alert {
-        border-radius: 10px;
-        border: none;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        box-shadow: 0 1px 4px var(--shadow);
+        font-weight: 400;
+        font-size: 0.85rem;
+      }
+
+      /* Badge enhancements */
+      .badge {
+        font-size: 0.7rem;
         font-weight: 500;
+        padding: 0.3rem 0.5rem;
+      }
+
+      /* Progress bar enhancements */
+      .progress {
+        height: 6px;
+        border-radius: 3px;
+        background: var(--border);
+      }
+
+      .progress-bar {
+        border-radius: 3px;
       }
 
       /* Responsive adjustments */
       @media (max-width: 768px) {
         body {
-          padding-top: 72px;
-          font-size: 0.9rem;
+          padding-top: 65px;
+          font-size: 0.85rem;
         }
         
         .navbar-brand {
-          font-size: 1.15rem;
+          font-size: 1rem;
         }
         
         .logo-container {
-          height: 42px;
-          width: 42px;
+          height: 32px;
+          width: 32px;
         }
         
         .navbar-brand img {
-          height: 34px;
+          height: 24px;
         }
         
         .page-header {
-          padding: 2rem 0;
+          padding: 1.2rem 0;
         }
         
-        .nav-link {
-          padding: 0.5rem 0.8rem !important;
-          margin: 2px 0;
+        .page-header h1 {
+          font-size: 1.3rem;
+        }
+        
+        main {
+          padding: 1rem 0;
         }
       }
 
       @media (max-width: 576px) {
-        main {
-          padding: 1.5rem 0;
+        .nav-link {
+          padding: 0.3rem 0.6rem !important;
+          font-size: 0.8rem;
         }
         
-        .page-header {
-          padding: 1.8rem 0;
-          margin-bottom: 2rem;
-        }
-        
-        .card {
+        .footer-section {
           margin-bottom: 1.5rem;
         }
       }
 
       /* Animation for page transitions */
-      @keyframes fadeInUp {
-        from { 
-          opacity: 0; 
-          transform: translateY(20px); 
-        }
-        to { 
-          opacity: 1; 
-          transform: translateY(0); 
-        }
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
       }
       
       main {
-        animation: fadeInUp 0.6s ease;
+        animation: fadeIn 0.3s ease;
       }
 
-      /* Loading animation */
-      @keyframes pulse {
-        0% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-        100% { transform: scale(1); }
+      /* Custom thin scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
       }
 
-      .loading {
-        animation: pulse 2s infinite;
+      ::-webkit-scrollbar-track {
+        background: var(--light);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--border);
+        border-radius: 3px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--muted);
       }
     </style>
   </head>
 
   <body>
-    <!-- National Header Strip -->
+    <!-- Thin National Header Strip -->
     <div class="national-header"></div>
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <!-- Slim Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
       <div class="container">
         <a class="navbar-brand" href="{% url 'home' %}">
           <div class="logo-container">
             <img
               src="{% static 'img/kenya-logo.png' %}"
               alt="Kenya Logo"
-              onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-map-marked-alt\' style=\'color: var(--kenya-primary); font-size: 26px;\'></i>';"
+              onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-map-marker-alt\' style=\'color: white; font-size: 18px;\'></i>';"
             />
           </div>
-          <span>National Geospatial Project Monitoring</span>
+          <span>Geospatial Monitoring</span>
         </a>
         <button
           class="navbar-toggler"
@@ -588,12 +513,12 @@
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'dashboard' %}"
-                ><i class="fas fa-tachometer-alt"></i> Dashboard</a
+                ><i class="fas fa-chart-bar"></i> Dashboard</a
               >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'project_map' %}"
-                ><i class="fas fa-map-marked-alt"></i> Map</a
+                ><i class="fas fa-map"></i> Map</a
               >
             </li>
             <li class="nav-item">
@@ -616,48 +541,46 @@
       {% block content %}{% endblock %}
     </main>
 
-    <!-- Enhanced Footer -->
+    <!-- Slim Footer -->
     <footer>
       <div class="container">
         <div class="row">
           <div class="col-lg-4 col-md-6 footer-section">
             <img src="{% static 'img/kenya-logo.png' %}" alt="Kenya Logo" class="footer-logo" onerror="this.style.display='none'">
-            <h5>Kenya Geospatial Monitoring System</h5>
-            <p>Transparency and accountability in development projects across Kenya through advanced geospatial technology and real-time monitoring.</p>
+            <h5>Geospatial Monitoring System</h5>
+            <p>Transparent monitoring of development projects across Kenya using advanced geospatial technology.</p>
             <div class="social-links">
-              <a href="#" title="Twitter"><i class="fab fa-twitter"></i></a>
-              <a href="#" title="Facebook"><i class="fab fa-facebook"></i></a>
-              <a href="#" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
-              <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+              <a href="#"><i class="fab fa-twitter"></i></a>
+              <a href="#"><i class="fab fa-facebook"></i></a>
+              <a href="#"><i class="fab fa-linkedin"></i></a>
+              <a href="#"><i class="fab fa-youtube"></i></a>
             </div>
           </div>
           <div class="col-lg-2 col-md-6 footer-section">
             <h5>Quick Links</h5>
             <ul>
-              <li><a href="{% url 'home' %}"><i class="fas fa-chevron-right"></i> Home</a></li>
-              <li><a href="{% url 'project_list' %}"><i class="fas fa-chevron-right"></i> Projects</a></li>
-              <li><a href="{% url 'dashboard' %}"><i class="fas fa-chevron-right"></i> Dashboard</a></li>
-              <li><a href="{% url 'project_map' %}"><i class="fas fa-chevron-right"></i> Interactive Map</a></li>
+              <li><a href="{% url 'home' %}">Home</a></li>
+              <li><a href="{% url 'project_list' %}">Projects</a></li>
+              <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+              <li><a href="{% url 'project_map' %}">Interactive Map</a></li>
             </ul>
           </div>
           <div class="col-lg-3 col-md-6 footer-section">
             <h5>Resources</h5>
             <ul>
-              <li><a href="{% url 'about' %}"><i class="fas fa-chevron-right"></i> About Us</a></li>
-              <li><a href="{% url 'contact' %}"><i class="fas fa-chevron-right"></i> Contact</a></li>
-              <li><a href="#"><i class="fas fa-chevron-right"></i> Government Portal</a></li>
-              <li><a href="#"><i class="fas fa-chevron-right"></i> Data Privacy</a></li>
-              <li><a href="#"><i class="fas fa-chevron-right"></i> Documentation</a></li>
+              <li><a href="{% url 'about' %}">About Us</a></li>
+              <li><a href="{% url 'contact' %}">Contact</a></li>
+              <li><a href="#">Data Privacy</a></li>
+              <li><a href="#">API Documentation</a></li>
             </ul>
           </div>
           <div class="col-lg-3 col-md-6 footer-section">
-            <h5>Contact Info</h5>
+            <h5>Contact</h5>
             <ul>
-              <li><i class="fas fa-map-marker-alt me-2"></i> Government Headquarters, Nairobi</li>
+              <li><i class="fas fa-map-marker-alt me-2"></i> Nairobi, Kenya</li>
               <li><i class="fas fa-phone me-2"></i> +254 20 123 4567</li>
               <li><i class="fas fa-envelope me-2"></i> info@geospatial.go.ke</li>
-              <li><i class="fas fa-clock me-2"></i> Mon - Fri, 8:00 AM - 5:00 PM</li>
-              <li><i class="fas fa-globe me-2"></i> www.geospatial.go.ke</li>
+              <li><i class="fas fa-clock me-2"></i> Mon - Fri, 8AM - 5PM</li>
             </ul>
           </div>
         </div>
@@ -667,7 +590,7 @@
               <span>&copy; 2025 Government of Kenya. All rights reserved.</span>
             </div>
             <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
-              <span>Promoting Transparency in National Development</span>
+              <span>Transparency in Development</span>
             </div>
           </div>
         </div>
@@ -697,30 +620,6 @@
         navLinks.forEach(link => {
           if(link.getAttribute('href') === currentLocation) {
             link.parentElement.classList.add('active');
-          }
-        });
-
-        // Add loading animation to buttons on click
-        document.querySelectorAll('.btn').forEach(button => {
-          button.addEventListener('click', function() {
-            this.classList.add('loading');
-            setTimeout(() => {
-              this.classList.remove('loading');
-            }, 2000);
-          });
-        });
-      });
-
-      // Smooth scrolling for anchor links
-      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute('href'));
-          if (target) {
-            target.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start'
-            });
           }
         });
       });
