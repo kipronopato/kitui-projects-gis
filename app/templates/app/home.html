@@ -1,4 +1,3 @@
-<!-- home.html -->
 {% extends 'base.html' %}
 {% load custom_filters %}
 {% load humanize %}
@@ -28,11 +27,8 @@
                 <span class="badge bg-info me-2">
                     <i class="fas fa-database me-1"></i>{{ total_projects|intcomma }} Projects
                 </span>
-                <span class="badge bg-warning me-2">
+                <span class="badge bg-warning">
                     <i class="fas fa-bell me-1"></i>{{ overdue_projects }} Alerts
-                </span>
-                <span class="badge bg-danger">
-                    <i class="fas fa-exclamation-triangle me-1"></i>{{ high_priority_projects }} Priority
                 </span>
             </div>
         </div>
@@ -48,7 +44,7 @@
 
         <div class="col-xl-2 col-md-4 col-sm-6">
           <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #4A90E2, #2a4d7a);">
+            <div class="stat-icon">
               <i class="fas fa-project-diagram"></i>
             </div>
             <div class="stat-content">
@@ -60,7 +56,7 @@
 
         <div class="col-xl-2 col-md-4 col-sm-6">
           <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #28a745, #1e7e34);">
+            <div class="stat-icon">
               <i class="fas fa-money-bill-wave"></i>
             </div>
             <div class="stat-content">
@@ -72,7 +68,7 @@
 
         <div class="col-xl-2 col-md-4 col-sm-6">
           <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #ffc107, #e0a800);">
+            <div class="stat-icon">
               <i class="fas fa-check-circle"></i>
             </div>
             <div class="stat-content">
@@ -84,19 +80,19 @@
 
         <div class="col-xl-2 col-md-4 col-sm-6">
           <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #17a2b8, #138496);">
-              <i class="fas fa-chart-line"></i>
+            <div class="stat-icon">
+              <i class="fas fa-map-marker-alt"></i>
             </div>
             <div class="stat-content">
-              <h3>{{ budget_utilization }}%</h3>
-              <span>Budget Utilization</span>
+              <h3>{{ counties|length }}</h3>
+              <span>Counties Covered</span>
             </div>
           </div>
         </div>
 
         <div class="col-xl-2 col-md-4 col-sm-6">
           <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #dc3545, #c82333);">
+            <div class="stat-icon">
               <i class="fas fa-exclamation-triangle"></i>
             </div>
             <div class="stat-content">
@@ -108,48 +104,16 @@
 
         <div class="col-xl-2 col-md-4 col-sm-6">
           <div class="stat-card">
-            <div class="stat-icon" style="background: linear-gradient(135deg, #6f42c1, #5a3596);">
-              <i class="fas fa-flag"></i>
+            <div class="stat-icon">
+              <i class="fas fa-clock"></i>
             </div>
             <div class="stat-content">
-              <h3>{{ high_priority_projects }}</h3>
-              <span>High Priority</span>
+              <h3>{{ upcoming_deadlines }}</h3>
+              <span>Upcoming Deadlines</span>
             </div>
           </div>
         </div>
 
-      </div>
-    </div>
-  </div>
-
-  <!-- Detailed Stats Row -->
-  <div class="detailed-stats-bar">
-    <div class="container-fluid">
-      <div class="row g-2">
-        <div class="col-md-3">
-          <div class="detail-stat">
-            <span class="stat-label">Completed</span>
-            <span class="stat-value text-success">{{ completed_projects }}</span>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="detail-stat">
-            <span class="stat-label">Ongoing</span>
-            <span class="stat-value text-warning">{{ ongoing_projects }}</span>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="detail-stat">
-            <span class="stat-label">Delayed</span>
-            <span class="stat-value text-danger">{{ delayed_projects }}</span>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="detail-stat">
-            <span class="stat-label">Planned</span>
-            <span class="stat-value text-info">{{ planned_projects }}</span>
-          </div>
-        </div>
       </div>
     </div>
   </div>
@@ -187,18 +151,6 @@
               </div>
             </div>
 
-            <!-- Quick Actions -->
-            <div class="quick-actions mb-3">
-              <div class="btn-group w-100">
-                <button class="btn btn-outline-primary btn-sm" onclick="refreshMonitoringData()">
-                  <i class="fas fa-sync-alt me-1"></i> Refresh
-                </button>
-                <button class="btn btn-outline-success btn-sm" onclick="exportData()">
-                  <i class="fas fa-download me-1"></i> Export
-                </button>
-              </div>
-            </div>
-
             <!-- Location Selection -->
             <div class="location-selection">
               <h6><i class="fas fa-crosshairs me-2"></i>Location Selection</h6>
@@ -217,21 +169,6 @@
 
             <form method="get" id="filter-form">
               
-              <!-- Search Box -->
-              <div class="filter-group">
-                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#searchFilter">
-                  <h6><i class="fas fa-search me-2"></i>Search Projects</h6>
-                  <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="collapse show" id="searchFilter">
-                  <div class="filter-options">
-                    <input type="text" class="form-control form-control-sm" 
-                           name="search" placeholder="Search projects..." 
-                           value="{{ search_query }}">
-                  </div>
-                </div>
-              </div>
-
               <!-- County Filter -->
               <div class="filter-group">
                 <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#countyFilter">
@@ -266,31 +203,10 @@
                              value="{{ status }}" id="status-{{ forloop.counter }}"
                              {% if status in selected_statuses %}checked{% endif %}>
                       <label class="form-check-label" for="status-{{ forloop.counter }}">
-                        <span class="status-badge status-{{ status }}"></span>
                         {{ status_labels|get_item:status }}
                       </label>
                     </div>
                     {% endfor %}
-                  </div>
-                </div>
-              </div>
-
-              <!-- Priority Filter -->
-              <div class="filter-group">
-                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#priorityFilter">
-                  <h6><i class="fas fa-flag me-2"></i>Priority Level</h6>
-                  <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="collapse show" id="priorityFilter">
-                  <div class="filter-options">
-                    <select class="form-select form-select-sm" name="priority" id="priority-select">
-                      <option value="">All Priorities</option>
-                      {% for priority in priority_choices %}
-                      <option value="{{ priority }}" {% if selected_priority == priority %}selected{% endif %}>
-                        {{ priority_labels|get_item:priority }}
-                      </option>
-                      {% endfor %}
-                    </select>
                   </div>
                 </div>
               </div>
@@ -341,14 +257,9 @@
                 </div>
               </div>
 
-              <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-primary">
-                  <i class="fas fa-filter me-1"></i> Apply Filters
-                </button>
-                <button type="button" class="btn btn-outline-secondary" onclick="clearAllFilters()">
-                  <i class="fas fa-times me-1"></i> Clear Filters
-                </button>
-              </div>
+              <button type="submit" class="btn btn-primary w-100 mt-3">
+                <i class="fas fa-filter me-1"></i> Apply Filters
+              </button>
             </form>
           </div>
         </div>
@@ -397,12 +308,6 @@
                     <div class="form-check form-switch me-2">
                       <input class="form-check-input" type="checkbox" id="project-markers-toggle" checked>
                       <label class="form-check-label" for="project-markers-toggle">Show Projects</label>
-                    </div>
-
-                    <!-- Cluster Toggle -->
-                    <div class="form-check form-switch me-2">
-                      <input class="form-check-input" type="checkbox" id="cluster-toggle" checked>
-                      <label class="form-check-label" for="cluster-toggle">Cluster Markers</label>
                     </div>
 
                     <!-- Map Info -->
@@ -454,10 +359,6 @@
                         <span class="legend-color delayed"></span>
                         <span>Delayed</span>
                       </div>
-                      <div class="legend-item">
-                        <span class="legend-color planned"></span>
-                        <span>Planned</span>
-                      </div>
                     </div>
                   </div>
 
@@ -486,8 +387,8 @@
 
               <!-- Project Lists -->
               <div class="row mt-4">
-                <div class="col-md-4">
-                  <div class="card h-100">
+                <div class="col-md-6">
+                  <div class="card">
                     <div class="card-header">
                       <h5 class="mb-0"><i class="fas fa-arrow-up me-2"></i>Highest Budget Projects</h5>
                     </div>
@@ -504,13 +405,6 @@
                             <span class="sector">{{ project.sector|default:"N/A" }}</span>
                             <span class="status badge bg-{{ project.status }}">{{ project.status }}</span>
                           </div>
-                          <div class="project-progress">
-                            <div class="progress">
-                              <div class="progress-bar bg-success" style="width: {{ project.physical_progress }}%">
-                                {{ project.physical_progress }}%
-                              </div>
-                            </div>
-                          </div>
                         </div>
                         {% empty %}
                         <p class="text-center text-muted">No projects found</p>
@@ -520,14 +414,15 @@
                   </div>
                 </div>
                 
-                <div class="col-md-4">
-                  <div class="card h-100">
+                <div class="col-md-6">
+                  <div class="card">
                     <div class="card-header">
                       <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Overdue Projects</h5>
                     </div>
                     <div class="card-body">
                       <div class="project-list">
-                        {% for project in overdue_projects_list %}
+                        {% for project in recent_projects %}
+                        {% if project.status == 'delayed' or project.status == 'ongoing' and project.end_date < current_date %}
                         <div class="project-item">
                           <div class="project-info">
                             <strong>{{ project.name|truncatechars:30 }}</strong>
@@ -535,50 +430,17 @@
                           </div>
                           <div class="project-meta">
                             <span class="location">{{ project.county }}</span>
-                            <span class="priority badge bg-{{ project.priority }}">{{ project.priority }}</span>
                             <span class="status badge bg-danger">{{ project.status }}</span>
-                          </div>
-                          <div class="project-dates">
-                            <small class="text-muted">
-                              Due: {{ project.end_date|date:"M d, Y" }}
-                              ({{ project.days_remaining }} days overdue)
-                            </small>
+                            {% if project.end_date %}
+                            <span class="days-remaining text-danger">
+                              Overdue
+                            </span>
+                            {% endif %}
                           </div>
                         </div>
+                        {% endif %}
                         {% empty %}
                         <p class="text-center text-muted">No overdue projects found</p>
-                        {% endfor %}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-4">
-                  <div class="card h-100">
-                    <div class="card-header">
-                      <h5 class="mb-0"><i class="fas fa-clock me-2"></i>Recent Projects</h5>
-                    </div>
-                    <div class="card-body">
-                      <div class="project-list">
-                        {% for project in recent_projects %}
-                        <div class="project-item">
-                          <div class="project-info">
-                            <strong>{{ project.name|truncatechars:30 }}</strong>
-                            <span class="budget">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
-                          </div>
-                          <div class="project-meta">
-                            <span class="location">{{ project.county }}</span>
-                            <span class="sector">{{ project.sector|default:"N/A" }}</span>
-                            <span class="status badge bg-{{ project.status }}">{{ project.status }}</span>
-                          </div>
-                          <div class="project-dates">
-                            <small class="text-muted">
-                              Started: {{ project.start_date|date:"M d, Y" }}
-                            </small>
-                          </div>
-                        </div>
-                        {% empty %}
-                        <p class="text-center text-muted">No recent projects found</p>
                         {% endfor %}
                       </div>
                     </div>
@@ -611,28 +473,6 @@
                     </div>
                   </div>
                 </div>
-
-                <div class="col-md-6">
-                  <div class="card h-100">
-                    <div class="card-header">
-                      <h5 class="mb-0"><i class="fas fa-flag me-2"></i>Priority Distribution</h5>
-                    </div>
-                    <div class="card-body">
-                      <canvas id="priorityChart" height="250"></canvas>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-6">
-                  <div class="card h-100">
-                    <div class="card-header">
-                      <h5 class="mb-0"><i class="fas fa-map-marked-alt me-2"></i>Top Counties</h5>
-                    </div>
-                    <div class="card-body">
-                      <canvas id="countyChart" height="250"></canvas>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -659,30 +499,6 @@
                     </div>
                     <div class="card-body">
                       <canvas id="timelineChart" height="250"></canvas>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Progress Analysis -->
-                <div class="col-md-6">
-                  <div class="card">
-                    <div class="card-header">
-                      <h5 class="mb-0"><i class="fas fa-tasks me-2"></i>Progress Analysis</h5>
-                    </div>
-                    <div class="card-body">
-                      <canvas id="progressChart" height="250"></canvas>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Risk Analysis -->
-                <div class="col-md-6">
-                  <div class="card">
-                    <div class="card-header">
-                      <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Risk Analysis</h5>
-                    </div>
-                    <div class="card-body">
-                      <canvas id="riskChart" height="250"></canvas>
                     </div>
                   </div>
                 </div>
@@ -791,6 +607,7 @@
   color: white;
   font-size: 1rem;
   margin-right: 0.8rem;
+  background: linear-gradient(135deg, #4A90E2, #2a4d7a);
 }
 
 .stat-content h3 {
@@ -804,34 +621,6 @@
   color: #6c757d;
   font-size: 0.8rem;
   font-weight: 500;
-}
-
-/* Detailed Stats Bar */
-.detailed-stats-bar {
-  background: #f8f9fa;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #dee2e6;
-}
-
-.detail-stat {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.4rem 0.8rem;
-  background: white;
-  border-radius: 6px;
-  border: 1px solid #e9ecef;
-}
-
-.stat-label {
-  font-size: 0.8rem;
-  color: #6c757d;
-  font-weight: 500;
-}
-
-.stat-value {
-  font-weight: 600;
-  font-size: 0.9rem;
 }
 
 /* Filters Sidebar */
@@ -873,15 +662,6 @@
 
 .btn-clear:hover {
   background: #5a6268;
-}
-
-/* Quick Actions */
-.quick-actions .btn-group {
-  gap: 1px;
-}
-
-.quick-actions .btn {
-  border-radius: 4px;
 }
 
 /* Navigation Tabs */
@@ -1009,20 +789,6 @@
   padding: 0.6rem 0.8rem;
   border-bottom: 1px solid #dee2e6;
 }
-
-/* Status badges in filters */
-.status-badge {
-  display: inline-block;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-right: 6px;
-}
-
-.status-planned { background-color: #6c757d; }
-.status-ongoing { background-color: #ffc107; }
-.status-completed { background-color: #28a745; }
-.status-delayed { background-color: #dc3545; }
 
 /* Map Card */
 .map-card {
@@ -1184,7 +950,6 @@
   display: flex;
   gap: 0.6rem;
   flex-wrap: wrap;
-  margin-bottom: 0.4rem;
 }
 
 .project-meta span {
@@ -1195,28 +960,10 @@
   color: #6c757d;
 }
 
-.project-progress {
-  margin-top: 0.4rem;
-}
-
-.project-progress .progress {
-  height: 6px;
-  font-size: 0.6rem;
-}
-
-.project-dates {
-  margin-top: 0.4rem;
-}
-
-/* Badge colors */
 .bg-completed { background-color: #28a745 !important; }
 .bg-ongoing { background-color: #ffc107 !important; color: #000 !important; }
 .bg-delayed { background-color: #dc3545 !important; }
 .bg-planned { background-color: #6c757d !important; }
-.bg-low { background-color: #6c757d !important; }
-.bg-medium { background-color: #17a2b8 !important; }
-.bg-high { background-color: #ffc107 !important; color: #000 !important; }
-.bg-critical { background-color: #dc3545 !important; }
 
 /* Enhanced Map Controls */
 .map-controls {
@@ -1280,11 +1027,6 @@
     padding: 0.8rem;
     justify-content: center;
   }
-  
-  .map-controls {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 }
 
 /* Custom scrollbar */
@@ -1309,48 +1051,6 @@
 .project-list::-webkit-scrollbar-thumb:hover {
   background: #a8a8a8;
 }
-
-/* Summary details styling */
-.summary-details h6 {
-  color: #2c3e50;
-  margin-bottom: 0.8rem;
-  font-weight: 600;
-}
-
-.summary-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 0.8rem;
-}
-
-.stat-item {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  padding: 0.6rem;
-  background: #f8f9fa;
-  border-radius: 4px;
-}
-
-.stat-item i {
-  color: #4A90E2;
-  font-size: 1.2rem;
-}
-
-.stat-item div {
-  display: flex;
-  flex-direction: column;
-}
-
-.stat-item strong {
-  font-size: 1rem;
-  color: #2c3e50;
-}
-
-.stat-item span {
-  font-size: 0.75rem;
-  color: #6c757d;
-}
 </style>
 
 <!-- Chart.js -->
@@ -1358,16 +1058,11 @@
 <!-- Leaflet CSS & JS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<!-- Leaflet MarkerCluster -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css" />
-<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 
 <script>
 // Dashboard JavaScript
 let kenyaMap;
 let projectMarkers;
-let markerCluster;
 let currentShapeLayer;
 let currentLevel = 'county';
 let baseLayers = {};
@@ -1379,7 +1074,7 @@ let choroplethLayers = {
 };
 
 // Chart instances
-let statusChart, sectorChart, budgetChart, timelineChart, priorityChart, countyChart, progressChart, riskChart;
+let statusChart, sectorChart, budgetChart, timelineChart;
 
 // Initialize notification marquee
 function initNotificationMarquee() {
@@ -1406,11 +1101,6 @@ function initNotificationMarquee() {
             badge: 'ALERT',
             type: 'warning',
             text: `{{ overdue_projects }} projects require attention`
-        },
-        {
-            badge: 'PRIORITY',
-            type: 'danger',
-            text: `{{ high_priority_projects }} high priority projects`
         }
     ];
     
@@ -1450,17 +1140,8 @@ function initMap() {
     // Load initial shapefile (counties)
     loadShapefileLayer('county');
     
-    // Initialize project markers with clustering
-    projectMarkers = L.layerGroup();
-    markerCluster = L.markerClusterGroup({
-        chunkedLoading: true,
-        maxClusterRadius: 50,
-        spiderfyOnMaxZoom: true,
-        showCoverageOnHover: true,
-        zoomToBoundsOnClick: true
-    });
-    
-    kenyaMap.addLayer(markerCluster);
+    // Initialize project markers
+    projectMarkers = L.layerGroup().addTo(kenyaMap);
     loadProjectMarkers();
 }
 
@@ -1536,21 +1217,9 @@ function initLayerControls() {
     // Project markers toggle
     document.getElementById('project-markers-toggle').addEventListener('change', function(e) {
         if (this.checked) {
-            kenyaMap.addLayer(markerCluster);
+            kenyaMap.addLayer(projectMarkers);
         } else {
-            kenyaMap.removeLayer(markerCluster);
-        }
-    });
-
-    // Cluster toggle
-    document.getElementById('cluster-toggle').addEventListener('change', function(e) {
-        markerCluster.clearLayers();
-        if (this.checked) {
-            // Re-add markers with clustering
-            loadProjectMarkers();
-        } else {
-            // Add markers without clustering
-            loadProjectMarkersWithoutClustering();
+            kenyaMap.removeLayer(projectMarkers);
         }
     });
 
@@ -1691,12 +1360,6 @@ function createChoroplethLayer(geojsonData, level) {
                             <span class="stat-value">${props.completion_rate}%</span>
                         </div>
                         ` : ''}
-                        ${props.avg_progress ? `
-                        <div class="stat-row">
-                            <span class="stat-label">Avg Progress:</span>
-                            <span class="stat-value">${props.avg_progress}%</span>
-                        </div>
-                        ` : ''}
                     </div>
                 </div>
             `;
@@ -1716,28 +1379,20 @@ function createChoroplethLayer(geojsonData, level) {
 }
 
 function getChoroplethStyle(feature, level) {
-    const densityScore = feature.properties.density_score || 0;
+    const projectCount = feature.properties.project_count || 0;
     
-    // Define color ranges based on density score
+    // Define color ranges based on project count
     let fillColor;
-    switch (densityScore) {
-        case 0:
-            fillColor = '#f8f9fa';
-            break;
-        case 1:
-            fillColor = '#a3d9b1';
-            break;
-        case 2:
-            fillColor = '#48c78e';
-            break;
-        case 3:
-            fillColor = '#4A90E2';
-            break;
-        case 4:
-            fillColor = '#2a4d7a';
-            break;
-        default:
-            fillColor = '#f8f9fa';
+    if (projectCount === 0) {
+        fillColor = '#f8f9fa';
+    } else if (projectCount <= 5) {
+        fillColor = '#a3d9b1';
+    } else if (projectCount <= 20) {
+        fillColor = '#48c78e';
+    } else if (projectCount <= 50) {
+        fillColor = '#4A90E2';
+    } else {
+        fillColor = '#2a4d7a';
     }
 
     return {
@@ -1757,8 +1412,6 @@ function loadProjectMarkers() {
     const statusCheckboxes = document.querySelectorAll('input[name="status"]:checked');
     const sectorCheckboxes = document.querySelectorAll('input[name="sector"]:checked');
     const yearSelect = document.getElementById('year-select');
-    const prioritySelect = document.getElementById('priority-select');
-    const searchInput = document.querySelector('input[name="search"]');
 
     if (countySelect && countySelect.value) {
         params.append('county', countySelect.value);
@@ -1776,18 +1429,7 @@ function loadProjectMarkers() {
         params.append('year', yearSelect.value);
     }
 
-    if (prioritySelect && prioritySelect.value) {
-        params.append('priority', prioritySelect.value);
-    }
-
-    if (searchInput && searchInput.value) {
-        params.append('search', searchInput.value);
-    }
-
     const url = `/api/projects/geojson/?${params.toString()}`;
-
-    // Clear existing markers
-    markerCluster.clearLayers();
 
     // Fetch projects data and create markers
     fetch(url)
@@ -1798,41 +1440,35 @@ function loadProjectMarkers() {
             return response.json();
         })
         .then(data => {
-            data.features.forEach(feature => {
-                const props = feature.properties;
-                const coords = feature.geometry.coordinates;
-                
-                // Create custom icon based on status and priority
-                const icon = createCustomIcon(props.status, props.priority);
-                
-                const marker = L.marker([coords[1], coords[0]], { icon: icon });
-                
-                // Create popup content
-                const popupContent = `
-                    <div class="project-popup">
-                        <h6>${props.name}</h6>
-                        <div class="popup-details">
+            // Clear existing markers
+            projectMarkers.clearLayers();
+
+            // Add new markers
+            L.geoJSON(data, {
+                pointToLayer: function(feature, latlng) {
+                    return L.circleMarker(latlng, {
+                        radius: 6,
+                        fillColor: getStatusColor(feature.properties.status),
+                        color: '#ffffff',
+                        weight: 2,
+                        opacity: 1,
+                        fillOpacity: 0.8
+                    });
+                },
+                onEachFeature: function(feature, layer) {
+                    const props = feature.properties;
+                    const popupContent = `
+                        <div class="project-popup">
+                            <h6>${props.name}</h6>
                             <p><strong>Status:</strong> <span class="badge bg-${props.status}">${props.status}</span></p>
-                            <p><strong>Priority:</strong> <span class="badge bg-${props.priority}">${props.priority}</span></p>
                             <p><strong>Budget:</strong> Ksh ${(props.budget || 0).toLocaleString()}</p>
                             <p><strong>County:</strong> ${props.county}</p>
                             <p><strong>Sector:</strong> ${props.sector || 'N/A'}</p>
-                            <p><strong>Physical Progress:</strong> ${props.physical_progress}%</p>
-                            <p><strong>Financial Progress:</strong> ${props.financial_progress}%</p>
-                            ${props.days_remaining !== null ? `
-                            <p><strong>Days Remaining:</strong> 
-                                <span class="${props.days_remaining < 0 ? 'text-danger' : 'text-success'}">
-                                    ${props.days_remaining} days
-                                </span>
-                            </p>
-                            ` : ''}
                         </div>
-                    </div>
-                `;
-                
-                marker.bindPopup(popupContent);
-                markerCluster.addLayer(marker);
-            });
+                    `;
+                    layer.bindPopup(popupContent);
+                }
+            }).addTo(projectMarkers);
         })
         .catch(error => {
             console.error('Error loading project markers:', error);
@@ -1840,84 +1476,14 @@ function loadProjectMarkers() {
         });
 }
 
-function loadProjectMarkersWithoutClustering() {
-    // Similar to loadProjectMarkers but without clustering
-    const params = new URLSearchParams();
-    // ... same parameter building as loadProjectMarkers
-
-    const url = `/api/projects/geojson/?${params.toString()}`;
-
-    projectMarkers.clearLayers();
-
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            data.features.forEach(feature => {
-                const props = feature.properties;
-                const coords = feature.geometry.coordinates;
-                const icon = createCustomIcon(props.status, props.priority);
-                
-                const marker = L.marker([coords[1], coords[0]], { icon: icon });
-                
-                const popupContent = `...`; // Same as above
-                marker.bindPopup(popupContent);
-                projectMarkers.addLayer(marker);
-            });
-            
-            kenyaMap.addLayer(projectMarkers);
-        })
-        .catch(error => {
-            console.error('Error loading project markers:', error);
-            showNotification('Error loading project markers', 'error');
-        });
-}
-
-function createCustomIcon(status, priority) {
-    // Define colors based on status and priority
-    let color;
-    switch (status) {
-        case 'completed':
-            color = '#28a745';
-            break;
-        case 'ongoing':
-            color = '#ffc107';
-            break;
-        case 'delayed':
-            color = '#dc3545';
-            break;
-        case 'planned':
-            color = '#6c757d';
-            break;
-        default:
-            color = '#6c757d';
-    }
-
-    // Add priority indicator (border)
-    let priorityBorder = '2px solid white';
-    if (priority === 'high') {
-        priorityBorder = '3px solid #ffc107';
-    } else if (priority === 'critical') {
-        priorityBorder = '3px solid #dc3545';
-    }
-
-    // Create custom HTML for marker
-    const html = `
-        <div style="
-            background-color: ${color};
-            width: 12px;
-            height: 12px;
-            border: ${priorityBorder};
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        "></div>
-    `;
-
-    return L.divIcon({
-        html: html,
-        className: 'custom-marker',
-        iconSize: [12, 12],
-        iconAnchor: [6, 6]
-    });
+function getStatusColor(status) {
+    const colors = {
+        'completed': '#28a745',
+        'ongoing': '#ffc107',
+        'delayed': '#dc3545',
+        'planned': '#6c757d'
+    };
+    return colors[status] || '#6c757d';
 }
 
 function showMapLoading(show) {
@@ -2003,30 +1569,12 @@ function showAreaSummary(properties, level) {
                     </div>
                 </div>
                 ` : ''}
-                ${properties.ongoing_projects ? `
+                ${properties.area_sqkm ? `
                 <div class="stat-item">
-                    <i class="fas fa-spinner"></i>
+                    <i class="fas fa-ruler-combined"></i>
                     <div>
-                        <strong>${properties.ongoing_projects}</strong>
-                        <span>Ongoing Projects</span>
-                    </div>
-                </div>
-                ` : ''}
-                ${properties.avg_progress ? `
-                <div class="stat-item">
-                    <i class="fas fa-chart-line"></i>
-                    <div>
-                        <strong>${properties.avg_progress}%</strong>
-                        <span>Avg Progress</span>
-                    </div>
-                </div>
-                ` : ''}
-                ${properties.overdue_projects ? `
-                <div class="stat-item">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    <div>
-                        <strong>${properties.overdue_projects}</strong>
-                        <span>Overdue Projects</span>
+                        <strong>${properties.area_sqkm} km²</strong>
+                        <span>Area</span>
                     </div>
                 </div>
                 ` : ''}
@@ -2074,9 +1622,9 @@ function initStatusChart() {
     const ctx = document.getElementById('statusChart').getContext('2d');
     const statusData = JSON.parse('{{ status_counts_json|escapejs }}');
     
-    const labels = Object.keys(statusData).map(key => key.charAt(0).toUpperCase() + key.slice(1));
-    const data = Object.values(statusData).map(item => item.count);
-    const backgroundColors = Object.keys(statusData).map(status => getStatusColor(status));
+    const labels = Object.keys(statusData);
+    const data = Object.values(statusData);
+    const backgroundColors = labels.map(status => getStatusColor(status));
     
     statusChart = new Chart(ctx, {
         type: 'doughnut',
@@ -2158,97 +1706,24 @@ function initSectorChart() {
     });
 }
 
-function initPriorityChart() {
-    const ctx = document.getElementById('priorityChart').getContext('2d');
-    const priorityData = JSON.parse('{{ priority_data_json|escapejs }}');
-    
-    const labels = Object.keys(priorityData).map(key => key.charAt(0).toUpperCase() + key.slice(1));
-    const data = Object.values(priorityData).map(item => item.count);
-    const backgroundColors = ['#6c757d', '#17a2b8', '#ffc107', '#dc3545'];
-    
-    priorityChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: labels,
-            datasets: [{
-                data: data,
-                backgroundColor: backgroundColors,
-                borderWidth: 2,
-                borderColor: '#fff'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                }
-            }
-        }
-    });
-}
-
-function initCountyChart() {
-    const ctx = document.getElementById('countyChart').getContext('2d');
-    const countyData = JSON.parse('{{ county_stats_json|escapejs }}');
-    
-    const labels = countyData.map(item => item.county);
-    const data = countyData.map(item => item.count);
-    
-    countyChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Number of Projects',
-                data: data,
-                backgroundColor: '#48c78e',
-                borderColor: '#28a745',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Number of Projects'
-                    }
-                },
-                x: {
-                    ticks: {
-                        maxRotation: 45,
-                        minRotation: 45
-                    }
-                }
-            }
-        }
-    });
-}
-
 function initBudgetChart() {
     const ctx = document.getElementById('budgetChart').getContext('2d');
-    const statusData = JSON.parse('{{ status_counts_json|escapejs }}');
     
-    const labels = Object.keys(statusData).map(key => key.charAt(0).toUpperCase() + key.slice(1));
-    const data = Object.values(statusData).map(item => item.budget / 1000000); // Convert to millions
+    // Sample data - you would replace this with actual data from your backend
+    const budgetData = {
+        'completed': {{ budget_stats.total_budget|default:0 }} * 0.4, // Example calculation
+        'ongoing': {{ budget_stats.total_budget|default:0 }} * 0.35,
+        'delayed': {{ budget_stats.total_budget|default:0 }} * 0.15,
+        'planned': {{ budget_stats.total_budget|default:0 }} * 0.1
+    };
     
     budgetChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: labels,
+            labels: ['Completed', 'Ongoing', 'Delayed', 'Planned'],
             datasets: [{
-                label: 'Budget (Millions KES)',
-                data: data,
+                label: 'Budget (KES)',
+                data: Object.values(budgetData),
                 backgroundColor: [
                     '#28a745',
                     '#ffc107', 
@@ -2275,7 +1750,7 @@ function initBudgetChart() {
                     callbacks: {
                         label: function(context) {
                             const value = context.raw || 0;
-                            return `Ksh ${(value * 1000000).toLocaleString()}`;
+                            return `Ksh ${value.toLocaleString()}`;
                         }
                     }
                 }
@@ -2283,9 +1758,10 @@ function initBudgetChart() {
             scales: {
                 y: {
                     beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Budget (Millions KES)'
+                    ticks: {
+                        callback: function(value) {
+                            return 'Ksh ' + value.toLocaleString();
+                        }
                     }
                 }
             }
@@ -2295,41 +1771,34 @@ function initBudgetChart() {
 
 function initTimelineChart() {
     const ctx = document.getElementById('timelineChart').getContext('2d');
-    const timelineData = JSON.parse('{{ timeline_data_json|escapejs }}');
     
-    const labels = timelineData.map(item => item.month);
-    const totalData = timelineData.map(item => item.total);
-    const completedData = timelineData.map(item => item.completed);
-    const ongoingData = timelineData.map(item => item.ongoing);
+    // Sample timeline data
+    const timelineData = {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        started: [5, 8, 12, 15, 18, 20, 25, 28, 30, 32, 35, 40],
+        completed: [2, 5, 8, 12, 15, 18, 22, 25, 28, 30, 32, 35]
+    };
     
     timelineChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: labels,
+            labels: timelineData.labels,
             datasets: [
                 {
-                    label: 'Total Projects',
-                    data: totalData,
+                    label: 'Projects Started',
+                    data: timelineData.started,
                     borderColor: '#4A90E2',
                     backgroundColor: 'rgba(74, 144, 226, 0.1)',
                     tension: 0.4,
                     fill: true
                 },
                 {
-                    label: 'Completed',
-                    data: completedData,
+                    label: 'Projects Completed',
+                    data: timelineData.completed,
                     borderColor: '#28a745',
                     backgroundColor: 'rgba(40, 167, 69, 0.1)',
                     tension: 0.4,
-                    fill: false
-                },
-                {
-                    label: 'Ongoing',
-                    data: ongoingData,
-                    borderColor: '#ffc107',
-                    backgroundColor: 'rgba(255, 193, 7, 0.1)',
-                    tension: 0.4,
-                    fill: false
+                    fill: true
                 }
             ]
         },
@@ -2354,102 +1823,11 @@ function initTimelineChart() {
     });
 }
 
-function initProgressChart() {
-    const ctx = document.getElementById('progressChart').getContext('2d');
-    
-    // Sample progress data - you would replace this with actual data
-    const progressData = {
-        labels: ['Q1', 'Q2', 'Q3', 'Q4'],
-        physical: [25, 45, 65, 85],
-        financial: [20, 40, 60, 80]
-    };
-    
-    progressChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: progressData.labels,
-            datasets: [
-                {
-                    label: 'Physical Progress',
-                    data: progressData.physical,
-                    backgroundColor: '#4A90E2',
-                    borderColor: '#2a4d7a',
-                    borderWidth: 1
-                },
-                {
-                    label: 'Financial Progress',
-                    data: progressData.financial,
-                    backgroundColor: '#48c78e',
-                    borderColor: '#28a745',
-                    borderWidth: 1
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'top',
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    title: {
-                        display: true,
-                        text: 'Progress (%)'
-                    }
-                }
-            }
-        }
-    });
-}
-
-function initRiskChart() {
-    const ctx = document.getElementById('riskChart').getContext('2d');
-    
-    // Sample risk data
-    const riskData = {
-        labels: ['Overdue', 'Delayed', 'High Priority', 'Critical'],
-        data: [{{ overdue_projects }}, {{ delayed_projects }}, 
-               {{ high_priority_projects }}, {{ high_priority_projects }}],
-        colors: ['#dc3545', '#fd7e14', '#ffc107', '#dc3545']
-    };
-    
-    riskChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: riskData.labels,
-            datasets: [{
-                data: riskData.data,
-                backgroundColor: riskData.colors,
-                borderWidth: 2,
-                borderColor: '#fff'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                }
-            }
-        }
-    });
-}
-
 function initCharts() {
     initStatusChart();
     initSectorChart();
-    initPriorityChart();
-    initCountyChart();
     initBudgetChart();
     initTimelineChart();
-    initProgressChart();
-    initRiskChart();
 }
 
 // Filter handlers
@@ -2457,23 +1835,23 @@ function handleCountySelection(countyName) {
     updateVisualizations();
 }
 
+function handleSubcountySelection(subcountyName) {
+    updateVisualizations();
+}
+
+function handleWardSelection(wardName) {
+    updateVisualizations();
+}
+
 function updateVisualizations() {
     // Reload map data with current filters
     loadShapefileLayer(currentLevel);
-    
-    // Check cluster toggle state
-    const clusterToggle = document.getElementById('cluster-toggle');
-    if (clusterToggle.checked) {
-        loadProjectMarkers();
-    } else {
-        loadProjectMarkersWithoutClustering();
-    }
+    loadProjectMarkers();
     
     // Update charts if they exist
     if (statusChart) {
         statusChart.update();
     }
-    // Add similar updates for other charts...
 }
 
 function clearAllFilters() {
@@ -2493,35 +1871,6 @@ function clearAllFilters() {
 function refreshMonitoringData() {
     showNotification('Data refreshed successfully', 'success');
     updateVisualizations();
-}
-
-function exportData() {
-    // Build export URL with current filters
-    const params = new URLSearchParams();
-    const countySelect = document.getElementById('county-select');
-    const statusCheckboxes = document.querySelectorAll('input[name="status"]:checked');
-    const sectorCheckboxes = document.querySelectorAll('input[name="sector"]:checked');
-    const yearSelect = document.getElementById('year-select');
-
-    if (countySelect && countySelect.value) {
-        params.append('county', countySelect.value);
-    }
-
-    statusCheckboxes.forEach(checkbox => {
-        params.append('status', checkbox.value);
-    });
-
-    sectorCheckboxes.forEach(checkbox => {
-        params.append('sector', checkbox.value);
-    });
-
-    if (yearSelect && yearSelect.value) {
-        params.append('year', yearSelect.value);
-    }
-
-    const exportUrl = `/api/projects/export/?${params.toString()}`;
-    window.open(exportUrl, '_blank');
-    showNotification('Export initiated', 'success');
 }
 
 // Initialize everything when page loads
@@ -2568,8 +1917,9 @@ document.addEventListener('DOMContentLoaded', function() {
 // Global functions
 window.clearAllFilters = clearAllFilters;
 window.refreshMonitoringData = refreshMonitoringData;
-window.exportData = exportData;
 window.handleCountySelection = handleCountySelection;
+window.handleSubcountySelection = handleSubcountySelection;
+window.handleWardSelection = handleWardSelection;
 window.clearSelection = clearSelection;
 </script>
 
