@@ -230,9 +230,34 @@ def home(request):
         # Recent projects with limit
         recent_projects = projects.order_by("-start_date")[:8]
         highest_budget_projects = projects.order_by("-budget")[:8]
-        overdue_projects_list = projects.filter(
+        
+        # Overdue projects list with days_remaining calculation
+        overdue_projects_list = []
+        overdue_projects_query = projects.filter(
             Q(status='ongoing', end_date__lt=current_date) | Q(status='delayed')
         ).order_by('end_date')[:8]
+        
+        for project in overdue_projects_query:
+            days_remaining = 0
+            if project.end_date:
+                days_remaining = (current_date - project.end_date).days
+            # Create a dictionary with project data including calculated days_remaining
+            project_data = {
+                'id': project.id,
+                'name': project.name,
+                'budget': project.budget,
+                'county': project.county,
+                'priority': project.priority,
+                'status': project.status,
+                'end_date': project.end_date,
+                'days_remaining': days_remaining,  # This will be negative for overdue
+                'sector': project.sector,
+                'start_date': project.start_date,
+                'physical_progress': project.physical_progress,
+                'financial_progress': project.financial_progress,
+                'project_manager': project.project_manager
+            }
+            overdue_projects_list.append(project_data)
 
         # Recent activity
         recent_updates = ProjectUpdate.objects.select_related("project").only(
@@ -603,7 +628,6 @@ def projects_geojson(request):
                         "financial_progress": project.financial_progress,
                         "project_manager": project.project_manager or "",
                         "days_remaining": days_remaining,
-                        "is_overdue": project.is_overdue,
                         "start_date": project.start_date.isoformat() if project.start_date else None,
                         "end_date": project.end_date.isoformat() if project.end_date else None,
                     }
@@ -704,8 +728,6 @@ def spatial_statistics(request):
         
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
-
-
 
 # ---------------- Dashboard View ---------------- #
 # ---------------- Dashboard View ---------------- #
