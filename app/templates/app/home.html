@@ -2414,7 +2414,7 @@ function initRiskChart() {
     const riskData = {
         labels: ['Overdue', 'Delayed', 'High Priority', 'Critical'],
         data: [{{ overdue_projects }}, {{ delayed_projects }}, 
-               {{ high_priority_projects }}, {{ high_priority_projects|divisibleby:2 ? high_priority_projects|add:"-1" : high_priority_projects }}],
+               {{ high_priority_projects }}, {{ high_priority_projects }}],
         colors: ['#dc3545', '#fd7e14', '#ffc107', '#dc3545']
     };
     
