@@ -36,4 +36,18 @@ urlpatterns = [
     
     # Add login URL if not already present
     path('accounts/login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    
+    
+    
+    # GeoJSON API Endpoints - FIXED URLs to match your JavaScript
+    path('api/counties/geojson/', views.counties_geojson, name='counties_geojson'),
+    path('api/subcounties/geojson/', views.subcounties_geojson, name='subcounties_geojson'),
+    path('api/wards/geojson/', views.wards_geojson, name='wards_geojson'),
+    path('api/projects/geojson/', views.projects_geojson, name='projects_geojson'),
+    
+    # Analytics
+    path('spatial-statistics/', views.spatial_statistics, name='spatial_statistics'),
+    
+    # Authentication
+    path('accounts/login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
 ]
