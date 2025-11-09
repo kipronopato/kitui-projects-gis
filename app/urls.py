@@ -15,7 +15,7 @@ urlpatterns = [
     path('counties-geojson/', views.counties_geojson, name='counties_geojson'),
     path('subcounties-geojson/', views.subcounties_geojson, name='subcounties_geojson'),
     path('wards-geojson/', views.wards_geojson, name='wards_geojson'),
-    path('project-locations-geojson/', views.project_locations_geojson, name='project_locations_geojson'),
+    #path('project-locations-geojson/', views.project_locations_geojson, name='project_locations_geojson'),
 
     # Spatial Analytics
     path('spatial-statistics/', views.spatial_statistics, name='spatial_statistics'),
