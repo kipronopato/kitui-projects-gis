@@ -51,6 +51,7 @@ import json
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.core.paginator import Paginator
+from django.views.decorators.csrf import csrf_exempt
 from app.models import Project, KenyaCounty, KenyaSubCounty, Kenyawards, ProjectUpdate, CitizenReport
 
 def _clean_get(request, name):
@@ -61,6 +62,17 @@ def _clean_get(request, name):
 def _clean_getlist(request, name):
     """Return list cleaned of empty/'None' entries."""
     return [v for v in request.GET.getlist(name) if v and v != "None"]
+
+def _decimal_to_float(obj):
+    """Recursively convert Decimal objects to float for JSON serialization."""
+    if isinstance(obj, Decimal):
+        return float(obj)
+    elif isinstance(obj, dict):
+        return {k: _decimal_to_float(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [_decimal_to_float(v) for v in obj]
+    else:
+        return obj
 
 def debug_data(request):
     """Debug view to check what data exists"""
@@ -174,9 +186,7 @@ def home(request):
         )
         
         # Convert Decimal values to float in budget_stats
-        for key, value in budget_stats.items():
-            if isinstance(value, Decimal):
-                budget_stats[key] = float(value)
+        budget_stats = _decimal_to_float(budget_stats)
 
         # Status analytics
         status_counts_chart = {}
@@ -238,13 +248,16 @@ def home(request):
                     .values_list("county", flat=True).distinct().order_by("county"))
         
         # Try to get counties from KenyaCounty model, fallback to projects
-        counties_from_model = list(KenyaCounty.objects.exclude(county__isnull=True)
-                    .values_list("county", flat=True).distinct().order_by("county"))
-        
-        counties = counties_from_model if counties_from_model else counties_from_projects
+        try:
+            counties_from_model = list(KenyaCounty.objects.exclude(county__isnull=True)
+                        .values_list("county", flat=True).distinct().order_by("county"))
+            counties = counties_from_model if counties_from_model else counties_from_projects
+        except Exception as e:
+            print(f"Error loading counties from model: {e}")
+            counties = counties_from_projects
 
-        print(f"Available counties: {counties}")
-        print(f"Available sectors: {sectors}")
+        print(f"Available counties: {len(counties)}")
+        print(f"Available sectors: {len(sectors)}")
 
         # ---------------- GeoJSON Generation ----------------
         map_projects = projects.filter(
@@ -358,10 +371,20 @@ def home(request):
             "error": f"An error occurred while loading the dashboard: {str(e)}"
         })
 
-# Enhanced API endpoints
+# Enhanced API endpoints with error handling and CORS support
+@csrf_exempt
 def counties_geojson(request):
     """Enhanced counties GeoJSON with project statistics"""
     try:
+        print("Loading counties GeoJSON...")
+        
+        # Check if KenyaCounty model has data
+        if not KenyaCounty.objects.exists():
+            return JsonResponse({
+                "type": "FeatureCollection",
+                "features": []
+            })
+            
         counties = KenyaCounty.objects.all()
         selected_counties = _clean_getlist(request, "county")
         
@@ -384,9 +407,18 @@ def counties_geojson(request):
                 delayed=Count('id', filter=Q(status='delayed'))
             )
             
+            # Convert geometry safely
+            geometry_data = None
+            if county.geom:
+                try:
+                    geometry_data = json.loads(county.geom.geojson)
+                except Exception as e:
+                    print(f"Error parsing geometry for county {county.county}: {e}")
+                    continue
+            
             feature = {
                 "type": "Feature",
-                "geometry": json.loads(county.geom.geojson) if county.geom else None,
+                "geometry": geometry_data,
                 "properties": {
                     "id": county.id,
                     "county": county.county,
@@ -406,14 +438,30 @@ def counties_geojson(request):
             "features": features
         }
         
+        print(f"Returning {len(features)} county features")
         return JsonResponse(response_data)
         
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+        print(f"Error in counties_geojson: {e}")
+        return JsonResponse({
+            "type": "FeatureCollection", 
+            "features": [],
+            "error": str(e)
+        }, status=500)
 
+@csrf_exempt
 def subcounties_geojson(request):
     """Enhanced subcounties GeoJSON"""
     try:
+        print("Loading subcounties GeoJSON...")
+        
+        # Check if KenyaSubCounty model has data
+        if not KenyaSubCounty.objects.exists():
+            return JsonResponse({
+                "type": "FeatureCollection",
+                "features": []
+            })
+            
         subcounties = KenyaSubCounty.objects.all()
         selected_counties = _clean_getlist(request, "county")
         
@@ -431,9 +479,18 @@ def subcounties_geojson(request):
                 completed=Count('id', filter=Q(status='completed'))
             )
             
+            # Convert geometry safely
+            geometry_data = None
+            if subcounty.geom:
+                try:
+                    geometry_data = json.loads(subcounty.geom.geojson)
+                except Exception as e:
+                    print(f"Error parsing geometry for subcounty {subcounty.subcounty}: {e}")
+                    continue
+            
             feature = {
                 "type": "Feature",
-                "geometry": json.loads(subcounty.geom.geojson) if subcounty.geom else None,
+                "geometry": geometry_data,
                 "properties": {
                     "id": subcounty.id,
                     "subcounty": subcounty.subcounty,
@@ -450,14 +507,30 @@ def subcounties_geojson(request):
             "features": features
         }
         
+        print(f"Returning {len(features)} subcounty features")
         return JsonResponse(response_data)
         
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+        print(f"Error in subcounties_geojson: {e}")
+        return JsonResponse({
+            "type": "FeatureCollection", 
+            "features": [],
+            "error": str(e)
+        }, status=500)
 
+@csrf_exempt
 def wards_geojson(request):
     """Enhanced wards GeoJSON"""
     try:
+        print("Loading wards GeoJSON...")
+        
+        # Check if Kenyawards model has data
+        if not Kenyawards.objects.exists():
+            return JsonResponse({
+                "type": "FeatureCollection",
+                "features": []
+            })
+            
         wards = Kenyawards.objects.all()
         selected_counties = _clean_getlist(request, "county")
         
@@ -470,9 +543,18 @@ def wards_geojson(request):
             projects_in_ward = Project.objects.filter(county__icontains=ward.county)
             project_count = projects_in_ward.count()
             
+            # Convert geometry safely
+            geometry_data = None
+            if ward.geom:
+                try:
+                    geometry_data = json.loads(ward.geom.geojson)
+                except Exception as e:
+                    print(f"Error parsing geometry for ward {ward.ward}: {e}")
+                    continue
+            
             feature = {
                 "type": "Feature",
-                "geometry": json.loads(ward.geom.geojson) if ward.geom else None,
+                "geometry": geometry_data,
                 "properties": {
                     "id": ward.id,
                     "ward": ward.ward,
@@ -488,14 +570,23 @@ def wards_geojson(request):
             "features": features
         }
         
+        print(f"Returning {len(features)} ward features")
         return JsonResponse(response_data)
         
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+        print(f"Error in wards_geojson: {e}")
+        return JsonResponse({
+            "type": "FeatureCollection", 
+            "features": [],
+            "error": str(e)
+        }, status=500)
 
+@csrf_exempt
 def projects_geojson(request):
     """API endpoint for project locations with enhanced filtering"""
     try:
+        print("Loading projects GeoJSON...")
+        
         projects = Project.objects.all()
         
         # Apply filters
@@ -574,11 +665,18 @@ def projects_geojson(request):
             }
         }
         
+        print(f"Returning {len(features)} project features")
         return JsonResponse(response_data)
         
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
+        print(f"Error in projects_geojson: {e}")
+        return JsonResponse({
+            "type": "FeatureCollection", 
+            "features": [],
+            "error": str(e)
+        }, status=500)
 
+@csrf_exempt
 def spatial_statistics(request):
     """Comprehensive project analytics"""
     try:
@@ -602,9 +700,7 @@ def spatial_statistics(request):
         )
         
         # Convert Decimal values to float
-        for key, value in performance_metrics.items():
-            if isinstance(value, Decimal):
-                performance_metrics[key] = float(value)
+        performance_metrics = _decimal_to_float(performance_metrics)
         
         # Risk analysis
         current_date = timezone.now().date()
@@ -624,11 +720,7 @@ def spatial_statistics(request):
         ).order_by('-total_budget')[:10])
         
         # Convert Decimal values to float in sector_analysis
-        for item in sector_analysis:
-            if 'total_budget' in item and isinstance(item['total_budget'], Decimal):
-                item['total_budget'] = float(item['total_budget'])
-            if 'avg_budget' in item and isinstance(item['avg_budget'], Decimal):
-                item['avg_budget'] = float(item['avg_budget'])
+        sector_analysis = _decimal_to_float(sector_analysis)
         
         # County analysis
         county_analysis = list(projects.values('county').annotate(
@@ -637,9 +729,7 @@ def spatial_statistics(request):
         ).order_by('-count')[:10])
         
         # Convert Decimal values to float in county_analysis
-        for item in county_analysis:
-            if 'total_budget' in item and isinstance(item['total_budget'], Decimal):
-                item['total_budget'] = float(item['total_budget'])
+        county_analysis = _decimal_to_float(county_analysis)
         
         return JsonResponse({
             'performance_metrics': performance_metrics,
@@ -650,7 +740,53 @@ def spatial_statistics(request):
         })
         
     except Exception as e:
+        print(f"Error in spatial_statistics: {e}")
         return JsonResponse({"error": str(e)}, status=500)
+
+# Fallback API endpoints for when spatial data is not available
+@csrf_exempt
+def fallback_counties_data(request):
+    """Fallback endpoint that returns basic county data from Project model"""
+    try:
+        county_data = Project.objects.exclude(county__isnull=True).exclude(county="").values('county').annotate(
+            project_count=Count('id'),
+            total_budget=Sum('budget'),
+            completed_projects=Count('id', filter=Q(status='completed'))
+        ).order_by('county')
+        
+        data = list(county_data)
+        data = _decimal_to_float(data)
+        
+        return JsonResponse({
+            "counties": data,
+            "source": "project_data_fallback"
+        })
+        
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+# Health check endpoint
+@csrf_exempt
+def health_check(request):
+    """Health check endpoint for monitoring"""
+    try:
+        # Check database connectivity
+        project_count = Project.objects.count()
+        county_count = KenyaCounty.objects.count()
+        
+        return JsonResponse({
+            "status": "healthy",
+            "database": "connected",
+            "projects_count": project_count,
+            "counties_count": county_count,
+            "timestamp": timezone.now().isoformat()
+        })
+    except Exception as e:
+        return JsonResponse({
+            "status": "unhealthy",
+            "error": str(e),
+            "timestamp": timezone.now().isoformat()
+        }, status=500)
 
 # ---------------- Dashboard View ---------------- #
 # ---------------- Dashboard View ---------------- #
