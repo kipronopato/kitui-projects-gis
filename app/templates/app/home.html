@@ -118,6 +118,19 @@
     </div>
   </div>
 
+  <!-- Debug Info (remove in production) -->
+  {% if error %}
+  <div class="container-fluid mt-3">
+    <div class="alert alert-danger">
+      <h5><i class="fas fa-exclamation-triangle"></i> Error Loading Data</h5>
+      <p class="mb-0">{{ error }}</p>
+      <small class="mt-2 d-block">
+        <a href="/debug-data/" target="_blank">Check debug data</a> to see what's in your database.
+      </small>
+    </div>
+  </div>
+  {% endif %}
+
   <!-- Main Content -->
   <div class="main-content">
     <div class="container-fluid">
@@ -177,7 +190,7 @@
                 </div>
                 <div class="collapse show" id="countyFilter">
                   <div class="filter-options">
-                    <select class="form-select form-select-sm" name="county" id="county-select" onchange="handleCountySelection(this.value)">
+                    <select class="form-select form-select-sm" name="county" id="county-select" onchange="this.form.submit()">
                       <option value="">All Counties</option>
                       {% for county in counties %}
                       <option value="{{ county }}" {% if selected_county == county %}selected{% endif %}>
@@ -201,7 +214,8 @@
                     <div class="form-check">
                       <input class="form-check-input" type="checkbox" name="status" 
                              value="{{ status }}" id="status-{{ forloop.counter }}"
-                             {% if status in selected_statuses %}checked{% endif %}>
+                             {% if status in selected_statuses %}checked{% endif %}
+                             onchange="this.form.submit()">
                       <label class="form-check-label" for="status-{{ forloop.counter }}">
                         {{ status_labels|get_item:status }}
                       </label>
@@ -222,16 +236,19 @@
                     <input type="text" class="form-control form-control-sm" 
                            placeholder="Search sectors..." id="sector-search">
                   </div>
-                  <div class="filter-options">
+                  <div class="filter-options" id="sector-options">
                     {% for sector in sectors %}
                     <div class="form-check sector-item">
                       <input class="form-check-input" type="checkbox" name="sector"
                              value="{{ sector }}" id="sector-{{ forloop.counter }}"
-                             {% if sector in selected_sectors %}checked{% endif %}>
+                             {% if sector in selected_sectors %}checked{% endif %}
+                             onchange="this.form.submit()">
                       <label class="form-check-label" for="sector-{{ forloop.counter }}">
-                        {{ sector }}
+                        {{ sector|default:"Not Specified" }}
                       </label>
                     </div>
+                    {% empty %}
+                    <div class="text-muted small">No sectors available</div>
                     {% endfor %}
                   </div>
                 </div>
@@ -245,7 +262,7 @@
                 </div>
                 <div class="collapse show" id="yearFilter">
                   <div class="filter-options">
-                    <select class="form-select form-select-sm" name="year" id="year-select">
+                    <select class="form-select form-select-sm" name="year" id="year-select" onchange="this.form.submit()">
                       <option value="">All Years</option>
                       {% for year in fiscal_years %}
                       <option value="{{ year }}" {% if selected_year == year|stringformat:"s" %}selected{% endif %}>
@@ -257,10 +274,24 @@
                 </div>
               </div>
 
-              <button type="submit" class="btn btn-primary w-100 mt-3">
-                <i class="fas fa-filter me-1"></i> Apply Filters
-              </button>
+              <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-filter me-1"></i> Apply Filters
+                </button>
+                <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                  <i class="fas fa-refresh me-1"></i> Reset
+                </a>
+              </div>
             </form>
+
+            <!-- Debug Link -->
+            <div class="mt-3 pt-3 border-top">
+              <small class="text-muted">
+                <a href="/debug-data/" target="_blank" class="text-decoration-none">
+                  <i class="fas fa-bug me-1"></i> Debug Data
+                </a>
+              </small>
+            </div>
           </div>
         </div>
 
@@ -276,7 +307,7 @@
                 <div class="card-header">
                   <h5 class="mb-0">
                     <i class="fas fa-map me-2"></i>
-                    <span id="map-title">Project Distribution - All Counties</span>
+                    <span id="map-title">Kenya Projects Distribution</span>
                   </h5>
                   <div class="map-controls">
                     <!-- Layer Controls -->
@@ -321,30 +352,6 @@
                   
                   <!-- Map Legends -->
                   <div class="map-legends">
-                    <div class="map-legend density-legend">
-                      <h6>Project Density</h6>
-                      <div class="legend-item">
-                        <span class="legend-color density-0"></span>
-                        <span>No Projects</span>
-                      </div>
-                      <div class="legend-item">
-                        <span class="legend-color density-1"></span>
-                        <span>1-5 Projects</span>
-                      </div>
-                      <div class="legend-item">
-                        <span class="legend-color density-2"></span>
-                        <span>6-20 Projects</span>
-                      </div>
-                      <div class="legend-item">
-                        <span class="legend-color density-3"></span>
-                        <span>21-50 Projects</span>
-                      </div>
-                      <div class="legend-item">
-                        <span class="legend-color density-4"></span>
-                        <span>50+ Projects</span>
-                      </div>
-                    </div>
-                    
                     <div class="map-legend project-legend">
                       <h6>Project Status</h6>
                       <div class="legend-item">
@@ -356,8 +363,36 @@
                         <span>Ongoing</span>
                       </div>
                       <div class="legend-item">
+                        <span class="legend-color planned"></span>
+                        <span>Planned</span>
+                      </div>
+                      <div class="legend-item">
                         <span class="legend-color delayed"></span>
                         <span>Delayed</span>
+                      </div>
+                    </div>
+                    
+                    <div class="map-legend density-legend">
+                      <h6>Project Density</h6>
+                      <div class="legend-item">
+                        <span class="legend-color density-0"></span>
+                        <span>No Projects</span>
+                      </div>
+                      <div class="legend-item">
+                        <span class="legend-color density-1"></span>
+                        <span>Low</span>
+                      </div>
+                      <div class="legend-item">
+                        <span class="legend-color density-2"></span>
+                        <span>Medium</span>
+                      </div>
+                      <div class="legend-item">
+                        <span class="legend-color density-3"></span>
+                        <span>High</span>
+                      </div>
+                      <div class="legend-item">
+                        <span class="legend-color density-4"></span>
+                        <span>Very High</span>
                       </div>
                     </div>
                   </div>
@@ -421,24 +456,19 @@
                     </div>
                     <div class="card-body">
                       <div class="project-list">
-                        {% for project in recent_projects %}
-                        {% if project.status == 'delayed' or project.status == 'ongoing' and project.end_date < current_date %}
-                        <div class="project-item">
-                          <div class="project-info">
-                            <strong>{{ project.name|truncatechars:30 }}</strong>
-                            <span class="budget">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
+                        {% for project in projects %}
+                          {% if project.status == 'delayed' or project.status == 'ongoing' and project.end_date < current_date %}
+                          <div class="project-item">
+                            <div class="project-info">
+                              <strong>{{ project.name|truncatechars:30 }}</strong>
+                              <span class="budget">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
+                            </div>
+                            <div class="project-meta">
+                              <span class="location">{{ project.county }}</span>
+                              <span class="status badge bg-danger">Overdue</span>
+                            </div>
                           </div>
-                          <div class="project-meta">
-                            <span class="location">{{ project.county }}</span>
-                            <span class="status badge bg-danger">{{ project.status }}</span>
-                            {% if project.end_date %}
-                            <span class="days-remaining text-danger">
-                              Overdue
-                            </span>
-                            {% endif %}
-                          </div>
-                        </div>
-                        {% endif %}
+                          {% endif %}
                         {% empty %}
                         <p class="text-center text-muted">No overdue projects found</p>
                         {% endfor %}
@@ -473,6 +503,19 @@
                     </div>
                   </div>
                 </div>
+
+                <div class="col-md-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5 class="mb-0"><i class="fas fa-map me-2"></i>Projects by County</h5>
+                    </div>
+                    <div class="card-body">
+                      <div id="countyChartContainer">
+                        <canvas id="countyChart" height="300"></canvas>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -499,6 +542,43 @@
                     </div>
                     <div class="card-body">
                       <canvas id="timelineChart" height="250"></canvas>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Performance Metrics -->
+                <div class="col-md-12">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>Performance Metrics</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="row text-center">
+                        <div class="col-md-3">
+                          <div class="metric-card">
+                            <h3>{{ completion_rate }}%</h3>
+                            <p>Completion Rate</p>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="metric-card">
+                            <h3>{{ ongoing_projects }}</h3>
+                            <p>Ongoing Projects</p>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="metric-card">
+                            <h3>{{ overdue_projects }}</h3>
+                            <p>Overdue Projects</p>
+                          </div>
+                        </div>
+                        <div class="col-md-3">
+                          <div class="metric-card">
+                            <h3>{{ upcoming_deadlines }}</h3>
+                            <p>Upcoming Deadlines</p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -781,7 +861,7 @@
 
 .filter-options {
   padding: 1rem;
-  max-height: 150px;
+  max-height: 200px;
   overflow-y: auto;
 }
 
@@ -960,10 +1040,10 @@
   color: #6c757d;
 }
 
-.bg-completed { background-color: #28a745 !important; }
+.bg-completed { background-color: #28a745 !important; color: white !important; }
 .bg-ongoing { background-color: #ffc107 !important; color: #000 !important; }
-.bg-delayed { background-color: #dc3545 !important; }
-.bg-planned { background-color: #6c757d !important; }
+.bg-delayed { background-color: #dc3545 !important; color: white !important; }
+.bg-planned { background-color: #6c757d !important; color: white !important; }
 
 /* Enhanced Map Controls */
 .map-controls {
@@ -1008,6 +1088,25 @@
   font-weight: 500;
 }
 
+/* Metric Cards */
+.metric-card {
+  padding: 1rem;
+  text-align: center;
+}
+
+.metric-card h3 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #4A90E2;
+  margin-bottom: 0.5rem;
+}
+
+.metric-card p {
+  color: #6c757d;
+  margin: 0;
+  font-weight: 500;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .filters-sidebar {
@@ -1026,6 +1125,11 @@
     left: auto;
     padding: 0.8rem;
     justify-content: center;
+  }
+  
+  .map-controls {
+    flex-direction: column;
+    align-items: flex-start;
   }
 }
 
@@ -1072,35 +1176,42 @@ let choroplethLayers = {
     subcounty: null,
     ward: null
 };
+let allProjectMarkers = [];
+let visibleProjectMarkers = [];
 
 // Chart instances
-let statusChart, sectorChart, budgetChart, timelineChart;
+let statusChart, sectorChart, budgetChart, timelineChart, countyChart;
 
 // Initialize notification marquee
 function initNotificationMarquee() {
     const notificationMarquee = document.getElementById('notification-marquee');
     if (!notificationMarquee) return;
     
+    const totalProjects = {{ total_projects|default:0 }};
+    const totalBudget = {{ total_budget|default:0 }};
+    const completionRate = {{ completion_rate|default:0 }};
+    const overdueProjects = {{ overdue_projects|default:0 }};
+    
     const notifications = [
         {
             badge: 'LIVE',
             type: 'success',
-            text: `Kenya Projects Dashboard: Tracking {{ total_projects|intcomma }} projects nationwide`
+            text: `Kenya Projects Dashboard: Tracking ${totalProjects.toLocaleString()} projects nationwide`
         },
         {
             badge: 'BUDGET',
             type: 'info',
-            text: `Total Investment: Ksh {{ total_budget|floatformat:0|intcomma }}`
+            text: `Total Investment: Ksh ${totalBudget.toLocaleString()}`
         },
         {
             badge: 'PROGRESS',
             type: 'primary',
-            text: `Completion Rate: {{ completion_rate }}%`
+            text: `Overall Completion Rate: ${completionRate}%`
         },
         {
             badge: 'ALERT',
             type: 'warning',
-            text: `{{ overdue_projects }} projects require attention`
+            text: `${overdueProjects} projects require immediate attention`
         }
     ];
     
@@ -1140,9 +1251,14 @@ function initMap() {
     // Load initial shapefile (counties)
     loadShapefileLayer('county');
     
-    // Initialize project markers
+    // Initialize project markers layer
     projectMarkers = L.layerGroup().addTo(kenyaMap);
+    
+    // Load initial project markers
     loadProjectMarkers();
+    
+    // Add zoom event listener for dynamic marker display
+    kenyaMap.on('zoomend', updateMarkerDensity);
 }
 
 function initBaseLayers() {
@@ -1218,6 +1334,7 @@ function initLayerControls() {
     document.getElementById('project-markers-toggle').addEventListener('change', function(e) {
         if (this.checked) {
             kenyaMap.addLayer(projectMarkers);
+            updateMarkerDensity();
         } else {
             kenyaMap.removeLayer(projectMarkers);
         }
@@ -1307,10 +1424,13 @@ function createChoroplethLayer(geojsonData, level) {
             nameProperty = 'county';
     }
 
+    // Calculate max projects for dynamic coloring
+    const maxProjects = Math.max(...geojsonData.features.map(f => f.properties.project_count || 0));
+
     // Create choropleth layer with enhanced styling
     const choroplethLayer = L.geoJSON(geojsonData, {
         style: function(feature) {
-            return getChoroplethStyle(feature, level);
+            return getChoroplethStyle(feature, level, maxProjects);
         },
         onEachFeature: function(feature, layer) {
             // Add interactivity
@@ -1360,6 +1480,12 @@ function createChoroplethLayer(geojsonData, level) {
                             <span class="stat-value">${props.completion_rate}%</span>
                         </div>
                         ` : ''}
+                        ${props.completed_projects ? `
+                        <div class="stat-row">
+                            <span class="stat-label">Completed:</span>
+                            <span class="stat-value">${props.completed_projects}</span>
+                        </div>
+                        ` : ''}
                     </div>
                 </div>
             `;
@@ -1378,21 +1504,28 @@ function createChoroplethLayer(geojsonData, level) {
     }
 }
 
-function getChoroplethStyle(feature, level) {
+function getChoroplethStyle(feature, level, maxProjects) {
     const projectCount = feature.properties.project_count || 0;
     
-    // Define color ranges based on project count
+    // Dynamic color ranges based on actual data distribution
     let fillColor;
+    
     if (projectCount === 0) {
         fillColor = '#f8f9fa';
-    } else if (projectCount <= 5) {
-        fillColor = '#a3d9b1';
-    } else if (projectCount <= 20) {
-        fillColor = '#48c78e';
-    } else if (projectCount <= 50) {
-        fillColor = '#4A90E2';
+    } else if (maxProjects > 0) {
+        const percentage = projectCount / maxProjects;
+        
+        if (percentage <= 0.25) {
+            fillColor = '#a3d9b1'; // Light green
+        } else if (percentage <= 0.5) {
+            fillColor = '#48c78e'; // Medium green
+        } else if (percentage <= 0.75) {
+            fillColor = '#4A90E2'; // Blue
+        } else {
+            fillColor = '#2a4d7a'; // Dark blue
+        }
     } else {
-        fillColor = '#2a4d7a';
+        fillColor = '#a3d9b1'; // Default light color
     }
 
     return {
@@ -1429,7 +1562,12 @@ function loadProjectMarkers() {
         params.append('year', yearSelect.value);
     }
 
+    // Get all projects (no pagination for better clustering)
+    params.append('page_size', '1000');
+
     const url = `/api/projects/geojson/?${params.toString()}`;
+
+    showMapLoading(true);
 
     // Fetch projects data and create markers
     fetch(url)
@@ -1440,40 +1578,101 @@ function loadProjectMarkers() {
             return response.json();
         })
         .then(data => {
+            // Store all markers
+            allProjectMarkers = [];
+            
             // Clear existing markers
             projectMarkers.clearLayers();
 
-            // Add new markers
-            L.geoJSON(data, {
-                pointToLayer: function(feature, latlng) {
-                    return L.circleMarker(latlng, {
-                        radius: 6,
-                        fillColor: getStatusColor(feature.properties.status),
-                        color: '#ffffff',
-                        weight: 2,
-                        opacity: 1,
-                        fillOpacity: 0.8
-                    });
-                },
-                onEachFeature: function(feature, layer) {
-                    const props = feature.properties;
+            console.log(`Loaded ${data.features.length} project markers`);
+
+            // Create markers for all projects
+            data.features.forEach(feature => {
+                if (feature.geometry && feature.geometry.type === 'Point') {
+                    const marker = L.circleMarker(
+                        [feature.geometry.coordinates[1], feature.geometry.coordinates[0]], 
+                        {
+                            radius: getMarkerSize(kenyaMap.getZoom()),
+                            fillColor: getStatusColor(feature.properties.status),
+                            color: '#ffffff',
+                            weight: 2,
+                            opacity: 1,
+                            fillOpacity: 0.8
+                        }
+                    );
+                    
                     const popupContent = `
                         <div class="project-popup">
-                            <h6>${props.name}</h6>
-                            <p><strong>Status:</strong> <span class="badge bg-${props.status}">${props.status}</span></p>
-                            <p><strong>Budget:</strong> Ksh ${(props.budget || 0).toLocaleString()}</p>
-                            <p><strong>County:</strong> ${props.county}</p>
-                            <p><strong>Sector:</strong> ${props.sector || 'N/A'}</p>
+                            <h6>${feature.properties.name}</h6>
+                            <p><strong>Status:</strong> <span class="badge bg-${feature.properties.status}">${feature.properties.status}</span></p>
+                            <p><strong>Budget:</strong> Ksh ${(feature.properties.budget || 0).toLocaleString()}</p>
+                            <p><strong>County:</strong> ${feature.properties.county}</p>
+                            <p><strong>Sector:</strong> ${feature.properties.sector || 'N/A'}</p>
+                            ${feature.properties.is_overdue ? '<p class="text-danger"><strong>⚠️ This project is overdue</strong></p>' : ''}
                         </div>
                     `;
-                    layer.bindPopup(popupContent);
+                    marker.bindPopup(popupContent);
+                    
+                    allProjectMarkers.push(marker);
                 }
-            }).addTo(projectMarkers);
+            });
+            
+            // Update marker density based on current zoom
+            updateMarkerDensity();
+            showMapLoading(false);
         })
         .catch(error => {
             console.error('Error loading project markers:', error);
-            showNotification('Error loading project markers', 'error');
+            showMapLoading(false);
+            showNotification('Error loading project markers. Please check your filters.', 'error');
         });
+}
+
+function getMarkerSize(zoom) {
+    // Dynamic marker size based on zoom level
+    if (zoom <= 7) return 4;
+    if (zoom <= 9) return 5;
+    if (zoom <= 11) return 6;
+    if (zoom <= 13) return 7;
+    return 8;
+}
+
+function updateMarkerDensity() {
+    if (!document.getElementById('project-markers-toggle').checked) {
+        return;
+    }
+    
+    const zoom = kenyaMap.getZoom();
+    
+    // Clear current markers
+    projectMarkers.clearLayers();
+    visibleProjectMarkers = [];
+    
+    // Determine how many markers to show based on zoom level
+    let displayCount = allProjectMarkers.length;
+    
+    if (zoom <= 7) {
+        displayCount = Math.min(50, allProjectMarkers.length); // Show only 50 at country level
+    } else if (zoom <= 9) {
+        displayCount = Math.min(100, allProjectMarkers.length); // Show 100 at regional level
+    } else if (zoom <= 11) {
+        displayCount = Math.min(200, allProjectMarkers.length); // Show 200 at county level
+    }
+    // At higher zoom levels, show all markers
+    
+    // Update marker sizes for all markers
+    allProjectMarkers.forEach(marker => {
+        marker.setRadius(getMarkerSize(zoom));
+    });
+    
+    // Show appropriate number of markers
+    const markersToShow = allProjectMarkers.slice(0, displayCount);
+    markersToShow.forEach(marker => {
+        projectMarkers.addLayer(marker);
+        visibleProjectMarkers.push(marker);
+    });
+    
+    console.log(`Showing ${markersToShow.length} markers at zoom level ${zoom}`);
 }
 
 function getStatusColor(status) {
@@ -1569,12 +1768,12 @@ function showAreaSummary(properties, level) {
                     </div>
                 </div>
                 ` : ''}
-                ${properties.area_sqkm ? `
+                ${properties.completed_projects ? `
                 <div class="stat-item">
-                    <i class="fas fa-ruler-combined"></i>
+                    <i class="fas fa-check-double"></i>
                     <div>
-                        <strong>${properties.area_sqkm} km²</strong>
-                        <span>Area</span>
+                        <strong>${properties.completed_projects}</strong>
+                        <span>Completed Projects</span>
                     </div>
                 </div>
                 ` : ''}
@@ -1622,9 +1821,17 @@ function initStatusChart() {
     const ctx = document.getElementById('statusChart').getContext('2d');
     const statusData = JSON.parse('{{ status_counts_json|escapejs }}');
     
-    const labels = Object.keys(statusData);
+    const labels = Object.keys(statusData).map(key => {
+        const labelMap = {
+            'planned': 'Planned',
+            'ongoing': 'Ongoing', 
+            'completed': 'Completed',
+            'delayed': 'Delayed'
+        };
+        return labelMap[key] || key;
+    });
     const data = Object.values(statusData);
-    const backgroundColors = labels.map(status => getStatusColor(status));
+    const backgroundColors = Object.keys(statusData).map(status => getStatusColor(status));
     
     statusChart = new Chart(ctx, {
         type: 'doughnut',
@@ -1706,36 +1913,22 @@ function initSectorChart() {
     });
 }
 
-function initBudgetChart() {
-    const ctx = document.getElementById('budgetChart').getContext('2d');
+function initCountyChart() {
+    const ctx = document.getElementById('countyChart').getContext('2d');
+    const countyData = JSON.parse('{{ county_stats_json|escapejs }}');
     
-    // Sample data - you would replace this with actual data from your backend
-    const budgetData = {
-        'completed': {{ budget_stats.total_budget|default:0 }} * 0.4, // Example calculation
-        'ongoing': {{ budget_stats.total_budget|default:0 }} * 0.35,
-        'delayed': {{ budget_stats.total_budget|default:0 }} * 0.15,
-        'planned': {{ budget_stats.total_budget|default:0 }} * 0.1
-    };
+    const labels = countyData.map(item => item.county);
+    const data = countyData.map(item => item.count);
     
-    budgetChart = new Chart(ctx, {
+    countyChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ['Completed', 'Ongoing', 'Delayed', 'Planned'],
+            labels: labels,
             datasets: [{
-                label: 'Budget (KES)',
-                data: Object.values(budgetData),
-                backgroundColor: [
-                    '#28a745',
-                    '#ffc107', 
-                    '#dc3545',
-                    '#6c757d'
-                ],
-                borderColor: [
-                    '#218838',
-                    '#e0a800',
-                    '#c82333',
-                    '#545b62'
-                ],
+                label: 'Number of Projects',
+                data: data,
+                backgroundColor: '#4A90E2',
+                borderColor: '#2a4d7a',
                 borderWidth: 1
             }]
         },
@@ -1745,69 +1938,6 @@ function initBudgetChart() {
             plugins: {
                 legend: {
                     display: false
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const value = context.raw || 0;
-                            return `Ksh ${value.toLocaleString()}`;
-                        }
-                    }
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return 'Ksh ' + value.toLocaleString();
-                        }
-                    }
-                }
-            }
-        }
-    });
-}
-
-function initTimelineChart() {
-    const ctx = document.getElementById('timelineChart').getContext('2d');
-    
-    // Sample timeline data
-    const timelineData = {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-        started: [5, 8, 12, 15, 18, 20, 25, 28, 30, 32, 35, 40],
-        completed: [2, 5, 8, 12, 15, 18, 22, 25, 28, 30, 32, 35]
-    };
-    
-    timelineChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: timelineData.labels,
-            datasets: [
-                {
-                    label: 'Projects Started',
-                    data: timelineData.started,
-                    borderColor: '#4A90E2',
-                    backgroundColor: 'rgba(74, 144, 226, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                },
-                {
-                    label: 'Projects Completed',
-                    data: timelineData.completed,
-                    borderColor: '#28a745',
-                    backgroundColor: 'rgba(40, 167, 69, 0.1)',
-                    tension: 0.4,
-                    fill: true
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'top',
                 }
             },
             scales: {
@@ -1816,6 +1946,12 @@ function initTimelineChart() {
                     title: {
                         display: true,
                         text: 'Number of Projects'
+                    }
+                },
+                x: {
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45
                     }
                 }
             }
@@ -1826,20 +1962,11 @@ function initTimelineChart() {
 function initCharts() {
     initStatusChart();
     initSectorChart();
-    initBudgetChart();
-    initTimelineChart();
+    initCountyChart();
 }
 
 // Filter handlers
 function handleCountySelection(countyName) {
-    updateVisualizations();
-}
-
-function handleSubcountySelection(subcountyName) {
-    updateVisualizations();
-}
-
-function handleWardSelection(wardName) {
     updateVisualizations();
 }
 
@@ -1852,25 +1979,20 @@ function updateVisualizations() {
     if (statusChart) {
         statusChart.update();
     }
+    if (sectorChart) {
+        sectorChart.update();
+    }
+    if (countyChart) {
+        countyChart.update();
+    }
 }
 
 function clearAllFilters() {
-    const form = document.getElementById('filter-form');
-    if (form) {
-        form.reset();
-        // Trigger change event on county select to update URL
-        const countySelect = document.getElementById('county-select');
-        if (countySelect) {
-            countySelect.dispatchEvent(new Event('change'));
-        }
-    }
-    clearSelection();
-    updateVisualizations();
-}
-
-function refreshMonitoringData() {
-    showNotification('Data refreshed successfully', 'success');
-    updateVisualizations();
+    // Reset form
+    document.getElementById('filter-form').reset();
+    
+    // Submit the form to reload with no filters
+    document.getElementById('filter-form').submit();
 }
 
 // Initialize everything when page loads
@@ -1888,10 +2010,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize filter functionality
     const filterForm = document.getElementById('filter-form');
     if (filterForm) {
-        filterForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            updateVisualizations();
-        });
+        // Form is now set to auto-submit on change, so we don't need additional handlers
     }
     
     // Initialize sector search
@@ -1916,10 +2035,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // Global functions
 window.clearAllFilters = clearAllFilters;
-window.refreshMonitoringData = refreshMonitoringData;
 window.handleCountySelection = handleCountySelection;
-window.handleSubcountySelection = handleSubcountySelection;
-window.handleWardSelection = handleWardSelection;
 window.clearSelection = clearSelection;
 </script>
 

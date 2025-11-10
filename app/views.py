@@ -40,8 +40,6 @@ from django.contrib.gis.db.models import Union
 from .models import Project, ProjectUpdate, CitizenReport, KenyaCounty, KenyaSubCounty, Kenyawards
 
 
-
-
 # views.py
 from django.db.models import Q, Sum, Avg, Min, Max, Count, Case, When, F
 from django.db.models.functions import ExtractYear, TruncMonth
@@ -65,14 +63,29 @@ def _clean_getlist(request, name):
     """Return list cleaned of empty/'None' entries."""
     return [v for v in request.GET.getlist(name) if v and v != "None"]
 
+def debug_data(request):
+    """Debug view to check what data exists"""
+    projects = Project.objects.all()
+    
+    debug_info = {
+        'total_projects': projects.count(),
+        'projects_sample': list(projects.values('id', 'name', 'county', 'status', 'sector', 'budget', 'start_date', 'end_date')[:10]),
+        'counties': list(projects.values_list('county', flat=True).distinct()),
+        'sectors': list(projects.values_list('sector', flat=True).distinct()),
+        'statuses': list(projects.values_list('status', flat=True).distinct()),
+        'fiscal_years': list(projects.dates("start_date", "year").order_by("-start_date").values_list('start_date__year', flat=True).distinct()),
+    }
+    
+    return JsonResponse(debug_info)
+
 def home(request):
     """Optimized dashboard view with efficient queries for large datasets"""
     try:
-        # Start with basic project query - using select_related and only() for optimization
-        projects = Project.objects.all().only(
-            'id', 'name', 'status', 'county', 'sector', 'budget', 
-            'start_date', 'end_date', 'location', 'latitude', 'longitude'
-        )
+        print("=== DASHBOARD LOADING ===")
+        
+        # Start with basic project query
+        projects = Project.objects.all()
+        print(f"Total projects in database: {projects.count()}")
 
         # ---------------- Basic Filters ----------------
         selected_county = _clean_get(request, "county")
@@ -81,20 +94,30 @@ def home(request):
         selected_sectors = _clean_getlist(request, "sector")
         search_query = _clean_get(request, "search")
 
+        print(f"Filters - County: {selected_county}, Year: {selected_year}")
+        print(f"Statuses: {selected_statuses}, Sectors: {selected_sectors}")
+
         # Apply basic filters
         if selected_county:
-            projects = projects.filter(county__iexact=selected_county)
+            projects = projects.filter(county__icontains=selected_county)
+            print(f"After county filter: {projects.count()}")
         
         if selected_year:
-            projects = projects.filter(start_date__year=selected_year)
+            try:
+                projects = projects.filter(start_date__year=int(selected_year))
+                print(f"After year filter: {projects.count()}")
+            except (ValueError, TypeError):
+                pass
         
         if selected_statuses:
             projects = projects.filter(status__in=selected_statuses)
+            print(f"After status filter: {projects.count()}")
         
         if selected_sectors:
             projects = projects.filter(sector__in=selected_sectors)
+            print(f"After sector filter: {projects.count()}")
 
-        # Search functionality with optimized query
+        # Search functionality
         if search_query:
             projects = projects.filter(
                 Q(name__icontains=search_query) |
@@ -102,6 +125,7 @@ def home(request):
                 Q(sector__icontains=search_query) |
                 Q(county__icontains=search_query)
             )
+            print(f"After search filter: {projects.count()}")
 
         # ---------------- Core Metrics with Efficient Queries ----------------
         current_date = timezone.now().date()
@@ -112,22 +136,32 @@ def home(request):
             total_budget=Sum('budget'),
             completed_projects=Count('id', filter=Q(status='completed')),
             ongoing_projects=Count('id', filter=Q(status='ongoing')),
-            overdue_projects=Count('id', filter=Q(status='ongoing', end_date__lt=current_date))
+            planned_projects=Count('id', filter=Q(status='planned')),
+            delayed_projects=Count('id', filter=Q(status='delayed'))
         )
         
         total_projects = metrics['total_projects'] or 0
         total_budget = metrics['total_budget'] or 0
         completed_projects = metrics['completed_projects'] or 0
         ongoing_projects = metrics['ongoing_projects'] or 0
-        overdue_projects = metrics['overdue_projects'] or 0
+        planned_projects = metrics['planned_projects'] or 0
+        delayed_projects = metrics['delayed_projects'] or 0
+
+        print(f"Metrics - Total: {total_projects}, Budget: {total_budget}")
+
+        # Calculate overdue projects
+        overdue_projects = projects.filter(
+            Q(status="ongoing") | Q(status="planned"),
+            end_date__lt=current_date
+        ).count()
 
         # Calculate rates
         completion_rate = round((completed_projects / total_projects * 100), 1) if total_projects else 0
         ongoing_rate = round((ongoing_projects / total_projects * 100), 1) if total_projects else 0
 
-        # Upcoming deadlines
+        # Upcoming deadlines (next 30 days)
         upcoming_deadlines = projects.filter(
-            Q(status="ongoing"),
+            Q(status="ongoing") | Q(status="planned"),
             end_date__gte=current_date,
             end_date__lte=current_date + timedelta(days=30),
         ).count()
@@ -140,7 +174,7 @@ def home(request):
             total_budget=Sum("budget")
         )
 
-        # Status analytics - simplified
+        # Status analytics
         status_counts_chart = {}
         status_distribution = projects.values("status").annotate(
             count=Count("id")
@@ -149,11 +183,16 @@ def home(request):
         for item in status_distribution:
             status_counts_chart[item["status"]] = item["count"]
 
-        # Sector analytics - limit to top sectors for performance
+        # Ensure all statuses are represented
+        for status in ['planned', 'ongoing', 'completed', 'delayed']:
+            if status not in status_counts_chart:
+                status_counts_chart[status] = 0
+
+        # Sector analytics
         sector_data_chart = []
         sector_analytics = projects.values("sector").annotate(
             count=Count("id")
-        ).order_by("-count")[:8]
+        ).order_by("-count")[:10]
 
         for item in sector_analytics:
             sector_data_chart.append({
@@ -161,12 +200,12 @@ def home(request):
                 "count": item["count"]
             })
 
-        # County analytics - simplified
+        # County analytics
         county_stats = []
         county_analytics = projects.values("county").annotate(
             count=Count("id"),
             total_budget=Sum("budget")
-        ).order_by("-count")[:10]
+        ).order_by("-count")[:15]
 
         for item in county_analytics:
             county_stats.append({
@@ -179,25 +218,35 @@ def home(request):
         recent_projects = projects.order_by("-start_date")[:5]
         highest_budget_projects = projects.order_by("-budget")[:5]
 
-        # Recent activity with select_related
-        recent_updates = ProjectUpdate.objects.select_related("project").only(
-            'project__name', 'progress_percentage', 'created_at'
-        ).order_by("-created_at")[:5]
+        # Recent activity
+        recent_updates = ProjectUpdate.objects.select_related("project").order_by("-created_at")[:5]
 
-        # ---------------- Dropdown Data with Caching Potential ----------------
+        # ---------------- Dropdown Data ----------------
         fiscal_years = list(Project.objects.dates("start_date", "year").order_by("-start_date").values_list('start_date__year', flat=True).distinct())
         status_choices = [choice[0] for choice in Project.STATUS_CHOICES]
         status_labels = dict(Project.STATUS_CHOICES)
 
+        # Get sectors and counties from Project data (more reliable)
         sectors = list(Project.objects.exclude(sector__isnull=True).exclude(sector="")
                     .values_list("sector", flat=True).distinct().order_by("sector"))
         
-        counties = list(KenyaCounty.objects.exclude(county__isnull=True)
+        counties_from_projects = list(Project.objects.exclude(county__isnull=True).exclude(county="")
                     .values_list("county", flat=True).distinct().order_by("county"))
+        
+        # Try to get counties from KenyaCounty model, fallback to projects
+        counties_from_model = list(KenyaCounty.objects.exclude(county__isnull=True)
+                    .values_list("county", flat=True).distinct().order_by("county"))
+        
+        counties = counties_from_model if counties_from_model else counties_from_projects
 
-        # ---------------- Optimized GeoJSON Generation ----------------
-        # Only sample projects for map to avoid performance issues
-        map_projects = projects.only('id', 'name', 'county', 'status', 'sector', 'budget', 'location', 'latitude', 'longitude')[:200]
+        print(f"Available counties: {counties}")
+        print(f"Available sectors: {sectors}")
+
+        # ---------------- GeoJSON Generation ----------------
+        map_projects = projects.filter(
+            Q(location__isnull=False) | 
+            Q(latitude__isnull=False, longitude__isnull=False)
+        )[:500]  # Increased limit
         
         features = []
         for project in map_projects:
@@ -241,6 +290,8 @@ def home(request):
             }
         }
 
+        print(f"Generated {len(features)} map features")
+
         # ---------------- Context for Template ----------------
         context = {
             # Core metrics
@@ -281,6 +332,7 @@ def home(request):
             "search_query": search_query or "",
         }
         
+        print("=== DASHBOARD LOADED SUCCESSFULLY ===")
         return render(request, "app/home.html", context)
         
     except Exception as e:
@@ -294,38 +346,38 @@ def home(request):
             "completion_rate": 0,
             "overdue_projects": 0,
             "upcoming_deadlines": 0,
-            "error": "An error occurred while loading the dashboard. Please try again."
+            "counties": [],
+            "sectors": [],
+            "status_choices": [],
+            "status_labels": {},
+            "fiscal_years": [],
+            "error": f"An error occurred while loading the dashboard: {str(e)}"
         })
 
-# Optimized API endpoints with pagination
+# Enhanced API endpoints
 def counties_geojson(request):
-    """Enhanced counties GeoJSON with pagination for large datasets"""
+    """Enhanced counties GeoJSON with project statistics"""
     try:
-        page = int(request.GET.get('page', 1))
-        page_size = min(int(request.GET.get('page_size', 50)), 100)  # Limit page size
-        
-        counties = KenyaCounty.objects.all().only('id', 'county', 'pop_2009', 'geom')
+        counties = KenyaCounty.objects.all()
         selected_counties = _clean_getlist(request, "county")
         
         if selected_counties:
             counties = counties.filter(county__in=selected_counties)
         
-        # Paginate counties
-        paginator = Paginator(counties, page_size)
-        county_page = paginator.get_page(page)
-        
         features = []
         current_date = timezone.now().date()
         
-        for county in county_page:
-            # Use efficient count queries
-            projects_in_county = Project.objects.filter(county__iexact=county.county)
+        for county in counties:
+            # Get projects for this county
+            projects_in_county = Project.objects.filter(county__icontains=county.county)
             project_count = projects_in_county.count()
             
-            # Get basic stats in single query
+            # Get comprehensive stats
             stats = projects_in_county.aggregate(
                 total_budget=Sum('budget'),
-                completed=Count('id', filter=Q(status='completed'))
+                completed=Count('id', filter=Q(status='completed')),
+                ongoing=Count('id', filter=Q(status='ongoing')),
+                delayed=Count('id', filter=Q(status='delayed'))
             )
             
             feature = {
@@ -338,6 +390,8 @@ def counties_geojson(request):
                     "project_count": project_count,
                     "total_budget": float(stats['total_budget'] or 0),
                     "completed_projects": stats['completed'] or 0,
+                    "ongoing_projects": stats['ongoing'] or 0,
+                    "delayed_projects": stats['delayed'] or 0,
                     "completion_rate": round((stats['completed'] / project_count * 100), 1) if project_count else 0,
                 }
             }
@@ -345,15 +399,7 @@ def counties_geojson(request):
         
         response_data = {
             "type": "FeatureCollection",
-            "features": features,
-            "pagination": {
-                "page": page,
-                "page_size": page_size,
-                "total_pages": paginator.num_pages,
-                "total_count": paginator.count,
-                "has_next": county_page.has_next(),
-                "has_previous": county_page.has_previous()
-            }
+            "features": features
         }
         
         return JsonResponse(response_data)
@@ -362,29 +408,23 @@ def counties_geojson(request):
         return JsonResponse({"error": str(e)}, status=500)
 
 def subcounties_geojson(request):
-    """Enhanced subcounties GeoJSON with pagination"""
+    """Enhanced subcounties GeoJSON"""
     try:
-        page = int(request.GET.get('page', 1))
-        page_size = min(int(request.GET.get('page_size', 50)), 100)
-        
-        subcounties = KenyaSubCounty.objects.all().only('id', 'subcounty', 'county', 'geom')
+        subcounties = KenyaSubCounty.objects.all()
         selected_counties = _clean_getlist(request, "county")
         
         if selected_counties:
             subcounties = subcounties.filter(county__in=selected_counties)
         
-        paginator = Paginator(subcounties, page_size)
-        subcounty_page = paginator.get_page(page)
-        
         features = []
         
-        for subcounty in subcounty_page:
-            # For large datasets, consider sampling or approximate counts
-            projects_in_subcounty = Project.objects.filter(county__iexact=subcounty.county)
+        for subcounty in subcounties:
+            projects_in_subcounty = Project.objects.filter(county__icontains=subcounty.county)
             project_count = projects_in_subcounty.count()
             
             stats = projects_in_subcounty.aggregate(
-                total_budget=Sum('budget')
+                total_budget=Sum('budget'),
+                completed=Count('id', filter=Q(status='completed'))
             )
             
             feature = {
@@ -396,21 +436,14 @@ def subcounties_geojson(request):
                     "county": subcounty.county,
                     "project_count": project_count,
                     "total_budget": float(stats['total_budget'] or 0),
+                    "completed_projects": stats['completed'] or 0,
                 }
             }
             features.append(feature)
         
         response_data = {
             "type": "FeatureCollection",
-            "features": features,
-            "pagination": {
-                "page": page,
-                "page_size": page_size,
-                "total_pages": paginator.num_pages,
-                "total_count": paginator.count,
-                "has_next": subcounty_page.has_next(),
-                "has_previous": subcounty_page.has_previous()
-            }
+            "features": features
         }
         
         return JsonResponse(response_data)
@@ -419,25 +452,18 @@ def subcounties_geojson(request):
         return JsonResponse({"error": str(e)}, status=500)
 
 def wards_geojson(request):
-    """Enhanced wards GeoJSON with pagination"""
+    """Enhanced wards GeoJSON"""
     try:
-        page = int(request.GET.get('page', 1))
-        page_size = min(int(request.GET.get('page_size', 50)), 100)
-        
-        wards = Kenyawards.objects.all().only('id', 'ward', 'subcounty', 'county', 'geom')
+        wards = Kenyawards.objects.all()
         selected_counties = _clean_getlist(request, "county")
         
         if selected_counties:
             wards = wards.filter(county__in=selected_counties)
         
-        paginator = Paginator(wards, page_size)
-        ward_page = paginator.get_page(page)
-        
         features = []
         
-        for ward in ward_page:
-            # Use county-level approximation for performance
-            projects_in_ward = Project.objects.filter(county__iexact=ward.county)
+        for ward in wards:
+            projects_in_ward = Project.objects.filter(county__icontains=ward.county)
             project_count = projects_in_ward.count()
             
             feature = {
@@ -455,15 +481,7 @@ def wards_geojson(request):
         
         response_data = {
             "type": "FeatureCollection",
-            "features": features,
-            "pagination": {
-                "page": page,
-                "page_size": page_size,
-                "total_pages": paginator.num_pages,
-                "total_count": paginator.count,
-                "has_next": ward_page.has_next(),
-                "has_previous": ward_page.has_previous()
-            }
+            "features": features
         }
         
         return JsonResponse(response_data)
@@ -472,15 +490,9 @@ def wards_geojson(request):
         return JsonResponse({"error": str(e)}, status=500)
 
 def projects_geojson(request):
-    """API endpoint for project locations with pagination"""
+    """API endpoint for project locations with enhanced filtering"""
     try:
-        page = int(request.GET.get('page', 1))
-        page_size = min(int(request.GET.get('page_size', 100)), 200)  # Limit for performance
-        
-        projects = Project.objects.all().only(
-            'id', 'name', 'status', 'county', 'sector', 'budget', 
-            'location', 'latitude', 'longitude', 'start_date', 'end_date'
-        )
+        projects = Project.objects.all()
         
         # Apply filters
         selected_county = _clean_get(request, "county")
@@ -489,7 +501,7 @@ def projects_geojson(request):
         selected_year = _clean_get(request, "year")
         
         if selected_county:
-            projects = projects.filter(county__iexact=selected_county)
+            projects = projects.filter(county__icontains=selected_county)
         if selected_statuses:
             projects = projects.filter(status__in=selected_statuses)
         if selected_sectors:
@@ -497,14 +509,15 @@ def projects_geojson(request):
         if selected_year:
             projects = projects.filter(start_date__year=selected_year)
         
-        # Paginate results
-        paginator = Paginator(projects, page_size)
-        project_page = paginator.get_page(page)
+        # Get projects with coordinates
+        projects_with_coords = projects.filter(
+            Q(location__isnull=False) | 
+            Q(latitude__isnull=False, longitude__isnull=False)
+        )
         
         features = []
-        current_date = timezone.now().date()
         
-        for project in project_page:
+        for project in projects_with_coords:
             point_geom = None
             
             if project.location and hasattr(project.location, 'x') and hasattr(project.location, 'y'):
@@ -522,6 +535,10 @@ def projects_geojson(request):
                     continue
             
             if point_geom:
+                # Calculate if project is overdue
+                current_date = timezone.now().date()
+                is_overdue = project.status in ['ongoing', 'planned'] and project.end_date and project.end_date < current_date
+                
                 features.append({
                     "type": "Feature",
                     "geometry": point_geom,
@@ -532,21 +549,18 @@ def projects_geojson(request):
                         "county": project.county or "",
                         "sector": project.sector or "",
                         "budget": float(project.budget) if project.budget else 0,
+                        "start_date": project.start_date.isoformat() if project.start_date else None,
+                        "end_date": project.end_date.isoformat() if project.end_date else None,
+                        "is_overdue": is_overdue,
+                        "description": project.description or "",
                     }
                 })
         
         response_data = {
             "type": "FeatureCollection",
             "features": features,
-            "pagination": {
-                "page": page,
-                "page_size": page_size,
-                "total_pages": paginator.num_pages,
-                "total_count": paginator.count,
-                "has_next": project_page.has_next(),
-                "has_previous": project_page.has_previous()
-            },
             "metadata": {
+                "total_projects": len(features),
                 "filters_applied": {
                     "county": selected_county,
                     "year": selected_year,
@@ -562,7 +576,7 @@ def projects_geojson(request):
         return JsonResponse({"error": str(e)}, status=500)
 
 def spatial_statistics(request):
-    """Comprehensive project analytics with optimized queries"""
+    """Comprehensive project analytics"""
     try:
         projects = Project.objects.all()
         
@@ -575,7 +589,7 @@ def spatial_statistics(request):
         if selected_sectors:
             projects = projects.filter(sector__in=selected_sectors)
         
-        # Single query for all performance metrics
+        # Performance metrics
         performance_metrics = projects.aggregate(
             total_projects=Count('id'),
             total_budget=Sum('budget'),
@@ -586,25 +600,37 @@ def spatial_statistics(request):
         # Risk analysis
         current_date = timezone.now().date()
         risk_analysis = {
-            'overdue_projects': projects.filter(status='ongoing', end_date__lt=current_date).count(),
+            'overdue_projects': projects.filter(
+                Q(status='ongoing') | Q(status='planned'),
+                end_date__lt=current_date
+            ).count(),
             'delayed_projects': projects.filter(status='delayed').count()
         }
         
-        # Sector analysis with limit
+        # Sector analysis
         sector_analysis = list(projects.values('sector').annotate(
             count=Count('id'),
             total_budget=Sum('budget'),
+            avg_budget=Avg('budget')
         ).order_by('-total_budget')[:10])
+        
+        # County analysis
+        county_analysis = list(projects.values('county').annotate(
+            count=Count('id'),
+            total_budget=Sum('budget')
+        ).order_by('-count')[:10])
         
         return JsonResponse({
             'performance_metrics': performance_metrics,
             'risk_analysis': risk_analysis,
             'sector_analysis': sector_analysis,
+            'county_analysis': county_analysis,
             'timestamp': timezone.now().isoformat()
         })
         
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
+
 
 # ---------------- Dashboard View ---------------- #
 # ---------------- Dashboard View ---------------- #
