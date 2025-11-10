@@ -39,7 +39,6 @@ from django.utils import timezone
 from django.contrib.gis.db.models import Union
 from .models import Project, ProjectUpdate, CitizenReport, KenyaCounty, KenyaSubCounty, Kenyawards
 
-
 # views.py
 from django.db.models import Q, Sum, Avg, Min, Max, Count, Case, When, F
 from django.db.models.functions import ExtractYear, TruncMonth
@@ -141,7 +140,7 @@ def home(request):
         )
         
         total_projects = metrics['total_projects'] or 0
-        total_budget = metrics['total_budget'] or 0
+        total_budget = float(metrics['total_budget'] or 0)  # Convert Decimal to float
         completed_projects = metrics['completed_projects'] or 0
         ongoing_projects = metrics['ongoing_projects'] or 0
         planned_projects = metrics['planned_projects'] or 0
@@ -173,6 +172,11 @@ def home(request):
             max_budget=Max("budget"),
             total_budget=Sum("budget")
         )
+        
+        # Convert Decimal values to float in budget_stats
+        for key, value in budget_stats.items():
+            if isinstance(value, Decimal):
+                budget_stats[key] = float(value)
 
         # Status analytics
         status_counts_chart = {}
@@ -200,7 +204,7 @@ def home(request):
                 "count": item["count"]
             })
 
-        # County analytics
+        # County analytics - FIX: Convert Decimal to float for JSON serialization
         county_stats = []
         county_analytics = projects.values("county").annotate(
             count=Count("id"),
@@ -211,7 +215,7 @@ def home(request):
             county_stats.append({
                 "county": item["county"],
                 "count": item["count"],
-                "total_budget": item["total_budget"] or 0
+                "total_budget": float(item["total_budget"] or 0)  # Convert Decimal to float
             })
 
         # Recent projects with limit
@@ -277,7 +281,7 @@ def home(request):
                         "county": project.county or "",
                         "status": project.status,
                         "sector": project.sector or "",
-                        "budget": float(project.budget) if project.budget else 0,
+                        "budget": float(project.budget) if project.budget else 0,  # Convert Decimal to float
                     },
                 })
 
@@ -323,7 +327,7 @@ def home(request):
             # CHART DATA
             "status_counts_json": json.dumps(status_counts_chart),
             "sector_data_json": json.dumps(sector_data_chart),
-            "county_stats_json": json.dumps(county_stats),
+            "county_stats_json": json.dumps(county_stats),  # Now safe to serialize
             
             # Current filter values
             "selected_year": selected_year or "",
@@ -388,7 +392,7 @@ def counties_geojson(request):
                     "county": county.county,
                     "pop_2009": county.pop_2009,
                     "project_count": project_count,
-                    "total_budget": float(stats['total_budget'] or 0),
+                    "total_budget": float(stats['total_budget'] or 0),  # Convert Decimal to float
                     "completed_projects": stats['completed'] or 0,
                     "ongoing_projects": stats['ongoing'] or 0,
                     "delayed_projects": stats['delayed'] or 0,
@@ -435,7 +439,7 @@ def subcounties_geojson(request):
                     "subcounty": subcounty.subcounty,
                     "county": subcounty.county,
                     "project_count": project_count,
-                    "total_budget": float(stats['total_budget'] or 0),
+                    "total_budget": float(stats['total_budget'] or 0),  # Convert Decimal to float
                     "completed_projects": stats['completed'] or 0,
                 }
             }
@@ -548,7 +552,7 @@ def projects_geojson(request):
                         "status": project.status,
                         "county": project.county or "",
                         "sector": project.sector or "",
-                        "budget": float(project.budget) if project.budget else 0,
+                        "budget": float(project.budget) if project.budget else 0,  # Convert Decimal to float
                         "start_date": project.start_date.isoformat() if project.start_date else None,
                         "end_date": project.end_date.isoformat() if project.end_date else None,
                         "is_overdue": is_overdue,
@@ -597,6 +601,11 @@ def spatial_statistics(request):
             completion_rate=Avg(Case(When(status='completed', then=1), default=0, output_field=FloatField())),
         )
         
+        # Convert Decimal values to float
+        for key, value in performance_metrics.items():
+            if isinstance(value, Decimal):
+                performance_metrics[key] = float(value)
+        
         # Risk analysis
         current_date = timezone.now().date()
         risk_analysis = {
@@ -614,11 +623,23 @@ def spatial_statistics(request):
             avg_budget=Avg('budget')
         ).order_by('-total_budget')[:10])
         
+        # Convert Decimal values to float in sector_analysis
+        for item in sector_analysis:
+            if 'total_budget' in item and isinstance(item['total_budget'], Decimal):
+                item['total_budget'] = float(item['total_budget'])
+            if 'avg_budget' in item and isinstance(item['avg_budget'], Decimal):
+                item['avg_budget'] = float(item['avg_budget'])
+        
         # County analysis
         county_analysis = list(projects.values('county').annotate(
             count=Count('id'),
             total_budget=Sum('budget')
         ).order_by('-count')[:10])
+        
+        # Convert Decimal values to float in county_analysis
+        for item in county_analysis:
+            if 'total_budget' in item and isinstance(item['total_budget'], Decimal):
+                item['total_budget'] = float(item['total_budget'])
         
         return JsonResponse({
             'performance_metrics': performance_metrics,
@@ -630,7 +651,6 @@ def spatial_statistics(request):
         
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
-
 
 # ---------------- Dashboard View ---------------- #
 # ---------------- Dashboard View ---------------- #
