@@ -8,6 +8,8 @@
 <!-- Leaflet MarkerCluster -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <style>
     /* Map container */
@@ -26,6 +28,8 @@
         box-shadow: 0 2px 4px var(--shadow);
         margin-bottom: 1rem;
         border: 1px solid var(--border);
+        max-height: 80vh;
+        overflow-y: auto;
     }
     
     /* Insight cards */
@@ -71,7 +75,7 @@
     .leaflet-popup-content {
         margin: 12px;
         line-height: 1.4;
-        min-width: 250px;
+        min-width: 280px;
         font-size: 0.85rem;
     }
     
@@ -158,6 +162,32 @@
         font-size: 0.85rem;
     }
     
+    /* Filter section styling */
+    .filter-section {
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .filter-section:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+    
+    /* Active filters badge */
+    .active-filters {
+        background: var(--primary);
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        margin-left: 5px;
+    }
+    
     /* Responsive adjustments */
     @media (max-width: 768px) {
         #map {
@@ -166,6 +196,7 @@
         
         .filter-panel {
             padding: 0.8rem;
+            max-height: 60vh;
         }
         
         .insight-card {
@@ -232,6 +263,38 @@
         background: var(--primary);
         color: white;
     }
+
+    /* Select2 customization */
+    .select2-container--default .select2-selection--multiple {
+        border: 1px solid #ced4da;
+        border-radius: 0.375rem;
+        min-height: 38px;
+    }
+
+    .select2-container--default.select2-container--focus .select2-selection--multiple {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+    }
+
+    /* Loading overlay */
+    .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255,255,255,0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        border-radius: 6px;
+    }
+
+    .spinner-border {
+        width: 3rem;
+        height: 3rem;
+    }
 </style>
 {% endblock %}
 
@@ -245,11 +308,15 @@
         </div>
         <div class="col-md-4 text-end">
             <div class="btn-group">
-                <button class="btn btn-primary btn-sm" onclick="exportInsights()">
-                    <i class="fas fa-download me-1"></i> Export
+                <button class="btn btn-primary btn-sm" onclick="downloadReport()">
+                    <i class="fas fa-file-pdf me-1"></i> Download PDF
                 </button>
                 <button class="btn btn-outline-primary btn-sm" onclick="resetFilters()">
                     <i class="fas fa-sync-alt me-1"></i> Reset
+                </button>
+                <button class="btn btn-outline-secondary btn-sm" onclick="toggleFilters()">
+                    <i class="fas fa-filter me-1"></i> Filters 
+                    <span class="active-filters" id="activeFiltersCount">0</span>
                 </button>
             </div>
         </div>
@@ -257,7 +324,7 @@
 
     <!-- Quick Stats Row -->
     <div class="row mb-3">
-        <div class="col-xl-3 col-md-6">
+        <div class="col-xl-2 col-md-4">
             <div class="insight-card">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
@@ -271,7 +338,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6">
+        <div class="col-xl-2 col-md-4">
             <div class="insight-card">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
@@ -285,7 +352,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6">
+        <div class="col-xl-2 col-md-4">
             <div class="insight-card">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
@@ -299,7 +366,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-3 col-md-6">
+        <div class="col-xl-2 col-md-4">
             <div class="insight-card">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
@@ -313,56 +380,143 @@
                 </div>
             </div>
         </div>
+        <div class="col-xl-2 col-md-4">
+            <div class="insight-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-bold mb-0" style="color: var(--primary);">{{ sectors|length }}</h5>
+                        <p class="text-muted mb-0">Sectors</p>
+                    </div>
+                    <i class="fas fa-industry fa-lg" style="color: var(--primary);"></i>
+                </div>
+                <div class="progress mt-2">
+                    <div class="progress-bar" style="width: 100%; background: var(--primary);"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4">
+            <div class="insight-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h5 class="fw-bold mb-0" style="color: var(--primary);">{{ filtered_count }}</h5>
+                        <p class="text-muted mb-0">Filtered</p>
+                    </div>
+                    <i class="fas fa-filter fa-lg" style="color: var(--primary);"></i>
+                </div>
+                <div class="progress mt-2">
+                    <div class="progress-bar" style="width: {% widthratio filtered_count total_projects 100 %}%; background: var(--primary);"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Filters and Map -->
     <div class="row mb-3">
-        <div class="col-lg-3">
-            <!-- Filters Panel -->
+        <div class="col-lg-3" id="filtersPanel">
+            <!-- Search Box -->
             <div class="filter-panel">
-                <h6 class="mb-2" style="color: var(--primary);"><i class="fas fa-filter me-1"></i>Filter Projects</h6>
-                
-                <!-- Status Filter -->
-                <div class="mb-3">
-                    <label class="form-label">Status</label>
-                    {% for status in status_choices %}
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="status" value="{{ status }}"
-                            id="status-{{ forloop.counter }}" {% if status in selected_statuses %}checked{% endif %}>
-                        <label class="form-check-label" for="status-{{ forloop.counter }}">
-                            {{ status_labels|get_item:status }}
-                        </label>
+                <h6 class="mb-2" style="color: var(--primary);"><i class="fas fa-search me-1"></i>Search Projects</h6>
+                <form id="filterForm" method="GET">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" name="search" placeholder="Search projects..." 
+                               value="{{ search_query }}" id="searchInput">
                     </div>
-                    {% endfor %}
-                </div>
-
-                <!-- County Filter -->
-                <div class="mb-3">
-                    <label class="form-label">County</label>
-                    <select name="county" class="form-select" multiple size="4">
-                        {% for county in counties %}
-                        <option value="{{ county }}" {% if county in selected_counties %}selected{% endif %}>
-                            {{ county }}
-                        </option>
+                    
+                    <!-- Status Filter -->
+                    <div class="filter-section">
+                        <label class="form-label">Project Status</label>
+                        {% for status in status_choices %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="status" value="{{ status }}"
+                                id="status-{{ forloop.counter }}" {% if status in selected_statuses %}checked{% endif %}>
+                            <label class="form-check-label" for="status-{{ forloop.counter }}">
+                                {{ status_labels|get_item:status }}
+                            </label>
+                        </div>
                         {% endfor %}
-                    </select>
-                </div>
+                    </div>
 
-                <!-- Sector Filter -->
-                <div class="mb-3">
-                    <label class="form-label">Sector</label>
-                    <select name="sector" class="form-select" multiple size="4">
-                        {% for sector in sectors %}
-                        <option value="{{ sector }}" {% if sector in selected_sectors %}selected{% endif %}>
-                            {{ sector }}
-                        </option>
-                        {% endfor %}
-                    </select>
-                </div>
+                    <!-- County Filter -->
+                    <div class="filter-section">
+                        <label class="form-label">County</label>
+                        <select name="county" class="form-select county-select" multiple>
+                            {% for county in counties %}
+                            <option value="{{ county }}" {% if county in selected_counties %}selected{% endif %}>
+                                {{ county }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-                <button type="submit" class="btn btn-primary btn-sm w-100 mt-2">
-                    <i class="fas fa-filter me-1"></i> Apply
-                </button>
+                    <!-- Sector Filter -->
+                    <div class="filter-section">
+                        <label class="form-label">Sector</label>
+                        <select name="sector" class="form-select sector-select" multiple>
+                            {% for sector in sectors %}
+                            <option value="{{ sector }}" {% if sector in selected_sectors %}selected{% endif %}>
+                                {{ sector }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Agency Filter -->
+                    <div class="filter-section">
+                        <label class="form-label">Implementing Agency</label>
+                        <select name="agency" class="form-select agency-select" multiple>
+                            {% for agency in agencies %}
+                            <option value="{{ agency }}" {% if agency in selected_agencies %}selected{% endif %}>
+                                {{ agency }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Project Manager Filter -->
+                    <div class="filter-section">
+                        <label class="form-label">Project Manager</label>
+                        <select name="manager" class="form-select manager-select" multiple>
+                            {% for manager in managers %}
+                            <option value="{{ manager }}" {% if manager in selected_managers %}selected{% endif %}>
+                                {{ manager }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Budget Range Filter -->
+                    <div class="filter-section">
+                        <label class="form-label">Budget Range</label>
+                        <select name="budget_range" class="form-select">
+                            <option value="">All Budgets</option>
+                            <option value="small" {% if selected_budget_range == 'small' %}selected{% endif %}>Small (&lt; 1M)</option>
+                            <option value="medium" {% if selected_budget_range == 'medium' %}selected{% endif %}>Medium (1M - 10M)</option>
+                            <option value="large" {% if selected_budget_range == 'large' %}selected{% endif %}>Large (10M - 100M)</option>
+                            <option value="xlarge" {% if selected_budget_range == 'xlarge' %}selected{% endif %}>Extra Large (&gt; 100M)</option>
+                        </select>
+                    </div>
+
+                    <!-- Date Range Filter -->
+                    <div class="filter-section">
+                        <label class="form-label">Date Added</label>
+                        <select name="date_range" class="form-select">
+                            <option value="">All Time</option>
+                            <option value="week" {% if selected_date_range == 'week' %}selected{% endif %}>Last 7 Days</option>
+                            <option value="month" {% if selected_date_range == 'month' %}selected{% endif %}>Last 30 Days</option>
+                            <option value="quarter" {% if selected_date_range == 'quarter' %}selected{% endif %}>Last 90 Days</option>
+                            <option value="year" {% if selected_date_range == 'year' %}selected{% endif %}>Last 365 Days</option>
+                        </select>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-filter me-1"></i> Apply Filters
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" onclick="clearFilters()">
+                            <i class="fas fa-times me-1"></i> Clear All
+                        </button>
+                    </div>
+                </form>
             </div>
 
             <!-- Deep Insights Panel -->
@@ -394,7 +548,10 @@
             <!-- Map Container -->
             <div class="card" style="border-color: var(--primary);">
                 <div class="card-header text-white d-flex justify-content-between align-items-center">
-                    <span style="font-size: 0.9rem;">Geographical Intelligence Map</span>
+                    <span style="font-size: 0.9rem;">
+                        Geographical Intelligence Map 
+                        <small class="opacity-75">({{ filtered_count }} projects)</small>
+                    </span>
                     <div class="d-flex align-items-center">
                         <select id="map-layer-select" class="form-select form-select-sm me-2" style="width: auto; font-size: 0.8rem;">
                             <option value="street">Street</option>
@@ -407,8 +564,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-body p-0">
+                <div class="card-body p-0 position-relative">
                     <div id="map"></div>
+                    <div class="loading-overlay" id="mapLoading" style="display: none;">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -418,12 +580,12 @@
     <div class="row">
         <div class="col-12">
             <div class="filter-panel">
-                <h5 class="mb-3" style="color: var(--primary);"><i class="fas fa-brain me-1"></i>Spatial Insights</h5>
+                <h5 class="mb-3" style="color: var(--primary);"><i class="fas fa-brain me-1"></i>Spatial Insights & Analytics</h5>
                 
                 <div class="row">
                     <!-- Sector Analysis -->
-                    <div class="col-md-6">
-                        <h6 class="fw-bold mb-3">Sector Investment</h6>
+                    <div class="col-md-4">
+                        <h6 class="fw-bold mb-3">Sector Investment Analysis</h6>
                         {% for sector in sector_analysis %}
                         <div class="d-flex justify-content-between align-items-center mb-2">
                             <span style="font-size: 0.85rem;">{{ sector.sector|default:"Unknown" }}</span>
@@ -438,9 +600,27 @@
                         {% endfor %}
                     </div>
 
+                    <!-- Agency Analysis -->
+                    <div class="col-md-4">
+                        <h6 class="fw-bold mb-3">Top Implementing Agencies</h6>
+                        {% for agency in agency_analysis %}
+                        <div class="border-bottom pb-2 mb-3">
+                            <h6 class="fw-bold mb-1" style="font-size: 0.9rem; color: var(--primary);">{{ agency.implementing_agency|default:"Unknown" }}</h6>
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="badge" style="background: var(--accent); font-size: 0.75rem;">
+                                    {{ agency.count }} projects
+                                </span>
+                                <span class="badge badge-impact" style="font-size: 0.75rem;">
+                                    Ksh {{ agency.total_budget|floatformat:0|intcomma }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
                     <!-- High Impact Projects -->
-                    <div class="col-md-6">
-                        <h6 class="fw-bold mb-3">High Impact</h6>
+                    <div class="col-md-4">
+                        <h6 class="fw-bold mb-3">High Impact Projects</h6>
                         {% for project in high_impact_projects %}
                         <div class="border-bottom pb-2 mb-3">
                             <h6 class="fw-bold mb-1" style="font-size: 0.9rem; color: var(--primary);">{{ project.name }}</h6>
@@ -468,8 +648,29 @@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <!-- Leaflet MarkerCluster -->
 <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <script>
+    // Initialize Select2 for multiple select fields
+    $(document).ready(function() {
+        $('.county-select, .sector-select, .agency-select, .manager-select').select2({
+            placeholder: "Select options",
+            allowClear: true,
+            width: '100%'
+        });
+        
+        // Update active filters count
+        updateActiveFiltersCount();
+        
+        // Add real-time search
+        $('#searchInput').on('input', function() {
+            if (this.value.length >= 3 || this.value.length === 0) {
+                $('#filterForm').submit();
+            }
+        });
+    });
+    
     // Initialize map centered on Kenya
     var map = L.map('map', {
         center: [-1.286389, 36.817223], // Nairobi coordinates
@@ -582,6 +783,14 @@
             </div>
             
             <div class="popup-detail">
+                <strong><i class="fas fa-building me-1"></i>Agency:</strong> ${feature.properties.implementing_agency || 'N/A'}
+            </div>
+            
+            <div class="popup-detail">
+                <strong><i class="fas fa-user-tie me-1"></i>Manager:</strong> ${feature.properties.project_manager || 'N/A'}
+            </div>
+            
+            <div class="popup-detail">
                 <strong><i class="fas fa-money-bill-wave me-1"></i>Budget:</strong> 
                 <span class="popup-budget">${budget}</span>
             </div>
@@ -690,26 +899,90 @@
     L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(map);
     
     // Utility functions
-    function exportInsights() {
-        const insightsData = {
-            total_projects: {{ total_projects }},
-            total_budget: {{ total_budget }},
-            average_budget: {{ budget_stats.avg_budget|default:0 }},
-            spatial_data: projects
-        };
+    function updateActiveFiltersCount() {
+        let count = 0;
         
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(insightsData, null, 2));
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", "kenya_projects_insights.json");
-        document.body.appendChild(downloadAnchorNode);
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();
+        // Count checked status checkboxes
+        count += document.querySelectorAll('input[name="status"]:checked').length;
+        
+        // Count selected options in multi-selects
+        count += document.querySelectorAll('.county-select option:selected').length;
+        count += document.querySelectorAll('.sector-select option:selected').length;
+        count += document.querySelectorAll('.agency-select option:selected').length;
+        count += document.querySelectorAll('.manager-select option:selected').length;
+        
+        // Count other filters
+        if (document.querySelector('select[name="budget_range"]').value) count++;
+        if (document.querySelector('select[name="date_range"]').value) count++;
+        if (document.querySelector('input[name="search"]').value) count++;
+        
+        document.getElementById('activeFiltersCount').textContent = count;
+    }
+    
+    function downloadReport() {
+        // Show loading
+        document.getElementById('mapLoading').style.display = 'flex';
+        
+        // Get current filter parameters
+        const formData = new FormData(document.getElementById('filterForm'));
+        const params = new URLSearchParams();
+        
+        for (let [key, value] of formData) {
+            if (Array.isArray(value)) {
+                value.forEach(v => params.append(key, v));
+            } else {
+                params.append(key, value);
+            }
+        }
+        
+        // Create download URL
+        const downloadUrl = `{% url 'download_project_report' %}?${params.toString()}`;
+        
+        // Create hidden iframe for download
+        const iframe = document.createElement('iframe');
+        iframe.style.display = 'none';
+        iframe.src = downloadUrl;
+        document.body.appendChild(iframe);
+        
+        // Hide loading after a delay
+        setTimeout(() => {
+            document.getElementById('mapLoading').style.display = 'none';
+            // Remove iframe after download
+            setTimeout(() => {
+                document.body.removeChild(iframe);
+            }, 1000);
+        }, 2000);
     }
     
     function resetFilters() {
         window.location.href = "{% url 'project_map' %}";
     }
+    
+    function clearFilters() {
+        // Clear all form fields
+        document.getElementById('filterForm').reset();
+        
+        // Clear Select2 selections
+        $('.county-select, .sector-select, .agency-select, .manager-select').val(null).trigger('change');
+        
+        // Submit the form to refresh
+        document.getElementById('filterForm').submit();
+    }
+    
+    function toggleFilters() {
+        const filtersPanel = document.getElementById('filtersPanel');
+        if (filtersPanel.style.display === 'none') {
+            filtersPanel.style.display = 'block';
+        } else {
+            filtersPanel.style.display = 'none';
+        }
+    }
+    
+    // Update filter count when form changes
+    document.getElementById('filterForm').addEventListener('change', updateActiveFiltersCount);
+    document.getElementById('filterForm').addEventListener('submit', function() {
+        document.getElementById('mapLoading').style.display = 'flex';
+    });
     
     // Initialize with some animations
     document.addEventListener('DOMContentLoaded', function() {
@@ -719,6 +992,9 @@
                 card.classList.add('highlight');
             }, index * 150);
         });
+        
+        // Update active filters count on page load
+        updateActiveFiltersCount();
     });
 </script>
 {% endblock %}

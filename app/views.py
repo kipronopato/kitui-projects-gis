@@ -1422,28 +1422,24 @@ class ProjectDetailView(DetailView):
     context_object_name = 'project'
 
 
+import json
+from django.db.models import Q, Sum, Count, Avg, Min, Max, StdDev
+from django.shortcuts import render
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from weasyprint import HTML
+import tempfile
+from decimal import Decimal
+from .models import Project
+from django.utils import timezone
+
 def project_map_view(request):
     # Start with all projects that have location data
     projects = Project.objects.filter(location__isnull=False)
     
-    # Filters
-    status_filter = request.GET.getlist('status')
-    if status_filter:
-        projects = projects.filter(status__in=status_filter)
-    
-    county_filter = request.GET.getlist('county')
-    if county_filter:
-        projects = projects.filter(county__in=county_filter)
-    
-    sector_filter = request.GET.getlist('sector')
-    if sector_filter:
-        projects = projects.filter(sector__in=sector_filter)
-    
-    # Get filter options
-    status_choices = [choice[0] for choice in Project.STATUS_CHOICES]
-    status_labels = dict(Project.STATUS_CHOICES)
-    counties = Project.objects.values_list('county', flat=True).distinct().order_by('county')
-    sectors = (
+    # Get all available filter values
+    all_counties = Project.objects.values_list('county', flat=True).distinct().order_by('county')
+    all_sectors = (
         Project.objects
         .exclude(sector__isnull=True)
         .exclude(sector='')
@@ -1451,6 +1447,91 @@ def project_map_view(request):
         .distinct()
         .order_by('sector')
     )
+    all_agencies = (
+        Project.objects
+        .exclude(implementing_agency__isnull=True)
+        .exclude(implementing_agency='')
+        .values_list('implementing_agency', flat=True)
+        .distinct()
+        .order_by('implementing_agency')
+    )
+    all_managers = (
+        Project.objects
+        .exclude(project_manager__isnull=True)
+        .exclude(project_manager='')
+        .values_list('project_manager', flat=True)
+        .distinct()
+        .order_by('project_manager')
+    )
+    
+    # Initialize filters
+    status_filter = request.GET.getlist('status')
+    county_filter = request.GET.getlist('county')
+    sector_filter = request.GET.getlist('sector')
+    agency_filter = request.GET.getlist('agency')
+    manager_filter = request.GET.getlist('manager')
+    budget_range = request.GET.get('budget_range', '')
+    date_range = request.GET.get('date_range', '')
+    search_query = request.GET.get('search', '')
+    
+    # Apply filters
+    if status_filter:
+        projects = projects.filter(status__in=status_filter)
+    
+    if county_filter:
+        projects = projects.filter(county__in=county_filter)
+    
+    if sector_filter:
+        projects = projects.filter(sector__in=sector_filter)
+    
+    if agency_filter:
+        projects = projects.filter(implementing_agency__in=agency_filter)
+    
+    if manager_filter:
+        projects = projects.filter(project_manager__in=manager_filter)
+    
+    # Budget range filter
+    if budget_range:
+        if budget_range == 'small':
+            projects = projects.filter(budget__lt=1000000)
+        elif budget_range == 'medium':
+            projects = projects.filter(budget__gte=1000000, budget__lt=10000000)
+        elif budget_range == 'large':
+            projects = projects.filter(budget__gte=10000000, budget__lt=100000000)
+        elif budget_range == 'xlarge':
+            projects = projects.filter(budget__gte=100000000)
+    
+    # Date range filter
+    if date_range:
+        from datetime import datetime, timedelta
+        today = timezone.now().date()
+        
+        if date_range == 'week':
+            week_ago = today - timedelta(days=7)
+            projects = projects.filter(created_at__gte=week_ago)
+        elif date_range == 'month':
+            month_ago = today - timedelta(days=30)
+            projects = projects.filter(created_at__gte=month_ago)
+        elif date_range == 'quarter':
+            quarter_ago = today - timedelta(days=90)
+            projects = projects.filter(created_at__gte=quarter_ago)
+        elif date_range == 'year':
+            year_ago = today - timedelta(days=365)
+            projects = projects.filter(created_at__gte=year_ago)
+    
+    # Search filter
+    if search_query:
+        projects = projects.filter(
+            Q(name__icontains=search_query) |
+            Q(description__icontains=search_query) |
+            Q(county__icontains=search_query) |
+            Q(sector__icontains=search_query) |
+            Q(implementing_agency__icontains=search_query)
+        )
+    
+    # Get filter options
+    status_choices = [choice[0] for choice in Project.STATUS_CHOICES]
+    status_labels = dict(Project.STATUS_CHOICES)
     
     # Deep Insights Calculations
     total_projects = projects.count()
@@ -1482,6 +1563,17 @@ def project_map_view(request):
             avg_budget=Avg('budget')
         )
         .exclude(sector__isnull=True)
+        .order_by('-total_budget')[:8]
+    )
+    
+    # Agency Analysis
+    agency_analysis = (
+        projects.values('implementing_agency')
+        .annotate(
+            count=Count('id'),
+            total_budget=Sum('budget')
+        )
+        .exclude(implementing_agency__isnull=True)
         .order_by('-total_budget')[:5]
     )
     
@@ -1492,15 +1584,6 @@ def project_map_view(request):
         max_budget=Max('budget'),
         budget_stddev=StdDev('budget')
     )
-    
-    # Spatial Clustering Analysis
-    county_density = []
-    for county in county_distribution:
-        county_density.append({
-            'county': county['county'],
-            'project_density': county['count'],
-            'budget_density': county['total_budget'] or 0
-        })
     
     # Recent Projects
     recent_projects = projects.order_by('-created_at')[:3]
@@ -1526,13 +1609,13 @@ def project_map_view(request):
                 "status": project.status,
                 "county": project.county,
                 "sector": project.sector or "",
-                "budget": float(budget),  # safe for JSON
+                "budget": float(budget),
                 "start_date": project.start_date.strftime("%Y-%m-%d") if project.start_date else "",
                 "end_date": project.end_date.strftime("%Y-%m-%d") if project.end_date else "",
                 "description": project.description or "",
                 "implementing_agency": project.implementing_agency or "",
                 "project_manager": project.project_manager or "",
-                "budget_percentage": float(budget_percentage)  # convert Decimal to float for JSON
+                "budget_percentage": float(budget_percentage)
             }
         })
     
@@ -1542,23 +1625,391 @@ def project_map_view(request):
         "geojson": json.dumps(geojson),
         "status_choices": status_choices,
         "status_labels": status_labels,
-        "counties": counties,
-        "sectors": sectors,
+        "counties": all_counties,
+        "sectors": all_sectors,
+        "agencies": all_agencies,
+        "managers": all_managers,
         "selected_statuses": status_filter,
         "selected_counties": county_filter,
         "selected_sectors": sector_filter,
+        "selected_agencies": agency_filter,
+        "selected_managers": manager_filter,
+        "selected_budget_range": budget_range,
+        "selected_date_range": date_range,
+        "search_query": search_query,
         "total_projects": total_projects,
         "total_budget": total_budget,
         "county_distribution": county_distribution,
         "status_distribution": status_distribution,
         "sector_analysis": sector_analysis,
+        "agency_analysis": agency_analysis,
         "budget_stats": budget_stats,
-        "county_density": county_density,
         "recent_projects": recent_projects,
         "high_impact_projects": high_impact_projects,
+        "filtered_count": projects.count(),
     }
     
     return render(request, 'app/project_map.html', context)
+
+def download_project_report(request):
+    # Get the same filters as the map view
+    projects = Project.objects.filter(location__isnull=False)
+    
+    # Apply the same filters as in the map view
+    status_filter = request.GET.getlist('status')
+    county_filter = request.GET.getlist('county')
+    sector_filter = request.GET.getlist('sector')
+    agency_filter = request.GET.getlist('agency')
+    manager_filter = request.GET.getlist('manager')
+    budget_range = request.GET.get('budget_range', '')
+    date_range = request.GET.get('date_range', '')
+    search_query = request.GET.get('search', '')
+    
+    if status_filter:
+        projects = projects.filter(status__in=status_filter)
+    if county_filter:
+        projects = projects.filter(county__in=county_filter)
+    if sector_filter:
+        projects = projects.filter(sector__in=sector_filter)
+    if agency_filter:
+        projects = projects.filter(implementing_agency__in=agency_filter)
+    if manager_filter:
+        projects = projects.filter(project_manager__in=manager_filter)
+    
+    # Apply budget range filter
+    if budget_range:
+        if budget_range == 'small':
+            projects = projects.filter(budget__lt=1000000)
+        elif budget_range == 'medium':
+            projects = projects.filter(budget__gte=1000000, budget__lt=10000000)
+        elif budget_range == 'large':
+            projects = projects.filter(budget__gte=10000000, budget__lt=100000000)
+        elif budget_range == 'xlarge':
+            projects = projects.filter(budget__gte=100000000)
+    
+    # Apply date range filter
+    if date_range:
+        from datetime import datetime, timedelta
+        today = timezone.now().date()
+        
+        if date_range == 'week':
+            week_ago = today - timedelta(days=7)
+            projects = projects.filter(created_at__gte=week_ago)
+        elif date_range == 'month':
+            month_ago = today - timedelta(days=30)
+            projects = projects.filter(created_at__gte=month_ago)
+        elif date_range == 'quarter':
+            quarter_ago = today - timedelta(days=90)
+            projects = projects.filter(created_at__gte=quarter_ago)
+        elif date_range == 'year':
+            year_ago = today - timedelta(days=365)
+            projects = projects.filter(created_at__gte=year_ago)
+    
+    if search_query:
+        projects = projects.filter(
+            Q(name__icontains=search_query) |
+            Q(description__icontains=search_query) |
+            Q(county__icontains=search_query) |
+            Q(sector__icontains=search_query) |
+            Q(implementing_agency__icontains=search_query)
+        )
+    
+    # Calculate statistics for the report
+    total_projects = projects.count()
+    total_budget = projects.aggregate(total=Sum('budget'))['total'] or Decimal(0)
+    avg_budget = projects.aggregate(avg=Avg('budget'))['avg'] or Decimal(0)
+    
+    status_distribution = projects.values('status').annotate(
+        count=Count('id'),
+        total_budget=Sum('budget')
+    )
+    
+    county_distribution = projects.values('county').annotate(
+        count=Count('id'),
+        total_budget=Sum('budget')
+    ).order_by('-count')[:10]
+    
+    sector_analysis = projects.values('sector').annotate(
+        count=Count('id'),
+        total_budget=Sum('budget')
+    ).exclude(sector__isnull=True).order_by('-total_budget')[:10]
+    
+    # Create HTML content for PDF
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8">
+        <title>Kenya Projects Report</title>
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+                margin: 20px;
+                color: #333;
+                line-height: 1.4;
+            }}
+            .header {{
+                text-align: center;
+                border-bottom: 2px solid #4a90e2;
+                padding-bottom: 20px;
+                margin-bottom: 30px;
+            }}
+            .summary-cards {{
+                display: flex;
+                justify-content: space-between;
+                margin-bottom: 30px;
+            }}
+            .summary-card {{
+                flex: 1;
+                padding: 15px;
+                margin: 0 10px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                text-align: center;
+                background: #f9f9f9;
+            }}
+            .table {{
+                width: 100%;
+                border-collapse: collapse;
+                margin-bottom: 30px;
+                font-size: 12px;
+            }}
+            .table th, .table td {{
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }}
+            .table th {{
+                background-color: #4a90e2;
+                color: white;
+            }}
+            .section {{
+                margin-bottom: 30px;
+                page-break-inside: avoid;
+            }}
+            .filters-applied {{
+                background: #f0f8ff;
+                padding: 15px;
+                border-radius: 5px;
+                margin-bottom: 20px;
+                border-left: 4px solid #4a90e2;
+            }}
+            .badge {{
+                background: #4a90e2;
+                color: white;
+                padding: 2px 8px;
+                border-radius: 10px;
+                font-size: 12px;
+            }}
+            .status-completed {{ color: #28a745; font-weight: bold; }}
+            .status-ongoing {{ color: #ffc107; font-weight: bold; }}
+            .status-delayed {{ color: #dc3545; font-weight: bold; }}
+            .status-planned {{ color: #6c757d; font-weight: bold; }}
+            @media print {{
+                .summary-cards {{
+                    page-break-inside: avoid;
+                }}
+                .section {{
+                    page-break-inside: avoid;
+                }}
+            }}
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1>Kenya Projects Geographical Intelligence Report</h1>
+            <p>Generated on: {timezone.now().strftime("%B %d, %Y at %I:%M %p")}</p>
+        </div>
+
+        <div class="filters-applied">
+            <h3>Applied Filters</h3>
+            <p>
+                {f"Status: {', '.join(status_filter)}" if status_filter else ""}
+                {f" | Counties: {', '.join(county_filter)}" if county_filter else ""}
+                {f" | Sectors: {', '.join(sector_filter)}" if sector_filter else ""}
+                {f" | Agencies: {', '.join(agency_filter)}" if agency_filter else ""}
+                {f" | Managers: {', '.join(manager_filter)}" if manager_filter else ""}
+                {f" | Budget Range: {budget_range}" if budget_range else ""}
+                {f" | Date Range: {date_range}" if date_range else ""}
+                {f" | Search: {search_query}" if search_query else ""}
+                {"No filters applied" if not any([status_filter, county_filter, sector_filter, agency_filter, manager_filter, budget_range, date_range, search_query]) else ""}
+            </p>
+        </div>
+
+        <div class="summary-cards">
+            <div class="summary-card">
+                <h3>{total_projects:,}</h3>
+                <p>Total Projects</p>
+            </div>
+            <div class="summary-card">
+                <h3>Ksh {total_budget:,.0f}</h3>
+                <p>Total Investment</p>
+            </div>
+            <div class="summary-card">
+                <h3>Ksh {avg_budget:,.0f}</h3>
+                <p>Average Budget</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Projects List ({projects.count()} projects)</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Project Name</th>
+                        <th>County</th>
+                        <th>Sector</th>
+                        <th>Status</th>
+                        <th>Budget (KES)</th>
+                        <th>Implementing Agency</th>
+                    </tr>
+                </thead>
+                <tbody>
+    """
+    
+    # Add projects to the table
+    for project in projects:
+        status_class = f"status-{project.status}"
+        html_content += f"""
+                    <tr>
+                        <td>{project.name}</td>
+                        <td>{project.county}</td>
+                        <td>{project.sector or 'N/A'}</td>
+                        <td class="{status_class}">{project.get_status_display()}</td>
+                        <td>Ksh {project.budget:,.0f if project.budget else 'N/A'}</td>
+                        <td>{project.implementing_agency or 'N/A'}</td>
+                    </tr>
+        """
+    
+    html_content += """
+                </tbody>
+            </table>
+        </div>
+    """
+    
+    # Add Status Distribution
+    html_content += """
+        <div class="section">
+            <h2>Status Distribution</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Project Count</th>
+                        <th>Percentage</th>
+                        <th>Total Budget</th>
+                    </tr>
+                </thead>
+                <tbody>
+    """
+    
+    for status in status_distribution:
+        percentage = (status['count'] / total_projects * 100) if total_projects > 0 else 0
+        html_content += f"""
+                    <tr>
+                        <td class="status-{status['status']}">{dict(Project.STATUS_CHOICES).get(status['status'], status['status'])}</td>
+                        <td>{status['count']}</td>
+                        <td>{percentage:.1f}%</td>
+                        <td>Ksh {status['total_budget']:,.0f if status['total_budget'] else '0'}</td>
+                    </tr>
+        """
+    
+    html_content += """
+                </tbody>
+            </table>
+        </div>
+    """
+    
+    # Add County Distribution
+    html_content += """
+        <div class="section">
+            <h2>Top Counties by Project Count</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>County</th>
+                        <th>Project Count</th>
+                        <th>Percentage</th>
+                        <th>Total Budget</th>
+                    </tr>
+                </thead>
+                <tbody>
+    """
+    
+    for county in county_distribution:
+        percentage = (county['count'] / total_projects * 100) if total_projects > 0 else 0
+        html_content += f"""
+                    <tr>
+                        <td>{county['county']}</td>
+                        <td>{county['count']}</td>
+                        <td>{percentage:.1f}%</td>
+                        <td>Ksh {county['total_budget']:,.0f if county['total_budget'] else '0'}</td>
+                    </tr>
+        """
+    
+    html_content += """
+                </tbody>
+            </table>
+        </div>
+    """
+    
+    # Add Sector Analysis
+    html_content += """
+        <div class="section">
+            <h2>Sector Analysis</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Sector</th>
+                        <th>Project Count</th>
+                        <th>Percentage</th>
+                        <th>Total Budget</th>
+                        <th>Average Budget</th>
+                    </tr>
+                </thead>
+                <tbody>
+    """
+    
+    for sector in sector_analysis:
+        percentage = (sector['count'] / total_projects * 100) if total_projects > 0 else 0
+        avg_budget_sector = sector['total_budget'] / sector['count'] if sector['count'] > 0 else 0
+        html_content += f"""
+                    <tr>
+                        <td>{sector['sector'] or 'Unknown'}</td>
+                        <td>{sector['count']}</td>
+                        <td>{percentage:.1f}%</td>
+                        <td>Ksh {sector['total_budget']:,.0f if sector['total_budget'] else '0'}</td>
+                        <td>Ksh {avg_budget_sector:,.0f}</td>
+                    </tr>
+        """
+    
+    html_content += """
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="footer" style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center; color: #666;">
+            <p>Report generated by Kenya Projects Geographical Intelligence System</p>
+            <p>This report contains confidential information intended for authorized use only.</p>
+        </div>
+    </body>
+    </html>
+    """
+    
+    # Create PDF
+    html = HTML(string=html_content)
+    
+    # Generate PDF with better formatting
+    pdf_file = html.write_pdf()
+    
+    # Create HTTP response with PDF
+    response = HttpResponse(pdf_file, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="kenya_projects_report.pdf"'
+    
+    return response
+
+
+
 
 
 def submit_report(request, project_id):

@@ -25,6 +25,7 @@ urlpatterns = [
     # Project Management
     path('projects/', views.ProjectListView.as_view(), name='project_list'),
     path('projects/map/', views.project_map_view, name='project_map'),
+    path('projects/download-project-report/', views.download_project_report, name='download_project_report'),
     path('projects/<int:pk>/', views.ProjectDetailView.as_view(), name='project_detail'),
     path('projects/<int:project_id>/report/', views.submit_report, name='submit_report'),
     

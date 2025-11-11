@@ -37,6 +37,12 @@
         --border: #E1E8ED;       /* Light border */
         --shadow: rgba(74, 144, 226, 0.08); /* Subtle shadow */
         --card-bg: #FFFFFF;      /* Card background */
+        --sidebar-width: 280px;
+        --sidebar-collapsed: 70px;
+        --sidebar-bg: #2C3E50;
+        --sidebar-hover: #34495E;
+        --sidebar-active: #4A90E2;
+        --sidebar-text: #ECF0F1;
       }
 
       /* Global Styles */
@@ -44,10 +50,13 @@
         font-family: 'Source Sans Pro', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         background-color: var(--light);
         color: var(--dark);
-        padding-top: 70px;
         font-size: 0.9rem;
         line-height: 1.5;
         font-weight: 400;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        min-height: 100vh;
       }
 
       h1, h2, h3, h4, h5, h6, .navbar-brand {
@@ -67,100 +76,236 @@
         position: fixed;
         top: 0;
         width: 100%;
-        z-index: 1031;
+        z-index: 1040;
       }
 
-      /* Slim Navbar */
-      .navbar {
-        background: rgba(255, 255, 255, 0.95) !important;
-        backdrop-filter: blur(10px);
-        box-shadow: 0 2px 12px var(--shadow);
-        padding: 0.4rem 0;
-        min-height: 56px;
+      /* Vertical Sidebar Navigation */
+      .sidebar {
+        width: var(--sidebar-width);
+        background: var(--sidebar-bg);
+        color: var(--sidebar-text);
+        position: fixed;
+        top: 4px;
+        left: 0;
+        height: calc(100vh - 4px);
         transition: all 0.3s ease;
-        border-bottom: 1px solid var(--border);
+        z-index: 1035;
+        overflow-y: auto;
+        overflow-x: hidden;
+        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
       }
 
-      .navbar.scrolled {
-        padding: 0.3rem 0;
-        box-shadow: 0 4px 20px var(--shadow);
+      .sidebar.collapsed {
+        width: var(--sidebar-collapsed);
       }
 
-      .navbar-brand {
+      .sidebar-header {
+        padding: 1.5rem 1rem;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 70px;
+      }
+
+      .sidebar-brand {
+        display: flex;
+        align-items: center;
+        color: var(--sidebar-text);
+        text-decoration: none;
         font-weight: 600;
         font-size: 1.1rem;
-        display: flex;
-        align-items: center;
-        color: var(--dark) !important;
-        letter-spacing: -0.2px;
       }
 
-      .logo-container {
-        display: flex;
-        align-items: center;
-        height: 36px;
+      .sidebar-logo {
         width: 36px;
+        height: 36px;
         background: linear-gradient(135deg, var(--primary), var(--secondary));
         border-radius: 6px;
-        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         margin-right: 10px;
-        padding: 3px;
-        transition: all 0.3s ease;
+        flex-shrink: 0;
       }
 
-      .navbar-brand:hover .logo-container {
-        transform: scale(1.05);
+      .sidebar-logo img {
+        width: 24px;
+        height: 24px;
       }
 
-      .navbar-brand img {
-        height: 28px;
-        width: auto;
-        display: block;
-        margin: auto;
+      .sidebar-title {
+        white-space: nowrap;
+        overflow: hidden;
+        transition: opacity 0.3s ease;
       }
 
-      .nav-link {
-        color: var(--dark) !important;
-        font-weight: 500;
-        margin: 0 2px;
+      .sidebar.collapsed .sidebar-title {
+        opacity: 0;
+        width: 0;
+      }
+
+      .toggle-btn {
+        background: none;
+        border: none;
+        color: var(--sidebar-text);
+        font-size: 1rem;
+        cursor: pointer;
+        padding: 0.25rem;
+        border-radius: 4px;
         transition: all 0.2s ease;
-        border-radius: 5px;
-        padding: 0.4rem 0.8rem !important;
-        font-size: 0.85rem;
+      }
+
+      .toggle-btn:hover {
+        background: rgba(255,255,255,0.1);
+      }
+
+      /* Navigation Menu */
+      .sidebar-nav {
+        padding: 1rem 0;
+      }
+
+      .nav-item {
         position: relative;
       }
 
-      .nav-link:hover,
-      .nav-link:focus {
-        color: var(--primary) !important;
-        background: rgba(74, 144, 226, 0.05);
-        transform: none;
+      .nav-link {
+        color: var(--sidebar-text);
+        padding: 0.75rem 1rem;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        border-left: 3px solid transparent;
+        font-size: 0.85rem;
+        white-space: nowrap;
       }
 
-      .nav-item.active .nav-link {
-        background: rgba(74, 144, 226, 0.1);
-        color: var(--primary) !important;
-        font-weight: 600;
+      .nav-link:hover {
+        background: var(--sidebar-hover);
+        border-left-color: var(--secondary);
       }
 
-      .nav-link i {
-        margin-right: 6px;
-        font-size: 0.8rem;
-        width: 16px;
+      .nav-link.active {
+        background: var(--sidebar-active);
+        border-left-color: var(--accent);
+        font-weight: 500;
+      }
+
+      .nav-icon {
+        width: 20px;
         text-align: center;
+        margin-right: 12px;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+      }
+
+      .nav-text {
+        transition: opacity 0.3s ease;
+      }
+
+      .sidebar.collapsed .nav-text {
+        opacity: 0;
+        width: 0;
+      }
+
+      /* Dropdown Arrows */
+      .dropdown-arrow {
+        margin-left: auto;
+        transition: transform 0.3s ease;
+        font-size: 0.8rem;
+      }
+
+      .nav-item.open > .nav-link .dropdown-arrow {
+        transform: rotate(90deg);
+      }
+
+      /* Sub-menu Styles */
+      .sub-menu {
+        background: rgba(0,0,0,0.2);
+        overflow: hidden;
+        max-height: 0;
+        transition: max-height 0.3s ease;
+      }
+
+      .nav-item.open > .sub-menu {
+        max-height: 500px;
+      }
+
+      .sub-menu .nav-link {
+        padding-left: 2.5rem;
+        font-size: 0.8rem;
+        border-left: 2px solid transparent;
+      }
+
+      .sub-menu .nav-link:hover {
+        border-left-color: var(--accent);
+      }
+
+      /* Nested Sub-menus */
+      .sub-sub-menu {
+        background: rgba(0,0,0,0.3);
+    }
+
+      .sub-sub-menu .nav-link {
+        padding-left: 3.5rem;
+        font-size: 0.75rem;
       }
 
       /* Main Content Area */
-      main {
-        min-height: calc(100vh - 180px);
-        padding: 1.5rem 0;
+      .main-content {
+        flex: 1;
+        margin-left: var(--sidebar-width);
+        transition: margin-left 0.3s ease;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .main-content.expanded {
+        margin-left: var(--sidebar-collapsed);
+      }
+
+      /* Top Navigation Bar */
+      .top-navbar {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 2px 12px var(--shadow);
+        padding: 0.8rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        position: sticky;
+        top: 4px;
+        z-index: 1030;
+      }
+
+      .breadcrumb {
+        background: transparent;
+        margin-bottom: 0;
+        padding: 0;
+        font-size: 0.85rem;
+      }
+
+      .breadcrumb-item a {
+        color: var(--primary);
+        text-decoration: none;
+      }
+
+      .breadcrumb-item.active {
+        color: var(--muted);
+      }
+
+      /* Content Area */
+      .content-wrapper {
+        flex: 1;
+        padding: 1.5rem;
+        background: var(--light);
       }
 
       .page-header {
         background: linear-gradient(135deg, rgba(74, 144, 226, 0.05), rgba(126, 211, 33, 0.05));
         color: var(--dark);
-        padding: 1.5rem 0;
-        margin-bottom: 2rem;
+        padding: 1.5rem;
+        margin: -1.5rem -1.5rem 2rem -1.5rem;
         border-bottom: 1px solid var(--border);
       }
 
@@ -170,21 +315,6 @@
         font-size: 1.5rem;
       }
 
-      .page-header .breadcrumb {
-        background: transparent;
-        margin-bottom: 0;
-        padding: 0;
-        font-size: 0.8rem;
-      }
-
-      .page-header .breadcrumb-item a {
-        color: var(--primary);
-      }
-
-      .page-header .breadcrumb-item.active {
-        color: var(--muted);
-      }
-
       /* Slim Footer */
       footer {
         background: var(--card-bg);
@@ -192,6 +322,7 @@
         padding: 2rem 0 1rem;
         font-size: 0.8rem;
         border-top: 1px solid var(--border);
+        margin-top: auto;
       }
 
       footer a {
@@ -337,110 +468,55 @@
         font-size: 0.9rem;
       }
 
-      /* Form enhancements */
-      .form-control {
-        border: 1px solid var(--border);
-        border-radius: 5px;
-        padding: 0.5rem 0.8rem;
-        transition: all 0.2s ease;
-        font-size: 0.85rem;
+      /* Custom thin scrollbar for sidebar */
+      .sidebar::-webkit-scrollbar {
+        width: 4px;
       }
 
-      .form-control:focus {
-        border-color: var(--primary);
-        box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
+      .sidebar::-webkit-scrollbar-track {
+        background: rgba(255,255,255,0.1);
       }
 
-      /* Table enhancements */
-      .table {
-        border-radius: 6px;
-        overflow: hidden;
-        box-shadow: 0 1px 4px var(--shadow);
-        font-size: 0.85rem;
+      .sidebar::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,0.3);
+        border-radius: 2px;
       }
 
-      .table thead th {
-        background: rgba(74, 144, 226, 0.05);
-        color: var(--dark);
-        border: none;
-        padding: 0.7rem 0.8rem;
-        font-weight: 600;
-        font-size: 0.8rem;
-      }
-
-      .table tbody td {
-        padding: 0.6rem 0.8rem;
-        border-color: var(--border);
-      }
-
-      /* Alert enhancements */
-      .alert {
-        border-radius: 6px;
-        border: 1px solid var(--border);
-        box-shadow: 0 1px 4px var(--shadow);
-        font-weight: 400;
-        font-size: 0.85rem;
-      }
-
-      /* Badge enhancements */
-      .badge {
-        font-size: 0.7rem;
-        font-weight: 500;
-        padding: 0.3rem 0.5rem;
-      }
-
-      /* Progress bar enhancements */
-      .progress {
-        height: 6px;
-        border-radius: 3px;
-        background: var(--border);
-      }
-
-      .progress-bar {
-        border-radius: 3px;
+      .sidebar::-webkit-scrollbar-thumb:hover {
+        background: rgba(255,255,255,0.5);
       }
 
       /* Responsive adjustments */
       @media (max-width: 768px) {
-        body {
-          padding-top: 65px;
-          font-size: 0.85rem;
+        .sidebar {
+          transform: translateX(-100%);
         }
         
-        .navbar-brand {
-          font-size: 1rem;
+        .sidebar.mobile-open {
+          transform: translateX(0);
         }
         
-        .logo-container {
-          height: 32px;
-          width: 32px;
+        .main-content {
+          margin-left: 0 !important;
         }
         
-        .navbar-brand img {
-          height: 24px;
+        .main-content.mobile-expanded {
+          margin-left: 0;
         }
         
-        .page-header {
-          padding: 1.2rem 0;
+        .mobile-overlay {
+          display: none;
+          position: fixed;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: rgba(0,0,0,0.5);
+          z-index: 1034;
         }
         
-        .page-header h1 {
-          font-size: 1.3rem;
-        }
-        
-        main {
-          padding: 1rem 0;
-        }
-      }
-
-      @media (max-width: 576px) {
-        .nav-link {
-          padding: 0.3rem 0.6rem !important;
-          font-size: 0.8rem;
-        }
-        
-        .footer-section {
-          margin-bottom: 1.5rem;
+        .mobile-overlay.active {
+          display: block;
         }
       }
 
@@ -450,26 +526,39 @@
         to { opacity: 1; }
       }
       
-      main {
+      .content-wrapper {
         animation: fadeIn 0.3s ease;
       }
 
-      /* Custom thin scrollbar */
-      ::-webkit-scrollbar {
-        width: 6px;
+      /* Custom tooltip for collapsed sidebar */
+      .nav-link .collapsed-tooltip {
+        display: none;
+        position: absolute;
+        left: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+        background: var(--dark);
+        color: white;
+        padding: 0.5rem 0.75rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        z-index: 1050;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
       }
 
-      ::-webkit-scrollbar-track {
-        background: var(--light);
+      .nav-link .collapsed-tooltip::before {
+        content: '';
+        position: absolute;
+        right: 100%;
+        top: 50%;
+        transform: translateY(-50%);
+        border: 5px solid transparent;
+        border-right-color: var(--dark);
       }
 
-      ::-webkit-scrollbar-thumb {
-        background: var(--border);
-        border-radius: 3px;
-      }
-
-      ::-webkit-scrollbar-thumb:hover {
-        background: var(--muted);
+      .sidebar.collapsed .nav-link:hover .collapsed-tooltip {
+        display: block;
       }
     </style>
   </head>
@@ -478,124 +567,324 @@
     <!-- Thin National Header Strip -->
     <div class="national-header"></div>
 
-    <!-- Slim Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
-      <div class="container">
-        <a class="navbar-brand" href="{% url 'home' %}">
-          <div class="logo-container">
+    <!-- Mobile Overlay -->
+    <div class="mobile-overlay"></div>
+
+    <!-- Vertical Sidebar Navigation -->
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <a href="{% url 'home' %}" class="sidebar-brand">
+          <div class="sidebar-logo">
             <img
               src="{% static 'img/kenya-logo.png' %}"
               alt="Kenya Logo"
               onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-map-marker-alt\' style=\'color: white; font-size: 18px;\'></i>';"
             />
           </div>
-          <span>Kenya National Project Monitoring System</span>
+          <span class="sidebar-title">Geospatial Monitoring</span>
         </a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-        >
-          <span class="navbar-toggler-icon"></span>
+        <button class="toggle-btn" id="sidebarToggle">
+          <i class="fas fa-chevron-left"></i>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'home' %}"
-                ><i class="fas fa-home"></i> Home</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'project_list' %}"
-                ><i class="fas fa-list"></i> Projects</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'dashboard' %}"
-                ><i class="fas fa-chart-bar"></i> Dashboard</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'project_map' %}"
-                ><i class="fas fa-map"></i> Map</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'about' %}"
-                ><i class="fas fa-info-circle"></i> About</a
-              >
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'contact' %}"
-                ><i class="fas fa-envelope"></i> Contact</a
-              >
-            </li>
-          </ul>
+      </div>
+
+      <div class="sidebar-nav">
+        <!-- Main Navigation Items -->
+        <div class="nav-item">
+          <a class="nav-link" href="{% url 'home' %}">
+            <i class="nav-icon fas fa-home"></i>
+            <span class="nav-text">Dashboard Overview</span>
+            <span class="collapsed-tooltip">Dashboard Overview</span>
+          </a>
+        </div>
+
+        <!-- Projects Section with Sub-menus -->
+        <div class="nav-item">
+          <a class="nav-link" href="#">
+            <i class="nav-icon fas fa-list"></i>
+            <span class="nav-text">Projects Management</span>
+            <i class="dropdown-arrow fas fa-chevron-right"></i>
+            <span class="collapsed-tooltip">Projects Management</span>
+          </a>
+          <div class="sub-menu">
+            <div class="nav-item">
+              <a class="nav-link" href="{% url 'project_list' %}">
+                <i class="nav-icon fas fa-th-list"></i>
+                <span class="nav-text">All Projects</span>
+                <span class="collapsed-tooltip">All Projects</span>
+              </a>
+            </div>
+            <div class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="nav-icon fas fa-plus-circle"></i>
+                <span class="nav-text">Add New Project</span>
+                <span class="collapsed-tooltip">Add New Project</span>
+              </a>
+            </div>
+            <div class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="nav-icon fas fa-tasks"></i>
+                <span class="nav-text">Project Categories</span>
+                <i class="dropdown-arrow fas fa-chevron-right"></i>
+                <span class="collapsed-tooltip">Project Categories</span>
+              </a>
+              <div class="sub-menu sub-sub-menu">
+                <div class="nav-item">
+                  <a class="nav-link" href="#">
+                    <i class="nav-icon fas fa-road"></i>
+                    <span class="nav-text">Infrastructure</span>
+                    <span class="collapsed-tooltip">Infrastructure</span>
+                  </a>
+                </div>
+                <div class="nav-item">
+                  <a class="nav-link" href="#">
+                    <i class="nav-icon fas fa-tint"></i>
+                    <span class="nav-text">Water & Sanitation</span>
+                    <span class="collapsed-tooltip">Water & Sanitation</span>
+                  </a>
+                </div>
+                <div class="nav-item">
+                  <a class="nav-link" href="#">
+                    <i class="nav-icon fas fa-bolt"></i>
+                    <span class="nav-text">Energy Projects</span>
+                    <span class="collapsed-tooltip">Energy Projects</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Geospatial Section -->
+        <div class="nav-item">
+          <a class="nav-link" href="#">
+            <i class="nav-icon fas fa-map"></i>
+            <span class="nav-text">Geospatial Data</span>
+            <i class="dropdown-arrow fas fa-chevron-right"></i>
+            <span class="collapsed-tooltip">Geospatial Data</span>
+          </a>
+          <div class="sub-menu">
+            <div class="nav-item">
+              <a class="nav-link" href="{% url 'project_map' %}">
+                <i class="nav-icon fas fa-globe-africa"></i>
+                <span class="nav-text">Interactive Map</span>
+                <span class="collapsed-tooltip">Interactive Map</span>
+              </a>
+            </div>
+            <div class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="nav-icon fas fa-layer-group"></i>
+                <span class="nav-text">Map Layers</span>
+                <i class="dropdown-arrow fas fa-chevron-right"></i>
+                <span class="collapsed-tooltip">Map Layers</span>
+              </a>
+              <div class="sub-menu sub-sub-menu">
+                <div class="nav-item">
+                  <a class="nav-link" href="#">
+                    <i class="nav-icon fas fa-satellite"></i>
+                    <span class="nav-text">Satellite Imagery</span>
+                    <span class="collapsed-tooltip">Satellite Imagery</span>
+                  </a>
+                </div>
+                <div class="nav-item">
+                  <a class="nav-link" href="#">
+                    <i class="nav-icon fas fa-draw-polygon"></i>
+                    <span class="nav-text">Project Boundaries</span>
+                    <span class="collapsed-tooltip">Project Boundaries</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Analytics Section -->
+        <div class="nav-item">
+          <a class="nav-link" href="{% url 'dashboard' %}">
+            <i class="nav-icon fas fa-chart-bar"></i>
+            <span class="nav-text">Analytics & Reports</span>
+            <i class="dropdown-arrow fas fa-chevron-right"></i>
+            <span class="collapsed-tooltip">Analytics & Reports</span>
+          </a>
+          <div class="sub-menu">
+            <div class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="nav-icon fas fa-chart-line"></i>
+                <span class="nav-text">Progress Analytics</span>
+                <span class="collapsed-tooltip">Progress Analytics</span>
+              </a>
+            </div>
+            <div class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="nav-icon fas fa-file-pdf"></i>
+                <span class="nav-text">Generate Reports</span>
+                <span class="collapsed-tooltip">Generate Reports</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Administration Section -->
+        <div class="nav-item">
+          <a class="nav-link" href="#">
+            <i class="nav-icon fas fa-cogs"></i>
+            <span class="nav-text">Administration</span>
+            <i class="dropdown-arrow fas fa-chevron-right"></i>
+            <span class="collapsed-tooltip">Administration</span>
+          </a>
+          <div class="sub-menu">
+            <div class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="nav-icon fas fa-users"></i>
+                <span class="nav-text">User Management</span>
+                <span class="collapsed-tooltip">User Management</span>
+              </a>
+            </div>
+            <div class="nav-item">
+              <a class="nav-link" href="#">
+                <i class="nav-icon fas fa-shield-alt"></i>
+                <span class="nav-text">Permissions</span>
+                <span class="collapsed-tooltip">Permissions</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Support Section -->
+        <div class="nav-item">
+          <a class="nav-link" href="{% url 'about' %}">
+            <i class="nav-icon fas fa-info-circle"></i>
+            <span class="nav-text">About & Help</span>
+            <i class="dropdown-arrow fas fa-chevron-right"></i>
+            <span class="collapsed-tooltip">About & Help</span>
+          </a>
+          <div class="sub-menu">
+            <div class="nav-item">
+              <a class="nav-link" href="{% url 'about' %}">
+                <i class="nav-icon fas fa-book"></i>
+                <span class="nav-text">Documentation</span>
+                <span class="collapsed-tooltip">Documentation</span>
+              </a>
+            </div>
+            <div class="nav-item">
+              <a class="nav-link" href="{% url 'contact' %}">
+                <i class="nav-icon fas fa-envelope"></i>
+                <span class="nav-text">Contact Support</span>
+                <span class="collapsed-tooltip">Contact Support</span>
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </nav>
-    
-    <!-- Main Content -->
-    <main class="container-fluid px-3 px-md-4">
-      {% block content %}{% endblock %}
-    </main>
 
-    <!-- Slim Footer -->
-    <footer>
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-4 col-md-6 footer-section">
-            <img src="{% static 'img/kenya-logo.png' %}" alt="Kenya Logo" class="footer-logo" onerror="this.style.display='none'">
-            <h5>Geospatial Monitoring System</h5>
-            <p>Transparent monitoring of development projects across Kenya using advanced geospatial technology.</p>
-            <div class="social-links">
-              <a href="#"><i class="fab fa-twitter"></i></a>
-              <a href="#"><i class="fab fa-facebook"></i></a>
-              <a href="#"><i class="fab fa-linkedin"></i></a>
-              <a href="#"><i class="fab fa-youtube"></i></a>
+    <!-- Main Content Area -->
+    <div class="main-content" id="mainContent">
+      <!-- Top Navigation Bar -->
+      <nav class="top-navbar">
+        <div class="container-fluid">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center">
+              <button class="btn btn-sm btn-outline-primary me-3 d-lg-none" id="mobileToggle">
+                <i class="fas fa-bars"></i>
+              </button>
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                  {% block breadcrumb %}{% endblock %}
+                </ol>
+              </nav>
             </div>
-          </div>
-          <div class="col-lg-2 col-md-6 footer-section">
-            <h5>Quick Links</h5>
-            <ul>
-              <li><a href="{% url 'home' %}">Home</a></li>
-              <li><a href="{% url 'project_list' %}">Projects</a></li>
-              <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-              <li><a href="{% url 'project_map' %}">Interactive Map</a></li>
-            </ul>
-          </div>
-          <div class="col-lg-3 col-md-6 footer-section">
-            <h5>Resources</h5>
-            <ul>
-              <li><a href="{% url 'about' %}">About Us</a></li>
-              <li><a href="{% url 'contact' %}">Contact</a></li>
-              <li><a href="#">Data Privacy</a></li>
-              <li><a href="#">API Documentation</a></li>
-            </ul>
-          </div>
-          <div class="col-lg-3 col-md-6 footer-section">
-            <h5>Contact</h5>
-            <ul>
-              <li><i class="fas fa-map-marker-alt me-2"></i> Nairobi, Kenya</li>
-              <li><i class="fas fa-phone me-2"></i> +254 20 123 4567</li>
-              <li><i class="fas fa-envelope me-2"></i> info@geospatial.go.ke</li>
-              <li><i class="fas fa-clock me-2"></i> Mon - Fri, 8AM - 5PM</li>
-            </ul>
+            <div class="d-flex align-items-center">
+              <span class="text-muted me-3 d-none d-sm-block">Welcome, User</span>
+              <div class="dropdown">
+                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                  <i class="fas fa-user-circle"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                  <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                  <li><hr class="dropdown-divider"></li>
+                  <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="copyright">
-          <div class="row align-items-center">
-            <div class="col-md-6 text-center text-md-start">
-              <span>&copy; 2025 Government of Kenya. All rights reserved.</span>
-            </div>
-            <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
-              <span>Transparency in Development</span>
-            </div>
+      </nav>
+
+      <!-- Content Wrapper -->
+      <div class="content-wrapper">
+        {% block page_header %}
+        <div class="page-header">
+          <div class="container-fluid">
+            <h1>{% block page_title %}Dashboard Overview{% endblock %}</h1>
+            <p class="text-muted mb-0">{% block page_subtitle %}Monitor and manage national development projects{% endblock %}</p>
           </div>
+        </div>
+        {% endblock %}
+
+        <div class="container-fluid">
+          {% block content %}{% endblock %}
         </div>
       </div>
-    </footer>
+
+      <!-- Slim Footer -->
+      <footer>
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-4 col-md-6 footer-section">
+              <img src="{% static 'img/kenya-logo.png' %}" alt="Kenya Logo" class="footer-logo" onerror="this.style.display='none'">
+              <h5>Geospatial Monitoring System</h5>
+              <p>Transparent monitoring of development projects across Kenya using advanced geospatial technology.</p>
+              <div class="social-links">
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+              </div>
+            </div>
+            <div class="col-lg-2 col-md-6 footer-section">
+              <h5>Quick Links</h5>
+              <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                <li><a href="{% url 'project_list' %}">Projects</a></li>
+                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                <li><a href="{% url 'project_map' %}">Interactive Map</a></li>
+              </ul>
+            </div>
+            <div class="col-lg-3 col-md-6 footer-section">
+              <h5>Resources</h5>
+              <ul>
+                <li><a href="{% url 'about' %}">About Us</a></li>
+                <li><a href="{% url 'contact' %}">Contact</a></li>
+                <li><a href="#">Data Privacy</a></li>
+                <li><a href="#">API Documentation</a></li>
+              </ul>
+            </div>
+            <div class="col-lg-3 col-md-6 footer-section">
+              <h5>Contact</h5>
+              <ul>
+                <li><i class="fas fa-map-marker-alt me-2"></i> Nairobi, Kenya</li>
+                <li><i class="fas fa-phone me-2"></i> +254 20 123 4567</li>
+                <li><i class="fas fa-envelope me-2"></i> info@geospatial.go.ke</li>
+                <li><i class="fas fa-clock me-2"></i> Mon - Fri, 8AM - 5PM</li>
+              </ul>
+            </div>
+          </div>
+          <div class="copyright">
+            <div class="row align-items-center">
+              <div class="col-md-6 text-center text-md-start">
+                <span>&copy; 2025 Government of Kenya. All rights reserved.</span>
+              </div>
+              <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
+                <span>Transparency in Development</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -603,25 +892,88 @@
     
     <!-- Custom JavaScript -->
     <script>
-      // Navbar scroll effect
-      window.addEventListener('scroll', function() {
-        if (window.scrollY > 10) {
-          document.querySelector('.navbar').classList.add('scrolled');
-        } else {
-          document.querySelector('.navbar').classList.remove('scrolled');
-        }
-      });
-
-      // Add active class to current page in navigation
+      // Sidebar toggle functionality
       document.addEventListener('DOMContentLoaded', function() {
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const mobileToggle = document.getElementById('mobileToggle');
+        const mobileOverlay = document.querySelector('.mobile-overlay');
+        const dropdownArrows = document.querySelectorAll('.dropdown-arrow');
+        
+        // Toggle sidebar collapse/expand
+        sidebarToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('collapsed');
+          mainContent.classList.toggle('expanded');
+          
+          // Rotate the toggle icon
+          const icon = this.querySelector('i');
+          if (sidebar.classList.contains('collapsed')) {
+            icon.classList.remove('fa-chevron-left');
+            icon.classList.add('fa-chevron-right');
+          } else {
+            icon.classList.remove('fa-chevron-right');
+            icon.classList.add('fa-chevron-left');
+          }
+        });
+        
+        // Mobile sidebar toggle
+        mobileToggle.addEventListener('click', function() {
+          sidebar.classList.toggle('mobile-open');
+          mobileOverlay.classList.toggle('active');
+        });
+        
+        // Close mobile sidebar when clicking overlay
+        mobileOverlay.addEventListener('click', function() {
+          sidebar.classList.remove('mobile-open');
+          this.classList.remove('active');
+        });
+        
+        // Dropdown menu functionality
+        dropdownArrows.forEach(arrow => {
+          arrow.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const navItem = this.closest('.nav-item');
+            navItem.classList.toggle('open');
+          });
+        });
+        
+        // Set active navigation item based on current URL
         const currentLocation = location.pathname;
         const navLinks = document.querySelectorAll('.nav-link');
         
         navLinks.forEach(link => {
-          if(link.getAttribute('href') === currentLocation) {
-            link.parentElement.classList.add('active');
+          if (link.getAttribute('href') === currentLocation) {
+            link.classList.add('active');
+            
+            // Open parent dropdowns if this is a nested item
+            let parent = link.closest('.sub-menu');
+            while (parent) {
+              parent.previousElementSibling.classList.add('active');
+              parent.parentElement.classList.add('open');
+              parent = parent.parentElement.closest('.sub-menu');
+            }
           }
         });
+        
+        // Close all dropdowns when clicking outside on mobile
+        document.addEventListener('click', function(e) {
+          if (window.innerWidth <= 768 && !e.target.closest('.sidebar')) {
+            const openDropdowns = document.querySelectorAll('.nav-item.open');
+            openDropdowns.forEach(item => {
+              item.classList.remove('open');
+            });
+          }
+        });
+      });
+
+      // Handle window resize
+      window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+          document.querySelector('.mobile-overlay').classList.remove('active');
+        }
       });
     </script>
     
