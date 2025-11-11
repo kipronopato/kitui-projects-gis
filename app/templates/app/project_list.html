@@ -1,10 +1,11 @@
 {% extends 'base.html' %}
 {% load humanize %}
 {% load custom_filters %}
-{% block content %}
+{% block page_title %}All Projects in Kenya{% endblock %}
+{% block page_subtitle %}Browse through all development projects across the country{% endblock %}
 
-<!-- Project List Dashboard -->
-<div class="kenya-projects-dashboard">
+{% block content %}
+<div class="dashboard-container">
     <!-- System Status Bar -->
     <div class="system-status-bar">
         <div class="container-fluid">
@@ -444,9 +445,14 @@
 </div>
 
 <style>
+.dashboard-container {
+    margin-left: 0;
+    width: 100%;
+}
+
 .kenya-projects-dashboard {
     background: var(--light);
-    min-height: 100vh;
+    min-height: calc(100vh - 120px);
     font-family: 'Source Sans Pro', sans-serif;
 }
 
@@ -576,7 +582,7 @@
 }
 
 .filter-header {
-    background: #f8f9fa;
+    background: var(--light);
     padding: 0.8rem 1rem;
     cursor: pointer;
     display: flex;
@@ -612,7 +618,7 @@
 
 /* Quick Insights */
 .quick-insights {
-    background: #f8f9fa;
+    background: var(--light);
     border-radius: 6px;
     padding: 0.8rem;
 }
@@ -729,7 +735,7 @@
 .status-completed { background: #28a745; }
 .status-ongoing { background: #ffc107; color: #000; }
 .status-delayed { background: #dc3545; }
-.status-planned { background: #6c757d; }
+.status-planned { background: var(--muted); }
 
 .project-header {
     margin-bottom: 0.8rem;
@@ -896,7 +902,7 @@
 
 .pagination .page-item.disabled .page-link {
     color: var(--muted);
-    background: #f8f9fa;
+    background: var(--light);
 }
 
 /* Responsive Design */
@@ -996,7 +1002,7 @@
 .bg-completed { background: #28a745; }
 .bg-ongoing { background: #ffc107; }
 .bg-delayed { background: #dc3545; }
-.bg-planned { background: #6c757d; }
+.bg-planned { background: var(--muted); }
 </style>
 
 <script>

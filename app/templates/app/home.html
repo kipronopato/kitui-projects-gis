@@ -1,581 +1,586 @@
 {% extends 'base.html' %}
 {% load custom_filters %}
 {% load humanize %}
+{% block page_title %}Dashboard Overview{% endblock %}
+{% block page_subtitle %}Monitor and manage national development projects{% endblock %}
+
 {% block content %}
-
-<!-- Notification System -->
-<div class="notification-marquee-container">
-    <div id="notification-marquee">
-        <!-- Notifications will be populated by JavaScript -->
-    </div>
-</div>
-
-<!-- System Status Bar -->
-<div class="system-status-bar">
-    <div class="container-fluid">
-        <div class="row align-items-center">
-            <div class="col-md-6">
-                <span class="text-muted">
-                    <i class="fas fa-sync-alt me-1"></i>
-                    Last updated: <span id="last-updated-time">{% now "H:i:s" %}</span>
-                </span>
-            </div>
-            <div class="col-md-6 text-end">
-                <span class="badge bg-success me-2">
-                    <i class="fas fa-circle me-1"></i>System Online
-                </span>
-                <span class="badge bg-info me-2">
-                    <i class="fas fa-database me-1"></i>{{ total_projects|intcomma }} Projects
-                </span>
-                <span class="badge bg-warning">
-                    <i class="fas fa-bell me-1"></i>{{ overdue_projects }} Alerts
-                </span>
-            </div>
+<div class="dashboard-container">
+    <!-- Notification System -->
+    <div class="notification-marquee-container">
+        <div id="notification-marquee">
+            <!-- Notifications will be populated by JavaScript -->
         </div>
     </div>
-</div>
 
-<div class="kenya-dashboard">
-  
-  <!-- Quick Stats Bar -->
-  <div class="quick-stats-bar">
-    <div class="container-fluid">
-      <div class="row g-2 stats-grid">
+    <!-- System Status Bar -->
+    <div class="system-status-bar">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <span class="text-muted">
+                        <i class="fas fa-sync-alt me-1"></i>
+                        Last updated: <span id="last-updated-time">{% now "H:i:s" %}</span>
+                    </span>
+                </div>
+                <div class="col-md-6 text-end">
+                    <span class="badge bg-success me-2">
+                        <i class="fas fa-circle me-1"></i>System Online
+                    </span>
+                    <span class="badge bg-info me-2">
+                        <i class="fas fa-database me-1"></i>{{ total_projects|intcomma }} Projects
+                    </span>
+                    <span class="badge bg-warning">
+                        <i class="fas fa-bell me-1"></i>{{ overdue_projects }} Alerts
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <div class="col-xl-2 col-md-4 col-sm-6">
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-project-diagram"></i>
+    <div class="kenya-dashboard">
+      
+      <!-- Quick Stats Bar -->
+      <div class="quick-stats-bar">
+        <div class="container-fluid">
+          <div class="row g-2 stats-grid">
+
+            <div class="col-xl-2 col-md-4 col-sm-6">
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-project-diagram"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>{{ total_projects|intcomma }}</h3>
+                  <span>Total Projects</span>
+                </div>
+              </div>
             </div>
-            <div class="stat-content">
-              <h3>{{ total_projects|intcomma }}</h3>
-              <span>Total Projects</span>
+
+            <div class="col-xl-2 col-md-4 col-sm-6">
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>Ksh {{ total_budget|floatformat:0|intcomma }}</h3>
+                  <span>Total Budget</span>
+                </div>
+              </div>
             </div>
+
+            <div class="col-xl-2 col-md-4 col-sm-6">
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>{{ completion_rate }}%</h3>
+                  <span>Completion Rate</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-sm-6">
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>{{ counties|length }}</h3>
+                  <span>Counties Covered</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-sm-6">
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>{{ overdue_projects }}</h3>
+                  <span>Overdue Projects</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-sm-6">
+              <div class="stat-card">
+                <div class="stat-icon">
+                  <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>{{ upcoming_deadlines }}</h3>
+                  <span>Upcoming Deadlines</span>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
-
-        <div class="col-xl-2 col-md-4 col-sm-6">
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-money-bill-wave"></i>
-            </div>
-            <div class="stat-content">
-              <h3>Ksh {{ total_budget|floatformat:0|intcomma }}</h3>
-              <span>Total Budget</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xl-2 col-md-4 col-sm-6">
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-check-circle"></i>
-            </div>
-            <div class="stat-content">
-              <h3>{{ completion_rate }}%</h3>
-              <span>Completion Rate</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xl-2 col-md-4 col-sm-6">
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-map-marker-alt"></i>
-            </div>
-            <div class="stat-content">
-              <h3>{{ counties|length }}</h3>
-              <span>Counties Covered</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xl-2 col-md-4 col-sm-6">
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <div class="stat-content">
-              <h3>{{ overdue_projects }}</h3>
-              <span>Overdue Projects</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-xl-2 col-md-4 col-sm-6">
-          <div class="stat-card">
-            <div class="stat-icon">
-              <i class="fas fa-clock"></i>
-            </div>
-            <div class="stat-content">
-              <h3>{{ upcoming_deadlines }}</h3>
-              <span>Upcoming Deadlines</span>
-            </div>
-          </div>
-        </div>
-
       </div>
-    </div>
-  </div>
 
-  <!-- Debug Info (remove in production) -->
-  {% if error %}
-  <div class="container-fluid mt-3">
-    <div class="alert alert-danger">
-      <h5><i class="fas fa-exclamation-triangle"></i> Error Loading Data</h5>
-      <p class="mb-0">{{ error }}</p>
-      <small class="mt-2 d-block">
-        <a href="/debug-data/" target="_blank">Check debug data</a> to see what's in your database.
-      </small>
-    </div>
-  </div>
-  {% endif %}
-
-  <!-- Main Content -->
-  <div class="main-content">
-    <div class="container-fluid">
-      <div class="row">
-        
-        <!-- Filters Sidebar -->
-        <div class="col-xl-3 col-lg-4">
-          <div class="filters-sidebar">
-            <div class="sidebar-header">
-              <h5><i class="fas fa-filter me-2"></i>Filters & Navigation</h5>
-              <button class="btn btn-sm btn-clear" onclick="clearAllFilters()">
-                Clear All
-              </button>
-            </div>
-
-            <!-- Navigation Tabs -->
-            <div class="navigation-tabs">
-              <div class="nav nav-pills nav-fill" id="v-pills-tab" role="tablist">
-                <button class="nav-link active" id="v-pills-map-tab" data-bs-toggle="pill" 
-                        data-bs-target="#v-pills-map" type="button">
-                  <i class="fas fa-map-marked-alt me-2"></i>Map View
-                </button>
-                <button class="nav-link" id="v-pills-overview-tab" data-bs-toggle="pill" 
-                        data-bs-target="#v-pills-overview" type="button">
-                  <i class="fas fa-chart-pie me-2"></i>Overview
-                </button>
-                <button class="nav-link" id="v-pills-analytics-tab" data-bs-toggle="pill" 
-                        data-bs-target="#v-pills-analytics" type="button">
-                  <i class="fas fa-chart-line me-2"></i>Analytics
-                </button>
-              </div>
-            </div>
-
-            <!-- Location Selection -->
-            <div class="location-selection">
-              <h6><i class="fas fa-crosshairs me-2"></i>Location Selection</h6>
-              <div class="location-controls">
-                <button class="btn btn-location active" data-level="county">
-                  <i class="fas fa-map"></i> County
-                </button>
-                <button class="btn btn-location" data-level="subcounty">
-                  <i class="fas fa-map-marker-alt"></i> Subcounty
-                </button>
-                <button class="btn btn-location" data-level="ward">
-                  <i class="fas fa-location-dot"></i> Ward
-                </button>
-              </div>
-            </div>
-
-            <form method="get" id="filter-form">
-              
-              <!-- County Filter -->
-              <div class="filter-group">
-                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#countyFilter">
-                  <h6><i class="fas fa-map me-2"></i>County</h6>
-                  <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="collapse show" id="countyFilter">
-                  <div class="filter-options">
-                    <select class="form-select form-select-sm" name="county" id="county-select" onchange="this.form.submit()">
-                      <option value="">All Counties</option>
-                      {% for county in counties %}
-                      <option value="{{ county }}" {% if selected_county == county %}selected{% endif %}>
-                        {{ county }}
-                      </option>
-                      {% endfor %}
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Status Filter -->
-              <div class="filter-group">
-                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#statusFilter">
-                  <h6><i class="fas fa-tasks me-2"></i>Project Status</h6>
-                  <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="collapse show" id="statusFilter">
-                  <div class="filter-options">
-                    {% for status in status_choices %}
-                    <div class="form-check">
-                      <input class="form-check-input" type="checkbox" name="status" 
-                             value="{{ status }}" id="status-{{ forloop.counter }}"
-                             {% if status in selected_statuses %}checked{% endif %}
-                             onchange="this.form.submit()">
-                      <label class="form-check-label" for="status-{{ forloop.counter }}">
-                        {{ status_labels|get_item:status }}
-                      </label>
-                    </div>
-                    {% endfor %}
-                  </div>
-                </div>
-              </div>
-
-              <!-- Sector Filter -->
-              <div class="filter-group">
-                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#sectorFilter">
-                  <h6><i class="fas fa-layer-group me-2"></i>Sector</h6>
-                  <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="collapse show" id="sectorFilter">
-                  <div class="search-box">
-                    <input type="text" class="form-control form-control-sm" 
-                           placeholder="Search sectors..." id="sector-search">
-                  </div>
-                  <div class="filter-options" id="sector-options">
-                    {% for sector in sectors %}
-                    <div class="form-check sector-item">
-                      <input class="form-check-input" type="checkbox" name="sector"
-                             value="{{ sector }}" id="sector-{{ forloop.counter }}"
-                             {% if sector in selected_sectors %}checked{% endif %}
-                             onchange="this.form.submit()">
-                      <label class="form-check-label" for="sector-{{ forloop.counter }}">
-                        {{ sector|default:"Not Specified" }}
-                      </label>
-                    </div>
-                    {% empty %}
-                    <div class="text-muted small">No sectors available</div>
-                    {% endfor %}
-                  </div>
-                </div>
-              </div>
-
-              <!-- Year Filter -->
-              <div class="filter-group">
-                <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#yearFilter">
-                  <h6><i class="fas fa-calendar me-2"></i>Year</h6>
-                  <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="collapse show" id="yearFilter">
-                  <div class="filter-options">
-                    <select class="form-select form-select-sm" name="year" id="year-select" onchange="this.form.submit()">
-                      <option value="">All Years</option>
-                      {% for year in fiscal_years %}
-                      <option value="{{ year }}" {% if selected_year == year|stringformat:"s" %}selected{% endif %}>
-                        {{ year }}
-                      </option>
-                      {% endfor %}
-                    </select>
-                  </div>
-                </div>
-              </div>
-
-              <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-primary">
-                  <i class="fas fa-filter me-1"></i> Apply Filters
-                </button>
-                <a href="{% url 'home' %}" class="btn btn-outline-secondary">
-                  <i class="fas fa-refresh me-1"></i> Reset
-                </a>
-              </div>
-            </form>
-
-            <!-- Debug Link -->
-            <div class="mt-3 pt-3 border-top">
-              <small class="text-muted">
-                <a href="/debug-data/" target="_blank" class="text-decoration-none">
-                  <i class="fas fa-bug me-1"></i> Debug Data
-                </a>
-              </small>
-            </div>
-          </div>
+      <!-- Debug Info (remove in production) -->
+      {% if error %}
+      <div class="container-fluid mt-3">
+        <div class="alert alert-danger">
+          <h5><i class="fas fa-exclamation-triangle"></i> Error Loading Data</h5>
+          <p class="mb-0">{{ error }}</p>
+          <small class="mt-2 d-block">
+            <a href="/debug-data/" target="_blank">Check debug data</a> to see what's in your database.
+          </small>
         </div>
+      </div>
+      {% endif %}
 
-        <!-- Main Content Area -->
-        <div class="col-xl-9 col-lg-8">
-          <div class="tab-content" id="v-pills-tabContent">
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="container-fluid">
+          <div class="row">
             
-            <!-- Map View Tab -->
-            <div class="tab-pane fade show active" id="v-pills-map" role="tabpanel">
-              
-              <!-- Map Container -->
-              <div class="card map-card">
-                <div class="card-header">
-                  <h5 class="mb-0">
-                    <i class="fas fa-map me-2"></i>
-                    <span id="map-title">Kenya Projects Distribution</span>
-                  </h5>
-                  <div class="map-controls">
-                    <!-- Layer Controls -->
-                    <div class="btn-group me-2">
-                      <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
-                        <i class="fas fa-layer-group me-1"></i> Base Maps
-                      </button>
-                      <ul class="dropdown-menu" id="base-map-selector">
-                        <li><a class="dropdown-item active" href="#" data-map="osm">OpenStreetMap</a></li>
-                        <li><a class="dropdown-item" href="#" data-map="satellite">Satellite</a></li>
-                        <li><a class="dropdown-item" href="#" data-map="dark">Dark Map</a></li>
-                        <li><a class="dropdown-item" href="#" data-map="terrain">Terrain</a></li>
-                      </ul>
-                    </div>
+            <!-- Filters Sidebar -->
+            <div class="col-xl-3 col-lg-4">
+              <div class="filters-sidebar">
+                <div class="sidebar-header">
+                  <h5><i class="fas fa-filter me-2"></i>Filters & Navigation</h5>
+                  <button class="btn btn-sm btn-clear" onclick="clearAllFilters()">
+                    Clear All
+                  </button>
+                </div>
 
-                    <!-- Shapefile Level Controls -->
-                    <div class="btn-group me-2">
-                      <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                        <i class="fas fa-map-marked-alt me-1"></i> <span id="current-level">County Level</span>
-                      </button>
-                      <ul class="dropdown-menu" id="level-selector">
-                        <li><a class="dropdown-item active" href="#" data-level="county">County Level</a></li>
-                        <li><a class="dropdown-item" href="#" data-level="subcounty">Subcounty Level</a></li>
-                        <li><a class="dropdown-item" href="#" data-level="ward">Ward Level</a></li>
-                      </ul>
-                    </div>
-
-                    <!-- Project Markers Toggle -->
-                    <div class="form-check form-switch me-2">
-                      <input class="form-check-input" type="checkbox" id="project-markers-toggle" checked>
-                      <label class="form-check-label" for="project-markers-toggle">Show Projects</label>
-                    </div>
-
-                    <!-- Map Info -->
-                    <div class="map-info">
-                      <span id="selected-area-info">Hover over areas to see details</span>
-                    </div>
+                <!-- Navigation Tabs -->
+                <div class="navigation-tabs">
+                  <div class="nav nav-pills nav-fill" id="v-pills-tab" role="tablist">
+                    <button class="nav-link active" id="v-pills-map-tab" data-bs-toggle="pill" 
+                            data-bs-target="#v-pills-map" type="button">
+                      <i class="fas fa-map-marked-alt me-2"></i>Map View
+                    </button>
+                    <button class="nav-link" id="v-pills-overview-tab" data-bs-toggle="pill" 
+                            data-bs-target="#v-pills-overview" type="button">
+                      <i class="fas fa-chart-pie me-2"></i>Overview
+                    </button>
+                    <button class="nav-link" id="v-pills-analytics-tab" data-bs-toggle="pill" 
+                            data-bs-target="#v-pills-analytics" type="button">
+                      <i class="fas fa-chart-line me-2"></i>Analytics
+                    </button>
                   </div>
                 </div>
-                <div class="card-body p-0 position-relative">
-                  <div id="kenya-map"></div>
+
+                <!-- Location Selection -->
+                <div class="location-selection">
+                  <h6><i class="fas fa-crosshairs me-2"></i>Location Selection</h6>
+                  <div class="location-controls">
+                    <button class="btn btn-location active" data-level="county">
+                      <i class="fas fa-map"></i> County
+                    </button>
+                    <button class="btn btn-location" data-level="subcounty">
+                      <i class="fas fa-map-marker-alt"></i> Subcounty
+                    </button>
+                    <button class="btn btn-location" data-level="ward">
+                      <i class="fas fa-location-dot"></i> Ward
+                    </button>
+                  </div>
+                </div>
+
+                <form method="get" id="filter-form">
                   
-                  <!-- Map Legends -->
-                  <div class="map-legends">
-                    <div class="map-legend project-legend">
-                      <h6>Project Status</h6>
-                      <div class="legend-item">
-                        <span class="legend-color completed"></span>
-                        <span>Completed</span>
+                  <!-- County Filter -->
+                  <div class="filter-group">
+                    <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#countyFilter">
+                      <h6><i class="fas fa-map me-2"></i>County</h6>
+                      <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="collapse show" id="countyFilter">
+                      <div class="filter-options">
+                        <select class="form-select form-select-sm" name="county" id="county-select" onchange="this.form.submit()">
+                          <option value="">All Counties</option>
+                          {% for county in counties %}
+                          <option value="{{ county }}" {% if selected_county == county %}selected{% endif %}>
+                            {{ county }}
+                          </option>
+                          {% endfor %}
+                        </select>
                       </div>
-                      <div class="legend-item">
-                        <span class="legend-color ongoing"></span>
-                        <span>Ongoing</span>
+                    </div>
+                  </div>
+
+                  <!-- Status Filter -->
+                  <div class="filter-group">
+                    <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#statusFilter">
+                      <h6><i class="fas fa-tasks me-2"></i>Project Status</h6>
+                      <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="collapse show" id="statusFilter">
+                      <div class="filter-options">
+                        {% for status in status_choices %}
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" name="status" 
+                                 value="{{ status }}" id="status-{{ forloop.counter }}"
+                                 {% if status in selected_statuses %}checked{% endif %}
+                                 onchange="this.form.submit()">
+                          <label class="form-check-label" for="status-{{ forloop.counter }}">
+                            {{ status_labels|get_item:status }}
+                          </label>
+                        </div>
+                        {% endfor %}
                       </div>
-                      <div class="legend-item">
-                        <span class="legend-color planned"></span>
-                        <span>Planned</span>
+                    </div>
+                  </div>
+
+                  <!-- Sector Filter -->
+                  <div class="filter-group">
+                    <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#sectorFilter">
+                      <h6><i class="fas fa-layer-group me-2"></i>Sector</h6>
+                      <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="collapse show" id="sectorFilter">
+                      <div class="search-box">
+                        <input type="text" class="form-control form-control-sm" 
+                               placeholder="Search sectors..." id="sector-search">
                       </div>
-                      <div class="legend-item">
-                        <span class="legend-color delayed"></span>
-                        <span>Delayed</span>
+                      <div class="filter-options" id="sector-options">
+                        {% for sector in sectors %}
+                        <div class="form-check sector-item">
+                          <input class="form-check-input" type="checkbox" name="sector"
+                                 value="{{ sector }}" id="sector-{{ forloop.counter }}"
+                                 {% if sector in selected_sectors %}checked{% endif %}
+                                 onchange="this.form.submit()">
+                          <label class="form-check-label" for="sector-{{ forloop.counter }}">
+                            {{ sector|default:"Not Specified" }}
+                          </label>
+                        </div>
+                        {% empty %}
+                        <div class="text-muted small">No sectors available</div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Year Filter -->
+                  <div class="filter-group">
+                    <div class="filter-header" data-bs-toggle="collapse" data-bs-target="#yearFilter">
+                      <h6><i class="fas fa-calendar me-2"></i>Year</h6>
+                      <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="collapse show" id="yearFilter">
+                      <div class="filter-options">
+                        <select class="form-select form-select-sm" name="year" id="year-select" onchange="this.form.submit()">
+                          <option value="">All Years</option>
+                          {% for year in fiscal_years %}
+                          <option value="{{ year }}" {% if selected_year == year|stringformat:"s" %}selected{% endif %}>
+                            {{ year }}
+                          </option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-filter me-1"></i> Apply Filters
+                    </button>
+                    <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                      <i class="fas fa-refresh me-1"></i> Reset
+                    </a>
+                  </div>
+                </form>
+
+                <!-- Debug Link -->
+                <div class="mt-3 pt-3 border-top">
+                  <small class="text-muted">
+                    <a href="/debug-data/" target="_blank" class="text-decoration-none">
+                      <i class="fas fa-bug me-1"></i> Debug Data
+                    </a>
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="col-xl-9 col-lg-8">
+              <div class="tab-content" id="v-pills-tabContent">
+                
+                <!-- Map View Tab -->
+                <div class="tab-pane fade show active" id="v-pills-map" role="tabpanel">
+                  
+                  <!-- Map Container -->
+                  <div class="card map-card">
+                    <div class="card-header">
+                      <h5 class="mb-0">
+                        <i class="fas fa-map me-2"></i>
+                        <span id="map-title">Kenya Projects Distribution</span>
+                      </h5>
+                      <div class="map-controls">
+                        <!-- Layer Controls -->
+                        <div class="btn-group me-2">
+                          <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fas fa-layer-group me-1"></i> Base Maps
+                          </button>
+                          <ul class="dropdown-menu" id="base-map-selector">
+                            <li><a class="dropdown-item active" href="#" data-map="osm">OpenStreetMap</a></li>
+                            <li><a class="dropdown-item" href="#" data-map="satellite">Satellite</a></li>
+                            <li><a class="dropdown-item" href="#" data-map="dark">Dark Map</a></li>
+                            <li><a class="dropdown-item" href="#" data-map="terrain">Terrain</a></li>
+                          </ul>
+                        </div>
+
+                        <!-- Shapefile Level Controls -->
+                        <div class="btn-group me-2">
+                          <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fas fa-map-marked-alt me-1"></i> <span id="current-level">County Level</span>
+                          </button>
+                          <ul class="dropdown-menu" id="level-selector">
+                            <li><a class="dropdown-item active" href="#" data-level="county">County Level</a></li>
+                            <li><a class="dropdown-item" href="#" data-level="subcounty">Subcounty Level</a></li>
+                            <li><a class="dropdown-item" href="#" data-level="ward">Ward Level</a></li>
+                          </ul>
+                        </div>
+
+                        <!-- Project Markers Toggle -->
+                        <div class="form-check form-switch me-2">
+                          <input class="form-check-input" type="checkbox" id="project-markers-toggle" checked>
+                          <label class="form-check-label" for="project-markers-toggle">Show Projects</label>
+                        </div>
+
+                        <!-- Map Info -->
+                        <div class="map-info">
+                          <span id="selected-area-info">Hover over areas to see details</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card-body p-0 position-relative">
+                      <div id="kenya-map"></div>
+                      
+                      <!-- Map Legends -->
+                      <div class="map-legends">
+                        <div class="map-legend project-legend">
+                          <h6>Project Status</h6>
+                          <div class="legend-item">
+                            <span class="legend-color completed"></span>
+                            <span>Completed</span>
+                          </div>
+                          <div class="legend-item">
+                            <span class="legend-color ongoing"></span>
+                            <span>Ongoing</span>
+                          </div>
+                          <div class="legend-item">
+                            <span class="legend-color planned"></span>
+                            <span>Planned</span>
+                          </div>
+                          <div class="legend-item">
+                            <span class="legend-color delayed"></span>
+                            <span>Delayed</span>
+                          </div>
+                        </div>
+                        
+                        <div class="map-legend density-legend">
+                          <h6>Project Density</h6>
+                          <div class="legend-item">
+                            <span class="legend-color density-0"></span>
+                            <span>No Projects</span>
+                          </div>
+                          <div class="legend-item">
+                            <span class="legend-color density-1"></span>
+                            <span>Low</span>
+                          </div>
+                          <div class="legend-item">
+                            <span class="legend-color density-2"></span>
+                            <span>Medium</span>
+                          </div>
+                          <div class="legend-item">
+                            <span class="legend-color density-3"></span>
+                            <span>High</span>
+                          </div>
+                          <div class="legend-item">
+                            <span class="legend-color density-4"></span>
+                            <span>Very High</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Loading Indicator -->
+                      <div id="map-loading" class="map-loading-indicator">
+                        <div class="spinner-border text-primary" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p>Loading map data...</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Selected Area Summary -->
+                  <div class="selected-area-summary" id="selected-area-summary">
+                    <div class="summary-header">
+                      <h6><i class="fas fa-info-circle me-2"></i>Selected Area Summary</h6>
+                      <button class="btn btn-sm btn-clear" onclick="clearSelection()">
+                        <i class="fas fa-times"></i> Clear
+                      </button>
+                    </div>
+                    <div class="summary-content" id="summary-content">
+                      <p class="text-muted">Select an area on the map to view detailed summary</p>
+                    </div>
+                  </div>
+
+                  <!-- Project Lists -->
+                  <div class="row mt-4">
+                    <div class="col-md-6">
+                      <div class="card">
+                        <div class="card-header">
+                          <h5 class="mb-0"><i class="fas fa-arrow-up me-2"></i>Highest Budget Projects</h5>
+                        </div>
+                        <div class="card-body">
+                          <div class="project-list">
+                            {% for project in highest_budget_projects %}
+                            <div class="project-item">
+                              <div class="project-info">
+                                <strong>{{ project.name|truncatechars:30 }}</strong>
+                                <span class="budget">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
+                              </div>
+                              <div class="project-meta">
+                                <span class="location">{{ project.county }}</span>
+                                <span class="sector">{{ project.sector|default:"N/A" }}</span>
+                                <span class="status badge bg-{{ project.status }}">{{ project.status }}</span>
+                              </div>
+                            </div>
+                            {% empty %}
+                            <p class="text-center text-muted">No projects found</p>
+                            {% endfor %}
+                          </div>
+                        </div>
                       </div>
                     </div>
                     
-                    <div class="map-legend density-legend">
-                      <h6>Project Density</h6>
-                      <div class="legend-item">
-                        <span class="legend-color density-0"></span>
-                        <span>No Projects</span>
-                      </div>
-                      <div class="legend-item">
-                        <span class="legend-color density-1"></span>
-                        <span>Low</span>
-                      </div>
-                      <div class="legend-item">
-                        <span class="legend-color density-2"></span>
-                        <span>Medium</span>
-                      </div>
-                      <div class="legend-item">
-                        <span class="legend-color density-3"></span>
-                        <span>High</span>
-                      </div>
-                      <div class="legend-item">
-                        <span class="legend-color density-4"></span>
-                        <span>Very High</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Loading Indicator -->
-                  <div id="map-loading" class="map-loading-indicator">
-                    <div class="spinner-border text-primary" role="status">
-                      <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <p>Loading map data...</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Selected Area Summary -->
-              <div class="selected-area-summary" id="selected-area-summary">
-                <div class="summary-header">
-                  <h6><i class="fas fa-info-circle me-2"></i>Selected Area Summary</h6>
-                  <button class="btn btn-sm btn-clear" onclick="clearSelection()">
-                    <i class="fas fa-times"></i> Clear
-                  </button>
-                </div>
-                <div class="summary-content" id="summary-content">
-                  <p class="text-muted">Select an area on the map to view detailed summary</p>
-                </div>
-              </div>
-
-              <!-- Project Lists -->
-              <div class="row mt-4">
-                <div class="col-md-6">
-                  <div class="card">
-                    <div class="card-header">
-                      <h5 class="mb-0"><i class="fas fa-arrow-up me-2"></i>Highest Budget Projects</h5>
-                    </div>
-                    <div class="card-body">
-                      <div class="project-list">
-                        {% for project in highest_budget_projects %}
-                        <div class="project-item">
-                          <div class="project-info">
-                            <strong>{{ project.name|truncatechars:30 }}</strong>
-                            <span class="budget">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
-                          </div>
-                          <div class="project-meta">
-                            <span class="location">{{ project.county }}</span>
-                            <span class="sector">{{ project.sector|default:"N/A" }}</span>
-                            <span class="status badge bg-{{ project.status }}">{{ project.status }}</span>
+                    <div class="col-md-6">
+                      <div class="card">
+                        <div class="card-header">
+                          <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Overdue Projects</h5>
+                        </div>
+                        <div class="card-body">
+                          <div class="project-list">
+                            {% for project in projects %}
+                              {% if project.status == 'delayed' or project.status == 'ongoing' and project.end_date < current_date %}
+                              <div class="project-item">
+                                <div class="project-info">
+                                  <strong>{{ project.name|truncatechars:30 }}</strong>
+                                  <span class="budget">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
+                                </div>
+                                <div class="project-meta">
+                                  <span class="location">{{ project.county }}</span>
+                                  <span class="status badge bg-danger">Overdue</span>
+                                </div>
+                              </div>
+                              {% endif %}
+                            {% empty %}
+                            <p class="text-center text-muted">No overdue projects found</p>
+                            {% endfor %}
                           </div>
                         </div>
-                        {% empty %}
-                        <p class="text-center text-muted">No projects found</p>
-                        {% endfor %}
                       </div>
                     </div>
                   </div>
                 </div>
-                
-                <div class="col-md-6">
-                  <div class="card">
-                    <div class="card-header">
-                      <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Overdue Projects</h5>
+
+                <!-- Overview Tab -->
+                <div class="tab-pane fade" id="v-pills-overview" role="tabpanel">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <div class="card h-100">
+                        <div class="card-header">
+                          <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Project Status Distribution</h5>
+                        </div>
+                        <div class="card-body">
+                          <canvas id="statusChart" height="250"></canvas>
+                        </div>
+                      </div>
                     </div>
-                    <div class="card-body">
-                      <div class="project-list">
-                        {% for project in projects %}
-                          {% if project.status == 'delayed' or project.status == 'ongoing' and project.end_date < current_date %}
-                          <div class="project-item">
-                            <div class="project-info">
-                              <strong>{{ project.name|truncatechars:30 }}</strong>
-                              <span class="budget">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
+
+                    <div class="col-md-6">
+                      <div class="card h-100">
+                        <div class="card-header">
+                          <h5 class="mb-0"><i class="fas fa-industry me-2"></i>Top Sectors</h5>
+                        </div>
+                        <div class="card-body">
+                          <canvas id="sectorChart" height="250"></canvas>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-12">
+                      <div class="card">
+                        <div class="card-header">
+                          <h5 class="mb-0"><i class="fas fa-map me-2"></i>Projects by County</h5>
+                        </div>
+                        <div class="card-body">
+                          <div id="countyChartContainer">
+                            <canvas id="countyChart" height="300"></canvas>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Analytics Tab -->
+                <div class="tab-pane fade" id="v-pills-analytics" role="tabpanel">
+                  <div class="row g-3">
+                    <!-- Budget Analysis -->
+                    <div class="col-md-6">
+                      <div class="card">
+                        <div class="card-header">
+                          <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Budget by Status</h5>
+                        </div>
+                        <div class="card-body">
+                          <canvas id="budgetChart" height="250"></canvas>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Timeline -->
+                    <div class="col-md-6">
+                      <div class="card">
+                        <div class="card-header">
+                          <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Projects Timeline</h5>
+                        </div>
+                        <div class="card-body">
+                          <canvas id="timelineChart" height="250"></canvas>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Performance Metrics -->
+                    <div class="col-md-12">
+                      <div class="card">
+                        <div class="card-header">
+                          <h5 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>Performance Metrics</h5>
+                        </div>
+                        <div class="card-body">
+                          <div class="row text-center">
+                            <div class="col-md-3">
+                              <div class="metric-card">
+                                <h3>{{ completion_rate }}%</h3>
+                                <p>Completion Rate</p>
+                              </div>
                             </div>
-                            <div class="project-meta">
-                              <span class="location">{{ project.county }}</span>
-                              <span class="status badge bg-danger">Overdue</span>
+                            <div class="col-md-3">
+                              <div class="metric-card">
+                                <h3>{{ ongoing_projects }}</h3>
+                                <p>Ongoing Projects</p>
+                              </div>
                             </div>
-                          </div>
-                          {% endif %}
-                        {% empty %}
-                        <p class="text-center text-muted">No overdue projects found</p>
-                        {% endfor %}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Overview Tab -->
-            <div class="tab-pane fade" id="v-pills-overview" role="tabpanel">
-              <div class="row g-3">
-                <div class="col-md-6">
-                  <div class="card h-100">
-                    <div class="card-header">
-                      <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Project Status Distribution</h5>
-                    </div>
-                    <div class="card-body">
-                      <canvas id="statusChart" height="250"></canvas>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-6">
-                  <div class="card h-100">
-                    <div class="card-header">
-                      <h5 class="mb-0"><i class="fas fa-industry me-2"></i>Top Sectors</h5>
-                    </div>
-                    <div class="card-body">
-                      <canvas id="sectorChart" height="250"></canvas>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-md-12">
-                  <div class="card">
-                    <div class="card-header">
-                      <h5 class="mb-0"><i class="fas fa-map me-2"></i>Projects by County</h5>
-                    </div>
-                    <div class="card-body">
-                      <div id="countyChartContainer">
-                        <canvas id="countyChart" height="300"></canvas>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Analytics Tab -->
-            <div class="tab-pane fade" id="v-pills-analytics" role="tabpanel">
-              <div class="row g-3">
-                <!-- Budget Analysis -->
-                <div class="col-md-6">
-                  <div class="card">
-                    <div class="card-header">
-                      <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Budget by Status</h5>
-                    </div>
-                    <div class="card-body">
-                      <canvas id="budgetChart" height="250"></canvas>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Timeline -->
-                <div class="col-md-6">
-                  <div class="card">
-                    <div class="card-header">
-                      <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Projects Timeline</h5>
-                    </div>
-                    <div class="card-body">
-                      <canvas id="timelineChart" height="250"></canvas>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Performance Metrics -->
-                <div class="col-md-12">
-                  <div class="card">
-                    <div class="card-header">
-                      <h5 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>Performance Metrics</h5>
-                    </div>
-                    <div class="card-body">
-                      <div class="row text-center">
-                        <div class="col-md-3">
-                          <div class="metric-card">
-                            <h3>{{ completion_rate }}%</h3>
-                            <p>Completion Rate</p>
-                          </div>
-                        </div>
-                        <div class="col-md-3">
-                          <div class="metric-card">
-                            <h3>{{ ongoing_projects }}</h3>
-                            <p>Ongoing Projects</p>
-                          </div>
-                        </div>
-                        <div class="col-md-3">
-                          <div class="metric-card">
-                            <h3>{{ overdue_projects }}</h3>
-                            <p>Overdue Projects</p>
-                          </div>
-                        </div>
-                        <div class="col-md-3">
-                          <div class="metric-card">
-                            <h3>{{ upcoming_deadlines }}</h3>
-                            <p>Upcoming Deadlines</p>
+                            <div class="col-md-3">
+                              <div class="metric-card">
+                                <h3>{{ overdue_projects }}</h3>
+                                <p>Overdue Projects</p>
+                              </div>
+                            </div>
+                            <div class="col-md-3">
+                              <div class="metric-card">
+                                <h3>{{ upcoming_deadlines }}</h3>
+                                <p>Upcoming Deadlines</p>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -588,20 +593,24 @@
         </div>
       </div>
     </div>
-  </div>
 </div>
 
 <style>
+.dashboard-container {
+    margin-left: 0;
+    width: 100%;
+}
+
 .kenya-dashboard {
   background: #f8f9fa;
-  min-height: 100vh;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: calc(100vh - 120px);
+  font-family: 'Source Sans Pro', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* Notification System */
 .notification-marquee-container {
   position: fixed;
-  top: 66px;
+  top: 60px;
   left: 0;
   width: 100%;
   background: linear-gradient(90deg, #4A90E2, #2a4d7a);
@@ -638,7 +647,7 @@
 
 .system-status-bar {
   background: white;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid #E1E8ED;
   padding: 8px 0;
   font-size: 0.8rem;
   margin-top: 30px;
@@ -653,7 +662,7 @@
 .quick-stats-bar {
   background: white;
   padding: 1rem 0;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid #E1E8ED;
 }
 
 .stats-grid {
@@ -664,7 +673,7 @@
   display: flex;
   align-items: center;
   background: white;
-  border: 1px solid #dee2e6;
+  border: 1px solid #E1E8ED;
   border-radius: 8px;
   padding: 0.8rem;
   transition: all 0.2s ease;
@@ -693,12 +702,12 @@
 .stat-content h3 {
   margin: 0;
   font-weight: 600;
-  color: #2c3e50;
+  color: #2C3E50;
   font-size: 1.2rem;
 }
 
 .stat-content span {
-  color: #6c757d;
+  color: #7F8C8D;
   font-size: 0.8rem;
   font-weight: 500;
 }
@@ -721,7 +730,7 @@
   align-items: center;
   margin-bottom: 1rem;
   padding-bottom: 0.8rem;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid #E1E8ED;
 }
 
 .sidebar-header h5 {
@@ -732,7 +741,7 @@
 }
 
 .btn-clear {
-  background: #6c757d;
+  background: #7F8C8D;
   color: white;
   border: none;
   padding: 0.2rem 0.6rem;
@@ -746,7 +755,7 @@
 
 /* Navigation Tabs */
 .navigation-tabs {
-  background: #f8f9fa;
+  background: #FAFBFC;
   border-radius: 6px;
   padding: 0.4rem;
   margin-bottom: 1rem;
@@ -755,7 +764,7 @@
 .navigation-tabs .nav-link {
   border-radius: 6px;
   padding: 0.6rem 0.8rem;
-  color: #6c757d;
+  color: #7F8C8D;
   font-weight: 500;
   transition: all 0.2s ease;
   font-size: 0.8rem;
@@ -777,12 +786,12 @@
 .location-selection {
   margin-bottom: 1rem;
   padding: 0.8rem;
-  background: #f8f9fa;
+  background: #FAFBFC;
   border-radius: 6px;
 }
 
 .location-selection h6 {
-  color: #2c3e50;
+  color: #2C3E50;
   margin-bottom: 0.6rem;
   font-weight: 600;
   font-size: 0.85rem;
@@ -796,9 +805,9 @@
 .btn-location {
   flex: 1;
   padding: 0.4rem;
-  border: 1px solid #dee2e6;
+  border: 1px solid #E1E8ED;
   background: white;
-  color: #6c757d;
+  color: #7F8C8D;
   border-radius: 4px;
   font-size: 0.75rem;
   transition: all 0.2s ease;
@@ -817,7 +826,7 @@
 
 /* Filter Groups */
 .filter-group {
-  border: 1px solid #dee2e6;
+  border: 1px solid #E1E8ED;
   border-radius: 6px;
   margin-bottom: 0.8rem;
   overflow: hidden;
@@ -829,7 +838,7 @@
 }
 
 .filter-header {
-  background: #f8f9fa;
+  background: #FAFBFC;
   padding: 0.8rem 1rem;
   cursor: pointer;
   display: flex;
@@ -844,14 +853,14 @@
 
 .filter-header h6 {
   margin: 0;
-  color: #2c3e50;
+  color: #2C3E50;
   font-weight: 600;
   font-size: 0.8rem;
 }
 
 .filter-header i {
   transition: transform 0.2s ease;
-  color: #6c757d;
+  color: #7F8C8D;
   font-size: 0.8rem;
 }
 
@@ -867,7 +876,7 @@
 
 .search-box {
   padding: 0.6rem 0.8rem;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid #E1E8ED;
 }
 
 /* Map Card */
@@ -875,7 +884,7 @@
   border: none;
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.08);
 }
 
 .map-card .card-header {
@@ -920,13 +929,13 @@
   border-radius: 6px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   min-width: 140px;
-  border: 1px solid #dee2e6;
+  border: 1px solid #E1E8ED;
 }
 
 .map-legend h6 {
   margin: 0 0 0.6rem 0;
   font-weight: 600;
-  color: #2c3e50;
+  color: #2C3E50;
   font-size: 0.8rem;
 }
 
@@ -948,9 +957,9 @@
 .legend-color.completed { background: #28a745; }
 .legend-color.ongoing { background: #ffc107; }
 .legend-color.delayed { background: #dc3545; }
-.legend-color.planned { background: #6c757d; }
+.legend-color.planned { background: #7F8C8D; }
 
-.legend-color.density-0 { background: #f8f9fa; }
+.legend-color.density-0 { background: #FAFBFC; }
 .legend-color.density-1 { background: #a3d9b1; }
 .legend-color.density-2 { background: #48c78e; }
 .legend-color.density-3 { background: #4A90E2; }
@@ -971,12 +980,12 @@
   align-items: center;
   margin-bottom: 0.8rem;
   padding-bottom: 0.6rem;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid #E1E8ED;
 }
 
 .summary-header h6 {
   margin: 0;
-  color: #2c3e50;
+  color: #2C3E50;
   font-weight: 600;
   font-size: 0.9rem;
 }
@@ -989,14 +998,14 @@
 
 .project-item {
   padding: 0.8rem;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid #E1E8ED;
   transition: background-color 0.2s ease;
   border-radius: 4px;
   margin-bottom: 0.4rem;
 }
 
 .project-item:hover {
-  background: #f8f9fa;
+  background: #FAFBFC;
 }
 
 .project-item:last-child {
@@ -1012,7 +1021,7 @@
 }
 
 .project-info strong {
-  color: #2c3e50;
+  color: #2C3E50;
   font-weight: 600;
   flex: 1;
   margin-right: 0.8rem;
@@ -1036,14 +1045,14 @@
   font-size: 0.75rem;
   padding: 0.2rem 0.4rem;
   border-radius: 3px;
-  background: #f8f9fa;
-  color: #6c757d;
+  background: #FAFBFC;
+  color: #7F8C8D;
 }
 
 .bg-completed { background-color: #28a745 !important; color: white !important; }
 .bg-ongoing { background-color: #ffc107 !important; color: #000 !important; }
 .bg-delayed { background-color: #dc3545 !important; color: white !important; }
-.bg-planned { background-color: #6c757d !important; color: white !important; }
+.bg-planned { background-color: #7F8C8D !important; color: white !important; }
 
 /* Enhanced Map Controls */
 .map-controls {
@@ -1084,7 +1093,7 @@
 
 .map-loading-indicator p {
   margin: 1rem 0 0 0;
-  color: #2c3e50;
+  color: #2C3E50;
   font-weight: 500;
 }
 
@@ -1102,7 +1111,7 @@
 }
 
 .metric-card p {
-  color: #6c757d;
+  color: #7F8C8D;
   margin: 0;
   font-weight: 500;
 }
@@ -1157,11 +1166,9 @@
 }
 </style>
 
+{% block extra_js %}
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<!-- Leaflet CSS & JS -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script>
 // Dashboard JavaScript
@@ -1511,7 +1518,7 @@ function getChoroplethStyle(feature, level, maxProjects) {
     let fillColor;
     
     if (projectCount === 0) {
-        fillColor = '#f8f9fa';
+        fillColor = '#FAFBFC';
     } else if (maxProjects > 0) {
         const percentage = projectCount / maxProjects;
         
@@ -1680,9 +1687,9 @@ function getStatusColor(status) {
         'completed': '#28a745',
         'ongoing': '#ffc107',
         'delayed': '#dc3545',
-        'planned': '#6c757d'
+        'planned': '#7F8C8D'
     };
-    return colors[status] || '#6c757d';
+    return colors[status] || '#7F8C8D';
 }
 
 function showMapLoading(show) {
@@ -2038,5 +2045,4 @@ window.clearAllFilters = clearAllFilters;
 window.handleCountySelection = handleCountySelection;
 window.clearSelection = clearSelection;
 </script>
-
 {% endblock %}
