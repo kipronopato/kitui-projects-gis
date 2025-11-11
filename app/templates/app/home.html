@@ -38,504 +38,551 @@
         </div>
     </div>
 
-    <!-- Horizontal Navigation & Filters Bar -->
-    <div class="horizontal-nav-filters">
+    <div class="kenya-dashboard">
+      
+      <!-- Horizontal Filters & Navigation Bar -->
+      <div class="horizontal-filters-bar">
         <div class="container-fluid">
-            <div class="row">
-                <div class="col-12">
-                    <div class="horizontal-filters-container">
-                        <!-- Navigation Tabs -->
-                        <div class="horizontal-navigation-tabs">
-                            <div class="nav nav-pills" id="horizontal-tab" role="tablist">
-                                <button class="nav-link active" id="map-view-tab" data-bs-toggle="pill" 
-                                        data-bs-target="#map-view" type="button">
-                                    <i class="fas fa-map-marked-alt me-2"></i>Map View
-                                </button>
-                                <button class="nav-link" id="overview-tab" data-bs-toggle="pill" 
-                                        data-bs-target="#overview" type="button">
-                                    <i class="fas fa-chart-pie me-2"></i>Overview
-                                </button>
-                                <button class="nav-link" id="analytics-tab" data-bs-toggle="pill" 
-                                        data-bs-target="#analytics" type="button">
-                                    <i class="fas fa-chart-line me-2"></i>Analytics
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Filters Section -->
-                        <div class="horizontal-filters-section">
-                            <div class="filters-row">
-                                <!-- Location Selection -->
-                                <div class="filter-item">
-                                    <label class="filter-label"><i class="fas fa-crosshairs me-1"></i>Location</label>
-                                    <div class="location-controls">
-                                        <button class="btn btn-location active" data-level="county">
-                                            <i class="fas fa-map"></i> County
-                                        </button>
-                                        <button class="btn btn-location" data-level="subcounty">
-                                            <i class="fas fa-map-marker-alt"></i> Subcounty
-                                        </button>
-                                        <button class="btn btn-location" data-level="ward">
-                                            <i class="fas fa-location-dot"></i> Ward
-                                        </button>
-                                    </div>
-                                </div>
-
-                                <!-- County Filter -->
-                                <div class="filter-item">
-                                    <label class="filter-label"><i class="fas fa-map me-1"></i>County</label>
-                                    <select class="form-select form-select-sm" name="county" id="county-select" onchange="this.form.submit()">
-                                        <option value="">All Counties</option>
-                                        {% for county in counties %}
-                                        <option value="{{ county }}" {% if selected_county == county %}selected{% endif %}>
-                                            {{ county }}
-                                        </option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-
-                                <!-- Status Filter -->
-                                <div class="filter-item">
-                                    <label class="filter-label"><i class="fas fa-tasks me-1"></i>Status</label>
-                                    <div class="status-checkboxes">
-                                        {% for status in status_choices %}
-                                        <div class="form-check form-check-inline">
-                                            <input class="form-check-input" type="checkbox" name="status" 
-                                                   value="{{ status }}" id="status-{{ forloop.counter }}"
-                                                   {% if status in selected_statuses %}checked{% endif %}
-                                                   onchange="this.form.submit()">
-                                            <label class="form-check-label" for="status-{{ forloop.counter }}">
-                                                {{ status_labels|get_item:status }}
-                                            </label>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-
-                                <!-- Sector Filter -->
-                                <div class="filter-item">
-                                    <label class="filter-label"><i class="fas fa-layer-group me-1"></i>Sector</label>
-                                    <select class="form-select form-select-sm" name="sector" id="sector-select" onchange="this.form.submit()">
-                                        <option value="">All Sectors</option>
-                                        {% for sector in sectors %}
-                                        <option value="{{ sector }}" {% if sector in selected_sectors %}selected{% endif %}>
-                                            {{ sector }}
-                                        </option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-
-                                <!-- Year Filter -->
-                                <div class="filter-item">
-                                    <label class="filter-label"><i class="fas fa-calendar me-1"></i>Year</label>
-                                    <select class="form-select form-select-sm" name="year" id="year-select" onchange="this.form.submit()">
-                                        <option value="">All Years</option>
-                                        {% for year in fiscal_years %}
-                                        <option value="{{ year }}" {% if selected_year == year|stringformat:"s" %}selected{% endif %}>
-                                            {{ year }}
-                                        </option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-
-                                <!-- Action Buttons -->
-                                <div class="filter-item">
-                                    <div class="filter-actions">
-                                        <button type="submit" class="btn btn-primary btn-sm">
-                                            <i class="fas fa-filter me-1"></i> Apply
-                                        </button>
-                                        <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">
-                                            <i class="fas fa-refresh me-1"></i> Reset
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+          <div class="filters-navigation-container">
+            
+            <!-- Navigation Tabs -->
+            <div class="horizontal-navigation-tabs">
+              <h6 class="filters-title me-3">Filters & Navigation</h6>
+              <div class="nav nav-pills" role="tablist">
+                <button class="nav-link active" id="v-pills-map-tab" data-bs-toggle="pill" 
+                        data-bs-target="#v-pills-map" type="button">
+                  <i class="fas fa-map-marked-alt me-2"></i>Map View
+                </button>
+                <button class="nav-link" id="v-pills-overview-tab" data-bs-toggle="pill" 
+                        data-bs-target="#v-pills-overview" type="button">
+                  <i class="fas fa-chart-pie me-2"></i>Overview
+                </button>
+                <button class="nav-link" id="v-pills-analytics-tab" data-bs-toggle="pill" 
+                        data-bs-target="#v-pills-analytics" type="button">
+                  <i class="fas fa-chart-line me-2"></i>Analytics
+                </button>
+              </div>
             </div>
-        </div>
-    </div>
 
-    <!-- Main Content Area -->
-    <div class="main-content-area">
+            <!-- Location Selection -->
+            <div class="horizontal-location-selection">
+              <h6 class="location-title me-2">Location Selection</h6>
+              <div class="location-controls">
+                <button class="btn btn-location active" data-level="county">
+                  <i class="fas fa-map"></i> County
+                </button>
+                <button class="btn btn-location" data-level="subcounty">
+                  <i class="fas fa-map-marker-alt"></i> Subcounty
+                </button>
+                <button class="btn btn-location" data-level="ward">
+                  <i class="fas fa-location-dot"></i> Ward
+                </button>
+              </div>
+            </div>
+
+            <!-- Filters Form -->
+            <form method="get" id="filter-form" class="horizontal-filter-form">
+              
+              <!-- County Filter -->
+              <div class="filter-group horizontal">
+                <div class="filter-header">
+                  <h6><i class="fas fa-map me-2"></i>County</h6>
+                </div>
+                <div class="filter-options">
+                  <select class="form-select form-select-sm" name="county" id="county-select" onchange="this.form.submit()">
+                    <option value="">All Counties</option>
+                    {% for county in counties %}
+                    <option value="{{ county }}" {% if selected_county == county %}selected{% endif %}>
+                      {{ county }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <!-- Status Filter -->
+              <div class="filter-group horizontal">
+                <div class="filter-header">
+                  <h6><i class="fas fa-tasks me-2"></i>Project Status</h6>
+                </div>
+                <div class="filter-options">
+                  {% for status in status_choices %}
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="status" 
+                           value="{{ status }}" id="status-{{ forloop.counter }}"
+                           {% if status in selected_statuses %}checked{% endif %}
+                           onchange="this.form.submit()">
+                    <label class="form-check-label" for="status-{{ forloop.counter }}">
+                      {{ status_labels|get_item:status }}
+                    </label>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+
+              <!-- Sector Filter -->
+              <div class="filter-group horizontal">
+                <div class="filter-header">
+                  <h6><i class="fas fa-layer-group me-2"></i>Sector</h6>
+                </div>
+                <div class="filter-options">
+                  <input type="text" class="form-control form-control-sm sector-search" 
+                         placeholder="Search sectors..." id="sector-search">
+                  <div class="sector-options" id="sector-options">
+                    {% for sector in sectors %}
+                    <div class="form-check sector-item">
+                      <input class="form-check-input" type="checkbox" name="sector"
+                             value="{{ sector }}" id="sector-{{ forloop.counter }}"
+                             {% if sector in selected_sectors %}checked{% endif %}
+                             onchange="this.form.submit()">
+                      <label class="form-check-label" for="sector-{{ forloop.counter }}">
+                        {{ sector|default:"Not Specified" }}
+                      </label>
+                    </div>
+                    {% empty %}
+                    <div class="text-muted small">No sectors available</div>
+                    {% endfor %}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Year Filter -->
+              <div class="filter-group horizontal">
+                <div class="filter-header">
+                  <h6><i class="fas fa-calendar me-2"></i>Year</h6>
+                </div>
+                <div class="filter-options">
+                  <select class="form-select form-select-sm" name="year" id="year-select" onchange="this.form.submit()">
+                    <option value="">All Years</option>
+                    {% for year in fiscal_years %}
+                    <option value="{{ year }}" {% if selected_year == year|stringformat:"s" %}selected{% endif %}>
+                      {{ year }}
+                    </option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="filter-actions">
+                <button type="submit" class="btn btn-primary btn-sm">
+                  <i class="fas fa-filter me-1"></i> Apply
+                </button>
+                <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">
+                  <i class="fas fa-refresh me-1"></i> Reset
+                </a>
+                <button type="button" class="btn btn-clear btn-sm" onclick="clearAllFilters()">
+                  Clear All
+                </button>
+              </div>
+
+              <!-- Debug Link -->
+              <div class="debug-link">
+                <small class="text-muted">
+                  <a href="/debug-data/" target="_blank" class="text-decoration-none">
+                    <i class="fas fa-bug me-1"></i> Debug Data
+                  </a>
+                </small>
+              </div>
+            </form>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Stats Bar - Made thinner -->
+      <div class="quick-stats-bar thin">
         <div class="container-fluid">
-            <!-- Tab Content -->
-            <div class="tab-content" id="horizontal-tabContent">
+          <div class="row g-1 stats-grid">
+
+            <div class="col-xl-2 col-md-4 col-sm-6">
+              <div class="stat-card thin">
+                <div class="stat-icon">
+                  <i class="fas fa-project-diagram"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>{{ total_projects|intcomma }}</h3>
+                  <span>Total Projects</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-sm-6">
+              <div class="stat-card thin">
+                <div class="stat-icon">
+                  <i class="fas fa-money-bill-wave"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>Ksh {{ total_budget|floatformat:0|intcomma }}</h3>
+                  <span>Total Budget</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-sm-6">
+              <div class="stat-card thin">
+                <div class="stat-icon">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>{{ completion_rate }}%</h3>
+                  <span>Completion Rate</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-sm-6">
+              <div class="stat-card thin">
+                <div class="stat-icon">
+                  <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>{{ counties|length }}</h3>
+                  <span>Counties Covered</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-sm-6">
+              <div class="stat-card thin">
+                <div class="stat-icon">
+                  <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>{{ overdue_projects }}</h3>
+                  <span>Overdue Projects</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-xl-2 col-md-4 col-sm-6">
+              <div class="stat-card thin">
+                <div class="stat-icon">
+                  <i class="fas fa-clock"></i>
+                </div>
+                <div class="stat-content">
+                  <h3>{{ upcoming_deadlines }}</h3>
+                  <span>Upcoming Deadlines</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Debug Info (remove in production) -->
+      {% if error %}
+      <div class="container-fluid mt-3">
+        <div class="alert alert-danger">
+          <h5><i class="fas fa-exclamation-triangle"></i> Error Loading Data</h5>
+          <p class="mb-0">{{ error }}</p>
+          <small class="mt-2 d-block">
+            <a href="/debug-data/" target="_blank">Check debug data</a> to see what's in your database.
+          </small>
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <div class="container-fluid">
+          <div class="row">
+            
+            <!-- Main Content Area - Full width since sidebar is now horizontal -->
+            <div class="col-12">
+              <div class="tab-content" id="v-pills-tabContent">
                 
                 <!-- Map View Tab -->
-                <div class="tab-pane fade show active" id="map-view" role="tabpanel">
-                    <div class="row">
-                        <div class="col-12">
-                            <!-- Map Container -->
-                            <div class="card map-card">
-                                <div class="card-header">
-                                    <h5 class="mb-0">
-                                        <i class="fas fa-map me-2"></i>
-                                        <span id="map-title">Kenya Projects Distribution</span>
-                                    </h5>
-                                    <div class="map-controls">
-                                        <!-- Layer Controls -->
-                                        <div class="btn-group me-2">
-                                            <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
-                                                <i class="fas fa-layer-group me-1"></i> Base Maps
-                                            </button>
-                                            <ul class="dropdown-menu" id="base-map-selector">
-                                                <li><a class="dropdown-item active" href="#" data-map="osm">OpenStreetMap</a></li>
-                                                <li><a class="dropdown-item" href="#" data-map="satellite">Satellite</a></li>
-                                                <li><a class="dropdown-item" href="#" data-map="dark">Dark Map</a></li>
-                                                <li><a class="dropdown-item" href="#" data-map="terrain">Terrain</a></li>
-                                            </ul>
-                                        </div>
-
-                                        <!-- Shapefile Level Controls -->
-                                        <div class="btn-group me-2">
-                                            <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                                                <i class="fas fa-map-marked-alt me-1"></i> <span id="current-level">County Level</span>
-                                            </button>
-                                            <ul class="dropdown-menu" id="level-selector">
-                                                <li><a class="dropdown-item active" href="#" data-level="county">County Level</a></li>
-                                                <li><a class="dropdown-item" href="#" data-level="subcounty">Subcounty Level</a></li>
-                                                <li><a class="dropdown-item" href="#" data-level="ward">Ward Level</a></li>
-                                            </ul>
-                                        </div>
-
-                                        <!-- Project Markers Toggle -->
-                                        <div class="form-check form-switch me-2">
-                                            <input class="form-check-input" type="checkbox" id="project-markers-toggle" checked>
-                                            <label class="form-check-label" for="project-markers-toggle">Show Projects</label>
-                                        </div>
-
-                                        <!-- Map Info -->
-                                        <div class="map-info">
-                                            <span id="selected-area-info">Hover over areas to see details</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="card-body p-0 position-relative">
-                                    <div id="kenya-map"></div>
-                                    
-                                    <!-- Map Legends -->
-                                    <div class="map-legends">
-                                        <div class="map-legend project-legend">
-                                            <h6>Project Status</h6>
-                                            <div class="legend-item">
-                                                <span class="legend-color completed"></span>
-                                                <span>Completed</span>
-                                            </div>
-                                            <div class="legend-item">
-                                                <span class="legend-color ongoing"></span>
-                                                <span>Ongoing</span>
-                                            </div>
-                                            <div class="legend-item">
-                                                <span class="legend-color planned"></span>
-                                                <span>Planned</span>
-                                            </div>
-                                            <div class="legend-item">
-                                                <span class="legend-color delayed"></span>
-                                                <span>Delayed</span>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="map-legend density-legend">
-                                            <h6>Project Density</h6>
-                                            <div class="legend-item">
-                                                <span class="legend-color density-0"></span>
-                                                <span>No Projects</span>
-                                            </div>
-                                            <div class="legend-item">
-                                                <span class="legend-color density-1"></span>
-                                                <span>Low</span>
-                                            </div>
-                                            <div class="legend-item">
-                                                <span class="legend-color density-2"></span>
-                                                <span>Medium</span>
-                                            </div>
-                                            <div class="legend-item">
-                                                <span class="legend-color density-3"></span>
-                                                <span>High</span>
-                                            </div>
-                                            <div class="legend-item">
-                                                <span class="legend-color density-4"></span>
-                                                <span>Very High</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Loading Indicator -->
-                                    <div id="map-loading" class="map-loading-indicator">
-                                        <div class="spinner-border text-primary" role="status">
-                                            <span class="visually-hidden">Loading...</span>
-                                        </div>
-                                        <p>Loading map data...</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Selected Area Summary -->
-                            <div class="selected-area-summary" id="selected-area-summary">
-                                <div class="summary-header">
-                                    <h6><i class="fas fa-info-circle me-2"></i>Selected Area Summary</h6>
-                                    <button class="btn btn-sm btn-clear" onclick="clearSelection()">
-                                        <i class="fas fa-times"></i> Clear
-                                    </button>
-                                </div>
-                                <div class="summary-content" id="summary-content">
-                                    <p class="text-muted">Select an area on the map to view detailed summary</p>
-                                </div>
-                            </div>
+                <div class="tab-pane fade show active" id="v-pills-map" role="tabpanel">
+                  
+                  <!-- Map Container -->
+                  <div class="card map-card">
+                    <div class="card-header">
+                      <h5 class="mb-0">
+                        <i class="fas fa-map me-2"></i>
+                        <span id="map-title">Kenya Projects Distribution</span>
+                      </h5>
+                      <div class="map-controls">
+                        <!-- Layer Controls -->
+                        <div class="btn-group me-2">
+                          <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fas fa-layer-group me-1"></i> Base Maps
+                          </button>
+                          <ul class="dropdown-menu" id="base-map-selector">
+                            <li><a class="dropdown-item active" href="#" data-map="osm">OpenStreetMap</a></li>
+                            <li><a class="dropdown-item" href="#" data-map="satellite">Satellite</a></li>
+                            <li><a class="dropdown-item" href="#" data-map="dark">Dark Map</a></li>
+                            <li><a class="dropdown-item" href="#" data-map="terrain">Terrain</a></li>
+                          </ul>
                         </div>
+
+                        <!-- Shapefile Level Controls -->
+                        <div class="btn-group me-2">
+                          <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                            <i class="fas fa-map-marked-alt me-1"></i> <span id="current-level">County Level</span>
+                          </button>
+                          <ul class="dropdown-menu" id="level-selector">
+                            <li><a class="dropdown-item active" href="#" data-level="county">County Level</a></li>
+                            <li><a class="dropdown-item" href="#" data-level="subcounty">Subcounty Level</a></li>
+                            <li><a class="dropdown-item" href="#" data-level="ward">Ward Level</a></li>
+                          </ul>
+                        </div>
+
+                        <!-- Project Markers Toggle -->
+                        <div class="form-check form-switch me-2">
+                          <input class="form-check-input" type="checkbox" id="project-markers-toggle" checked>
+                          <label class="form-check-label" for="project-markers-toggle">Show Projects</label>
+                        </div>
+
+                        <!-- Map Info -->
+                        <div class="map-info">
+                          <span id="selected-area-info">Hover over areas to see details</span>
+                        </div>
+                      </div>
                     </div>
+                    <div class="card-body p-0 position-relative">
+                      <div id="kenya-map"></div>
+                      
+                      <!-- Map Legends -->
+                      <div class="map-legends">
+                        <div class="map-legend project-legend">
+                          <h6>Project Status</h6>
+                          <div class="legend-item">
+                            <span class="legend-color completed"></span>
+                            <span>Completed</span>
+                          </div>
+                          <div class="legend-item">
+                            <span class="legend-color ongoing"></span>
+                            <span>Ongoing</span>
+                          </div>
+                          <div class="legend-item">
+                            <span class="legend-color planned"></span>
+                            <span>Planned</span>
+                          </div>
+                          <div class="legend-item">
+                            <span class="legend-color delayed"></span>
+                            <span>Delayed</span>
+                          </div>
+                        </div>
+                        
+                        <div class="map-legend density-legend">
+                          <h6>Project Density</h6>
+                          <div class="legend-item">
+                            <span class="legend-color density-0"></span>
+                            <span>No Projects</span>
+                          </div>
+                          <div class="legend-item">
+                            <span class="legend-color density-1"></span>
+                            <span>Low</span>
+                          </div>
+                          <div class="legend-item">
+                            <span class="legend-color density-2"></span>
+                            <span>Medium</span>
+                          </div>
+                          <div class="legend-item">
+                            <span class="legend-color density-3"></span>
+                            <span>High</span>
+                          </div>
+                          <div class="legend-item">
+                            <span class="legend-color density-4"></span>
+                            <span>Very High</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Loading Indicator -->
+                      <div id="map-loading" class="map-loading-indicator">
+                        <div class="spinner-border text-primary" role="status">
+                          <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p>Loading map data...</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Selected Area Summary -->
+                  <div class="selected-area-summary" id="selected-area-summary">
+                    <div class="summary-header">
+                      <h6><i class="fas fa-info-circle me-2"></i>Selected Area Summary</h6>
+                      <button class="btn btn-sm btn-clear" onclick="clearSelection()">
+                        <i class="fas fa-times"></i> Clear
+                      </button>
+                    </div>
+                    <div class="summary-content" id="summary-content">
+                      <p class="text-muted">Select an area on the map to view detailed summary</p>
+                    </div>
+                  </div>
+
+                  <!-- Project Lists -->
+                  <div class="row mt-4">
+                    <div class="col-md-6">
+                      <div class="card">
+                        <div class="card-header">
+                          <h5 class="mb-0"><i class="fas fa-arrow-up me-2"></i>Highest Budget Projects</h5>
+                        </div>
+                        <div class="card-body">
+                          <div class="project-list">
+                            {% for project in highest_budget_projects %}
+                            <div class="project-item">
+                              <div class="project-info">
+                                <strong>{{ project.name|truncatechars:30 }}</strong>
+                                <span class="budget">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
+                              </div>
+                              <div class="project-meta">
+                                <span class="location">{{ project.county }}</span>
+                                <span class="sector">{{ project.sector|default:"N/A" }}</span>
+                                <span class="status badge bg-{{ project.status }}">{{ project.status }}</span>
+                              </div>
+                            </div>
+                            {% empty %}
+                            <p class="text-center text-muted">No projects found</p>
+                            {% endfor %}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                      <div class="card">
+                        <div class="card-header">
+                          <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Overdue Projects</h5>
+                        </div>
+                        <div class="card-body">
+                          <div class="project-list">
+                            {% for project in projects %}
+                              {% if project.status == 'delayed' or project.status == 'ongoing' and project.end_date < current_date %}
+                              <div class="project-item">
+                                <div class="project-info">
+                                  <strong>{{ project.name|truncatechars:30 }}</strong>
+                                  <span class="budget">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
+                                </div>
+                                <div class="project-meta">
+                                  <span class="location">{{ project.county }}</span>
+                                  <span class="status badge bg-danger">Overdue</span>
+                                </div>
+                              </div>
+                              {% endif %}
+                            {% empty %}
+                            <p class="text-center text-muted">No overdue projects found</p>
+                            {% endfor %}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <!-- Overview Tab -->
-                <div class="tab-pane fade" id="overview" role="tabpanel">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <div class="card h-100">
-                                <div class="card-header">
-                                    <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Project Status Distribution</h5>
-                                </div>
-                                <div class="card-body">
-                                    <canvas id="statusChart" height="250"></canvas>
-                                </div>
-                            </div>
+                <div class="tab-pane fade" id="v-pills-overview" role="tabpanel">
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <div class="card h-100">
+                        <div class="card-header">
+                          <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Project Status Distribution</h5>
                         </div>
-
-                        <div class="col-md-6">
-                            <div class="card h-100">
-                                <div class="card-header">
-                                    <h5 class="mb-0"><i class="fas fa-industry me-2"></i>Top Sectors</h5>
-                                </div>
-                                <div class="card-body">
-                                    <canvas id="sectorChart" height="250"></canvas>
-                                </div>
-                            </div>
+                        <div class="card-body">
+                          <canvas id="statusChart" height="250"></canvas>
                         </div>
-
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="mb-0"><i class="fas fa-map me-2"></i>Projects by County</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div id="countyChartContainer">
-                                        <canvas id="countyChart" height="300"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                      </div>
                     </div>
+
+                    <div class="col-md-6">
+                      <div class="card h-100">
+                        <div class="card-header">
+                          <h5 class="mb-0"><i class="fas fa-industry me-2"></i>Top Sectors</h5>
+                        </div>
+                        <div class="card-body">
+                          <canvas id="sectorChart" height="250"></canvas>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-md-12">
+                      <div class="card">
+                        <div class="card-header">
+                          <h5 class="mb-0"><i class="fas fa-map me-2"></i>Projects by County</h5>
+                        </div>
+                        <div class="card-body">
+                          <div id="countyChartContainer">
+                            <canvas id="countyChart" height="300"></canvas>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <!-- Analytics Tab -->
-                <div class="tab-pane fade" id="analytics" role="tabpanel">
-                    <div class="row g-3">
-                        <!-- Budget Analysis -->
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Budget by Status</h5>
-                                </div>
-                                <div class="card-body">
-                                    <canvas id="budgetChart" height="250"></canvas>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Timeline -->
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Projects Timeline</h5>
-                                </div>
-                                <div class="card-body">
-                                    <canvas id="timelineChart" height="250"></canvas>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Performance Metrics -->
-                        <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>Performance Metrics</h5>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row text-center">
-                                        <div class="col-md-3">
-                                            <div class="metric-card">
-                                                <h3>{{ completion_rate }}%</h3>
-                                                <p>Completion Rate</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="metric-card">
-                                                <h3>{{ ongoing_projects }}</h3>
-                                                <p>Ongoing Projects</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="metric-card">
-                                                <h3>{{ overdue_projects }}</h3>
-                                                <p>Overdue Projects</p>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="metric-card">
-                                                <h3>{{ upcoming_deadlines }}</h3>
-                                                <p>Upcoming Deadlines</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Thin Summary Statistics -->
-    <div class="thin-stats-bar">
-        <div class="container-fluid">
-            <div class="row g-1 stats-grid-thin">
-                <div class="col">
-                    <div class="stat-card-thin">
-                        <div class="stat-icon-thin">
-                            <i class="fas fa-project-diagram"></i>
-                        </div>
-                        <div class="stat-content-thin">
-                            <h4>{{ total_projects|intcomma }}</h4>
-                            <span>Total Projects</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="stat-card-thin">
-                        <div class="stat-icon-thin">
-                            <i class="fas fa-money-bill-wave"></i>
-                        </div>
-                        <div class="stat-content-thin">
-                            <h4>Ksh {{ total_budget|floatformat:0|intcomma }}</h4>
-                            <span>Total Budget</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="stat-card-thin">
-                        <div class="stat-icon-thin">
-                            <i class="fas fa-check-circle"></i>
-                        </div>
-                        <div class="stat-content-thin">
-                            <h4>{{ completion_rate }}%</h4>
-                            <span>Completion Rate</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="stat-card-thin">
-                        <div class="stat-icon-thin">
-                            <i class="fas fa-map-marker-alt"></i>
-                        </div>
-                        <div class="stat-content-thin">
-                            <h4>{{ counties|length }}</h4>
-                            <span>Counties Covered</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="stat-card-thin">
-                        <div class="stat-icon-thin">
-                            <i class="fas fa-exclamation-triangle"></i>
-                        </div>
-                        <div class="stat-content-thin">
-                            <h4>{{ overdue_projects }}</h4>
-                            <span>Overdue Projects</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="stat-card-thin">
-                        <div class="stat-icon-thin">
-                            <i class="fas fa-clock"></i>
-                        </div>
-                        <div class="stat-content-thin">
-                            <h4>{{ upcoming_deadlines }}</h4>
-                            <span>Upcoming Deadlines</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Project Lists Section -->
-    <div class="project-lists-section">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="card">
+                <div class="tab-pane fade" id="v-pills-analytics" role="tabpanel">
+                  <div class="row g-3">
+                    <!-- Budget Analysis -->
+                    <div class="col-md-6">
+                      <div class="card">
                         <div class="card-header">
-                            <h5 class="mb-0"><i class="fas fa-arrow-up me-2"></i>Highest Budget Projects</h5>
+                          <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Budget by Status</h5>
                         </div>
                         <div class="card-body">
-                            <div class="project-list">
-                                {% for project in highest_budget_projects %}
-                                <div class="project-item">
-                                    <div class="project-info">
-                                        <strong>{{ project.name|truncatechars:30 }}</strong>
-                                        <span class="budget">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
-                                    </div>
-                                    <div class="project-meta">
-                                        <span class="location">{{ project.county }}</span>
-                                        <span class="sector">{{ project.sector|default:"N/A" }}</span>
-                                        <span class="status badge bg-{{ project.status }}">{{ project.status }}</span>
-                                    </div>
-                                </div>
-                                {% empty %}
-                                <p class="text-center text-muted">No projects found</p>
-                                {% endfor %}
-                            </div>
+                          <canvas id="budgetChart" height="250"></canvas>
                         </div>
+                      </div>
                     </div>
-                </div>
-                
-                <div class="col-md-6">
-                    <div class="card">
+
+                    <!-- Timeline -->
+                    <div class="col-md-6">
+                      <div class="card">
                         <div class="card-header">
-                            <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Overdue Projects</h5>
+                          <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Projects Timeline</h5>
                         </div>
                         <div class="card-body">
-                            <div class="project-list">
-                                {% for project in projects %}
-                                    {% if project.status == 'delayed' or project.status == 'ongoing' and project.end_date < current_date %}
-                                    <div class="project-item">
-                                        <div class="project-info">
-                                            <strong>{{ project.name|truncatechars:30 }}</strong>
-                                            <span class="budget">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
-                                        </div>
-                                        <div class="project-meta">
-                                            <span class="location">{{ project.county }}</span>
-                                            <span class="status badge bg-danger">Overdue</span>
-                                        </div>
-                                    </div>
-                                    {% endif %}
-                                {% empty %}
-                                <p class="text-center text-muted">No overdue projects found</p>
-                                {% endfor %}
-                            </div>
+                          <canvas id="timelineChart" height="250"></canvas>
                         </div>
+                      </div>
                     </div>
+
+                    <!-- Performance Metrics -->
+                    <div class="col-md-12">
+                      <div class="card">
+                        <div class="card-header">
+                          <h5 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>Performance Metrics</h5>
+                        </div>
+                        <div class="card-body">
+                          <div class="row text-center">
+                            <div class="col-md-3">
+                              <div class="metric-card">
+                                <h3>{{ completion_rate }}%</h3>
+                                <p>Completion Rate</p>
+                              </div>
+                            </div>
+                            <div class="col-md-3">
+                              <div class="metric-card">
+                                <h3>{{ ongoing_projects }}</h3>
+                                <p>Ongoing Projects</p>
+                              </div>
+                            </div>
+                            <div class="col-md-3">
+                              <div class="metric-card">
+                                <h3>{{ overdue_projects }}</h3>
+                                <p>Overdue Projects</p>
+                              </div>
+                            </div>
+                            <div class="col-md-3">
+                              <div class="metric-card">
+                                <h3>{{ upcoming_deadlines }}</h3>
+                                <p>Upcoming Deadlines</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
 </div>
 
@@ -545,507 +592,624 @@
     width: 100%;
 }
 
-/* Horizontal Navigation & Filters */
-.horizontal-nav-filters {
-    background: var(--card-bg);
-    border-bottom: 1px solid var(--border);
-    padding: 1rem 0;
-    margin-bottom: 1rem;
+.kenya-dashboard {
+  background: #f8f9fa;
+  min-height: calc(100vh - 120px);
+  font-family: 'Source Sans Pro', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.horizontal-filters-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
+/* Notification System */
+.notification-marquee-container {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(90deg, #4A90E2, #2a4d7a);
+  color: white;
+  padding: 6px 0;
+  z-index: 1030;
+  overflow: hidden;
+  font-size: 0.8rem;
+}
+
+#notification-marquee {
+  white-space: nowrap;
+  display: inline-block;
+  padding-left: 100%;
+  animation: scrollText 90s linear infinite;
+}
+
+@keyframes scrollText {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+.notification-item {
+  display: inline-block;
+  margin-right: 40px;
+  font-weight: 500;
+}
+
+.notification-item .badge {
+  margin-right: 6px;
+  font-size: 0.7rem;
+  padding: 2px 5px;
+}
+
+.system-status-bar {
+  background: white;
+  border-bottom: 1px solid #E1E8ED;
+  padding: 8px 0;
+  font-size: 0.8rem;
+  margin-top: 30px;
+}
+
+.system-status-bar .badge {
+  font-size: 0.75rem;
+  padding: 4px 8px;
+}
+
+/* Horizontal Filters & Navigation Bar */
+.horizontal-filters-bar {
+  background: white;
+  border-bottom: 1px solid #E1E8ED;
+  padding: 1rem 0;
+  margin-bottom: 1rem;
+}
+
+.filters-navigation-container {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
 }
 
 .horizontal-navigation-tabs {
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.filters-title {
+  color: #4A90E2;
+  font-weight: 600;
+  margin: 0;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.horizontal-navigation-tabs .nav {
+  gap: 0.5rem;
 }
 
 .horizontal-navigation-tabs .nav-link {
-    border: none;
-    border-radius: 6px;
-    padding: 0.6rem 1rem;
-    color: var(--muted);
-    font-weight: 500;
-    transition: all 0.2s ease;
-    font-size: 0.85rem;
-    margin-right: 0.5rem;
+  border-radius: 6px;
+  padding: 0.5rem 0.8rem;
+  color: #7F8C8D;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  font-size: 0.8rem;
+  border: none;
+  white-space: nowrap;
 }
 
 .horizontal-navigation-tabs .nav-link.active {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    color: white;
-    box-shadow: 0 2px 4px var(--shadow);
+  background: linear-gradient(135deg, #4A90E2, #2a4d7a);
+  color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .horizontal-navigation-tabs .nav-link:hover:not(.active) {
-    background: rgba(74, 144, 226, 0.1);
-    color: var(--primary);
+  background: rgba(74, 144, 226, 0.1);
+  color: #4A90E2;
 }
 
-.horizontal-filters-section {
-    background: var(--light);
-    border-radius: 6px;
-    padding: 1rem;
+/* Horizontal Location Selection */
+.horizontal-location-selection {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
 }
 
-.filters-row {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    flex-wrap: wrap;
-}
-
-.filter-item {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    min-width: 120px;
-}
-
-.filter-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--dark);
-    margin-bottom: 0;
+.location-title {
+  color: #2C3E50;
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin: 0;
+  white-space: nowrap;
 }
 
 .location-controls {
-    display: flex;
-    gap: 0.3rem;
+  display: flex;
+  gap: 0.3rem;
 }
 
 .btn-location {
-    padding: 0.3rem 0.6rem;
-    border: 1px solid var(--border);
-    background: white;
-    color: var(--muted);
-    border-radius: 4px;
-    font-size: 0.7rem;
-    transition: all 0.2s ease;
-    white-space: nowrap;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid #E1E8ED;
+  background: white;
+  color: #7F8C8D;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .btn-location.active {
-    background: var(--primary);
-    color: white;
-    border-color: var(--primary);
+  background: #4A90E2;
+  color: white;
+  border-color: #4A90E2;
 }
 
 .btn-location:hover:not(.active) {
-    background: #e9ecef;
-    color: var(--primary);
+  background: #e9ecef;
+  color: #4A90E2;
 }
 
-.status-checkboxes {
-    display: flex;
-    gap: 0.8rem;
-    flex-wrap: wrap;
+/* Horizontal Filter Form */
+.horizontal-filter-form {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  flex: 1;
 }
 
-.status-checkboxes .form-check {
-    margin-bottom: 0;
+.filter-group.horizontal {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 120px;
 }
 
-.status-checkboxes .form-check-label {
-    font-size: 0.75rem;
+.filter-group.horizontal .filter-header {
+  padding: 0;
+  background: none;
+  cursor: default;
 }
 
+.filter-group.horizontal .filter-header h6 {
+  color: #2C3E50;
+  font-weight: 600;
+  font-size: 0.8rem;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.filter-group.horizontal .filter-options {
+  padding: 0;
+  max-height: none;
+  overflow: visible;
+}
+
+.filter-group.horizontal .form-select {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+}
+
+.filter-group.horizontal .form-check {
+  margin-bottom: 0.2rem;
+}
+
+.filter-group.horizontal .form-check-label {
+  font-size: 0.75rem;
+}
+
+/* Sector Search in Horizontal Layout */
+.sector-search {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.sector-options {
+  max-height: 120px;
+  overflow-y: auto;
+  border: 1px solid #E1E8ED;
+  border-radius: 4px;
+  padding: 0.3rem;
+  background: white;
+}
+
+/* Filter Actions */
 .filter-actions {
-    display: flex;
-    gap: 0.5rem;
-    margin-top: 0.8rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 
-/* Main Content Area */
-.main-content-area {
-    margin-bottom: 1rem;
+.filter-actions .btn {
+  font-size: 0.75rem;
+  padding: 0.3rem 0.6rem;
+  white-space: nowrap;
 }
 
-/* Thin Stats Bar */
-.thin-stats-bar {
-    background: var(--card-bg);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    padding: 0.8rem 0;
-    margin-bottom: 1rem;
+.debug-link {
+  margin-left: auto;
 }
 
-.stats-grid-thin {
-    margin: 0;
+/* Quick Stats Bar - Thin Version */
+.quick-stats-bar.thin {
+  padding: 0.5rem 0;
+  background: white;
+  border-bottom: 1px solid #E1E8ED;
 }
 
-.stat-card-thin {
-    display: flex;
-    align-items: center;
-    background: transparent;
-    padding: 0.5rem;
-    transition: all 0.2s ease;
-    height: 100%;
-    border-right: 1px solid var(--border);
+.stat-card.thin {
+  padding: 0.5rem;
+  border: 1px solid #E1E8ED;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
 
-.stat-card-thin:last-child {
-    border-right: none;
+.stat-card.thin .stat-icon {
+  width: 30px;
+  height: 30px;
+  font-size: 0.9rem;
+  margin-right: 0.6rem;
 }
 
-.stat-card-thin:hover {
-    background: rgba(74, 144, 226, 0.05);
+.stat-card.thin .stat-content h3 {
+  font-size: 1rem;
+  margin: 0;
 }
 
-.stat-icon-thin {
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 0.9rem;
-    margin-right: 0.6rem;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
+.stat-card.thin .stat-content span {
+  font-size: 0.75rem;
 }
 
-.stat-content-thin h4 {
-    margin: 0;
-    font-weight: 600;
-    color: var(--dark);
-    font-size: 1.1rem;
-    line-height: 1.2;
-}
-
-.stat-content-thin span {
-    color: var(--muted);
-    font-size: 0.7rem;
-    font-weight: 500;
-    line-height: 1.2;
-}
-
-/* Project Lists Section */
-.project-lists-section {
-    margin-bottom: 2rem;
-}
-
-/* Map Styles */
+/* Map Card */
 .map-card {
-    border: none;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 8px var(--shadow);
+  border: none;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.08);
+  margin-bottom: 1rem;
 }
 
 .map-card .card-header {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
-    color: white;
-    padding: 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  background: linear-gradient(135deg, #4A90E2, #2a4d7a);
+  color: white;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .map-card .card-header h5 {
-    margin: 0;
-    font-weight: 600;
-    font-size: 1rem;
+  margin: 0;
+  font-weight: 600;
+  font-size: 1rem;
 }
 
 .map-info {
-    font-size: 0.8rem;
-    opacity: 0.9;
+  font-size: 0.8rem;
+  opacity: 0.9;
 }
 
 #kenya-map {
-    height: 500px;
-    width: 100%;
+  height: 500px;
+  width: 100%;
 }
 
 /* Map Legends */
 .map-legends {
-    position: absolute;
-    bottom: 15px;
-    left: 15px;
-    display: flex;
-    gap: 0.8rem;
-    flex-wrap: wrap;
-    z-index: 1000;
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  z-index: 1000;
 }
 
 .map-legend {
-    background: var(--card-bg);
-    padding: 0.8rem;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    min-width: 140px;
-    border: 1px solid var(--border);
+  background: white;
+  padding: 0.8rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  min-width: 140px;
+  border: 1px solid #E1E8ED;
 }
 
 .map-legend h6 {
-    margin: 0 0 0.6rem 0;
-    font-weight: 600;
-    color: var(--dark);
-    font-size: 0.8rem;
+  margin: 0 0 0.6rem 0;
+  font-weight: 600;
+  color: #2C3E50;
+  font-size: 0.8rem;
 }
 
 .legend-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.4rem;
 }
 
 .legend-color {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    margin-right: 0.6rem;
-    border: 2px solid white;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 0.6rem;
+  border: 2px solid white;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .legend-color.completed { background: #28a745; }
 .legend-color.ongoing { background: #ffc107; }
 .legend-color.delayed { background: #dc3545; }
-.legend-color.planned { background: var(--muted); }
+.legend-color.planned { background: #7F8C8D; }
 
-.legend-color.density-0 { background: var(--light); }
+.legend-color.density-0 { background: #FAFBFC; }
 .legend-color.density-1 { background: #a3d9b1; }
 .legend-color.density-2 { background: #48c78e; }
-.legend-color.density-3 { background: var(--primary); }
+.legend-color.density-3 { background: #4A90E2; }
 .legend-color.density-4 { background: #2a4d7a; }
 
 /* Selected Area Summary */
 .selected-area-summary {
-    background: var(--card-bg);
-    border-radius: 6px;
-    padding: 1rem;
-    margin-top: 1rem;
-    box-shadow: 0 2px 4px var(--shadow);
+  background: white;
+  border-radius: 6px;
+  padding: 1rem;
+  margin-top: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .summary-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.8rem;
-    padding-bottom: 0.6rem;
-    border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+  padding-bottom: 0.6rem;
+  border-bottom: 1px solid #E1E8ED;
 }
 
 .summary-header h6 {
-    margin: 0;
-    color: var(--dark);
-    font-weight: 600;
-    font-size: 0.9rem;
+  margin: 0;
+  color: #2C3E50;
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
 /* Project Lists */
 .project-list {
-    max-height: 250px;
-    overflow-y: auto;
+  max-height: 250px;
+  overflow-y: auto;
 }
 
 .project-item {
-    padding: 0.8rem;
-    border-bottom: 1px solid var(--border);
-    transition: background-color 0.2s ease;
-    border-radius: 4px;
-    margin-bottom: 0.4rem;
+  padding: 0.8rem;
+  border-bottom: 1px solid #E1E8ED;
+  transition: background-color 0.2s ease;
+  border-radius: 4px;
+  margin-bottom: 0.4rem;
 }
 
 .project-item:hover {
-    background: var(--light);
+  background: #FAFBFC;
 }
 
 .project-item:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
+  border-bottom: none;
+  margin-bottom: 0;
 }
 
 .project-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 0.6rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.6rem;
 }
 
 .project-info strong {
-    color: var(--dark);
-    font-weight: 600;
-    flex: 1;
-    margin-right: 0.8rem;
-    font-size: 0.85rem;
+  color: #2C3E50;
+  font-weight: 600;
+  flex: 1;
+  margin-right: 0.8rem;
+  font-size: 0.85rem;
 }
 
 .budget {
-    color: var(--primary);
-    font-weight: 600;
-    font-size: 0.8rem;
-    white-space: nowrap;
+  color: #4A90E2;
+  font-weight: 600;
+  font-size: 0.8rem;
+  white-space: nowrap;
 }
 
 .project-meta {
-    display: flex;
-    gap: 0.6rem;
-    flex-wrap: wrap;
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
 }
 
 .project-meta span {
-    font-size: 0.75rem;
-    padding: 0.2rem 0.4rem;
-    border-radius: 3px;
-    background: var(--light);
-    color: var(--muted);
+  font-size: 0.75rem;
+  padding: 0.2rem 0.4rem;
+  border-radius: 3px;
+  background: #FAFBFC;
+  color: #7F8C8D;
 }
+
+.bg-completed { background-color: #28a745 !important; color: white !important; }
+.bg-ongoing { background-color: #ffc107 !important; color: #000 !important; }
+.bg-delayed { background-color: #dc3545 !important; color: white !important; }
+.bg-planned { background-color: #7F8C8D !important; color: white !important; }
 
 /* Enhanced Map Controls */
 .map-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .map-controls .btn-group {
-    flex-shrink: 0;
+  flex-shrink: 0;
 }
 
 .map-controls .form-check {
-    margin: 0;
-    white-space: nowrap;
+  margin: 0;
+  white-space: nowrap;
 }
 
 .map-controls .form-check-label {
-    font-size: 0.8rem;
-    color: white;
+  font-size: 0.8rem;
+  color: white;
 }
 
 /* Map Loading Indicator */
 .map-loading-indicator {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(255, 255, 255, 0.95);
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    text-align: center;
-    z-index: 1000;
-    display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  z-index: 1000;
+  display: none;
 }
 
 .map-loading-indicator p {
-    margin: 1rem 0 0 0;
-    color: var(--dark);
-    font-weight: 500;
+  margin: 1rem 0 0 0;
+  color: #2C3E50;
+  font-weight: 500;
 }
 
 /* Metric Cards */
 .metric-card {
-    padding: 1rem;
-    text-align: center;
+  padding: 1rem;
+  text-align: center;
 }
 
 .metric-card h3 {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--primary);
-    margin-bottom: 0.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #4A90E2;
+  margin-bottom: 0.5rem;
 }
 
 .metric-card p {
-    color: var(--muted);
-    margin: 0;
-    font-weight: 500;
+  color: #7F8C8D;
+  margin: 0;
+  font-weight: 500;
 }
 
 /* Responsive Design */
+@media (max-width: 1200px) {
+  .filters-navigation-container {
+    gap: 1rem;
+  }
+  
+  .horizontal-filter-form {
+    gap: 0.8rem;
+  }
+  
+  .filter-group.horizontal {
+    min-width: 110px;
+  }
+}
+
+@media (max-width: 992px) {
+  .horizontal-filters-bar {
+    padding: 0.8rem 0;
+  }
+  
+  .filters-navigation-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+  
+  .horizontal-filter-form {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .filter-actions {
+    margin-left: auto;
+  }
+}
+
 @media (max-width: 768px) {
-    .filters-row {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 1rem;
-    }
-    
-    .filter-item {
-        min-width: auto;
-    }
-    
-    .location-controls {
-        justify-content: center;
-    }
-    
-    .status-checkboxes {
-        justify-content: center;
-    }
-    
-    #kenya-map {
-        height: 350px;
-    }
-    
-    .map-legends {
-        position: relative;
-        bottom: auto;
-        left: auto;
-        padding: 0.8rem;
-        justify-content: center;
-    }
-    
-    .map-controls {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-    
-    .stats-grid-thin .col {
-        flex: 0 0 50%;
-        max-width: 50%;
-        margin-bottom: 0.5rem;
-    }
-    
-    .stat-card-thin {
-        border-right: none;
-        border-bottom: 1px solid var(--border);
-    }
-    
-    .stat-card-thin:last-child {
-        border-bottom: none;
-    }
+  .horizontal-navigation-tabs {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .horizontal-location-selection {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  
+  .horizontal-filter-form {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.8rem;
+  }
+  
+  .filter-group.horizontal {
+    width: 100%;
+  }
+  
+  .filter-actions {
+    width: 100%;
+    justify-content: flex-start;
+    margin-left: 0;
+  }
+  
+  .debug-link {
+    margin-left: 0;
+  }
+  
+  #kenya-map {
+    height: 350px;
+  }
+  
+  .map-legends {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    padding: 0.8rem;
+    justify-content: center;
+  }
+  
+  .map-controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 /* Custom scrollbar */
-.project-list::-webkit-scrollbar {
-    width: 4px;
+.filter-options::-webkit-scrollbar,
+.project-list::-webkit-scrollbar,
+.sector-options::-webkit-scrollbar {
+  width: 4px;
 }
 
-.project-list::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 2px;
+.filter-options::-webkit-scrollbar-track,
+.project-list::-webkit-scrollbar-track,
+.sector-options::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 2px;
 }
 
-.project-list::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 2px;
+.filter-options::-webkit-scrollbar-thumb,
+.project-list::-webkit-scrollbar-thumb,
+.sector-options::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 2px;
 }
 
-.project-list::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
-}
-
-/* Status badge colors */
-.bg-completed { background-color: #28a745 !important; color: white !important; }
-.bg-ongoing { background-color: #ffc107 !important; color: #000 !important; }
-.bg-delayed { background-color: #dc3545 !important; color: white !important; }
-.bg-planned { background-color: var(--muted) !important; color: white !important; }
-
-/* Form elements */
-.form-select-sm {
-    font-size: 0.8rem;
-}
-
-.btn-sm {
-    font-size: 0.8rem;
+.filter-options::-webkit-scrollbar-thumb:hover,
+.project-list::-webkit-scrollbar-thumb:hover,
+.sector-options::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
 </style>
 
@@ -1299,9 +1463,591 @@ function loadShapefileLayer(level) {
         });
 }
 
-// ... (rest of the JavaScript functions remain the same as in the original file)
-// Note: Due to character limits, I've kept the core structure but removed duplicate functions
-// The complete JavaScript implementation would be similar to the original
+function createChoroplethLayer(geojsonData, level) {
+    // Determine the property name for the area name based on level
+    let nameProperty;
+    switch (level) {
+        case 'subcounty':
+            nameProperty = 'subcounty';
+            break;
+        case 'ward':
+            nameProperty = 'ward';
+            break;
+        case 'county':
+        default:
+            nameProperty = 'county';
+    }
+
+    // Calculate max projects for dynamic coloring
+    const maxProjects = Math.max(...geojsonData.features.map(f => f.properties.project_count || 0));
+
+    // Create choropleth layer with enhanced styling
+    const choroplethLayer = L.geoJSON(geojsonData, {
+        style: function(feature) {
+            return getChoroplethStyle(feature, level, maxProjects);
+        },
+        onEachFeature: function(feature, layer) {
+            // Add interactivity
+            layer.on({
+                mouseover: function(e) {
+                    const layer = e.target;
+                    layer.setStyle({
+                        weight: 3,
+                        color: '#666',
+                        dashArray: '',
+                        fillOpacity: 0.7
+                    });
+                    
+                    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+                        layer.bringToFront();
+                    }
+                    
+                    updateAreaInfo(feature.properties, level);
+                },
+                mouseout: function(e) {
+                    choroplethLayer.resetStyle(e.target);
+                    clearAreaInfo();
+                },
+                click: function(e) {
+                    kenyaMap.fitBounds(e.target.getBounds());
+                    showAreaSummary(feature.properties, level);
+                }
+            });
+
+            // Bind popup
+            const props = feature.properties;
+            const popupContent = `
+                <div class="map-popup">
+                    <h6>${props[nameProperty]}</h6>
+                    <div class="popup-stats">
+                        <div class="stat-row">
+                            <span class="stat-label">Total Projects:</span>
+                            <span class="stat-value">${props.project_count || 0}</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Total Budget:</span>
+                            <span class="stat-value">Ksh ${(props.total_budget || 0).toLocaleString()}</span>
+                        </div>
+                        ${props.completion_rate ? `
+                        <div class="stat-row">
+                            <span class="stat-label">Completion Rate:</span>
+                            <span class="stat-value">${props.completion_rate}%</span>
+                        </div>
+                        ` : ''}
+                        ${props.completed_projects ? `
+                        <div class="stat-row">
+                            <span class="stat-label">Completed:</span>
+                            <span class="stat-value">${props.completed_projects}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            layer.bindPopup(popupContent);
+        }
+    });
+
+    // Add to map and store reference
+    choroplethLayer.addTo(kenyaMap);
+    choroplethLayers[level] = choroplethLayer;
+    currentShapeLayer = choroplethLayer;
+
+    // Fit map to layer bounds
+    if (choroplethLayer.getBounds().isValid()) {
+        kenyaMap.fitBounds(choroplethLayer.getBounds());
+    }
+}
+
+function getChoroplethStyle(feature, level, maxProjects) {
+    const projectCount = feature.properties.project_count || 0;
+    
+    // Dynamic color ranges based on actual data distribution
+    let fillColor;
+    
+    if (projectCount === 0) {
+        fillColor = '#FAFBFC';
+    } else if (maxProjects > 0) {
+        const percentage = projectCount / maxProjects;
+        
+        if (percentage <= 0.25) {
+            fillColor = '#a3d9b1'; // Light green
+        } else if (percentage <= 0.5) {
+            fillColor = '#48c78e'; // Medium green
+        } else if (percentage <= 0.75) {
+            fillColor = '#4A90E2'; // Blue
+        } else {
+            fillColor = '#2a4d7a'; // Dark blue
+        }
+    } else {
+        fillColor = '#a3d9b1'; // Default light color
+    }
+
+    return {
+        fillColor: fillColor,
+        weight: 1,
+        opacity: 1,
+        color: 'white',
+        dashArray: '3',
+        fillOpacity: 0.7
+    };
+}
+
+function loadProjectMarkers() {
+    // Build URL with current filters
+    const params = new URLSearchParams();
+    const countySelect = document.getElementById('county-select');
+    const statusCheckboxes = document.querySelectorAll('input[name="status"]:checked');
+    const sectorCheckboxes = document.querySelectorAll('input[name="sector"]:checked');
+    const yearSelect = document.getElementById('year-select');
+
+    if (countySelect && countySelect.value) {
+        params.append('county', countySelect.value);
+    }
+
+    statusCheckboxes.forEach(checkbox => {
+        params.append('status', checkbox.value);
+    });
+
+    sectorCheckboxes.forEach(checkbox => {
+        params.append('sector', checkbox.value);
+    });
+
+    if (yearSelect && yearSelect.value) {
+        params.append('year', yearSelect.value);
+    }
+
+    // Get all projects (no pagination for better clustering)
+    params.append('page_size', '1000');
+
+    const url = `/api/projects/geojson/?${params.toString()}`;
+
+    showMapLoading(true);
+
+    // Fetch projects data and create markers
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Store all markers
+            allProjectMarkers = [];
+            
+            // Clear existing markers
+            projectMarkers.clearLayers();
+
+            console.log(`Loaded ${data.features.length} project markers`);
+
+            // Create markers for all projects
+            data.features.forEach(feature => {
+                if (feature.geometry && feature.geometry.type === 'Point') {
+                    const marker = L.circleMarker(
+                        [feature.geometry.coordinates[1], feature.geometry.coordinates[0]], 
+                        {
+                            radius: getMarkerSize(kenyaMap.getZoom()),
+                            fillColor: getStatusColor(feature.properties.status),
+                            color: '#ffffff',
+                            weight: 2,
+                            opacity: 1,
+                            fillOpacity: 0.8
+                        }
+                    );
+                    
+                    const popupContent = `
+                        <div class="project-popup">
+                            <h6>${feature.properties.name}</h6>
+                            <p><strong>Status:</strong> <span class="badge bg-${feature.properties.status}">${feature.properties.status}</span></p>
+                            <p><strong>Budget:</strong> Ksh ${(feature.properties.budget || 0).toLocaleString()}</p>
+                            <p><strong>County:</strong> ${feature.properties.county}</p>
+                            <p><strong>Sector:</strong> ${feature.properties.sector || 'N/A'}</p>
+                            ${feature.properties.is_overdue ? '<p class="text-danger"><strong>⚠️ This project is overdue</strong></p>' : ''}
+                        </div>
+                    `;
+                    marker.bindPopup(popupContent);
+                    
+                    allProjectMarkers.push(marker);
+                }
+            });
+            
+            // Update marker density based on current zoom
+            updateMarkerDensity();
+            showMapLoading(false);
+        })
+        .catch(error => {
+            console.error('Error loading project markers:', error);
+            showMapLoading(false);
+            showNotification('Error loading project markers. Please check your filters.', 'error');
+        });
+}
+
+function getMarkerSize(zoom) {
+    // Dynamic marker size based on zoom level
+    if (zoom <= 7) return 4;
+    if (zoom <= 9) return 5;
+    if (zoom <= 11) return 6;
+    if (zoom <= 13) return 7;
+    return 8;
+}
+
+function updateMarkerDensity() {
+    if (!document.getElementById('project-markers-toggle').checked) {
+        return;
+    }
+    
+    const zoom = kenyaMap.getZoom();
+    
+    // Clear current markers
+    projectMarkers.clearLayers();
+    visibleProjectMarkers = [];
+    
+    // Determine how many markers to show based on zoom level
+    let displayCount = allProjectMarkers.length;
+    
+    if (zoom <= 7) {
+        displayCount = Math.min(50, allProjectMarkers.length); // Show only 50 at country level
+    } else if (zoom <= 9) {
+        displayCount = Math.min(100, allProjectMarkers.length); // Show 100 at regional level
+    } else if (zoom <= 11) {
+        displayCount = Math.min(200, allProjectMarkers.length); // Show 200 at county level
+    }
+    // At higher zoom levels, show all markers
+    
+    // Update marker sizes for all markers
+    allProjectMarkers.forEach(marker => {
+        marker.setRadius(getMarkerSize(zoom));
+    });
+    
+    // Show appropriate number of markers
+    const markersToShow = allProjectMarkers.slice(0, displayCount);
+    markersToShow.forEach(marker => {
+        projectMarkers.addLayer(marker);
+        visibleProjectMarkers.push(marker);
+    });
+    
+    console.log(`Showing ${markersToShow.length} markers at zoom level ${zoom}`);
+}
+
+function getStatusColor(status) {
+    const colors = {
+        'completed': '#28a745',
+        'ongoing': '#ffc107',
+        'delayed': '#dc3545',
+        'planned': '#7F8C8D'
+    };
+    return colors[status] || '#7F8C8D';
+}
+
+function showMapLoading(show) {
+    const loadingIndicator = document.getElementById('map-loading');
+    if (loadingIndicator) {
+        loadingIndicator.style.display = show ? 'block' : 'none';
+    }
+}
+
+function updateAreaInfo(properties, level) {
+    let areaName;
+    switch (level) {
+        case 'subcounty':
+            areaName = properties.subcounty;
+            break;
+        case 'ward':
+            areaName = properties.ward;
+            break;
+        case 'county':
+        default:
+            areaName = properties.county;
+    }
+
+    const infoElement = document.getElementById('selected-area-info');
+    if (infoElement) {
+        infoElement.innerHTML = `
+            <strong>${areaName}</strong> - 
+            ${properties.project_count || 0} projects - 
+            Ksh ${(properties.total_budget || 0).toLocaleString()}
+        `;
+    }
+}
+
+function clearAreaInfo() {
+    const infoElement = document.getElementById('selected-area-info');
+    if (infoElement) {
+        infoElement.innerHTML = 'Hover over areas to see details';
+    }
+}
+
+function showAreaSummary(properties, level) {
+    let areaName, areaType;
+    switch (level) {
+        case 'subcounty':
+            areaName = properties.subcounty;
+            areaType = 'Subcounty';
+            break;
+        case 'ward':
+            areaName = properties.ward;
+            areaType = 'Ward';
+            break;
+        case 'county':
+        default:
+            areaName = properties.county;
+            areaType = 'County';
+    }
+
+    const summaryContent = document.getElementById('summary-content');
+    summaryContent.innerHTML = `
+        <div class="summary-details">
+            <h6>${areaName} ${areaType}</h6>
+            <div class="summary-stats">
+                <div class="stat-item">
+                    <i class="fas fa-project-diagram"></i>
+                    <div>
+                        <strong>${properties.project_count || 0}</strong>
+                        <span>Total Projects</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <div>
+                        <strong>Ksh ${(properties.total_budget || 0).toLocaleString()}</strong>
+                        <span>Total Budget</span>
+                    </div>
+                </div>
+                ${properties.completion_rate ? `
+                <div class="stat-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>${properties.completion_rate}%</strong>
+                        <span>Completion Rate</span>
+                    </div>
+                </div>
+                ` : ''}
+                ${properties.completed_projects ? `
+                <div class="stat-item">
+                    <i class="fas fa-check-double"></i>
+                    <div>
+                        <strong>${properties.completed_projects}</strong>
+                        <span>Completed Projects</span>
+                    </div>
+                </div>
+                ` : ''}
+            </div>
+        </div>
+    `;
+}
+
+function clearSelection() {
+    const summaryContent = document.getElementById('summary-content');
+    summaryContent.innerHTML = '<p class="text-muted">Select an area on the map to view detailed summary</p>';
+    
+    // Reset map view if needed
+    if (currentShapeLayer) {
+        kenyaMap.fitBounds(currentShapeLayer.getBounds());
+    }
+}
+
+function showNotification(message, type = 'info') {
+    // Create a simple toast notification
+    const toast = document.createElement('div');
+    toast.className = `alert alert-${type === 'error' ? 'danger' : type === 'success' ? 'success' : 'info'} alert-dismissible fade show`;
+    toast.style.position = 'fixed';
+    toast.style.top = '100px';
+    toast.style.right = '20px';
+    toast.style.zIndex = '9999';
+    toast.style.minWidth = '300px';
+    toast.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.parentNode.removeChild(toast);
+        }
+    }, 5000);
+}
+
+// Chart Functions
+function initStatusChart() {
+    const ctx = document.getElementById('statusChart').getContext('2d');
+    const statusData = JSON.parse('{{ status_counts_json|escapejs }}');
+    
+    const labels = Object.keys(statusData).map(key => {
+        const labelMap = {
+            'planned': 'Planned',
+            'ongoing': 'Ongoing', 
+            'completed': 'Completed',
+            'delayed': 'Delayed'
+        };
+        return labelMap[key] || key;
+    });
+    const data = Object.values(statusData);
+    const backgroundColors = Object.keys(statusData).map(status => getStatusColor(status));
+    
+    statusChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: data,
+                backgroundColor: backgroundColors,
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.raw || 0;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = Math.round((value / total) * 100);
+                            return `${label}: ${value} (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function initSectorChart() {
+    const ctx = document.getElementById('sectorChart').getContext('2d');
+    const sectorData = JSON.parse('{{ sector_data_json|escapejs }}');
+    
+    const labels = sectorData.map(item => item.sector);
+    const data = sectorData.map(item => item.count);
+    
+    sectorChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Number of Projects',
+                data: data,
+                backgroundColor: '#4A90E2',
+                borderColor: '#2a4d7a',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Projects'
+                    }
+                },
+                x: {
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            }
+        }
+    });
+}
+
+function initCountyChart() {
+    const ctx = document.getElementById('countyChart').getContext('2d');
+    const countyData = JSON.parse('{{ county_stats_json|escapejs }}');
+    
+    const labels = countyData.map(item => item.county);
+    const data = countyData.map(item => item.count);
+    
+    countyChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Number of Projects',
+                data: data,
+                backgroundColor: '#4A90E2',
+                borderColor: '#2a4d7a',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Projects'
+                    }
+                },
+                x: {
+                    ticks: {
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            }
+        }
+    });
+}
+
+function initCharts() {
+    initStatusChart();
+    initSectorChart();
+    initCountyChart();
+}
+
+// Filter handlers
+function handleCountySelection(countyName) {
+    updateVisualizations();
+}
+
+function updateVisualizations() {
+    // Reload map data with current filters
+    loadShapefileLayer(currentLevel);
+    loadProjectMarkers();
+    
+    // Update charts if they exist
+    if (statusChart) {
+        statusChart.update();
+    }
+    if (sectorChart) {
+        sectorChart.update();
+    }
+    if (countyChart) {
+        countyChart.update();
+    }
+}
+
+function clearAllFilters() {
+    // Reset form
+    document.getElementById('filter-form').reset();
+    
+    // Submit the form to reload with no filters
+    document.getElementById('filter-form').submit();
+}
 
 // Initialize everything when page loads
 document.addEventListener('DOMContentLoaded', function() {
@@ -1315,6 +2061,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize charts
     initCharts();
     
+    // Initialize filter functionality
+    const filterForm = document.getElementById('filter-form');
+    if (filterForm) {
+        // Form is now set to auto-submit on change, so we don't need additional handlers
+    }
+    
+    // Initialize sector search
+    const sectorSearch = document.getElementById('sector-search');
+    if (sectorSearch) {
+        sectorSearch.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            document.querySelectorAll('.sector-item').forEach(item => {
+                const label = item.querySelector('label').textContent.toLowerCase();
+                item.style.display = label.includes(searchTerm) ? 'block' : 'none';
+            });
+        });
+    }
+    
     // Update last updated time
     setInterval(() => {
         const now = new Date();
@@ -1324,6 +2088,8 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Global functions
+window.clearAllFilters = clearAllFilters;
+window.handleCountySelection = handleCountySelection;
 window.clearSelection = clearSelection;
 </script>
 {% endblock %}
