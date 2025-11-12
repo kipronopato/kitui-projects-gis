@@ -2,982 +2,1251 @@
 
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kenya National Geospatial Project Monitoring System</title>
     
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     
     <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Sans+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
     
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{% static 'css/custom.css' %}" />
-    
-    {% block extra_css %}{% endblock %}
-
     <style>
-      :root {
-        --primary: #4A90E2;      /* Soft blue */
-        --secondary: #7ED321;    /* Light green */
-        --accent: #FF6B6B;       /* Coral accent */
-        --light: #FAFBFC;        /* Very light background */
-        --dark: #2C3E50;         /* Dark text */
-        --muted: #7F8C8D;        /* Muted text */
-        --border: #E1E8ED;       /* Light border */
-        --shadow: rgba(74, 144, 226, 0.08); /* Subtle shadow */
-        --card-bg: #FFFFFF;      /* Card background */
-        --sidebar-width: 280px;
-        --sidebar-collapsed: 70px;
-        --sidebar-bg: #2C3E50;
-        --sidebar-hover: #34495E;
-        --sidebar-active: #4A90E2;
-        --sidebar-text: #ECF0F1;
-      }
-
-      /* Global Styles */
-      body {
-        font-family: 'Source Sans Pro', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background-color: var(--light);
-        color: var(--dark);
-        font-size: 0.9rem;
-        line-height: 1.5;
-        font-weight: 400;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        min-height: 100vh;
-      }
-
-      h1, h2, h3, h4, h5, h6, .navbar-brand {
-        font-family: 'Inter', sans-serif;
-        font-weight: 600;
-      }
-
-      /* Thin Header Strip */
-      .national-header {
-        height: 4px;
-        background: linear-gradient(
-          90deg,
-          var(--primary) 0%,
-          var(--secondary) 50%,
-          var(--accent) 100%
-        );
-        position: fixed;
-        top: 0;
-        width: 100%;
-        z-index: 1040;
-      }
-
-      /* Vertical Sidebar Navigation */
-      .sidebar {
-        width: var(--sidebar-width);
-        background: var(--sidebar-bg);
-        color: var(--sidebar-text);
-        position: fixed;
-        top: 4px;
-        left: 0;
-        height: calc(100vh - 4px);
-        transition: all 0.3s ease;
-        z-index: 1035;
-        overflow-y: auto;
-        overflow-x: hidden;
-        box-shadow: 2px 0 10px rgba(0,0,0,0.1);
-      }
-
-      .sidebar.collapsed {
-        width: var(--sidebar-collapsed);
-      }
-
-      .sidebar-header {
-        padding: 1.5rem 1rem;
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        min-height: 70px;
-      }
-
-      .sidebar-brand {
-        display: flex;
-        align-items: center;
-        color: var(--sidebar-text);
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 1.1rem;
-      }
-
-      .sidebar-logo {
-        width: 36px;
-        height: 36px;
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        border-radius: 6px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-right: 10px;
-        flex-shrink: 0;
-      }
-
-      .sidebar-logo img {
-        width: 24px;
-        height: 24px;
-      }
-
-      .sidebar-title {
-        white-space: nowrap;
-        overflow: hidden;
-        transition: opacity 0.3s ease;
-      }
-
-      .sidebar.collapsed .sidebar-title {
-        opacity: 0;
-        width: 0;
-      }
-
-      .toggle-btn {
-        background: none;
-        border: none;
-        color: var(--sidebar-text);
-        font-size: 1rem;
-        cursor: pointer;
-        padding: 0.25rem;
-        border-radius: 4px;
-        transition: all 0.2s ease;
-      }
-
-      .toggle-btn:hover {
-        background: rgba(255,255,255,0.1);
-      }
-
-      /* Navigation Menu */
-      .sidebar-nav {
-        padding: 1rem 0;
-      }
-
-      .nav-item {
-        position: relative;
-      }
-
-      .nav-link {
-        color: var(--sidebar-text);
-        padding: 0.75rem 1rem;
-        display: flex;
-        align-items: center;
-        text-decoration: none;
-        transition: all 0.2s ease;
-        border-left: 3px solid transparent;
-        font-size: 0.85rem;
-        white-space: nowrap;
-      }
-
-      .nav-link:hover {
-        background: var(--sidebar-hover);
-        border-left-color: var(--secondary);
-      }
-
-      .nav-link.active {
-        background: var(--sidebar-active);
-        border-left-color: var(--accent);
-        font-weight: 500;
-      }
-
-      .nav-icon {
-        width: 20px;
-        text-align: center;
-        margin-right: 12px;
-        font-size: 0.9rem;
-        flex-shrink: 0;
-      }
-
-      .nav-text {
-        transition: opacity 0.3s ease;
-      }
-
-      .sidebar.collapsed .nav-text {
-        opacity: 0;
-        width: 0;
-      }
-
-      /* Dropdown Arrows */
-      .dropdown-arrow {
-        margin-left: auto;
-        transition: transform 0.3s ease;
-        font-size: 0.8rem;
-      }
-
-      .nav-item.open > .nav-link .dropdown-arrow {
-        transform: rotate(90deg);
-      }
-
-      /* Sub-menu Styles */
-      .sub-menu {
-        background: rgba(0,0,0,0.2);
-        overflow: hidden;
-        max-height: 0;
-        transition: max-height 0.3s ease;
-      }
-
-      .nav-item.open > .sub-menu {
-        max-height: 500px;
-      }
-
-      .sub-menu .nav-link {
-        padding-left: 2.5rem;
-        font-size: 0.8rem;
-        border-left: 2px solid transparent;
-      }
-
-      .sub-menu .nav-link:hover {
-        border-left-color: var(--accent);
-      }
-
-      /* Nested Sub-menus */
-      .sub-sub-menu {
-        background: rgba(0,0,0,0.3);
-    }
-
-      .sub-sub-menu .nav-link {
-        padding-left: 3.5rem;
-        font-size: 0.75rem;
-      }
-
-      /* Main Content Area */
-      .main-content {
-        flex: 1;
-        margin-left: var(--sidebar-width);
-        transition: margin-left 0.3s ease;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .main-content.expanded {
-        margin-left: var(--sidebar-collapsed);
-      }
-
-      /* Top Navigation Bar */
-      .top-navbar {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        box-shadow: 0 2px 12px var(--shadow);
-        padding: 0.8rem 1.5rem;
-        border-bottom: 1px solid var(--border);
-        position: sticky;
-        top: 4px;
-        z-index: 1030;
-      }
-
-      .breadcrumb {
-        background: transparent;
-        margin-bottom: 0;
-        padding: 0;
-        font-size: 0.85rem;
-      }
-
-      .breadcrumb-item a {
-        color: var(--primary);
-        text-decoration: none;
-      }
-
-      .breadcrumb-item.active {
-        color: var(--muted);
-      }
-
-      /* Content Area */
-      .content-wrapper {
-        flex: 1;
-        padding: 1.5rem;
-        background: var(--light);
-      }
-
-      .page-header {
-        background: linear-gradient(135deg, rgba(74, 144, 226, 0.05), rgba(126, 211, 33, 0.05));
-        color: var(--dark);
-        padding: 1.5rem;
-        margin: -1.5rem -1.5rem 2rem -1.5rem;
-        border-bottom: 1px solid var(--border);
-      }
-
-      .page-header h1 {
-        font-weight: 600;
-        margin-bottom: 0.3rem;
-        font-size: 1.5rem;
-      }
-
-      /* Slim Footer */
-      footer {
-        background: var(--card-bg);
-        color: var(--dark);
-        padding: 2rem 0 1rem;
-        font-size: 0.8rem;
-        border-top: 1px solid var(--border);
-        margin-top: auto;
-      }
-
-      footer a {
-        color: var(--primary);
-        text-decoration: none;
-        transition: all 0.2s ease;
-        font-size: 0.8rem;
-      }
-
-      footer a:hover {
-        color: var(--secondary);
-        text-decoration: none;
-      }
-
-      .footer-logo {
-        max-height: 45px;
-        margin-bottom: 0.8rem;
-      }
-
-      .footer-section {
-        margin-bottom: 1.2rem;
-      }
-
-      .footer-section h5 {
-        color: var(--dark);
-        font-weight: 600;
-        margin-bottom: 0.8rem;
-        font-size: 0.9rem;
-      }
-
-      .footer-section ul {
-        list-style: none;
-        padding-left: 0;
-      }
-
-      .footer-section ul li {
-        margin-bottom: 0.4rem;
-      }
-
-      .social-links a {
-        display: inline-block;
-        margin-right: 8px;
-        font-size: 1rem;
-        color: var(--muted);
-        transition: all 0.2s ease;
-      }
-
-      .social-links a:hover {
-        color: var(--primary);
-        transform: translateY(-1px);
-      }
-
-      .copyright {
-        border-top: 1px solid var(--border);
-        padding-top: 1rem;
-        margin-top: 1rem;
-        text-align: center;
-        font-size: 0.75rem;
-        color: var(--muted);
-      }
-
-      /* Custom utility classes */
-      .bg-primary {
-        background-color: var(--primary) !important;
-      }
-
-      .bg-secondary {
-        background-color: var(--secondary) !important;
-      }
-
-      .bg-accent {
-        background-color: var(--accent) !important;
-      }
-
-      .text-primary {
-        color: var(--primary) !important;
-      }
-
-      .text-secondary {
-        color: var(--secondary) !important;
-      }
-
-      .text-accent {
-        color: var(--accent) !important;
-      }
-
-      .btn-primary {
-        background: var(--primary);
-        color: white;
-        border: none;
-        font-size: 0.85rem;
-        padding: 0.5rem 1rem;
-        border-radius: 5px;
-        font-weight: 500;
-        transition: all 0.2s ease;
-      }
-
-      .btn-primary:hover {
-        background: #3a80d2;
-        color: white;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
-      }
-
-      .btn-outline-primary {
-        border: 1px solid var(--primary);
-        color: var(--primary);
-        font-size: 0.85rem;
-        padding: 0.5rem 1rem;
-        border-radius: 5px;
-        font-weight: 500;
-        transition: all 0.2s ease;
-        background: transparent;
-      }
-
-      .btn-outline-primary:hover {
-        background-color: var(--primary);
-        color: white;
-      }
-
-      /* Card enhancements */
-      .card {
-        border: 1px solid var(--border);
-        border-radius: 8px;
-        box-shadow: 0 2px 8px var(--shadow);
-        transition: all 0.2s ease;
-        margin-bottom: 1.2rem;
-        background: var(--card-bg);
-      }
-
-      .card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px var(--shadow);
-      }
-
-      .card-header {
-        background: rgba(255, 255, 255, 0.9);
-        color: var(--dark);
-        border-radius: 8px 8px 0 0 !important;
-        padding: 0.8rem 1rem;
-        font-weight: 600;
-        border-bottom: 1px solid var(--border);
-        font-size: 0.9rem;
-      }
-
-      /* Custom thin scrollbar for sidebar */
-      .sidebar::-webkit-scrollbar {
-        width: 4px;
-      }
-
-      .sidebar::-webkit-scrollbar-track {
-        background: rgba(255,255,255,0.1);
-      }
-
-      .sidebar::-webkit-scrollbar-thumb {
-        background: rgba(255,255,255,0.3);
-        border-radius: 2px;
-      }
-
-      .sidebar::-webkit-scrollbar-thumb:hover {
-        background: rgba(255,255,255,0.5);
-      }
-
-      /* Responsive adjustments */
-      @media (max-width: 768px) {
+        :root {
+            --primary: #2C5F9B;
+            --primary-light: #3A7BCC;
+            --primary-dark: #1E4A7A;
+            --secondary: #27AE60;
+            --secondary-light: #2ECC71;
+            --accent: #E74C3C;
+            --accent-light: #EC7063;
+            --light: #F8F9FA;
+            --dark: #2C3E50;
+            --dark-light: #34495E;
+            --muted: #7F8C8D;
+            --border: #E1E8ED;
+            --card-bg: #FFFFFF;
+            --sidebar-bg: #FFFFFF;
+            --sidebar-hover: #F8F9FA;
+            --sidebar-active: #E3F2FD;
+            --sidebar-text: #2C3E50;
+            --sidebar-width: 300px;
+            --sidebar-collapsed: 80px;
+            --header-height: 70px;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.12);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.15);
+            --gradient-primary: linear-gradient(135deg, var(--primary), var(--primary-light));
+            --gradient-secondary: linear-gradient(135deg, var(--secondary), var(--secondary-light));
+            --gradient-accent: linear-gradient(135deg, var(--accent), var(--accent-light));
+            --border-radius: 10px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans Pro', sans-serif;
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            font-weight: 400;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* National Header Strip */
+        .national-header {
+            height: 5px;
+            background: linear-gradient(90deg, 
+                var(--primary) 0%, 
+                var(--secondary) 35%, 
+                var(--accent) 70%, 
+                #F39C12 100%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1100;
+        }
+
+        /* Main Layout */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            padding-top: 5px;
+        }
+
+        /* Sidebar Styles */
         .sidebar {
-          transform: translateX(-100%);
+            width: var(--sidebar-width);
+            background: var(--sidebar-bg);
+            position: fixed;
+            top: 5px;
+            left: 0;
+            height: calc(100vh - 5px);
+            transition: var(--transition);
+            z-index: 1000;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
-        
-        .sidebar.mobile-open {
-          transform: translateX(0);
+
+        .sidebar.collapsed {
+            width: var(--sidebar-collapsed);
         }
-        
+
+        /* Sidebar Header */
+        .sidebar-header {
+            padding: 1.5rem 1.5rem 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--sidebar-bg);
+            flex-shrink: 0;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 700;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .sidebar-logo {
+            width: 42px;
+            height: 42px;
+            background: var(--gradient-primary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            box-shadow: var(--shadow-sm);
+            flex-shrink: 0;
+        }
+
+        .sidebar-logo i {
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-main {
+            font-weight: 700;
+            font-size: 1.1rem;
+            line-height: 1.2;
+        }
+
+        .brand-sub {
+            font-size: 0.75rem;
+            color: var(--muted);
+            font-weight: 400;
+        }
+
+        .sidebar.collapsed .brand-text {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .toggle-btn {
+            background: var(--light);
+            border: none;
+            color: var(--dark);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            flex-shrink: 0;
+        }
+
+        .toggle-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: rotate(180deg);
+        }
+
+        /* Navigation Menu */
+        .sidebar-nav {
+            flex: 1;
+            padding: 1.5rem 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .nav-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .nav-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            padding: 0 1.5rem 0.5rem;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+        }
+
+        .sidebar.collapsed .section-label {
+            opacity: 0;
+            height: 0;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .nav-item {
+            position: relative;
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.85rem 1.5rem;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+            border-left: 4px solid transparent;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: var(--sidebar-hover);
+            color: var(--primary);
+            border-left-color: var(--primary-light);
+        }
+
+        .nav-link.active {
+            background: var(--sidebar-active);
+            color: var(--primary);
+            border-left-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .nav-icon {
+            width: 24px;
+            text-align: center;
+            margin-right: 12px;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .nav-link.active .nav-icon {
+            color: var(--primary);
+        }
+
+        .nav-text {
+            flex: 1;
+            transition: var(--transition);
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .sidebar.collapsed .nav-text {
+            opacity: 0;
+            width: 0;
+        }
+
+        .nav-badge {
+            background: var(--accent);
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        .dropdown-arrow {
+            margin-left: auto;
+            transition: var(--transition);
+            font-size: 0.8rem;
+            color: var(--muted);
+            flex-shrink: 0;
+        }
+
+        .nav-item.open > .nav-link .dropdown-arrow {
+            transform: rotate(90deg);
+            color: var(--primary);
+        }
+
+        /* Sub-menus */
+        .sub-menu {
+            background: rgba(0,0,0,0.02);
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.4s ease;
+        }
+
+        .nav-item.open > .sub-menu {
+            max-height: 500px;
+        }
+
+        .sub-menu .nav-link {
+            padding-left: 3rem;
+            padding-top: 0.7rem;
+            padding-bottom: 0.7rem;
+            font-size: 0.9rem;
+            border-left: 2px solid transparent;
+        }
+
+        .sub-menu .nav-link:hover {
+            border-left-color: var(--secondary);
+        }
+
+        .sub-menu .nav-link.active {
+            border-left-color: var(--secondary);
+        }
+
+        .sub-menu .nav-icon {
+            font-size: 0.9rem;
+            width: 20px;
+        }
+
+        /* Nested Sub-menus */
+        .sub-sub-menu {
+            background: rgba(0,0,0,0.03);
+        }
+
+        .sub-sub-menu .nav-link {
+            padding-left: 4rem;
+            font-size: 0.85rem;
+        }
+
+        /* Tooltip for collapsed sidebar */
+        .nav-link .collapsed-tooltip {
+            display: none;
+            position: absolute;
+            left: calc(100% + 10px);
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--dark);
+            color: white;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            z-index: 1050;
+            box-shadow: var(--shadow-lg);
+            font-weight: 500;
+        }
+
+        .nav-link .collapsed-tooltip::before {
+            content: '';
+            position: absolute;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 6px solid transparent;
+            border-right-color: var(--dark);
+        }
+
+        .sidebar.collapsed .nav-link:hover .collapsed-tooltip {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        /* Main Content Area */
         .main-content {
-          margin-left: 0 !important;
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: var(--transition);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--light);
         }
-        
-        .main-content.mobile-expanded {
-          margin-left: 0;
+
+        .main-content.expanded {
+            margin-left: var(--sidebar-collapsed);
         }
-        
+
+        /* Top Navigation Bar */
+        .top-navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: var(--shadow-sm);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 5px;
+            z-index: 900;
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+        }
+
+        .breadcrumb {
+            background: transparent;
+            margin-bottom: 0;
+            padding: 0;
+            font-size: 0.9rem;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .breadcrumb-item a:hover {
+            color: var(--primary-dark);
+        }
+
+        .breadcrumb-item.active {
+            color: var(--muted);
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            color: var(--muted);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: var(--muted);
+        }
+
+        .notification-bell {
+            position: relative;
+            color: var(--muted);
+            font-size: 1.2rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .notification-bell:hover {
+            color: var(--primary);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--accent);
+            color: white;
+            font-size: 0.6rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Content Wrapper */
+        .content-wrapper {
+            flex: 1;
+            padding: 2rem;
+            background: var(--light);
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, rgba(44, 95, 155, 0.03), rgba(39, 174, 96, 0.03));
+            padding: 2rem;
+            margin: -2rem -2rem 2rem -2rem;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .page-header h1 {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+        }
+
+        .page-subtitle {
+            color: var(--muted);
+            font-size: 1rem;
+            max-width: 600px;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--card-bg);
+            color: var(--dark);
+            padding: 3rem 0 1.5rem;
+            margin-top: 3rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-logo {
+            max-height: 50px;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section {
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h5 {
+            color: var(--dark);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            position: relative;
+            padding-bottom: 0.5rem;
+        }
+
+        .footer-section h5::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: var(--muted);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary);
+            padding-left: 5px;
+        }
+
+        .contact-info li {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .contact-info i {
+            color: var(--primary);
+            margin-right: 0.75rem;
+            margin-top: 0.2rem;
+            flex-shrink: 0;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: var(--light);
+            color: var(--muted);
+            border-radius: 8px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .copyright {
+            border-top: 1px solid var(--border);
+            padding-top: 1.5rem;
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        /* Mobile Overlay */
         .mobile-overlay {
-          display: none;
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(0,0,0,0.5);
-          z-index: 1034;
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
         }
-        
+
         .mobile-overlay.active {
-          display: block;
+            display: block;
         }
-      }
 
-      /* Animation for page transitions */
-      @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-      }
-      
-      .content-wrapper {
-        animation: fadeIn 0.3s ease;
-      }
+        /* Mobile Toggle Button */
+        .mobile-toggle {
+            display: none;
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
 
-      /* Custom tooltip for collapsed sidebar */
-      .nav-link .collapsed-tooltip {
-        display: none;
-        position: absolute;
-        left: 100%;
-        top: 50%;
-        transform: translateY(-50%);
-        background: var(--dark);
-        color: white;
-        padding: 0.5rem 0.75rem;
-        border-radius: 4px;
-        font-size: 0.75rem;
-        white-space: nowrap;
-        z-index: 1050;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      }
+        .mobile-toggle:hover {
+            background: var(--primary-dark);
+        }
 
-      .nav-link .collapsed-tooltip::before {
-        content: '';
-        position: absolute;
-        right: 100%;
-        top: 50%;
-        transform: translateY(-50%);
-        border: 5px solid transparent;
-        border-right-color: var(--dark);
-      }
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-      .sidebar.collapsed .nav-link:hover .collapsed-tooltip {
-        display: block;
-      }
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .content-wrapper {
+            animation: fadeIn 0.4s ease;
+        }
+
+        /* Custom Scrollbar */
+        .sidebar-nav::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.05);
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.1);
+            border-radius: 2px;
+        }
+
+        .sidebar-nav::-webkit-scrollbar-thumb:hover {
+            background: rgba(0,0,0,0.2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0 !important;
+            }
+            
+            .mobile-toggle {
+                display: flex;
+            }
+            
+            .user-details {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                padding: 1.5rem;
+            }
+            
+            .page-header {
+                padding: 1.5rem;
+                margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+            }
+            
+            .top-navbar {
+                padding: 1rem;
+            }
+        }
+
+        /* Utility Classes */
+        .bg-gradient-primary {
+            background: var(--gradient-primary) !important;
+        }
+
+        .text-gradient {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .shadow-card {
+            box-shadow: var(--shadow-sm);
+        }
+
+        .shadow-card-hover {
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+        }
+
+        .shadow-card-hover:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
     </style>
-  </head>
+</head>
 
-  <body>
-    <!-- Thin National Header Strip -->
+<body>
+    <!-- National Header Strip -->
     <div class="national-header"></div>
 
-    <!-- Mobile Overlay -->
-    <div class="mobile-overlay"></div>
+    <!-- App Container -->
+    <div class="app-container">
+        <!-- Mobile Overlay -->
+        <div class="mobile-overlay"></div>
 
-    <!-- Vertical Sidebar Navigation -->
-    <nav class="sidebar">
-      <div class="sidebar-header">
-        <a href="{% url 'home' %}" class="sidebar-brand">
-          <div class="sidebar-logo">
-            <img
-              src="{% static 'img/kenya-logo.png' %}"
-              alt="Kenya Logo"
-              onerror="this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-map-marker-alt\' style=\'color: white; font-size: 18px;\'></i>';"
-            />
-          </div>
-          <span class="sidebar-title">Geospatial Monitoring</span>
-        </a>
-        <button class="toggle-btn" id="sidebarToggle">
-          <i class="fas fa-chevron-left"></i>
-        </button>
-      </div>
-
-      <div class="sidebar-nav">
-        <!-- Main Navigation Items -->
-        <div class="nav-item">
-          <a class="nav-link" href="{% url 'home' %}">
-            <i class="nav-icon fas fa-home"></i>
-            <span class="nav-text">Dashboard Overview</span>
-            <span class="collapsed-tooltip">Dashboard Overview</span>
-          </a>
-        </div>
-
-        <!-- Projects Section with Sub-menus -->
-        <div class="nav-item">
-          <a class="nav-link" href="#">
-            <i class="nav-icon fas fa-list"></i>
-            <span class="nav-text">Projects Management</span>
-            <i class="dropdown-arrow fas fa-chevron-right"></i>
-            <span class="collapsed-tooltip">Projects Management</span>
-          </a>
-          <div class="sub-menu">
-            <div class="nav-item">
-              <a class="nav-link" href="{% url 'project_list' %}">
-                <i class="nav-icon fas fa-th-list"></i>
-                <span class="nav-text">All Projects</span>
-                <span class="collapsed-tooltip">All Projects</span>
-              </a>
-            </div>
-            <div class="nav-item">
-              <a class="nav-link" href="#">
-                <i class="nav-icon fas fa-plus-circle"></i>
-                <span class="nav-text">Add New Project</span>
-                <span class="collapsed-tooltip">Add New Project</span>
-              </a>
-            </div>
-            <div class="nav-item">
-              <a class="nav-link" href="#">
-                <i class="nav-icon fas fa-tasks"></i>
-                <span class="nav-text">Project Categories</span>
-                <i class="dropdown-arrow fas fa-chevron-right"></i>
-                <span class="collapsed-tooltip">Project Categories</span>
-              </a>
-              <div class="sub-menu sub-sub-menu">
-                <div class="nav-item">
-                  <a class="nav-link" href="#">
-                    <i class="nav-icon fas fa-road"></i>
-                    <span class="nav-text">Infrastructure</span>
-                    <span class="collapsed-tooltip">Infrastructure</span>
-                  </a>
-                </div>
-                <div class="nav-item">
-                  <a class="nav-link" href="#">
-                    <i class="nav-icon fas fa-tint"></i>
-                    <span class="nav-text">Water & Sanitation</span>
-                    <span class="collapsed-tooltip">Water & Sanitation</span>
-                  </a>
-                </div>
-                <div class="nav-item">
-                  <a class="nav-link" href="#">
-                    <i class="nav-icon fas fa-bolt"></i>
-                    <span class="nav-text">Energy Projects</span>
-                    <span class="collapsed-tooltip">Energy Projects</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Geospatial Section -->
-        <div class="nav-item">
-          <a class="nav-link" href="#">
-            <i class="nav-icon fas fa-map"></i>
-            <span class="nav-text">Geospatial Data</span>
-            <i class="dropdown-arrow fas fa-chevron-right"></i>
-            <span class="collapsed-tooltip">Geospatial Data</span>
-          </a>
-          <div class="sub-menu">
-            <div class="nav-item">
-              <a class="nav-link" href="{% url 'project_map' %}">
-                <i class="nav-icon fas fa-globe-africa"></i>
-                <span class="nav-text">Interactive Map</span>
-                <span class="collapsed-tooltip">Interactive Map</span>
-              </a>
-            </div>
-            <div class="nav-item">
-              <a class="nav-link" href="#">
-                <i class="nav-icon fas fa-layer-group"></i>
-                <span class="nav-text">Map Layers</span>
-                <i class="dropdown-arrow fas fa-chevron-right"></i>
-                <span class="collapsed-tooltip">Map Layers</span>
-              </a>
-              <div class="sub-menu sub-sub-menu">
-                <div class="nav-item">
-                  <a class="nav-link" href="#">
-                    <i class="nav-icon fas fa-satellite"></i>
-                    <span class="nav-text">Satellite Imagery</span>
-                    <span class="collapsed-tooltip">Satellite Imagery</span>
-                  </a>
-                </div>
-                <div class="nav-item">
-                  <a class="nav-link" href="#">
-                    <i class="nav-icon fas fa-draw-polygon"></i>
-                    <span class="nav-text">Project Boundaries</span>
-                    <span class="collapsed-tooltip">Project Boundaries</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Analytics Section -->
-        <div class="nav-item">
-          <a class="nav-link" href="{% url 'dashboard' %}">
-            <i class="nav-icon fas fa-chart-bar"></i>
-            <span class="nav-text">Analytics & Reports</span>
-            <i class="dropdown-arrow fas fa-chevron-right"></i>
-            <span class="collapsed-tooltip">Analytics & Reports</span>
-          </a>
-          <div class="sub-menu">
-            <div class="nav-item">
-              <a class="nav-link" href="#">
-                <i class="nav-icon fas fa-chart-line"></i>
-                <span class="nav-text">Progress Analytics</span>
-                <span class="collapsed-tooltip">Progress Analytics</span>
-              </a>
-            </div>
-            <div class="nav-item">
-              <a class="nav-link" href="#">
-                <i class="nav-icon fas fa-file-pdf"></i>
-                <span class="nav-text">Generate Reports</span>
-                <span class="collapsed-tooltip">Generate Reports</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Administration Section -->
-        <div class="nav-item">
-          <a class="nav-link" href="#">
-            <i class="nav-icon fas fa-cogs"></i>
-            <span class="nav-text">Administration</span>
-            <i class="dropdown-arrow fas fa-chevron-right"></i>
-            <span class="collapsed-tooltip">Administration</span>
-          </a>
-          <div class="sub-menu">
-            <div class="nav-item">
-              <a class="nav-link" href="#">
-                <i class="nav-icon fas fa-users"></i>
-                <span class="nav-text">User Management</span>
-                <span class="collapsed-tooltip">User Management</span>
-              </a>
-            </div>
-            <div class="nav-item">
-              <a class="nav-link" href="#">
-                <i class="nav-icon fas fa-shield-alt"></i>
-                <span class="nav-text">Permissions</span>
-                <span class="collapsed-tooltip">Permissions</span>
-              </a>
-            </div>
-          </div>
-        </div>
-
-        <!-- Support Section -->
-        <div class="nav-item">
-          <a class="nav-link" href="{% url 'about' %}">
-            <i class="nav-icon fas fa-info-circle"></i>
-            <span class="nav-text">About & Help</span>
-            <i class="dropdown-arrow fas fa-chevron-right"></i>
-            <span class="collapsed-tooltip">About & Help</span>
-          </a>
-          <div class="sub-menu">
-            <div class="nav-item">
-              <a class="nav-link" href="{% url 'about' %}">
-                <i class="nav-icon fas fa-book"></i>
-                <span class="nav-text">Documentation</span>
-                <span class="collapsed-tooltip">Documentation</span>
-              </a>
-            </div>
-            <div class="nav-item">
-              <a class="nav-link" href="{% url 'contact' %}">
-                <i class="nav-icon fas fa-envelope"></i>
-                <span class="nav-text">Contact Support</span>
-                <span class="collapsed-tooltip">Contact Support</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Main Content Area -->
-    <div class="main-content" id="mainContent">
-      <!-- Top Navigation Bar -->
-      <nav class="top-navbar">
-        <div class="container-fluid">
-          <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-              <button class="btn btn-sm btn-outline-primary me-3 d-lg-none" id="mobileToggle">
-                <i class="fas fa-bars"></i>
-              </button>
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-                  {% block breadcrumb %}{% endblock %}
-                </ol>
-              </nav>
-            </div>
-            <div class="d-flex align-items-center">
-              <span class="text-muted me-3 d-none d-sm-block">Welcome, User</span>
-              <div class="dropdown">
-                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                  <i class="fas fa-user-circle"></i>
+        <!-- Vertical Sidebar -->
+        <nav class="sidebar">
+            <!-- Sidebar Header -->
+            <div class="sidebar-header">
+                <a href="{% url 'home' %}" class="sidebar-brand">
+                    <div class="sidebar-logo">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
+                    <div class="brand-text">
+                        <span class="brand-main">Geospatial</span>
+                        <span class="brand-sub">Monitoring System</span>
+                    </div>
+                </a>
+                <button class="toggle-btn" id="sidebarToggle">
+                    <i class="fas fa-chevron-left"></i>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                  <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
-                  <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                </ul>
-              </div>
             </div>
-          </div>
-        </div>
-      </nav>
 
-      <!-- Content Wrapper -->
-      <div class="content-wrapper">
-        {% block page_header %}
-        <div class="page-header">
-          <div class="container-fluid">
-            <h1>{% block page_title %}Dashboard Overview{% endblock %}</h1>
-            <p class="text-muted mb-0">{% block page_subtitle %}Monitor and manage national development projects{% endblock %}</p>
-          </div>
-        </div>
-        {% endblock %}
+            <!-- Navigation Menu -->
+            <div class="sidebar-nav">
+                <!-- Dashboard Section -->
+                <div class="nav-section">
+                    <div class="section-label">Main</div>
+                    <div class="nav-item">
+                        <a class="nav-link active" href="{% url 'home' %}">
+                            <i class="nav-icon fas fa-home"></i>
+                            <span class="nav-text">Dashboard Overview</span>
+                            <span class="collapsed-tooltip">Dashboard Overview</span>
+                        </a>
+                    </div>
+                </div>
 
-        <div class="container-fluid">
-          {% block content %}{% endblock %}
-        </div>
-      </div>
+                <!-- Projects Section -->
+                <div class="nav-section">
+                    <div class="section-label">Projects</div>
+                    
+                    <div class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="nav-icon fas fa-list-check"></i>
+                            <span class="nav-text">Projects Management</span>
+                            <i class="dropdown-arrow fas fa-chevron-right"></i>
+                            <span class="collapsed-tooltip">Projects Management</span>
+                        </a>
+                        <div class="sub-menu">
+                            <div class="nav-item">
+                                <a class="nav-link" href="{% url 'project_list' %}">
+                                    <i class="nav-icon fas fa-th-list"></i>
+                                    <span class="nav-text">All Projects</span>
+                                    <span class="collapsed-tooltip">All Projects</span>
+                                </a>
+                            </div>
+                            <div class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-plus-circle"></i>
+                                    <span class="nav-text">Add New Project</span>
+                                    <span class="nav-badge">New</span>
+                                    <span class="collapsed-tooltip">Add New Project</span>
+                                </a>
+                            </div>
+                            <div class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-tasks"></i>
+                                    <span class="nav-text">Project Categories</span>
+                                    <i class="dropdown-arrow fas fa-chevron-right"></i>
+                                    <span class="collapsed-tooltip">Project Categories</span>
+                                </a>
+                                <div class="sub-menu sub-sub-menu">
+                                    <div class="nav-item">
+                                        <a class="nav-link" href="#">
+                                            <i class="nav-icon fas fa-road"></i>
+                                            <span class="nav-text">Infrastructure</span>
+                                            <span class="collapsed-tooltip">Infrastructure</span>
+                                        </a>
+                                    </div>
+                                    <div class="nav-item">
+                                        <a class="nav-link" href="#">
+                                            <i class="nav-icon fas fa-tint"></i>
+                                            <span class="nav-text">Water & Sanitation</span>
+                                            <span class="collapsed-tooltip">Water & Sanitation</span>
+                                        </a>
+                                    </div>
+                                    <div class="nav-item">
+                                        <a class="nav-link" href="#">
+                                            <i class="nav-icon fas fa-bolt"></i>
+                                            <span class="nav-text">Energy Projects</span>
+                                            <span class="collapsed-tooltip">Energy Projects</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-      <!-- Slim Footer -->
-      <footer>
-        <div class="container">
-          <div class="row">
-            <div class="col-lg-4 col-md-6 footer-section">
-              <img src="{% static 'img/kenya-logo.png' %}" alt="Kenya Logo" class="footer-logo" onerror="this.style.display='none'">
-              <h5>Geospatial Monitoring System</h5>
-              <p>Transparent monitoring of development projects across Kenya using advanced geospatial technology.</p>
-              <div class="social-links">
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-linkedin"></i></a>
-                <a href="#"><i class="fab fa-youtube"></i></a>
-              </div>
+                <!-- Geospatial Section -->
+                <div class="nav-section">
+                    <div class="section-label">Maps & Data</div>
+                    
+                    <div class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="nav-icon fas fa-map-marked-alt"></i>
+                            <span class="nav-text">Geospatial Data</span>
+                            <i class="dropdown-arrow fas fa-chevron-right"></i>
+                            <span class="collapsed-tooltip">Geospatial Data</span>
+                        </a>
+                        <div class="sub-menu">
+                            <div class="nav-item">
+                                <a class="nav-link" href="{% url 'project_map' %}">
+                                    <i class="nav-icon fas fa-globe-africa"></i>
+                                    <span class="nav-text">Interactive Map</span>
+                                    <span class="collapsed-tooltip">Interactive Map</span>
+                                </a>
+                            </div>
+                            <div class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-layer-group"></i>
+                                    <span class="nav-text">Map Layers</span>
+                                    <i class="dropdown-arrow fas fa-chevron-right"></i>
+                                    <span class="collapsed-tooltip">Map Layers</span>
+                                </a>
+                                <div class="sub-menu sub-sub-menu">
+                                    <div class="nav-item">
+                                        <a class="nav-link" href="#">
+                                            <i class="nav-icon fas fa-satellite"></i>
+                                            <span class="nav-text">Satellite Imagery</span>
+                                            <span class="collapsed-tooltip">Satellite Imagery</span>
+                                        </a>
+                                    </div>
+                                    <div class="nav-item">
+                                        <a class="nav-link" href="#">
+                                            <i class="nav-icon fas fa-draw-polygon"></i>
+                                            <span class="nav-text">Project Boundaries</span>
+                                            <span class="collapsed-tooltip">Project Boundaries</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Section -->
+                <div class="nav-section">
+                    <div class="section-label">Analytics</div>
+                    
+                    <div class="nav-item">
+                        <a class="nav-link" href="{% url 'dashboard' %}">
+                            <i class="nav-icon fas fa-chart-bar"></i>
+                            <span class="nav-text">Analytics & Reports</span>
+                            <i class="dropdown-arrow fas fa-chevron-right"></i>
+                            <span class="collapsed-tooltip">Analytics & Reports</span>
+                        </a>
+                        <div class="sub-menu">
+                            <div class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-chart-line"></i>
+                                    <span class="nav-text">Progress Analytics</span>
+                                    <span class="collapsed-tooltip">Progress Analytics</span>
+                                </a>
+                            </div>
+                            <div class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-file-pdf"></i>
+                                    <span class="nav-text">Generate Reports</span>
+                                    <span class="collapsed-tooltip">Generate Reports</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Administration Section -->
+                <div class="nav-section">
+                    <div class="section-label">Administration</div>
+                    
+                    <div class="nav-item">
+                        <a class="nav-link" href="#">
+                            <i class="nav-icon fas fa-cogs"></i>
+                            <span class="nav-text">System Settings</span>
+                            <i class="dropdown-arrow fas fa-chevron-right"></i>
+                            <span class="collapsed-tooltip">System Settings</span>
+                        </a>
+                        <div class="sub-menu">
+                            <div class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-users"></i>
+                                    <span class="nav-text">User Management</span>
+                                    <span class="collapsed-tooltip">User Management</span>
+                                </a>
+                            </div>
+                            <div class="nav-item">
+                                <a class="nav-link" href="#">
+                                    <i class="nav-icon fas fa-shield-alt"></i>
+                                    <span class="nav-text">Permissions</span>
+                                    <span class="collapsed-tooltip">Permissions</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Support Section -->
+                <div class="nav-section">
+                    <div class="section-label">Support</div>
+                    
+                    <div class="nav-item">
+                        <a class="nav-link" href="{% url 'about' %}">
+                            <i class="nav-icon fas fa-info-circle"></i>
+                            <span class="nav-text">About & Help</span>
+                            <i class="dropdown-arrow fas fa-chevron-right"></i>
+                            <span class="collapsed-tooltip">About & Help</span>
+                        </a>
+                        <div class="sub-menu">
+                            <div class="nav-item">
+                                <a class="nav-link" href="{% url 'about' %}">
+                                    <i class="nav-icon fas fa-book"></i>
+                                    <span class="nav-text">Documentation</span>
+                                    <span class="collapsed-tooltip">Documentation</span>
+                                </a>
+                            </div>
+                            <div class="nav-item">
+                                <a class="nav-link" href="{% url 'contact' %}">
+                                    <i class="nav-icon fas fa-envelope"></i>
+                                    <span class="nav-text">Contact Support</span>
+                                    <span class="collapsed-tooltip">Contact Support</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="col-lg-2 col-md-6 footer-section">
-              <h5>Quick Links</h5>
-              <ul>
-                <li><a href="{% url 'home' %}">Home</a></li>
-                <li><a href="{% url 'project_list' %}">Projects</a></li>
-                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
-                <li><a href="{% url 'project_map' %}">Interactive Map</a></li>
-              </ul>
-            </div>
-            <div class="col-lg-3 col-md-6 footer-section">
-              <h5>Resources</h5>
-              <ul>
-                <li><a href="{% url 'about' %}">About Us</a></li>
-                <li><a href="{% url 'contact' %}">Contact</a></li>
-                <li><a href="#">Data Privacy</a></li>
-                <li><a href="#">API Documentation</a></li>
-              </ul>
-            </div>
-            <div class="col-lg-3 col-md-6 footer-section">
-              <h5>Contact</h5>
-              <ul>
-                <li><i class="fas fa-map-marker-alt me-2"></i> Nairobi, Kenya</li>
-                <li><i class="fas fa-phone me-2"></i> +254 20 123 4567</li>
-                <li><i class="fas fa-envelope me-2"></i> info@geospatial.go.ke</li>
-                <li><i class="fas fa-clock me-2"></i> Mon - Fri, 8AM - 5PM</li>
-              </ul>
-            </div>
-          </div>
-          <div class="copyright">
-            <div class="row align-items-center">
-              <div class="col-md-6 text-center text-md-start">
-                <span>&copy; 2025 Government of Kenya. All rights reserved.</span>
-              </div>
-              <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
-                <span>Transparency in Development</span>
-              </div>
-            </div>
-          </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <div class="main-content" id="mainContent">
+            <!-- Top Navigation Bar -->
+            <nav class="top-navbar">
+                <div class="container-fluid">
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <div class="d-flex align-items-center">
+                            <button class="mobile-toggle me-3" id="mobileToggle">
+                                <i class="fas fa-bars"></i>
+                            </button>
+                            <nav aria-label="breadcrumb">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+                                    {% block breadcrumb %}{% endblock %}
+                                </ol>
+                            </nav>
+                        </div>
+                        <div class="user-menu">
+                            <div class="notification-bell">
+                                <i class="fas fa-bell"></i>
+                                <span class="notification-badge">3</span>
+                            </div>
+                            <div class="user-info">
+                                <div class="user-avatar">JD</div>
+                                <div class="user-details">
+                                    <div class="user-name">John Doe</div>
+                                    <div class="user-role">Administrator</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Content Wrapper 
+            <div class="content-wrapper">
+                {% block page_header %}
+                <div class="page-header">
+                    <div class="container-fluid">
+                        <h1>{% block page_title %}Dashboard Overview{% endblock %}</h1>
+                        <p class="page-subtitle">{% block page_subtitle %}Monitor and manage national development projects across Kenya{% endblock %}</p>
+                    </div>
+                </div>
+                {% endblock %}
+
+                <div class="container-fluid">
+                    {% block content %}{% endblock %}
+                </div>
+            </div> -->
+
+            <!-- Footer -->
+            <footer>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-4 col-md-6 footer-section">
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="sidebar-logo me-2">
+                                    <i class="fas fa-map-marked-alt"></i>
+                                </div>
+                                <div>
+                                    <h5 class="mb-0">Geospatial Monitoring</h5>
+                                    <small class="text-muted">Government of Kenya</small>
+                                </div>
+                            </div>
+                            <p class="mb-3">Transparent monitoring of development projects across Kenya using advanced geospatial technology for better governance and public accountability.</p>
+                            <div class="social-links">
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                                <a href="#"><i class="fab fa-youtube"></i></a>
+                            </div>
+                        </div>
+                        <div class="col-lg-2 col-md-6 footer-section">
+                            <h5>Quick Links</h5>
+                            <ul>
+                                <li><a href="{% url 'home' %}">Home</a></li>
+                                <li><a href="{% url 'project_list' %}">Projects</a></li>
+                                <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                                <li><a href="{% url 'project_map' %}">Interactive Map</a></li>
+                                <li><a href="{% url 'about' %}">About Us</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-3 col-md-6 footer-section">
+                            <h5>Resources</h5>
+                            <ul>
+                                <li><a href="#">Documentation</a></li>
+                                <li><a href="{% url 'contact' %}">Contact Support</a></li>
+                                <li><a href="#">Data Privacy</a></li>
+                                <li><a href="#">API Documentation</a></li>
+                                <li><a href="#">Training Materials</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-3 col-md-6 footer-section">
+                            <h5>Contact Info</h5>
+                            <ul class="contact-info">
+                                <li>
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Nairobi, Kenya</span>
+                                </li>
+                                <li>
+                                    <i class="fas fa-phone"></i>
+                                    <span>+254 20 123 4567</span>
+                                </li>
+                                <li>
+                                    <i class="fas fa-envelope"></i>
+                                    <span>info@geospatial.go.ke</span>
+                                </li>
+                                <li>
+                                    <i class="fas fa-clock"></i>
+                                    <span>Mon - Fri, 8:00 AM - 5:00 PM</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="copyright">
+                        <div class="row align-items-center">
+                            <div class="col-md-6 text-center text-md-start">
+                                <span>&copy; 2025 Government of Kenya. All rights reserved.</span>
+                            </div>
+                            <div class="col-md-6 text-center text-md-end mt-2 mt-md-0">
+                                <span>Promoting Transparency in National Development</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
         </div>
-      </footer>
     </div>
 
-    <!-- Scripts -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    
+
     <!-- Custom JavaScript -->
     <script>
-      // Sidebar toggle functionality
-      document.addEventListener('DOMContentLoaded', function() {
-        const sidebar = document.querySelector('.sidebar');
-        const mainContent = document.getElementById('mainContent');
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        const mobileToggle = document.getElementById('mobileToggle');
-        const mobileOverlay = document.querySelector('.mobile-overlay');
-        const dropdownArrows = document.querySelectorAll('.dropdown-arrow');
-        
-        // Toggle sidebar collapse/expand
-        sidebarToggle.addEventListener('click', function() {
-          sidebar.classList.toggle('collapsed');
-          mainContent.classList.toggle('expanded');
-          
-          // Rotate the toggle icon
-          const icon = this.querySelector('i');
-          if (sidebar.classList.contains('collapsed')) {
-            icon.classList.remove('fa-chevron-left');
-            icon.classList.add('fa-chevron-right');
-          } else {
-            icon.classList.remove('fa-chevron-right');
-            icon.classList.add('fa-chevron-left');
-          }
-        });
-        
-        // Mobile sidebar toggle
-        mobileToggle.addEventListener('click', function() {
-          sidebar.classList.toggle('mobile-open');
-          mobileOverlay.classList.toggle('active');
-        });
-        
-        // Close mobile sidebar when clicking overlay
-        mobileOverlay.addEventListener('click', function() {
-          sidebar.classList.remove('mobile-open');
-          this.classList.remove('active');
-        });
-        
-        // Dropdown menu functionality
-        dropdownArrows.forEach(arrow => {
-          arrow.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const mobileToggle = document.getElementById('mobileToggle');
+            const mobileOverlay = document.querySelector('.mobile-overlay');
+            const dropdownArrows = document.querySelectorAll('.dropdown-arrow');
             
-            const navItem = this.closest('.nav-item');
-            navItem.classList.toggle('open');
-          });
-        });
-        
-        // Set active navigation item based on current URL
-        const currentLocation = location.pathname;
-        const navLinks = document.querySelectorAll('.nav-link');
-        
-        navLinks.forEach(link => {
-          if (link.getAttribute('href') === currentLocation) {
-            link.classList.add('active');
-            
-            // Open parent dropdowns if this is a nested item
-            let parent = link.closest('.sub-menu');
-            while (parent) {
-              parent.previousElementSibling.classList.add('active');
-              parent.parentElement.classList.add('open');
-              parent = parent.parentElement.closest('.sub-menu');
-            }
-          }
-        });
-        
-        // Close all dropdowns when clicking outside on mobile
-        document.addEventListener('click', function(e) {
-          if (window.innerWidth <= 768 && !e.target.closest('.sidebar')) {
-            const openDropdowns = document.querySelectorAll('.nav-item.open');
-            openDropdowns.forEach(item => {
-              item.classList.remove('open');
+            // Toggle sidebar collapse/expand
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+                
+                // Rotate the toggle icon
+                const icon = this.querySelector('i');
+                if (sidebar.classList.contains('collapsed')) {
+                    icon.classList.remove('fa-chevron-left');
+                    icon.classList.add('fa-chevron-right');
+                } else {
+                    icon.classList.remove('fa-chevron-right');
+                    icon.classList.add('fa-chevron-left');
+                }
             });
-          }
+            
+            // Mobile sidebar toggle
+            mobileToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('mobile-open');
+                mobileOverlay.classList.toggle('active');
+            });
+            
+            // Close mobile sidebar when clicking overlay
+            mobileOverlay.addEventListener('click', function() {
+                sidebar.classList.remove('mobile-open');
+                this.classList.remove('active');
+            });
+            
+            // Dropdown menu functionality
+            dropdownArrows.forEach(arrow => {
+                arrow.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const navItem = this.closest('.nav-item');
+                    navItem.classList.toggle('open');
+                });
+            });
+            
+            // Set active navigation item based on current URL
+            const currentLocation = location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentLocation) {
+                    link.classList.add('active');
+                    
+                    // Open parent dropdowns if this is a nested item
+                    let parent = link.closest('.sub-menu');
+                    while (parent) {
+                        parent.previousElementSibling.classList.add('active');
+                        parent.parentElement.classList.add('open');
+                        parent = parent.parentElement.closest('.sub-menu');
+                    }
+                }
+            });
+            
+            // Close all dropdowns when clicking outside on mobile
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 992 && !e.target.closest('.sidebar')) {
+                    const openDropdowns = document.querySelectorAll('.nav-item.open');
+                    openDropdowns.forEach(item => {
+                        item.classList.remove('open');
+                    });
+                }
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 992) {
+                    mobileOverlay.classList.remove('active');
+                }
+            });
         });
-      });
-
-      // Handle window resize
-      window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
-          document.querySelector('.mobile-overlay').classList.remove('active');
-        }
-      });
     </script>
     
-    <script src="{% static 'js/custom.js' %}"></script>
     {% block extra_js %}{% endblock %}
-  </body>
+</body>
 </html>

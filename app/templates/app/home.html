@@ -1,1221 +1,1424 @@
 {% extends 'base.html' %}
 {% load custom_filters %}
 {% load humanize %}
+
 {% block page_title %}Dashboard Overview{% endblock %}
-{% block page_subtitle %}Monitor and manage national development projects{% endblock %}
+{% block page_subtitle %}Monitor and manage national development projects across Kenya{% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
+<div class="dashboard-wrapper">
     <!-- Notification System -->
-    <div class="notification-marquee-container">
-        <div id="notification-marquee">
-            <!-- Notifications will be populated by JavaScript -->
+    <div class="notification-system">
+        <div class="notification-marquee">
+            <div class="marquee-content">
+                <div class="notification-item">
+                    <span class="badge live">LIVE</span>
+                    <span>Kenya Projects Dashboard: Tracking {{ total_projects|intcomma }} projects nationwide</span>
+                </div>
+                <div class="notification-item">
+                    <span class="badge budget">BUDGET</span>
+                    <span>Total Investment: Ksh {{ total_budget|floatformat:0|intcomma }}</span>
+                </div>
+                <div class="notification-item">
+                    <span class="badge progress">PROGRESS</span>
+                    <span>Overall Completion Rate: {{ completion_rate }}%</span>
+                </div>
+                <div class="notification-item">
+                    <span class="badge alert">ALERT</span>
+                    <span>{{ overdue_projects }} projects require immediate attention</span>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- System Status Bar -->
     <div class="system-status-bar">
         <div class="container-fluid">
-            <div class="row align-items-center">
-                <div class="col-md-6">
-                    <span class="text-muted">
-                        <i class="fas fa-sync-alt me-1"></i>
-                        Last updated: <span id="last-updated-time">{% now "H:i:s" %}</span>
-                    </span>
+            <div class="status-content">
+                <div class="status-left">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Last updated: <strong id="last-updated-time">{% now "H:i:s" %}</strong></span>
                 </div>
-                <div class="col-md-6 text-end">
-                    <span class="badge bg-success me-2">
-                        <i class="fas fa-circle me-1"></i>System Online
-                    </span>
-                    <span class="badge bg-info me-2">
-                        <i class="fas fa-database me-1"></i>{{ total_projects|intcomma }} Projects
-                    </span>
-                    <span class="badge bg-warning">
-                        <i class="fas fa-bell me-1"></i>{{ overdue_projects }} Alerts
-                    </span>
+                <div class="status-right">
+                    <div class="status-badges">
+                        <span class="badge online">
+                            <i class="fas fa-circle"></i>
+                            System Online
+                        </span>
+                        <span class="badge projects">
+                            <i class="fas fa-database"></i>
+                            {{ total_projects|intcomma }} Projects
+                        </span>
+                        <span class="badge alerts">
+                            <i class="fas fa-bell"></i>
+                            {{ overdue_projects }} Alerts
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="kenya-dashboard">
-      
-      <!-- Horizontal Filters & Navigation Bar -->
-      <div class="horizontal-filters-bar">
+    <!-- Quick Stats Overview -->
+    <div class="quick-stats-section">
         <div class="container-fluid">
-          <div class="filters-navigation-container">
-            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon primary">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ total_projects|intcomma }}</h3>
+                        <p>Total Projects</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon success">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>Ksh {{ total_budget|floatformat:0|intcomma }}</h3>
+                        <p>Total Budget</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon warning">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ completion_rate }}%</h3>
+                        <p>Completion Rate</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon info">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ counties|length }}</h3>
+                        <p>Counties Covered</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ overdue_projects }}</h3>
+                        <p>Overdue Projects</p>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon secondary">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-content">
+                        <h3>{{ upcoming_deadlines }}</h3>
+                        <p>Upcoming Deadlines</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Navigation & Filters -->
+    <div class="dashboard-controls">
+        <div class="container-fluid">
             <!-- Navigation Tabs -->
-            <div class="horizontal-navigation-tabs">
-              <h6 class="filters-title me-3">Filters & Navigation</h6>
-              <div class="nav nav-pills" role="tablist">
-                <button class="nav-link active" id="v-pills-map-tab" data-bs-toggle="pill" 
-                        data-bs-target="#v-pills-map" type="button">
-                  <i class="fas fa-map-marked-alt me-2"></i>Map View
-                </button>
-                <button class="nav-link" id="v-pills-overview-tab" data-bs-toggle="pill" 
-                        data-bs-target="#v-pills-overview" type="button">
-                  <i class="fas fa-chart-pie me-2"></i>Overview
-                </button>
-                <button class="nav-link" id="v-pills-analytics-tab" data-bs-toggle="pill" 
-                        data-bs-target="#v-pills-analytics" type="button">
-                  <i class="fas fa-chart-line me-2"></i>Analytics
-                </button>
-              </div>
+            <div class="dashboard-navigation">
+                <div class="nav-tabs">
+                    <button class="nav-tab active" data-tab="map">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <span>Map View</span>
+                    </button>
+                    <button class="nav-tab" data-tab="overview">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Overview</span>
+                    </button>
+                    <button class="nav-tab" data-tab="analytics">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Analytics</span>
+                    </button>
+                </div>
             </div>
 
-            <!-- Location Selection -->
-            <div class="horizontal-location-selection">
-              <h6 class="location-title me-2">Location Selection</h6>
-              <div class="location-controls">
-                <button class="btn btn-location active" data-level="county">
-                  <i class="fas fa-map"></i> County
-                </button>
-                <button class="btn btn-location" data-level="subcounty">
-                  <i class="fas fa-map-marker-alt"></i> Subcounty
-                </button>
-                <button class="btn btn-location" data-level="ward">
-                  <i class="fas fa-location-dot"></i> Ward
-                </button>
-              </div>
-            </div>
+            <!-- Filter Controls -->
+            <div class="filter-controls">
+                <form method="get" id="filter-form" class="filter-form">
+                    <!-- Hierarchical Location Filters -->
+                    <div class="location-filters">
+                        <div class="filter-group">
+                            <label>County</label>
+                            <select class="form-select" name="county" id="county-select">
+                                <option value="">All Counties</option>
+                                {% for county in counties %}
+                                <option value="{{ county }}" {% if selected_county == county %}selected{% endif %}>
+                                    {{ county }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
 
-            <!-- Filters Form -->
-            <form method="get" id="filter-form" class="horizontal-filter-form">
-              
-              <!-- County Filter -->
-              <div class="filter-group horizontal">
-                <div class="filter-header">
-                  <h6><i class="fas fa-map me-2"></i>County</h6>
-                </div>
-                <div class="filter-options">
-                  <select class="form-select form-select-sm" name="county" id="county-select" onchange="this.form.submit()">
-                    <option value="">All Counties</option>
-                    {% for county in counties %}
-                    <option value="{{ county }}" {% if selected_county == county %}selected{% endif %}>
-                      {{ county }}
-                    </option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
+                        <div class="filter-group">
+                            <label>Subcounty</label>
+                            <select class="form-select" name="subcounty" id="subcounty-select" {% if not selected_county %}disabled{% endif %}>
+                                <option value="">All Subcounties</option>
+                                {% if selected_county and subcounties %}
+                                    {% for subcounty in subcounties %}
+                                    <option value="{{ subcounty }}" {% if selected_subcounty == subcounty %}selected{% endif %}>
+                                        {{ subcounty }}
+                                    </option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
 
-              <!-- Status Filter -->
-              <div class="filter-group horizontal">
-                <div class="filter-header">
-                  <h6><i class="fas fa-tasks me-2"></i>Project Status</h6>
-                </div>
-                <div class="filter-options">
-                  {% for status in status_choices %}
-                  <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="status" 
-                           value="{{ status }}" id="status-{{ forloop.counter }}"
-                           {% if status in selected_statuses %}checked{% endif %}
-                           onchange="this.form.submit()">
-                    <label class="form-check-label" for="status-{{ forloop.counter }}">
-                      {{ status_labels|get_item:status }}
-                    </label>
-                  </div>
-                  {% endfor %}
-                </div>
-              </div>
-
-              <!-- Sector Filter -->
-              <div class="filter-group horizontal">
-                <div class="filter-header">
-                  <h6><i class="fas fa-layer-group me-2"></i>Sector</h6>
-                </div>
-                <div class="filter-options">
-                  <input type="text" class="form-control form-control-sm sector-search" 
-                         placeholder="Search sectors..." id="sector-search">
-                  <div class="sector-options" id="sector-options">
-                    {% for sector in sectors %}
-                    <div class="form-check sector-item">
-                      <input class="form-check-input" type="checkbox" name="sector"
-                             value="{{ sector }}" id="sector-{{ forloop.counter }}"
-                             {% if sector in selected_sectors %}checked{% endif %}
-                             onchange="this.form.submit()">
-                      <label class="form-check-label" for="sector-{{ forloop.counter }}">
-                        {{ sector|default:"Not Specified" }}
-                      </label>
+                        <div class="filter-group">
+                            <label>Ward</label>
+                            <select class="form-select" name="ward" id="ward-select" {% if not selected_subcounty %}disabled{% endif %}>
+                                <option value="">All Wards</option>
+                                {% if selected_subcounty and wards %}
+                                    {% for ward in wards %}
+                                    <option value="{{ ward }}" {% if selected_ward == ward %}selected{% endif %}>
+                                        {{ ward }}
+                                    </option>
+                                    {% endfor %}
+                                {% endif %}
+                            </select>
+                        </div>
                     </div>
-                    {% empty %}
-                    <div class="text-muted small">No sectors available</div>
-                    {% endfor %}
-                  </div>
-                </div>
-              </div>
 
-              <!-- Year Filter -->
-              <div class="filter-group horizontal">
-                <div class="filter-header">
-                  <h6><i class="fas fa-calendar me-2"></i>Year</h6>
-                </div>
-                <div class="filter-options">
-                  <select class="form-select form-select-sm" name="year" id="year-select" onchange="this.form.submit()">
-                    <option value="">All Years</option>
-                    {% for year in fiscal_years %}
-                    <option value="{{ year }}" {% if selected_year == year|stringformat:"s" %}selected{% endif %}>
-                      {{ year }}
-                    </option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-
-              <!-- Action Buttons -->
-              <div class="filter-actions">
-                <button type="submit" class="btn btn-primary btn-sm">
-                  <i class="fas fa-filter me-1"></i> Apply
-                </button>
-                <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm">
-                  <i class="fas fa-refresh me-1"></i> Reset
-                </a>
-                <button type="button" class="btn btn-clear btn-sm" onclick="clearAllFilters()">
-                  Clear All
-                </button>
-              </div>
-
-              <!-- Debug Link -->
-              <div class="debug-link">
-                <small class="text-muted">
-                  <a href="/debug-data/" target="_blank" class="text-decoration-none">
-                    <i class="fas fa-bug me-1"></i> Debug Data
-                  </a>
-                </small>
-              </div>
-            </form>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- Quick Stats Bar - Made thinner -->
-      <div class="quick-stats-bar thin">
-        <div class="container-fluid">
-          <div class="row g-1 stats-grid">
-
-            <div class="col-xl-2 col-md-4 col-sm-6">
-              <div class="stat-card thin">
-                <div class="stat-icon">
-                  <i class="fas fa-project-diagram"></i>
-                </div>
-                <div class="stat-content">
-                  <h3>{{ total_projects|intcomma }}</h3>
-                  <span>Total Projects</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-xl-2 col-md-4 col-sm-6">
-              <div class="stat-card thin">
-                <div class="stat-icon">
-                  <i class="fas fa-money-bill-wave"></i>
-                </div>
-                <div class="stat-content">
-                  <h3>Ksh {{ total_budget|floatformat:0|intcomma }}</h3>
-                  <span>Total Budget</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-xl-2 col-md-4 col-sm-6">
-              <div class="stat-card thin">
-                <div class="stat-icon">
-                  <i class="fas fa-check-circle"></i>
-                </div>
-                <div class="stat-content">
-                  <h3>{{ completion_rate }}%</h3>
-                  <span>Completion Rate</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-xl-2 col-md-4 col-sm-6">
-              <div class="stat-card thin">
-                <div class="stat-icon">
-                  <i class="fas fa-map-marker-alt"></i>
-                </div>
-                <div class="stat-content">
-                  <h3>{{ counties|length }}</h3>
-                  <span>Counties Covered</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-xl-2 col-md-4 col-sm-6">
-              <div class="stat-card thin">
-                <div class="stat-icon">
-                  <i class="fas fa-exclamation-triangle"></i>
-                </div>
-                <div class="stat-content">
-                  <h3>{{ overdue_projects }}</h3>
-                  <span>Overdue Projects</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-xl-2 col-md-4 col-sm-6">
-              <div class="stat-card thin">
-                <div class="stat-icon">
-                  <i class="fas fa-clock"></i>
-                </div>
-                <div class="stat-content">
-                  <h3>{{ upcoming_deadlines }}</h3>
-                  <span>Upcoming Deadlines</span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
-      <!-- Debug Info (remove in production) -->
-      {% if error %}
-      <div class="container-fluid mt-3">
-        <div class="alert alert-danger">
-          <h5><i class="fas fa-exclamation-triangle"></i> Error Loading Data</h5>
-          <p class="mb-0">{{ error }}</p>
-          <small class="mt-2 d-block">
-            <a href="/debug-data/" target="_blank">Check debug data</a> to see what's in your database.
-          </small>
-        </div>
-      </div>
-      {% endif %}
-
-      <!-- Main Content -->
-      <div class="main-content">
-        <div class="container-fluid">
-          <div class="row">
-            
-            <!-- Main Content Area - Full width since sidebar is now horizontal -->
-            <div class="col-12">
-              <div class="tab-content" id="v-pills-tabContent">
-                
-                <!-- Map View Tab -->
-                <div class="tab-pane fade show active" id="v-pills-map" role="tabpanel">
-                  
-                  <!-- Map Container -->
-                  <div class="card map-card">
-                    <div class="card-header">
-                      <h5 class="mb-0">
-                        <i class="fas fa-map me-2"></i>
-                        <span id="map-title">Kenya Projects Distribution</span>
-                      </h5>
-                      <div class="map-controls">
-                        <!-- Layer Controls -->
-                        <div class="btn-group me-2">
-                          <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown">
-                            <i class="fas fa-layer-group me-1"></i> Base Maps
-                          </button>
-                          <ul class="dropdown-menu" id="base-map-selector">
-                            <li><a class="dropdown-item active" href="#" data-map="osm">OpenStreetMap</a></li>
-                            <li><a class="dropdown-item" href="#" data-map="satellite">Satellite</a></li>
-                            <li><a class="dropdown-item" href="#" data-map="dark">Dark Map</a></li>
-                            <li><a class="dropdown-item" href="#" data-map="terrain">Terrain</a></li>
-                          </ul>
-                        </div>
-
-                        <!-- Shapefile Level Controls -->
-                        <div class="btn-group me-2">
-                          <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
-                            <i class="fas fa-map-marked-alt me-1"></i> <span id="current-level">County Level</span>
-                          </button>
-                          <ul class="dropdown-menu" id="level-selector">
-                            <li><a class="dropdown-item active" href="#" data-level="county">County Level</a></li>
-                            <li><a class="dropdown-item" href="#" data-level="subcounty">Subcounty Level</a></li>
-                            <li><a class="dropdown-item" href="#" data-level="ward">Ward Level</a></li>
-                          </ul>
-                        </div>
-
-                        <!-- Project Markers Toggle -->
-                        <div class="form-check form-switch me-2">
-                          <input class="form-check-input" type="checkbox" id="project-markers-toggle" checked>
-                          <label class="form-check-label" for="project-markers-toggle">Show Projects</label>
-                        </div>
-
-                        <!-- Map Info -->
-                        <div class="map-info">
-                          <span id="selected-area-info">Hover over areas to see details</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="card-body p-0 position-relative">
-                      <div id="kenya-map"></div>
-                      
-                      <!-- Map Legends -->
-                      <div class="map-legends">
-                        <div class="map-legend project-legend">
-                          <h6>Project Status</h6>
-                          <div class="legend-item">
-                            <span class="legend-color completed"></span>
-                            <span>Completed</span>
-                          </div>
-                          <div class="legend-item">
-                            <span class="legend-color ongoing"></span>
-                            <span>Ongoing</span>
-                          </div>
-                          <div class="legend-item">
-                            <span class="legend-color planned"></span>
-                            <span>Planned</span>
-                          </div>
-                          <div class="legend-item">
-                            <span class="legend-color delayed"></span>
-                            <span>Delayed</span>
-                          </div>
-                        </div>
-                        
-                        <div class="map-legend density-legend">
-                          <h6>Project Density</h6>
-                          <div class="legend-item">
-                            <span class="legend-color density-0"></span>
-                            <span>No Projects</span>
-                          </div>
-                          <div class="legend-item">
-                            <span class="legend-color density-1"></span>
-                            <span>Low</span>
-                          </div>
-                          <div class="legend-item">
-                            <span class="legend-color density-2"></span>
-                            <span>Medium</span>
-                          </div>
-                          <div class="legend-item">
-                            <span class="legend-color density-3"></span>
-                            <span>High</span>
-                          </div>
-                          <div class="legend-item">
-                            <span class="legend-color density-4"></span>
-                            <span>Very High</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <!-- Loading Indicator -->
-                      <div id="map-loading" class="map-loading-indicator">
-                        <div class="spinner-border text-primary" role="status">
-                          <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <p>Loading map data...</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Selected Area Summary -->
-                  <div class="selected-area-summary" id="selected-area-summary">
-                    <div class="summary-header">
-                      <h6><i class="fas fa-info-circle me-2"></i>Selected Area Summary</h6>
-                      <button class="btn btn-sm btn-clear" onclick="clearSelection()">
-                        <i class="fas fa-times"></i> Clear
-                      </button>
-                    </div>
-                    <div class="summary-content" id="summary-content">
-                      <p class="text-muted">Select an area on the map to view detailed summary</p>
-                    </div>
-                  </div>
-
-                  <!-- Project Lists -->
-                  <div class="row mt-4">
-                    <div class="col-md-6">
-                      <div class="card">
-                        <div class="card-header">
-                          <h5 class="mb-0"><i class="fas fa-arrow-up me-2"></i>Highest Budget Projects</h5>
-                        </div>
-                        <div class="card-body">
-                          <div class="project-list">
-                            {% for project in highest_budget_projects %}
-                            <div class="project-item">
-                              <div class="project-info">
-                                <strong>{{ project.name|truncatechars:30 }}</strong>
-                                <span class="budget">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
-                              </div>
-                              <div class="project-meta">
-                                <span class="location">{{ project.county }}</span>
-                                <span class="sector">{{ project.sector|default:"N/A" }}</span>
-                                <span class="status badge bg-{{ project.status }}">{{ project.status }}</span>
-                              </div>
+                    <!-- Status Filter -->
+                    <div class="filter-group">
+                        <label>Status</label>
+                        <div class="status-filters">
+                            {% for status_value, status_label in status_choices %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="status" 
+                                       value="{{ status_value }}" id="status-{{ forloop.counter }}"
+                                       {% if status_value in selected_statuses %}checked{% endif %}>
+                                <label class="form-check-label" for="status-{{ forloop.counter }}">
+                                    {{ status_label }}
+                                </label>
                             </div>
-                            {% empty %}
-                            <p class="text-center text-muted">No projects found</p>
                             {% endfor %}
-                          </div>
                         </div>
-                      </div>
+                    </div>
+
+                    <!-- Sector Filter -->
+                    <div class="filter-group">
+                        <label>Sector</label>
+                        <div class="sector-filters">
+                            <input type="text" class="form-control sector-search" 
+                                   placeholder="Search sectors..." id="sector-search">
+                            <div class="sector-options">
+                                {% for sector in sectors %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="sector"
+                                           value="{{ sector }}" id="sector-{{ forloop.counter }}"
+                                           {% if sector in selected_sectors %}checked{% endif %}>
+                                    <label class="form-check-label" for="sector-{{ forloop.counter }}">
+                                        {{ sector|default:"Not Specified" }}
+                                    </label>
+                                </div>
+                                {% empty %}
+                                <div class="no-sectors">No sectors available</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Year Filter -->
+                    <div class="filter-group">
+                        <label>Year</label>
+                        <select class="form-select" name="year" id="year-select">
+                            <option value="">All Years</option>
+                            {% for year in fiscal_years %}
+                            <option value="{{ year }}" {% if selected_year == year|stringformat:"s" %}selected{% endif %}>
+                                {{ year }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-filter"></i>
+                            Apply Filters
+                        </button>
+                        <a href="{% url 'home' %}" class="btn btn-secondary">
+                            <i class="fas fa-refresh"></i>
+                            Reset
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Content -->
+    <div class="dashboard-content">
+        <div class="container-fluid">
+            <!-- Map View -->
+            <div class="tab-content active" id="map-tab">
+                <div class="map-container">
+                    <div class="map-header">
+                        <h3>
+                            <i class="fas fa-map"></i>
+                            <span id="map-title">Kenya Projects Distribution</span>
+                        </h3>
+                        <div class="map-controls">
+                            <div class="control-group">
+                                <label>Base Map:</label>
+                                <select class="form-select" id="base-map-selector">
+                                    <option value="osm">OpenStreetMap</option>
+                                    <option value="satellite">Satellite</option>
+                                    <option value="dark">Dark Map</option>
+                                    <option value="terrain">Terrain</option>
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <label>View Level:</label>
+                                <select class="form-select" id="level-selector">
+                                    <option value="county">County Level</option>
+                                    <option value="subcounty">Subcounty Level</option>
+                                    <option value="ward">Ward Level</option>
+                                </select>
+                            </div>
+                            <div class="control-group">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="project-markers-toggle" checked>
+                                    <label class="form-check-label" for="project-markers-toggle">
+                                        Show Projects
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="map-wrapper">
+                        <div id="kenya-map"></div>
+                        
+                        <!-- Map Legends -->
+                        <div class="map-legends">
+                            <div class="legend">
+                                <h6>Project Status</h6>
+                                <div class="legend-items">
+                                    <div class="legend-item">
+                                        <span class="color completed"></span>
+                                        <span>Completed</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="color ongoing"></span>
+                                        <span>Ongoing</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="color planned"></span>
+                                        <span>Planned</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="color delayed"></span>
+                                        <span>Delayed</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="legend">
+                                <h6>Project Density</h6>
+                                <div class="legend-items">
+                                    <div class="legend-item">
+                                        <span class="color density-0"></span>
+                                        <span>No Projects</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="color density-1"></span>
+                                        <span>Low</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="color density-2"></span>
+                                        <span>Medium</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="color density-3"></span>
+                                        <span>High</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Loading Indicator -->
+                        <div id="map-loading" class="map-loading">
+                            <div class="spinner"></div>
+                            <p>Loading map data...</p>
+                        </div>
+                    </div>
+
+                    <!-- Selected Area Summary -->
+                    <div class="area-summary">
+                        <div class="summary-header">
+                            <h5>
+                                <i class="fas fa-info-circle"></i>
+                                <span id="summary-title">Selected Area Summary</span>
+                            </h5>
+                            <button class="btn-clear" onclick="clearSelection()">
+                                <i class="fas fa-times"></i>
+                                Clear
+                            </button>
+                        </div>
+                        <div class="summary-content" id="summary-content">
+                            <div class="placeholder">
+                                <i class="fas fa-mouse-pointer"></i>
+                                <p>Select an area on the map to view detailed summary</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Project Highlights -->
+                <div class="project-highlights">
+                    <div class="highlight-column">
+                        <div class="highlight-card">
+                            <div class="card-header">
+                                <h5>
+                                    <i class="fas fa-arrow-up"></i>
+                                    Highest Budget Projects
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                {% for project in highest_budget_projects %}
+                                <div class="project-item">
+                                    <div class="project-main">
+                                        <h6>{{ project.name|truncatechars:35 }}</h6>
+                                        <span class="budget">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
+                                    </div>
+                                    <div class="project-meta">
+                                        <span class="location">{{ project.county }}</span>
+                                        <span class="sector">{{ project.sector|default:"N/A" }}</span>
+                                        <span class="status {{ project.status }}">{{ project.status }}</span>
+                                    </div>
+                                </div>
+                                {% empty %}
+                                <div class="no-data">
+                                    <i class="fas fa-inbox"></i>
+                                    <p>No projects found</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="col-md-6">
-                      <div class="card">
-                        <div class="card-header">
-                          <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Overdue Projects</h5>
-                        </div>
-                        <div class="card-body">
-                          <div class="project-list">
-                            {% for project in projects %}
-                              {% if project.status == 'delayed' or project.status == 'ongoing' and project.end_date < current_date %}
-                              <div class="project-item">
-                                <div class="project-info">
-                                  <strong>{{ project.name|truncatechars:30 }}</strong>
-                                  <span class="budget">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
+                    <div class="highlight-column">
+                        <div class="highlight-card">
+                            <div class="card-header">
+                                <h5>
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    Recent Project Updates
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                {% for update in recent_updates %}
+                                <div class="project-item">
+                                    <div class="project-main">
+                                        <h6>{{ update.project.name|truncatechars:35 }}</h6>
+                                        <span class="progress">{{ update.progress_percentage }}%</span>
+                                    </div>
+                                    <div class="project-meta">
+                                        <span class="location">{{ update.project.county }}</span>
+                                        <span class="date">{{ update.created_at|date:"M d, Y" }}</span>
+                                    </div>
                                 </div>
-                                <div class="project-meta">
-                                  <span class="location">{{ project.county }}</span>
-                                  <span class="status badge bg-danger">Overdue</span>
+                                {% empty %}
+                                <div class="no-data">
+                                    <i class="fas fa-inbox"></i>
+                                    <p>No recent updates</p>
                                 </div>
-                              </div>
-                              {% endif %}
-                            {% empty %}
-                            <p class="text-center text-muted">No overdue projects found</p>
-                            {% endfor %}
-                          </div>
+                                {% endfor %}
+                            </div>
                         </div>
-                      </div>
                     </div>
-                  </div>
                 </div>
-
-                <!-- Overview Tab -->
-                <div class="tab-pane fade" id="v-pills-overview" role="tabpanel">
-                  <div class="row g-3">
-                    <div class="col-md-6">
-                      <div class="card h-100">
-                        <div class="card-header">
-                          <h5 class="mb-0"><i class="fas fa-chart-pie me-2"></i>Project Status Distribution</h5>
-                        </div>
-                        <div class="card-body">
-                          <canvas id="statusChart" height="250"></canvas>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col-md-6">
-                      <div class="card h-100">
-                        <div class="card-header">
-                          <h5 class="mb-0"><i class="fas fa-industry me-2"></i>Top Sectors</h5>
-                        </div>
-                        <div class="card-body">
-                          <canvas id="sectorChart" height="250"></canvas>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col-md-12">
-                      <div class="card">
-                        <div class="card-header">
-                          <h5 class="mb-0"><i class="fas fa-map me-2"></i>Projects by County</h5>
-                        </div>
-                        <div class="card-body">
-                          <div id="countyChartContainer">
-                            <canvas id="countyChart" height="300"></canvas>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Analytics Tab -->
-                <div class="tab-pane fade" id="v-pills-analytics" role="tabpanel">
-                  <div class="row g-3">
-                    <!-- Budget Analysis -->
-                    <div class="col-md-6">
-                      <div class="card">
-                        <div class="card-header">
-                          <h5 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Budget by Status</h5>
-                        </div>
-                        <div class="card-body">
-                          <canvas id="budgetChart" height="250"></canvas>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Timeline -->
-                    <div class="col-md-6">
-                      <div class="card">
-                        <div class="card-header">
-                          <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Projects Timeline</h5>
-                        </div>
-                        <div class="card-body">
-                          <canvas id="timelineChart" height="250"></canvas>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Performance Metrics -->
-                    <div class="col-md-12">
-                      <div class="card">
-                        <div class="card-header">
-                          <h5 class="mb-0"><i class="fas fa-tachometer-alt me-2"></i>Performance Metrics</h5>
-                        </div>
-                        <div class="card-body">
-                          <div class="row text-center">
-                            <div class="col-md-3">
-                              <div class="metric-card">
-                                <h3>{{ completion_rate }}%</h3>
-                                <p>Completion Rate</p>
-                              </div>
-                            </div>
-                            <div class="col-md-3">
-                              <div class="metric-card">
-                                <h3>{{ ongoing_projects }}</h3>
-                                <p>Ongoing Projects</p>
-                              </div>
-                            </div>
-                            <div class="col-md-3">
-                              <div class="metric-card">
-                                <h3>{{ overdue_projects }}</h3>
-                                <p>Overdue Projects</p>
-                              </div>
-                            </div>
-                            <div class="col-md-3">
-                              <div class="metric-card">
-                                <h3>{{ upcoming_deadlines }}</h3>
-                                <p>Upcoming Deadlines</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
-          </div>
+
+            <!-- Overview Tab -->
+            <div class="tab-content" id="overview-tab">
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h5>
+                                <i class="fas fa-chart-pie"></i>
+                                Project Status Distribution
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h5>
+                                <i class="fas fa-industry"></i>
+                                Top Sectors
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="sectorChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card full-width">
+                        <div class="card-header">
+                            <h5>
+                                <i class="fas fa-map"></i>
+                                Projects by County
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="countyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics Tab -->
+            <div class="tab-content" id="analytics-tab">
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <div class="card-header">
+                            <h5>
+                                <i class="fas fa-chart-bar"></i>
+                                Budget Analytics
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="budget-stats">
+                                <div class="budget-item">
+                                    <span class="label">Average Budget</span>
+                                    <span class="value">Ksh {{ budget_stats.avg_budget|floatformat:0|intcomma }}</span>
+                                </div>
+                                <div class="budget-item">
+                                    <span class="label">Min Budget</span>
+                                    <span class="value">Ksh {{ budget_stats.min_budget|floatformat:0|intcomma }}</span>
+                                </div>
+                                <div class="budget-item">
+                                    <span class="label">Max Budget</span>
+                                    <span class="value">Ksh {{ budget_stats.max_budget|floatformat:0|intcomma }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analytics-card">
+                        <div class="card-header">
+                            <h5>
+                                <i class="fas fa-chart-line"></i>
+                                Performance Metrics
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="metrics-grid">
+                                <div class="metric-item">
+                                    <div class="metric-value">{{ completion_rate }}%</div>
+                                    <div class="metric-label">Completion Rate</div>
+                                </div>
+                                <div class="metric-item">
+                                    <div class="metric-value">{{ ongoing_projects }}</div>
+                                    <div class="metric-label">Ongoing Projects</div>
+                                </div>
+                                <div class="metric-item">
+                                    <div class="metric-value">{{ overdue_projects }}</div>
+                                    <div class="metric-label">Overdue Projects</div>
+                                </div>
+                                <div class="metric-item">
+                                    <div class="metric-value">{{ upcoming_deadlines }}</div>
+                                    <div class="metric-label">Upcoming Deadlines</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
 </div>
 
 <style>
-.dashboard-container {
+/* Dashboard Wrapper */
+.dashboard-wrapper {
     margin-left: 0;
     width: 100%;
-}
-
-.kenya-dashboard {
-  background: #f8f9fa;
-  min-height: calc(100vh - 120px);
-  font-family: 'Source Sans Pro', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: var(--light);
+    min-height: 100vh;
 }
 
 /* Notification System */
-.notification-marquee-container {
-  position: fixed;
-  top: 60px;
-  left: 0;
-  width: 100%;
-  background: linear-gradient(90deg, #4A90E2, #2a4d7a);
-  color: white;
-  padding: 6px 0;
-  z-index: 1030;
-  overflow: hidden;
-  font-size: 0.8rem;
+.notification-system {
+    background: linear-gradient(90deg, var(--primary), var(--primary-light));
+    color: white;
+    padding: 8px 0;
+    overflow: hidden;
+    position: relative;
 }
 
-#notification-marquee {
-  white-space: nowrap;
-  display: inline-block;
-  padding-left: 100%;
-  animation: scrollText 90s linear infinite;
+.notification-marquee {
+    overflow: hidden;
+    white-space: nowrap;
 }
 
-@keyframes scrollText {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-100%); }
+.marquee-content {
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee 60s linear infinite;
+}
+
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
 }
 
 .notification-item {
-  display: inline-block;
-  margin-right: 40px;
-  font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    margin-right: 40px;
+    font-weight: 500;
+    font-size: 0.85rem;
 }
 
 .notification-item .badge {
-  margin-right: 6px;
-  font-size: 0.7rem;
-  padding: 2px 5px;
+    margin-right: 8px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 600;
 }
 
+.badge.live { background: var(--secondary); }
+.badge.budget { background: var(--primary-light); }
+.badge.progress { background: var(--accent); }
+.badge.alert { background: #FF6B6B; }
+
+/* System Status Bar */
 .system-status-bar {
-  background: white;
-  border-bottom: 1px solid #E1E8ED;
-  padding: 8px 0;
-  font-size: 0.8rem;
-  margin-top: 30px;
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 12px 0;
+    margin-top: 0;
 }
 
-.system-status-bar .badge {
-  font-size: 0.75rem;
-  padding: 4px 8px;
+.status-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-/* Horizontal Filters & Navigation Bar */
-.horizontal-filters-bar {
-  background: white;
-  border-bottom: 1px solid #E1E8ED;
-  padding: 1rem 0;
-  margin-bottom: 1rem;
+.status-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-size: 0.85rem;
 }
 
-.filters-navigation-container {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  flex-wrap: wrap;
+.status-left i {
+    color: var(--primary);
 }
 
-.horizontal-navigation-tabs {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+.status-badges {
+    display: flex;
+    gap: 12px;
 }
 
-.filters-title {
-  color: #4A90E2;
-  font-weight: 600;
-  margin: 0;
-  font-size: 0.9rem;
-  white-space: nowrap;
+.status-badges .badge {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
-.horizontal-navigation-tabs .nav {
-  gap: 0.5rem;
+.badge.online { background: var(--secondary); color: white; }
+.badge.projects { background: var(--primary-light); color: white; }
+.badge.alerts { background: var(--accent); color: white; }
+
+/* Quick Stats Section */
+.quick-stats-section {
+    padding: 24px 0;
+    background: white;
 }
 
-.horizontal-navigation-tabs .nav-link {
-  border-radius: 6px;
-  padding: 0.5rem 0.8rem;
-  color: #7F8C8D;
-  font-weight: 500;
-  transition: all 0.2s ease;
-  font-size: 0.8rem;
-  border: none;
-  white-space: nowrap;
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
 }
 
-.horizontal-navigation-tabs .nav-link.active {
-  background: linear-gradient(135deg, #4A90E2, #2a4d7a);
-  color: white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+.stat-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: var(--transition);
+    box-shadow: var(--shadow-sm);
 }
 
-.horizontal-navigation-tabs .nav-link:hover:not(.active) {
-  background: rgba(74, 144, 226, 0.1);
-  color: #4A90E2;
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
-/* Horizontal Location Selection */
-.horizontal-location-selection {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
 }
 
-.location-title {
-  color: #2C3E50;
-  font-weight: 600;
-  font-size: 0.85rem;
-  margin: 0;
-  white-space: nowrap;
+.stat-icon.primary { background: var(--gradient-primary); }
+.stat-icon.success { background: var(--gradient-secondary); }
+.stat-icon.warning { background: linear-gradient(135deg, #FFC107, #FF8F00); }
+.stat-icon.info { background: linear-gradient(135deg, #17A2B8, #138496); }
+.stat-icon.danger { background: var(--gradient-accent); }
+.stat-icon.secondary { background: linear-gradient(135deg, #6C757D, #495057); }
+
+.stat-content h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--dark);
 }
 
-.location-controls {
-  display: flex;
-  gap: 0.3rem;
+.stat-content p {
+    margin: 4px 0 0 0;
+    color: var(--muted);
+    font-size: 0.85rem;
 }
 
-.btn-location {
-  padding: 0.3rem 0.6rem;
-  border: 1px solid #E1E8ED;
-  background: white;
-  color: #7F8C8D;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  transition: all 0.2s ease;
-  white-space: nowrap;
+/* Dashboard Controls */
+.dashboard-controls {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 20px 0;
 }
 
-.btn-location.active {
-  background: #4A90E2;
-  color: white;
-  border-color: #4A90E2;
+.dashboard-navigation {
+    margin-bottom: 20px;
 }
 
-.btn-location:hover:not(.active) {
-  background: #e9ecef;
-  color: #4A90E2;
+.nav-tabs {
+    display: flex;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
 }
 
-/* Horizontal Filter Form */
-.horizontal-filter-form {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  flex-wrap: wrap;
-  flex: 1;
+.nav-tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    color: var(--muted);
+    font-weight: 500;
+    transition: var(--transition);
+    cursor: pointer;
 }
 
-.filter-group.horizontal {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  min-width: 120px;
+.nav-tab:hover {
+    background: var(--light);
+    color: var(--primary);
 }
 
-.filter-group.horizontal .filter-header {
-  padding: 0;
-  background: none;
-  cursor: default;
+.nav-tab.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: var(--shadow-sm);
 }
 
-.filter-group.horizontal .filter-header h6 {
-  color: #2C3E50;
-  font-weight: 600;
-  font-size: 0.8rem;
-  margin: 0;
-  white-space: nowrap;
+.filter-controls {
+    background: var(--light);
+    border-radius: var(--border-radius);
+    padding: 20px;
 }
 
-.filter-group.horizontal .filter-options {
-  padding: 0;
-  max-height: none;
-  overflow: visible;
+.filter-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    align-items: start;
 }
 
-.filter-group.horizontal .form-select {
-  font-size: 0.75rem;
-  padding: 0.2rem 0.5rem;
+.location-filters {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    grid-column: 1 / -1;
 }
 
-.filter-group.horizontal .form-check {
-  margin-bottom: 0.2rem;
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
-.filter-group.horizontal .form-check-label {
-  font-size: 0.75rem;
+.filter-group label {
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.9rem;
 }
 
-/* Sector Search in Horizontal Layout */
+/* Filter Options */
+.status-filters,
+.sector-filters {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 12px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
 .sector-search {
-  font-size: 0.75rem;
-  padding: 0.2rem 0.5rem;
-  margin-bottom: 0.3rem;
+    margin-bottom: 8px;
 }
 
 .sector-options {
-  max-height: 120px;
-  overflow-y: auto;
-  border: 1px solid #E1E8ED;
-  border-radius: 4px;
-  padding: 0.3rem;
-  background: white;
+    max-height: 120px;
+    overflow-y: auto;
 }
 
-/* Filter Actions */
+.form-check {
+    margin-bottom: 6px;
+}
+
+.form-check-label {
+    font-size: 0.85rem;
+}
+
 .filter-actions {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
+    display: flex;
+    gap: 12px;
+    align-items: end;
 }
 
 .filter-actions .btn {
-  font-size: 0.75rem;
-  padding: 0.3rem 0.6rem;
-  white-space: nowrap;
+    padding: 10px 16px;
+    font-size: 0.85rem;
 }
 
-.debug-link {
-  margin-left: auto;
+/* Dashboard Content */
+.dashboard-content {
+    padding: 24px 0;
 }
 
-/* Quick Stats Bar - Thin Version */
-.quick-stats-bar.thin {
-  padding: 0.5rem 0;
-  background: white;
-  border-bottom: 1px solid #E1E8ED;
+.tab-content {
+    display: none;
 }
 
-.stat-card.thin {
-  padding: 0.5rem;
-  border: 1px solid #E1E8ED;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  height: 100%;
+.tab-content.active {
+    display: block;
 }
 
-.stat-card.thin .stat-icon {
-  width: 30px;
-  height: 30px;
-  font-size: 0.9rem;
-  margin-right: 0.6rem;
+/* Map Container */
+.map-container {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    margin-bottom: 24px;
 }
 
-.stat-card.thin .stat-content h3 {
-  font-size: 1rem;
-  margin: 0;
+.map-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
 }
 
-.stat-card.thin .stat-content span {
-  font-size: 0.75rem;
+.map-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-/* Map Card */
-.map-card {
-  border: none;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.08);
-  margin-bottom: 1rem;
+.map-controls {
+    display: flex;
+    gap: 20px;
+    align-items: center;
 }
 
-.map-card .card-header {
-  background: linear-gradient(135deg, #4A90E2, #2a4d7a);
-  color: white;
-  padding: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.map-card .card-header h5 {
-  margin: 0;
-  font-weight: 600;
-  font-size: 1rem;
+.control-group label {
+    font-size: 0.85rem;
+    font-weight: 500;
 }
 
-.map-info {
-  font-size: 0.8rem;
-  opacity: 0.9;
+.control-group .form-select {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+}
+
+.control-group .form-check {
+    margin: 0;
+}
+
+.control-group .form-check-label {
+    color: white;
+    font-size: 0.85rem;
+}
+
+/* Map Wrapper */
+.map-wrapper {
+    position: relative;
+    height: 500px;
 }
 
 #kenya-map {
-  height: 500px;
-  width: 100%;
+    height: 100%;
+    width: 100%;
 }
 
 /* Map Legends */
 .map-legends {
-  position: absolute;
-  bottom: 15px;
-  left: 15px;
-  display: flex;
-  gap: 0.8rem;
-  flex-wrap: wrap;
-  z-index: 1000;
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    gap: 16px;
+    z-index: 1000;
 }
 
-.map-legend {
-  background: white;
-  padding: 0.8rem;
-  border-radius: 6px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  min-width: 140px;
-  border: 1px solid #E1E8ED;
+.legend {
+    background: white;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-md);
+    min-width: 150px;
 }
 
-.map-legend h6 {
-  margin: 0 0 0.6rem 0;
-  font-weight: 600;
-  color: #2C3E50;
-  font-size: 0.8rem;
+.legend h6 {
+    margin: 0 0 8px 0;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.legend-items {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .legend-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.legend-color {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  margin-right: 0.6rem;
-  border: 2px solid white;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+.legend-item .color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
-.legend-color.completed { background: #28a745; }
-.legend-color.ongoing { background: #ffc107; }
-.legend-color.delayed { background: #dc3545; }
-.legend-color.planned { background: #7F8C8D; }
+.color.completed { background: #28a745; }
+.color.ongoing { background: #ffc107; }
+.color.delayed { background: #dc3545; }
+.color.planned { background: #6c757d; }
 
-.legend-color.density-0 { background: #FAFBFC; }
-.legend-color.density-1 { background: #a3d9b1; }
-.legend-color.density-2 { background: #48c78e; }
-.legend-color.density-3 { background: #4A90E2; }
-.legend-color.density-4 { background: #2a4d7a; }
+.color.density-0 { background: #f8f9fa; }
+.color.density-1 { background: #a3d9b1; }
+.color.density-2 { background: #48c78e; }
+.color.density-3 { background: #4A90E2; }
 
-/* Selected Area Summary */
-.selected-area-summary {
-  background: white;
-  border-radius: 6px;
-  padding: 1rem;
-  margin-top: 1rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+/* Map Loading */
+.map-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+    z-index: 1000;
+    display: none;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--border);
+    border-top: 4px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.map-loading p {
+    margin: 0;
+    color: var(--dark);
+    font-weight: 500;
+}
+
+/* Area Summary */
+.area-summary {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    margin-top: 16px;
 }
 
 .summary-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.8rem;
-  padding-bottom: 0.6rem;
-  border-bottom: 1px solid #E1E8ED;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.summary-header h6 {
-  margin: 0;
-  color: #2C3E50;
-  font-weight: 600;
-  font-size: 0.9rem;
+.summary-header h5 {
+    margin: 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--dark);
 }
 
-/* Project Lists */
-.project-list {
-  max-height: 250px;
-  overflow-y: auto;
+.btn-clear {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 4px;
+    transition: var(--transition);
+}
+
+.btn-clear:hover {
+    background: var(--light);
+    color: var(--dark);
+}
+
+.summary-content {
+    padding: 20px;
+    min-height: 120px;
+}
+
+.placeholder {
+    text-align: center;
+    color: var(--muted);
+}
+
+.placeholder i {
+    font-size: 2rem;
+    margin-bottom: 12px;
+    opacity: 0.5;
+}
+
+.placeholder p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+/* Project Highlights */
+.project-highlights {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-top: 24px;
+}
+
+.highlight-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.highlight-card .card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--light);
+}
+
+.highlight-card .card-header h5 {
+    margin: 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--dark);
+}
+
+.highlight-card .card-body {
+    padding: 0;
+    max-height: 300px;
+    overflow-y: auto;
 }
 
 .project-item {
-  padding: 0.8rem;
-  border-bottom: 1px solid #E1E8ED;
-  transition: background-color 0.2s ease;
-  border-radius: 4px;
-  margin-bottom: 0.4rem;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    transition: var(--transition);
 }
 
 .project-item:hover {
-  background: #FAFBFC;
+    background: var(--light);
 }
 
 .project-item:last-child {
-  border-bottom: none;
-  margin-bottom: 0;
+    border-bottom: none;
 }
 
-.project-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 0.6rem;
+.project-main {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
 }
 
-.project-info strong {
-  color: #2C3E50;
-  font-weight: 600;
-  flex: 1;
-  margin-right: 0.8rem;
-  font-size: 0.85rem;
+.project-main h6 {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--dark);
+    flex: 1;
+    margin-right: 12px;
 }
 
-.budget {
-  color: #4A90E2;
-  font-weight: 600;
-  font-size: 0.8rem;
-  white-space: nowrap;
+.budget, .progress {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.85rem;
+    white-space: nowrap;
 }
 
 .project-meta {
-  display: flex;
-  gap: 0.6rem;
-  flex-wrap: wrap;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
 .project-meta span {
-  font-size: 0.75rem;
-  padding: 0.2rem 0.4rem;
-  border-radius: 3px;
-  background: #FAFBFC;
-  color: #7F8C8D;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 500;
 }
 
-.bg-completed { background-color: #28a745 !important; color: white !important; }
-.bg-ongoing { background-color: #ffc107 !important; color: #000 !important; }
-.bg-delayed { background-color: #dc3545 !important; color: white !important; }
-.bg-planned { background-color: #7F8C8D !important; color: white !important; }
-
-/* Enhanced Map Controls */
-.map-controls {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+.location, .date {
+    background: var(--light);
+    color: var(--muted);
 }
 
-.map-controls .btn-group {
-  flex-shrink: 0;
+.sector {
+    background: #E3F2FD;
+    color: var(--primary);
 }
 
-.map-controls .form-check {
-  margin: 0;
-  white-space: nowrap;
+.status {
+    color: white;
 }
 
-.map-controls .form-check-label {
-  font-size: 0.8rem;
-  color: white;
+.status.completed { background: #28a745; }
+.status.ongoing { background: #ffc107; color: #000; }
+.status.delayed { background: #dc3545; }
+.status.planned { background: #6c757d; }
+
+.no-data {
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--muted);
 }
 
-/* Map Loading Indicator */
-.map-loading-indicator {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: rgba(255, 255, 255, 0.95);
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  text-align: center;
-  z-index: 1000;
-  display: none;
+.no-data i {
+    font-size: 2rem;
+    margin-bottom: 12px;
+    opacity: 0.5;
 }
 
-.map-loading-indicator p {
-  margin: 1rem 0 0 0;
-  color: #2C3E50;
-  font-weight: 500;
+.no-data p {
+    margin: 0;
+    font-size: 0.9rem;
 }
 
-/* Metric Cards */
-.metric-card {
-  padding: 1rem;
-  text-align: center;
+/* Charts Grid */
+.charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
 }
 
-.metric-card h3 {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #4A90E2;
-  margin-bottom: 0.5rem;
+.chart-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
 }
 
-.metric-card p {
-  color: #7F8C8D;
-  margin: 0;
-  font-weight: 500;
+.chart-card.full-width {
+    grid-column: 1 / -1;
+}
+
+.chart-card .card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--light);
+}
+
+.chart-card .card-header h5 {
+    margin: 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--dark);
+}
+
+.chart-card .card-body {
+    padding: 20px;
+    height: 300px;
+}
+
+.chart-card.full-width .card-body {
+    height: 350px;
+}
+
+/* Analytics Grid */
+.analytics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
+.analytics-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+.analytics-card .card-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+    background: var(--light);
+}
+
+.analytics-card .card-header h5 {
+    margin: 0;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--dark);
+}
+
+.analytics-card .card-body {
+    padding: 20px;
+}
+
+.budget-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.budget-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: var(--light);
+    border-radius: 8px;
+}
+
+.budget-item .label {
+    font-weight: 500;
+    color: var(--dark);
+}
+
+.budget-item .value {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 16px;
+}
+
+.metric-item {
+    text-align: center;
+    padding: 20px;
+    background: var(--light);
+    border-radius: var(--border-radius);
+    transition: var(--transition);
+}
+
+.metric-item:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.metric-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 8px;
+}
+
+.metric-label {
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 500;
 }
 
 /* Responsive Design */
 @media (max-width: 1200px) {
-  .filters-navigation-container {
-    gap: 1rem;
-  }
-  
-  .horizontal-filter-form {
-    gap: 0.8rem;
-  }
-  
-  .filter-group.horizontal {
-    min-width: 110px;
-  }
-}
-
-@media (max-width: 992px) {
-  .horizontal-filters-bar {
-    padding: 0.8rem 0;
-  }
-  
-  .filters-navigation-container {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.8rem;
-  }
-  
-  .horizontal-filter-form {
-    width: 100%;
-    justify-content: space-between;
-  }
-  
-  .filter-actions {
-    margin-left: auto;
-  }
+    .filter-form {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .project-highlights {
+        grid-template-columns: 1fr;
+    }
+    
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 768px) {
-  .horizontal-navigation-tabs {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-  
-  .horizontal-location-selection {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-  
-  .horizontal-filter-form {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.8rem;
-  }
-  
-  .filter-group.horizontal {
-    width: 100%;
-  }
-  
-  .filter-actions {
-    width: 100%;
-    justify-content: flex-start;
-    margin-left: 0;
-  }
-  
-  .debug-link {
-    margin-left: 0;
-  }
-  
-  #kenya-map {
-    height: 350px;
-  }
-  
-  .map-legends {
-    position: relative;
-    bottom: auto;
-    left: auto;
-    padding: 0.8rem;
-    justify-content: center;
-  }
-  
-  .map-controls {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .filter-form {
+        grid-template-columns: 1fr;
+    }
+    
+    .location-filters {
+        grid-template-columns: 1fr;
+    }
+    
+    .map-header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+    }
+    
+    .map-controls {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .map-legends {
+        position: relative;
+        bottom: auto;
+        left: auto;
+        padding: 16px;
+        flex-direction: column;
+    }
+    
+    .analytics-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
-/* Custom scrollbar */
+@media (max-width: 576px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .nav-tabs {
+        flex-direction: column;
+    }
+    
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .status-content {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+    
+    .status-badges {
+        flex-wrap: wrap;
+    }
+}
+
+/* Custom Scrollbars */
 .filter-options::-webkit-scrollbar,
-.project-list::-webkit-scrollbar,
-.sector-options::-webkit-scrollbar {
-  width: 4px;
+.highlight-card .card-body::-webkit-scrollbar {
+    width: 6px;
 }
 
 .filter-options::-webkit-scrollbar-track,
-.project-list::-webkit-scrollbar-track,
-.sector-options::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 2px;
+.highlight-card .card-body::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
 }
 
 .filter-options::-webkit-scrollbar-thumb,
-.project-list::-webkit-scrollbar-thumb,
-.sector-options::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 2px;
+.highlight-card .card-body::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
 }
 
 .filter-options::-webkit-scrollbar-thumb:hover,
-.project-list::-webkit-scrollbar-thumb:hover,
-.sector-options::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+.highlight-card .card-body::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
 }
 </style>
 
 {% block extra_js %}
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Leaflet CSS & JS are already included in base.html -->
 
 <script>
 // Dashboard JavaScript
@@ -1231,157 +1434,218 @@ let choroplethLayers = {
     ward: null
 };
 let allProjectMarkers = [];
-let visibleProjectMarkers = [];
+let selectedArea = null;
 
 // Chart instances
-let statusChart, sectorChart, budgetChart, timelineChart, countyChart;
+let statusChart, sectorChart, countyChart;
 
-// Initialize notification marquee
-function initNotificationMarquee() {
-    const notificationMarquee = document.getElementById('notification-marquee');
-    if (!notificationMarquee) return;
+// Location data from Django context
+const subcountiesByCounty = {{ subcounties_by_county_json|safe }};
+const wardsBySubcounty = {{ wards_by_subcounty_json|safe }};
+
+// Initialize dashboard
+document.addEventListener('DOMContentLoaded', function() {
+    initializeDashboard();
+    initializeCharts();
+    initializeEventListeners();
+});
+
+function initializeDashboard() {
+    // Initialize navigation tabs
+    initializeNavigation();
     
-    const totalProjects = {{ total_projects|default:0 }};
-    const totalBudget = {{ total_budget|default:0 }};
-    const completionRate = {{ completion_rate|default:0 }};
-    const overdueProjects = {{ overdue_projects|default:0 }};
+    // Initialize hierarchical dropdowns
+    initializeHierarchicalDropdowns();
     
-    const notifications = [
-        {
-            badge: 'LIVE',
-            type: 'success',
-            text: `Kenya Projects Dashboard: Tracking ${totalProjects.toLocaleString()} projects nationwide`
-        },
-        {
-            badge: 'BUDGET',
-            type: 'info',
-            text: `Total Investment: Ksh ${totalBudget.toLocaleString()}`
-        },
-        {
-            badge: 'PROGRESS',
-            type: 'primary',
-            text: `Overall Completion Rate: ${completionRate}%`
-        },
-        {
-            badge: 'ALERT',
-            type: 'warning',
-            text: `${overdueProjects} projects require immediate attention`
-        }
-    ];
+    // Initialize map if map tab is active
+    if (document.getElementById('kenya-map')) {
+        initializeMap();
+    }
     
-    let marqueeHTML = '';
-    notifications.forEach(notification => {
-        marqueeHTML += `
-            <span class="notification-item">
-                <span class="badge bg-${notification.type}">${notification.badge}</span>
-                ${notification.text}
-            </span>
-        `;
-    });
-    
-    marqueeHTML += marqueeHTML; // Duplicate for seamless looping
-    notificationMarquee.innerHTML = marqueeHTML;
+    // Update time
+    updateLastUpdatedTime();
 }
 
-// Initialize map with enhanced controls
-function initMap() {
+function initializeNavigation() {
+    const tabs = document.querySelectorAll('.nav-tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            const targetTab = this.getAttribute('data-tab');
+            
+            // Update active tab
+            tabs.forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Show target content
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+                if (content.id === `${targetTab}-tab`) {
+                    content.classList.add('active');
+                    
+                    // Initialize map if map tab is activated
+                    if (targetTab === 'map' && !kenyaMap) {
+                        setTimeout(() => initializeMap(), 100);
+                    }
+                }
+            });
+        });
+    });
+}
+
+function initializeHierarchicalDropdowns() {
+    const countySelect = document.getElementById('county-select');
+    const subcountySelect = document.getElementById('subcounty-select');
+    const wardSelect = document.getElementById('ward-select');
+
+    // County selection change
+    countySelect.addEventListener('change', function() {
+        const selectedCounty = this.value;
+        
+        // Update subcounty dropdown
+        updateSubcountyDropdown(selectedCounty);
+        
+        // Clear and disable ward dropdown
+        wardSelect.innerHTML = '<option value="">All Wards</option>';
+        wardSelect.disabled = true;
+        
+        // Update visualizations
+        updateVisualizations();
+    });
+
+    // Subcounty selection change
+    subcountySelect.addEventListener('change', function() {
+        const selectedCounty = countySelect.value;
+        const selectedSubcounty = this.value;
+        
+        // Update ward dropdown
+        updateWardDropdown(selectedCounty, selectedSubcounty);
+        
+        // Update visualizations
+        updateVisualizations();
+    });
+
+    // Ward selection change
+    wardSelect.addEventListener('change', function() {
+        updateVisualizations();
+    });
+}
+
+function updateSubcountyDropdown(county) {
+    const subcountySelect = document.getElementById('subcounty-select');
+    
+    if (!county) {
+        subcountySelect.innerHTML = '<option value="">All Subcounties</option>';
+        subcountySelect.disabled = true;
+        return;
+    }
+    
+    subcountySelect.innerHTML = '<option value="">All Subcounties</option>';
+    
+    if (subcountiesByCounty[county]) {
+        subcountiesByCounty[county].forEach(subcounty => {
+            const option = document.createElement('option');
+            option.value = subcounty;
+            option.textContent = subcounty;
+            subcountySelect.appendChild(option);
+        });
+        subcountySelect.disabled = false;
+    } else {
+        subcountySelect.disabled = true;
+    }
+}
+
+function updateWardDropdown(county, subcounty) {
+    const wardSelect = document.getElementById('ward-select');
+    
+    if (!county || !subcounty) {
+        wardSelect.innerHTML = '<option value="">All Wards</option>';
+        wardSelect.disabled = true;
+        return;
+    }
+    
+    wardSelect.innerHTML = '<option value="">All Wards</option>';
+    
+    const key = `${county}::${subcounty}`;
+    if (wardsBySubcounty[key]) {
+        wardsBySubcounty[key].forEach(ward => {
+            const option = document.createElement('option');
+            option.value = ward;
+            option.textContent = ward;
+            wardSelect.appendChild(option);
+        });
+        wardSelect.disabled = false;
+    } else {
+        wardSelect.disabled = true;
+    }
+}
+
+function initializeMap() {
     kenyaMap = L.map('kenya-map', {
         center: [-1.286389, 36.817223],
         zoom: 7,
         zoomControl: true,
         maxBounds: [
-            [-4.9, 33.9], // Southwest coordinates
-            [5.0, 42.0]   // Northeast coordinates
+            [-4.9, 33.9],
+            [5.0, 42.0]
         ],
         maxBoundsViscosity: 1.0
     });
 
-    // Initialize base layers
-    initBaseLayers();
-    
-    // Initialize layer controls
-    initLayerControls();
-    
-    // Load initial shapefile (counties)
+    initializeBaseLayers();
+    initializeMapControls();
     loadShapefileLayer('county');
     
-    // Initialize project markers layer
     projectMarkers = L.layerGroup().addTo(kenyaMap);
-    
-    // Load initial project markers
     loadProjectMarkers();
     
-    // Add zoom event listener for dynamic marker display
     kenyaMap.on('zoomend', updateMarkerDensity);
 }
 
-function initBaseLayers() {
-    // OpenStreetMap
+function initializeBaseLayers() {
     baseLayers.osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors',
         maxZoom: 19
     });
 
-    // Satellite
     baseLayers.satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         attribution: '© Esri, Earthstar Geographics',
         maxZoom: 19
     });
 
-    // Dark Map
     baseLayers.dark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
         attribution: '© OpenStreetMap, © CartoDB',
         maxZoom: 19
     });
 
-    // Terrain
     baseLayers.terrain = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap, © OpenTopoMap',
         maxZoom: 17
     });
 
-    // Add default base layer
     baseLayers.osm.addTo(kenyaMap);
 }
 
-function initLayerControls() {
+function initializeMapControls() {
     // Base map selector
-    document.querySelectorAll('#base-map-selector .dropdown-item').forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Update active state
-            document.querySelectorAll('#base-map-selector .dropdown-item').forEach(i => i.classList.remove('active'));
-            this.classList.add('active');
-            
-            // Remove current base layer
-            Object.values(baseLayers).forEach(layer => {
-                if (kenyaMap.hasLayer(layer)) {
-                    kenyaMap.removeLayer(layer);
-                }
-            });
-            
-            // Add new base layer
-            const mapType = this.getAttribute('data-map');
-            baseLayers[mapType].addTo(kenyaMap);
-            currentBaseLayer = mapType;
+    document.getElementById('base-map-selector').addEventListener('change', function(e) {
+        Object.values(baseLayers).forEach(layer => {
+            if (kenyaMap.hasLayer(layer)) {
+                kenyaMap.removeLayer(layer);
+            }
         });
+        
+        baseLayers[this.value].addTo(kenyaMap);
+        currentBaseLayer = this.value;
     });
 
     // Level selector
-    document.querySelectorAll('#level-selector .dropdown-item').forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Update active state and text
-            document.querySelectorAll('#level-selector .dropdown-item').forEach(i => i.classList.remove('active'));
-            this.classList.add('active');
-            document.getElementById('current-level').textContent = this.textContent;
-            
-            // Load new shapefile level
-            const level = this.getAttribute('data-level');
-            loadShapefileLayer(level);
-        });
+    document.getElementById('level-selector').addEventListener('change', function(e) {
+        const level = this.value;
+        loadShapefileLayer(level);
+        updateMapTitle(level);
+        currentLevel = level;
     });
 
     // Project markers toggle
@@ -1393,35 +1657,22 @@ function initLayerControls() {
             kenyaMap.removeLayer(projectMarkers);
         }
     });
-
-    // Location controls
-    document.querySelectorAll('.btn-location').forEach(btn => {
-        btn.addEventListener('click', function() {
-            document.querySelectorAll('.btn-location').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            const level = this.getAttribute('data-level');
-            loadShapefileLayer(level);
-        });
-    });
 }
 
 function loadShapefileLayer(level) {
     showMapLoading(true);
     currentLevel = level;
 
-    // Remove existing shape layer
     if (currentShapeLayer) {
         kenyaMap.removeLayer(currentShapeLayer);
     }
 
-    // Remove existing choropleth layer if any
     Object.values(choroplethLayers).forEach(layer => {
         if (layer && kenyaMap.hasLayer(layer)) {
             kenyaMap.removeLayer(layer);
         }
     });
 
-    // Determine the API endpoint based on level
     let apiUrl;
     switch (level) {
         case 'subcounty':
@@ -1435,21 +1686,26 @@ function loadShapefileLayer(level) {
             apiUrl = '/api/counties/geojson/';
     }
 
-    // Add current filters to API call
     const params = new URLSearchParams();
     const countySelect = document.getElementById('county-select');
+    const subcountySelect = document.getElementById('subcounty-select');
+    const wardSelect = document.getElementById('ward-select');
+    
     if (countySelect && countySelect.value) {
         params.append('county', countySelect.value);
+    }
+    if (subcountySelect && subcountySelect.value && level !== 'county') {
+        params.append('subcounty', subcountySelect.value);
+    }
+    if (wardSelect && wardSelect.value && level === 'ward') {
+        params.append('ward', wardSelect.value);
     }
 
     const url = `${apiUrl}?${params.toString()}`;
 
-    // Fetch and display the shapefile
     fetch(url)
         .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return response.json();
         })
         .then(data => {
@@ -1464,30 +1720,29 @@ function loadShapefileLayer(level) {
 }
 
 function createChoroplethLayer(geojsonData, level) {
-    // Determine the property name for the area name based on level
-    let nameProperty;
+    let nameProperty, displayName;
     switch (level) {
         case 'subcounty':
             nameProperty = 'subcounty';
+            displayName = 'Subcounty';
             break;
         case 'ward':
             nameProperty = 'ward';
+            displayName = 'Ward';
             break;
         case 'county':
         default:
             nameProperty = 'county';
+            displayName = 'County';
     }
 
-    // Calculate max projects for dynamic coloring
     const maxProjects = Math.max(...geojsonData.features.map(f => f.properties.project_count || 0));
 
-    // Create choropleth layer with enhanced styling
     const choroplethLayer = L.geoJSON(geojsonData, {
         style: function(feature) {
             return getChoroplethStyle(feature, level, maxProjects);
         },
         onEachFeature: function(feature, layer) {
-            // Add interactivity
             layer.on({
                 mouseover: function(e) {
                     const layer = e.target;
@@ -1509,16 +1764,29 @@ function createChoroplethLayer(geojsonData, level) {
                     clearAreaInfo();
                 },
                 click: function(e) {
+                    selectedArea = {
+                        properties: feature.properties,
+                        level: level,
+                        layer: layer
+                    };
+                    
                     kenyaMap.fitBounds(e.target.getBounds());
                     showAreaSummary(feature.properties, level);
+                    
+                    // Highlight selected area
+                    choroplethLayer.resetStyle();
+                    layer.setStyle({
+                        weight: 4,
+                        color: '#FF6B6B',
+                        fillOpacity: 0.8
+                    });
                 }
             });
 
-            // Bind popup
             const props = feature.properties;
             const popupContent = `
                 <div class="map-popup">
-                    <h6>${props[nameProperty]}</h6>
+                    <h6>${props[nameProperty]} ${displayName}</h6>
                     <div class="popup-stats">
                         <div class="stat-row">
                             <span class="stat-label">Total Projects:</span>
@@ -1547,12 +1815,10 @@ function createChoroplethLayer(geojsonData, level) {
         }
     });
 
-    // Add to map and store reference
     choroplethLayer.addTo(kenyaMap);
     choroplethLayers[level] = choroplethLayer;
     currentShapeLayer = choroplethLayer;
 
-    // Fit map to layer bounds
     if (choroplethLayer.getBounds().isValid()) {
         kenyaMap.fitBounds(choroplethLayer.getBounds());
     }
@@ -1560,8 +1826,6 @@ function createChoroplethLayer(geojsonData, level) {
 
 function getChoroplethStyle(feature, level, maxProjects) {
     const projectCount = feature.properties.project_count || 0;
-    
-    // Dynamic color ranges based on actual data distribution
     let fillColor;
     
     if (projectCount === 0) {
@@ -1570,16 +1834,16 @@ function getChoroplethStyle(feature, level, maxProjects) {
         const percentage = projectCount / maxProjects;
         
         if (percentage <= 0.25) {
-            fillColor = '#a3d9b1'; // Light green
+            fillColor = '#a3d9b1';
         } else if (percentage <= 0.5) {
-            fillColor = '#48c78e'; // Medium green
+            fillColor = '#48c78e';
         } else if (percentage <= 0.75) {
-            fillColor = '#4A90E2'; // Blue
+            fillColor = '#4A90E2';
         } else {
-            fillColor = '#2a4d7a'; // Dark blue
+            fillColor = '#2a4d7a';
         }
     } else {
-        fillColor = '#a3d9b1'; // Default light color
+        fillColor = '#a3d9b1';
     }
 
     return {
@@ -1593,15 +1857,22 @@ function getChoroplethStyle(feature, level, maxProjects) {
 }
 
 function loadProjectMarkers() {
-    // Build URL with current filters
     const params = new URLSearchParams();
     const countySelect = document.getElementById('county-select');
+    const subcountySelect = document.getElementById('subcounty-select');
+    const wardSelect = document.getElementById('ward-select');
     const statusCheckboxes = document.querySelectorAll('input[name="status"]:checked');
     const sectorCheckboxes = document.querySelectorAll('input[name="sector"]:checked');
     const yearSelect = document.getElementById('year-select');
 
     if (countySelect && countySelect.value) {
         params.append('county', countySelect.value);
+    }
+    if (subcountySelect && subcountySelect.value) {
+        params.append('subcounty', subcountySelect.value);
+    }
+    if (wardSelect && wardSelect.value) {
+        params.append('ward', wardSelect.value);
     }
 
     statusCheckboxes.forEach(checkbox => {
@@ -1616,31 +1887,20 @@ function loadProjectMarkers() {
         params.append('year', yearSelect.value);
     }
 
-    // Get all projects (no pagination for better clustering)
     params.append('page_size', '1000');
 
     const url = `/api/projects/geojson/?${params.toString()}`;
-
     showMapLoading(true);
 
-    // Fetch projects data and create markers
     fetch(url)
         .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             return response.json();
         })
         .then(data => {
-            // Store all markers
             allProjectMarkers = [];
-            
-            // Clear existing markers
             projectMarkers.clearLayers();
 
-            console.log(`Loaded ${data.features.length} project markers`);
-
-            // Create markers for all projects
             data.features.forEach(feature => {
                 if (feature.geometry && feature.geometry.type === 'Point') {
                     const marker = L.circleMarker(
@@ -1662,7 +1922,6 @@ function loadProjectMarkers() {
                             <p><strong>Budget:</strong> Ksh ${(feature.properties.budget || 0).toLocaleString()}</p>
                             <p><strong>County:</strong> ${feature.properties.county}</p>
                             <p><strong>Sector:</strong> ${feature.properties.sector || 'N/A'}</p>
-                            ${feature.properties.is_overdue ? '<p class="text-danger"><strong>⚠️ This project is overdue</strong></p>' : ''}
                         </div>
                     `;
                     marker.bindPopup(popupContent);
@@ -1671,7 +1930,6 @@ function loadProjectMarkers() {
                 }
             });
             
-            // Update marker density based on current zoom
             updateMarkerDensity();
             showMapLoading(false);
         })
@@ -1683,7 +1941,6 @@ function loadProjectMarkers() {
 }
 
 function getMarkerSize(zoom) {
-    // Dynamic marker size based on zoom level
     if (zoom <= 7) return 4;
     if (zoom <= 9) return 5;
     if (zoom <= 11) return 6;
@@ -1692,41 +1949,25 @@ function getMarkerSize(zoom) {
 }
 
 function updateMarkerDensity() {
-    if (!document.getElementById('project-markers-toggle').checked) {
-        return;
-    }
+    if (!document.getElementById('project-markers-toggle').checked) return;
     
     const zoom = kenyaMap.getZoom();
-    
-    // Clear current markers
     projectMarkers.clearLayers();
-    visibleProjectMarkers = [];
     
-    // Determine how many markers to show based on zoom level
     let displayCount = allProjectMarkers.length;
     
-    if (zoom <= 7) {
-        displayCount = Math.min(50, allProjectMarkers.length); // Show only 50 at country level
-    } else if (zoom <= 9) {
-        displayCount = Math.min(100, allProjectMarkers.length); // Show 100 at regional level
-    } else if (zoom <= 11) {
-        displayCount = Math.min(200, allProjectMarkers.length); // Show 200 at county level
-    }
-    // At higher zoom levels, show all markers
+    if (zoom <= 7) displayCount = Math.min(50, allProjectMarkers.length);
+    else if (zoom <= 9) displayCount = Math.min(100, allProjectMarkers.length);
+    else if (zoom <= 11) displayCount = Math.min(200, allProjectMarkers.length);
     
-    // Update marker sizes for all markers
     allProjectMarkers.forEach(marker => {
         marker.setRadius(getMarkerSize(zoom));
     });
     
-    // Show appropriate number of markers
     const markersToShow = allProjectMarkers.slice(0, displayCount);
     markersToShow.forEach(marker => {
         projectMarkers.addLayer(marker);
-        visibleProjectMarkers.push(marker);
     });
-    
-    console.log(`Showing ${markersToShow.length} markers at zoom level ${zoom}`);
 }
 
 function getStatusColor(status) {
@@ -1734,9 +1975,9 @@ function getStatusColor(status) {
         'completed': '#28a745',
         'ongoing': '#ffc107',
         'delayed': '#dc3545',
-        'planned': '#7F8C8D'
+        'planned': '#6c757d'
     };
-    return colors[status] || '#7F8C8D';
+    return colors[status] || '#6c757d';
 }
 
 function showMapLoading(show) {
@@ -1747,34 +1988,12 @@ function showMapLoading(show) {
 }
 
 function updateAreaInfo(properties, level) {
-    let areaName;
-    switch (level) {
-        case 'subcounty':
-            areaName = properties.subcounty;
-            break;
-        case 'ward':
-            areaName = properties.ward;
-            break;
-        case 'county':
-        default:
-            areaName = properties.county;
-    }
-
-    const infoElement = document.getElementById('selected-area-info');
-    if (infoElement) {
-        infoElement.innerHTML = `
-            <strong>${areaName}</strong> - 
-            ${properties.project_count || 0} projects - 
-            Ksh ${(properties.total_budget || 0).toLocaleString()}
-        `;
-    }
+    // This function can be used to show temporary info when hovering over areas
+    console.log('Area info:', properties, level);
 }
 
 function clearAreaInfo() {
-    const infoElement = document.getElementById('selected-area-info');
-    if (infoElement) {
-        infoElement.innerHTML = 'Hover over areas to see details';
-    }
+    // Clear temporary area info
 }
 
 function showAreaSummary(properties, level) {
@@ -1795,6 +2014,10 @@ function showAreaSummary(properties, level) {
     }
 
     const summaryContent = document.getElementById('summary-content');
+    const summaryTitle = document.getElementById('summary-title');
+    
+    summaryTitle.textContent = `${areaName} ${areaType} Summary`;
+    
     summaryContent.innerHTML = `
         <div class="summary-details">
             <h6>${areaName} ${areaType}</h6>
@@ -1831,6 +2054,15 @@ function showAreaSummary(properties, level) {
                     </div>
                 </div>
                 ` : ''}
+                ${properties.ongoing_projects ? `
+                <div class="stat-item">
+                    <i class="fas fa-spinner"></i>
+                    <div>
+                        <strong>${properties.ongoing_projects}</strong>
+                        <span>Ongoing Projects</span>
+                    </div>
+                </div>
+                ` : ''}
             </div>
         </div>
     `;
@@ -1838,12 +2070,31 @@ function showAreaSummary(properties, level) {
 
 function clearSelection() {
     const summaryContent = document.getElementById('summary-content');
-    summaryContent.innerHTML = '<p class="text-muted">Select an area on the map to view detailed summary</p>';
+    const summaryTitle = document.getElementById('summary-title');
     
-    // Reset map view if needed
+    summaryTitle.textContent = 'Selected Area Summary';
+    summaryContent.innerHTML = `
+        <div class="placeholder">
+            <i class="fas fa-mouse-pointer"></i>
+            <p>Select an area on the map to view detailed summary</p>
+        </div>
+    `;
+    
+    // Clear selection highlight
+    if (selectedArea && selectedArea.layer && currentShapeLayer) {
+        currentShapeLayer.resetStyle(selectedArea.layer);
+    }
+    selectedArea = null;
+    
     if (currentShapeLayer) {
         kenyaMap.fitBounds(currentShapeLayer.getBounds());
     }
+}
+
+function updateMapTitle(level) {
+    const mapTitle = document.getElementById('map-title');
+    const levelText = level.charAt(0).toUpperCase() + level.slice(1);
+    mapTitle.textContent = `Kenya Projects Distribution - ${levelText} Level`;
 }
 
 function showNotification(message, type = 'info') {
@@ -1870,8 +2121,13 @@ function showNotification(message, type = 'info') {
     }, 5000);
 }
 
-// Chart Functions
-function initStatusChart() {
+function initializeCharts() {
+    initializeStatusChart();
+    initializeSectorChart();
+    initializeCountyChart();
+}
+
+function initializeStatusChart() {
     const ctx = document.getElementById('statusChart').getContext('2d');
     const statusData = JSON.parse('{{ status_counts_json|escapejs }}');
     
@@ -1902,26 +2158,13 @@ function initStatusChart() {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    position: 'bottom',
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const label = context.label || '';
-                            const value = context.raw || 0;
-                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                            const percentage = Math.round((value / total) * 100);
-                            return `${label}: ${value} (${percentage}%)`;
-                        }
-                    }
-                }
+                legend: { position: 'bottom' }
             }
         }
     });
 }
 
-function initSectorChart() {
+function initializeSectorChart() {
     const ctx = document.getElementById('sectorChart').getContext('2d');
     const sectorData = JSON.parse('{{ sector_data_json|escapejs }}');
     
@@ -1943,31 +2186,16 @@ function initSectorChart() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
+            plugins: { legend: { display: false } },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Number of Projects'
-                    }
-                },
-                x: {
-                    ticks: {
-                        maxRotation: 45,
-                        minRotation: 45
-                    }
-                }
+                y: { beginAtZero: true },
+                x: { ticks: { maxRotation: 45, minRotation: 45 } }
             }
         }
     });
 }
 
-function initCountyChart() {
+function initializeCountyChart() {
     const ctx = document.getElementById('countyChart').getContext('2d');
     const countyData = JSON.parse('{{ county_stats_json|escapejs }}');
     
@@ -1989,107 +2217,66 @@ function initCountyChart() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                }
-            },
+            plugins: { legend: { display: false } },
             scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Number of Projects'
-                    }
-                },
-                x: {
-                    ticks: {
-                        maxRotation: 45,
-                        minRotation: 45
-                    }
-                }
+                y: { beginAtZero: true },
+                x: { ticks: { maxRotation: 45, minRotation: 45 } }
             }
         }
     });
 }
 
-function initCharts() {
-    initStatusChart();
-    initSectorChart();
-    initCountyChart();
-}
-
-// Filter handlers
-function handleCountySelection(countyName) {
-    updateVisualizations();
-}
-
-function updateVisualizations() {
-    // Reload map data with current filters
-    loadShapefileLayer(currentLevel);
-    loadProjectMarkers();
-    
-    // Update charts if they exist
-    if (statusChart) {
-        statusChart.update();
-    }
-    if (sectorChart) {
-        sectorChart.update();
-    }
-    if (countyChart) {
-        countyChart.update();
-    }
-}
-
-function clearAllFilters() {
-    // Reset form
-    document.getElementById('filter-form').reset();
-    
-    // Submit the form to reload with no filters
-    document.getElementById('filter-form').submit();
-}
-
-// Initialize everything when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    initNotificationMarquee();
-    
-    // Initialize map
-    if (document.getElementById('kenya-map')) {
-        initMap();
-    }
-    
-    // Initialize charts
-    initCharts();
-    
-    // Initialize filter functionality
+function initializeEventListeners() {
+    // Filter form submission
     const filterForm = document.getElementById('filter-form');
     if (filterForm) {
-        // Form is now set to auto-submit on change, so we don't need additional handlers
+        filterForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            updateVisualizations();
+        });
     }
-    
-    // Initialize sector search
+
+    // Sector search
     const sectorSearch = document.getElementById('sector-search');
     if (sectorSearch) {
         sectorSearch.addEventListener('input', function(e) {
             const searchTerm = e.target.value.toLowerCase();
-            document.querySelectorAll('.sector-item').forEach(item => {
+            document.querySelectorAll('.sector-options .form-check').forEach(item => {
                 const label = item.querySelector('label').textContent.toLowerCase();
                 item.style.display = label.includes(searchTerm) ? 'block' : 'none';
             });
         });
     }
+
+    // Status and sector checkbox changes
+    document.querySelectorAll('input[name="status"], input[name="sector"]').forEach(checkbox => {
+        checkbox.addEventListener('change', updateVisualizations);
+    });
+
+    // Year selection change
+    document.getElementById('year-select').addEventListener('change', updateVisualizations);
+}
+
+function updateVisualizations() {
+    if (kenyaMap) {
+        loadShapefileLayer(currentLevel);
+        loadProjectMarkers();
+    }
     
-    // Update last updated time
+    if (statusChart) statusChart.update();
+    if (sectorChart) sectorChart.update();
+    if (countyChart) countyChart.update();
+}
+
+function updateLastUpdatedTime() {
     setInterval(() => {
         const now = new Date();
         document.getElementById('last-updated-time').textContent = 
             now.toLocaleTimeString('en-US', { hour12: false });
     }, 1000);
-});
+}
 
 // Global functions
-window.clearAllFilters = clearAllFilters;
-window.handleCountySelection = handleCountySelection;
 window.clearSelection = clearSelection;
 </script>
 {% endblock %}

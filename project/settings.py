@@ -26,12 +26,28 @@ DEBUG = os.getenv("DEBUG", "False").lower() in ["true", "1", "yes"]
 
 # --- ADDED FOR PRODUCTION SECURITY (HTTPS ENFORCEMENT) ---
 # Allows Django to recognize incoming HTTPS requests forwarded by the Render proxy
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+#........SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # Redirects all incoming HTTP requests to HTTPS when DEBUG is False
-SECURE_SSL_REDIRECT = not DEBUG
+#........SECURE_SSL_REDIRECT = not DEBUG
 # Ensures session and CSRF cookies are only sent over HTTPS
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+#........SESSION_COOKIE_SECURE = True
+#...........CSRF_COOKIE_SECURE = True
+# --- Local Development Security ---
+DEBUG = os.getenv("DEBUG", "True").lower() in ["true", "1", "yes"]
+
+if DEBUG:
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    SECURE_PROXY_SSL_HEADER = None
+else:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+
+
 # --- END SECURITY ADDITIONS ---
 
 # Toggle between SQLite+SpatiaLite (local) and PostGIS (production)

@@ -38,7 +38,6 @@ from django.shortcuts import render
 from django.utils import timezone
 from django.contrib.gis.db.models import Union
 from .models import Project, ProjectUpdate, CitizenReport, KenyaCounty, KenyaSubCounty, Kenyawards
-
 # views.py
 from django.db.models import Q, Sum, Avg, Min, Max, Count, Case, When, F
 from django.db.models.functions import ExtractYear, TruncMonth
@@ -52,7 +51,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
-from app.models import Project, KenyaCounty, KenyaSubCounty, Kenyawards, ProjectUpdate, CitizenReport
+from app.models import Project, KenyaCounty, KenyaSubCounty, Kenyawards, ProjectUpdate, CitizenReport, ProjectChatMessage
 
 def _clean_get(request, name):
     """Return single GET param; treat 'None' or empty as None."""
@@ -152,7 +151,7 @@ def home(request):
         )
         
         total_projects = metrics['total_projects'] or 0
-        total_budget = float(metrics['total_budget'] or 0)  # Convert Decimal to float
+        total_budget = float(metrics['total_budget'] or 0)
         completed_projects = metrics['completed_projects'] or 0
         ongoing_projects = metrics['ongoing_projects'] or 0
         planned_projects = metrics['planned_projects'] or 0
@@ -214,7 +213,7 @@ def home(request):
                 "count": item["count"]
             })
 
-        # County analytics - FIX: Convert Decimal to float for JSON serialization
+        # County analytics
         county_stats = []
         county_analytics = projects.values("county").annotate(
             count=Count("id"),
@@ -225,7 +224,7 @@ def home(request):
             county_stats.append({
                 "county": item["county"],
                 "count": item["count"],
-                "total_budget": float(item["total_budget"] or 0)  # Convert Decimal to float
+                "total_budget": float(item["total_budget"] or 0)
             })
 
         # Recent projects with limit
@@ -240,7 +239,7 @@ def home(request):
         status_choices = [choice[0] for choice in Project.STATUS_CHOICES]
         status_labels = dict(Project.STATUS_CHOICES)
 
-        # Get sectors and counties from Project data (more reliable)
+        # Get sectors and counties from Project data
         sectors = list(Project.objects.exclude(sector__isnull=True).exclude(sector="")
                     .values_list("sector", flat=True).distinct().order_by("sector"))
         
@@ -256,6 +255,35 @@ def home(request):
             print(f"Error loading counties from model: {e}")
             counties = counties_from_projects
 
+        # Prepare hierarchical location data for JavaScript
+        subcounties_by_county = {}
+        wards_by_subcounty = {}
+        
+        try:
+            # Get subcounties grouped by county
+            subcounties_data = KenyaSubCounty.objects.values('county', 'subcounty').distinct()
+            for item in subcounties_data:
+                county = item['county']
+                subcounty = item['subcounty']
+                if county not in subcounties_by_county:
+                    subcounties_by_county[county] = []
+                if subcounty not in subcounties_by_county[county]:
+                    subcounties_by_county[county].append(subcounty)
+            
+            # Get wards grouped by county and subcounty
+            wards_data = Kenyawards.objects.values('county', 'subcounty', 'ward').distinct()
+            for item in wards_data:
+                county = item['county']
+                subcounty = item['subcounty']
+                ward = item['ward']
+                key = f"{county}::{subcounty}"
+                if key not in wards_by_subcounty:
+                    wards_by_subcounty[key] = []
+                if ward not in wards_by_subcounty[key]:
+                    wards_by_subcounty[key].append(ward)
+        except Exception as e:
+            print(f"Error loading hierarchical location data: {e}")
+
         print(f"Available counties: {len(counties)}")
         print(f"Available sectors: {len(sectors)}")
 
@@ -263,7 +291,7 @@ def home(request):
         map_projects = projects.filter(
             Q(location__isnull=False) | 
             Q(latitude__isnull=False, longitude__isnull=False)
-        )[:500]  # Increased limit
+        )[:500]
         
         features = []
         for project in map_projects:
@@ -294,7 +322,7 @@ def home(request):
                         "county": project.county or "",
                         "status": project.status,
                         "sector": project.sector or "",
-                        "budget": float(project.budget) if project.budget else 0,  # Convert Decimal to float
+                        "budget": float(project.budget) if project.budget else 0,
                     },
                 })
 
@@ -334,13 +362,17 @@ def home(request):
             "counties": counties,
             "selected_county": selected_county or "",
             
+            # Hierarchical location data
+            "subcounties_by_county_json": json.dumps(subcounties_by_county),
+            "wards_by_subcounty_json": json.dumps(wards_by_subcounty),
+            
             # JSON data for JavaScript
             "geojson": json.dumps(geojson),
             
             # CHART DATA
             "status_counts_json": json.dumps(status_counts_chart),
             "sector_data_json": json.dumps(sector_data_chart),
-            "county_stats_json": json.dumps(county_stats),  # Now safe to serialize
+            "county_stats_json": json.dumps(county_stats),
             
             # Current filter values
             "selected_year": selected_year or "",
@@ -368,6 +400,12 @@ def home(request):
             "status_choices": [],
             "status_labels": {},
             "fiscal_years": [],
+            "subcounties_by_county_json": json.dumps({}),
+            "wards_by_subcounty_json": json.dumps({}),
+            "geojson": json.dumps({"type": "FeatureCollection", "features": []}),
+            "status_counts_json": json.dumps({}),
+            "sector_data_json": json.dumps([]),
+            "county_stats_json": json.dumps([]),
             "error": f"An error occurred while loading the dashboard: {str(e)}"
         })
 
@@ -424,7 +462,7 @@ def counties_geojson(request):
                     "county": county.county,
                     "pop_2009": county.pop_2009,
                     "project_count": project_count,
-                    "total_budget": float(stats['total_budget'] or 0),  # Convert Decimal to float
+                    "total_budget": float(stats['total_budget'] or 0),
                     "completed_projects": stats['completed'] or 0,
                     "ongoing_projects": stats['ongoing'] or 0,
                     "delayed_projects": stats['delayed'] or 0,
@@ -496,7 +534,7 @@ def subcounties_geojson(request):
                     "subcounty": subcounty.subcounty,
                     "county": subcounty.county,
                     "project_count": project_count,
-                    "total_budget": float(stats['total_budget'] or 0),  # Convert Decimal to float
+                    "total_budget": float(stats['total_budget'] or 0),
                     "completed_projects": stats['completed'] or 0,
                 }
             }
@@ -643,7 +681,7 @@ def projects_geojson(request):
                         "status": project.status,
                         "county": project.county or "",
                         "sector": project.sector or "",
-                        "budget": float(project.budget) if project.budget else 0,  # Convert Decimal to float
+                        "budget": float(project.budget) if project.budget else 0,
                         "start_date": project.start_date.isoformat() if project.start_date else None,
                         "end_date": project.end_date.isoformat() if project.end_date else None,
                         "is_overdue": is_overdue,
@@ -787,7 +825,8 @@ def health_check(request):
             "error": str(e),
             "timestamp": timezone.now().isoformat()
         }, status=500)
-
+        
+        
 # ---------------- Dashboard View ---------------- #
 # ---------------- Dashboard View ---------------- #
 import json
