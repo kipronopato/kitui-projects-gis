@@ -168,13 +168,7 @@
                             <label>Subcounty</label>
                             <select class="form-select" name="subcounty" id="subcounty-select" {% if not selected_county %}disabled{% endif %}>
                                 <option value="">All Subcounties</option>
-                                {% if selected_county and subcounties %}
-                                    {% for subcounty in subcounties %}
-                                    <option value="{{ subcounty }}" {% if selected_subcounty == subcounty %}selected{% endif %}>
-                                        {{ subcounty }}
-                                    </option>
-                                    {% endfor %}
-                                {% endif %}
+                                <!-- Will be populated dynamically -->
                             </select>
                         </div>
 
@@ -182,13 +176,7 @@
                             <label>Ward</label>
                             <select class="form-select" name="ward" id="ward-select" {% if not selected_subcounty %}disabled{% endif %}>
                                 <option value="">All Wards</option>
-                                {% if selected_subcounty and wards %}
-                                    {% for ward in wards %}
-                                    <option value="{{ ward }}" {% if selected_ward == ward %}selected{% endif %}>
-                                        {{ ward }}
-                                    </option>
-                                    {% endfor %}
-                                {% endif %}
+                                <!-- Will be populated dynamically -->
                             </select>
                         </div>
                     </div>
@@ -197,7 +185,7 @@
                     <div class="filter-group">
                         <label>Status</label>
                         <div class="status-filters">
-                            {% for status_value, status_label in status_choices %}
+                            {% for status_value, status_label in status_labels.items %}
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="status" 
                                        value="{{ status_value }}" id="status-{{ forloop.counter }}"
@@ -416,26 +404,27 @@
                         <div class="highlight-card">
                             <div class="card-header">
                                 <h5>
-                                    <i class="fas fa-exclamation-triangle"></i>
-                                    Recent Project Updates
+                                    <i class="fas fa-clock"></i>
+                                    Recent Projects
                                 </h5>
                             </div>
                             <div class="card-body">
-                                {% for update in recent_updates %}
+                                {% for project in recent_projects %}
                                 <div class="project-item">
                                     <div class="project-main">
-                                        <h6>{{ update.project.name|truncatechars:35 }}</h6>
-                                        <span class="progress">{{ update.progress_percentage }}%</span>
+                                        <h6>{{ project.name|truncatechars:35 }}</h6>
+                                        <span class="date">{{ project.start_date|date:"M d, Y" }}</span>
                                     </div>
                                     <div class="project-meta">
-                                        <span class="location">{{ update.project.county }}</span>
-                                        <span class="date">{{ update.created_at|date:"M d, Y" }}</span>
+                                        <span class="location">{{ project.county }}</span>
+                                        <span class="sector">{{ project.sector|default:"N/A" }}</span>
+                                        <span class="status {{ project.status }}">{{ project.status }}</span>
                                     </div>
                                 </div>
                                 {% empty %}
                                 <div class="no-data">
                                     <i class="fas fa-inbox"></i>
-                                    <p>No recent updates</p>
+                                    <p>No recent projects</p>
                                 </div>
                                 {% endfor %}
                             </div>
@@ -499,15 +488,15 @@
                             <div class="budget-stats">
                                 <div class="budget-item">
                                     <span class="label">Average Budget</span>
-                                    <span class="value">Ksh {{ budget_stats.avg_budget|floatformat:0|intcomma }}</span>
+                                    <span class="value">Ksh {{ budget_stats.avg_budget|default:0|floatformat:0|intcomma }}</span>
                                 </div>
                                 <div class="budget-item">
                                     <span class="label">Min Budget</span>
-                                    <span class="value">Ksh {{ budget_stats.min_budget|floatformat:0|intcomma }}</span>
+                                    <span class="value">Ksh {{ budget_stats.min_budget|default:0|floatformat:0|intcomma }}</span>
                                 </div>
                                 <div class="budget-item">
                                     <span class="label">Max Budget</span>
-                                    <span class="value">Ksh {{ budget_stats.max_budget|floatformat:0|intcomma }}</span>
+                                    <span class="value">Ksh {{ budget_stats.max_budget|default:0|floatformat:0|intcomma }}</span>
                                 </div>
                             </div>
                         </div>
@@ -527,7 +516,7 @@
                                     <div class="metric-label">Completion Rate</div>
                                 </div>
                                 <div class="metric-item">
-                                    <div class="metric-value">{{ ongoing_projects }}</div>
+                                    <div class="metric-value">{{ ongoing_projects|default:0 }}</div>
                                     <div class="metric-label">Ongoing Projects</div>
                                 </div>
                                 <div class="metric-item">
@@ -1122,7 +1111,7 @@
     margin-right: 12px;
 }
 
-.budget, .progress {
+.budget, .progress, .date {
     color: var(--primary);
     font-weight: 600;
     font-size: 0.85rem;

@@ -97,6 +97,11 @@ def home(request):
         projects = Project.objects.all()
         print(f"Total projects in database: {projects.count()}")
 
+        # Debug: Print first few projects to verify data
+        sample_projects = projects[:5]
+        for i, project in enumerate(sample_projects):
+            print(f"Project {i+1}: {project.name}, County: {project.county}, Status: {project.status}, Budget: {project.budget}")
+
         # ---------------- Basic Filters ----------------
         selected_county = _clean_get(request, "county")
         selected_year = _clean_get(request, "year")
@@ -158,6 +163,7 @@ def home(request):
         delayed_projects = metrics['delayed_projects'] or 0
 
         print(f"Metrics - Total: {total_projects}, Budget: {total_budget}")
+        print(f"Completed: {completed_projects}, Ongoing: {ongoing_projects}, Planned: {planned_projects}, Delayed: {delayed_projects}")
 
         # Calculate overdue projects
         overdue_projects = projects.filter(
@@ -379,6 +385,11 @@ def home(request):
             "selected_statuses": selected_statuses,
             "selected_sectors": selected_sectors,
             "search_query": search_query or "",
+            
+            # Debug info
+            "ongoing_projects": ongoing_projects,
+            "planned_projects": planned_projects,
+            "delayed_projects": delayed_projects,
         }
         
         print("=== DASHBOARD LOADED SUCCESSFULLY ===")
