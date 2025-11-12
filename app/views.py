@@ -243,14 +243,30 @@ def home(request):
         # ---------------- Dropdown Data ----------------
         fiscal_years = list(Project.objects.dates("start_date", "year").order_by("-start_date").values_list('start_date__year', flat=True).distinct())
         
-        # FIX: Create proper status choices and labels
-        status_choices = [
+        # FIX: Create a SAFE status choices list that won't break the template
+        # Get unique status values from the database
+        db_statuses = list(Project.objects.values_list('status', flat=True).distinct())
+        print(f"Database statuses: {db_statuses}")
+        
+        # Define our expected status choices
+        expected_status_choices = [
             ("planned", "Planned"),
-            ("ongoing", "Ongoing"),
+            ("ongoing", "Ongoing"), 
             ("completed", "Completed"),
             ("delayed", "Delayed"),
         ]
-        status_labels = dict(status_choices)
+        
+        # Create a safe status choices list that only includes what's in the database
+        safe_status_choices = []
+        for status_value, status_label in expected_status_choices:
+            if status_value in db_statuses:
+                safe_status_choices.append((status_value, status_label))
+        
+        # If no safe choices found, fall back to expected ones
+        if not safe_status_choices:
+            safe_status_choices = expected_status_choices
+            
+        status_labels = dict(safe_status_choices)
 
         # Get sectors and counties from Project data
         sectors = list(Project.objects.exclude(sector__isnull=True).exclude(sector="")
@@ -299,6 +315,7 @@ def home(request):
 
         print(f"Available counties: {len(counties)}")
         print(f"Available sectors: {len(sectors)}")
+        print(f"Safe status choices: {safe_status_choices}")
 
         # ---------------- GeoJSON Generation ----------------
         map_projects = projects.filter(
@@ -367,10 +384,10 @@ def home(request):
             "highest_budget_projects": highest_budget_projects,
             "recent_updates": recent_updates,
             
-            # Filter options
+            # Filter options - USE SAFE STATUS CHOICES
             "fiscal_years": fiscal_years,
-            "status_choices": status_choices,  # Use the fixed status_choices
-            "status_labels": status_labels,    # Use the fixed status_labels
+            "status_choices": safe_status_choices,  # Use the safe version
+            "status_labels": status_labels,         # Use the safe version  
             "sectors": sectors,
             "counties": counties,
             "selected_county": selected_county or "",
@@ -408,11 +425,11 @@ def home(request):
         import traceback
         traceback.print_exc()
         
-        # Create fallback status data
-        status_choices = [
+        # Create a completely safe fallback context
+        safe_status_choices = [
             ("planned", "Planned"),
             ("ongoing", "Ongoing"),
-            ("completed", "Completed"),
+            ("completed", "Completed"), 
             ("delayed", "Delayed"),
         ]
         
@@ -424,8 +441,8 @@ def home(request):
             "upcoming_deadlines": 0,
             "counties": [],
             "sectors": [],
-            "status_choices": status_choices,
-            "status_labels": dict(status_choices),
+            "status_choices": safe_status_choices,  # Always use safe choices
+            "status_labels": dict(safe_status_choices),
             "fiscal_years": [],
             "subcounties_by_county_json": json.dumps({}),
             "wards_by_subcounty_json": json.dumps({}),
