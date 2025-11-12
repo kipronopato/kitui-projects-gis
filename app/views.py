@@ -242,8 +242,15 @@ def home(request):
 
         # ---------------- Dropdown Data ----------------
         fiscal_years = list(Project.objects.dates("start_date", "year").order_by("-start_date").values_list('start_date__year', flat=True).distinct())
-        status_choices = [choice[0] for choice in Project.STATUS_CHOICES]
-        status_labels = dict(Project.STATUS_CHOICES)
+        
+        # FIX: Create proper status choices and labels
+        status_choices = [
+            ("planned", "Planned"),
+            ("ongoing", "Ongoing"),
+            ("completed", "Completed"),
+            ("delayed", "Delayed"),
+        ]
+        status_labels = dict(status_choices)
 
         # Get sectors and counties from Project data
         sectors = list(Project.objects.exclude(sector__isnull=True).exclude(sector="")
@@ -362,8 +369,8 @@ def home(request):
             
             # Filter options
             "fiscal_years": fiscal_years,
-            "status_choices": status_choices,
-            "status_labels": status_labels,
+            "status_choices": status_choices,  # Use the fixed status_choices
+            "status_labels": status_labels,    # Use the fixed status_labels
             "sectors": sectors,
             "counties": counties,
             "selected_county": selected_county or "",
@@ -390,6 +397,7 @@ def home(request):
             "ongoing_projects": ongoing_projects,
             "planned_projects": planned_projects,
             "delayed_projects": delayed_projects,
+            "completed_projects": completed_projects,
         }
         
         print("=== DASHBOARD LOADED SUCCESSFULLY ===")
@@ -400,6 +408,14 @@ def home(request):
         import traceback
         traceback.print_exc()
         
+        # Create fallback status data
+        status_choices = [
+            ("planned", "Planned"),
+            ("ongoing", "Ongoing"),
+            ("completed", "Completed"),
+            ("delayed", "Delayed"),
+        ]
+        
         return render(request, "app/home.html", {
             "total_projects": 0,
             "total_budget": 0,
@@ -408,8 +424,8 @@ def home(request):
             "upcoming_deadlines": 0,
             "counties": [],
             "sectors": [],
-            "status_choices": [],
-            "status_labels": {},
+            "status_choices": status_choices,
+            "status_labels": dict(status_choices),
             "fiscal_years": [],
             "subcounties_by_county_json": json.dumps({}),
             "wards_by_subcounty_json": json.dumps({}),

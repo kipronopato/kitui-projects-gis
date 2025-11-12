@@ -166,7 +166,7 @@
 
                         <div class="filter-group">
                             <label>Subcounty</label>
-                            <select class="form-select" name="subcounty" id="subcounty-select" {% if not selected_county %}disabled{% endif %}>
+                            <select class="form-select" name="subcounty" id="subcounty-select" disabled>
                                 <option value="">All Subcounties</option>
                                 <!-- Will be populated dynamically -->
                             </select>
@@ -174,7 +174,7 @@
 
                         <div class="filter-group">
                             <label>Ward</label>
-                            <select class="form-select" name="ward" id="ward-select" {% if not selected_subcounty %}disabled{% endif %}>
+                            <select class="form-select" name="ward" id="ward-select" disabled>
                                 <option value="">All Wards</option>
                                 <!-- Will be populated dynamically -->
                             </select>
@@ -185,13 +185,13 @@
                     <div class="filter-group">
                         <label>Status</label>
                         <div class="status-filters">
-                            {% for status_value, status_label in status_labels.items %}
+                            {% for status in status_choices %}
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" name="status" 
-                                       value="{{ status_value }}" id="status-{{ forloop.counter }}"
-                                       {% if status_value in selected_statuses %}checked{% endif %}>
+                                       value="{{ status.0 }}" id="status-{{ forloop.counter }}"
+                                       {% if status.0 in selected_statuses %}checked{% endif %}>
                                 <label class="form-check-label" for="status-{{ forloop.counter }}">
-                                    {{ status_label }}
+                                    {{ status.1 }}
                                 </label>
                             </div>
                             {% endfor %}
@@ -890,6 +890,7 @@
 #kenya-map {
     height: 100%;
     width: 100%;
+    background: #f8f9fa;
 }
 
 /* Map Legends */
@@ -1571,6 +1572,8 @@ function updateWardDropdown(county, subcounty) {
 }
 
 function initializeMap() {
+    console.log('Initializing Kenya map...');
+    
     kenyaMap = L.map('kenya-map', {
         center: [-1.286389, 36.817223],
         zoom: 7,
@@ -1590,48 +1593,62 @@ function initializeMap() {
     loadProjectMarkers();
     
     kenyaMap.on('zoomend', updateMarkerDensity);
+    
+    console.log('Map initialized successfully');
 }
 
 function initializeBaseLayers() {
+    // OpenStreetMap
     baseLayers.osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors',
         maxZoom: 19
     });
 
+    // Satellite
     baseLayers.satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         attribution: '© Esri, Earthstar Geographics',
         maxZoom: 19
     });
 
+    // Dark Map
     baseLayers.dark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
         attribution: '© OpenStreetMap, © CartoDB',
         maxZoom: 19
     });
 
+    // Terrain
     baseLayers.terrain = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap, © OpenTopoMap',
         maxZoom: 17
     });
 
+    // Add default base layer
     baseLayers.osm.addTo(kenyaMap);
+    console.log('Base layers initialized');
 }
 
 function initializeMapControls() {
     // Base map selector
     document.getElementById('base-map-selector').addEventListener('change', function(e) {
+        const selectedLayer = this.value;
+        console.log('Changing base map to:', selectedLayer);
+        
         Object.values(baseLayers).forEach(layer => {
             if (kenyaMap.hasLayer(layer)) {
                 kenyaMap.removeLayer(layer);
             }
         });
         
-        baseLayers[this.value].addTo(kenyaMap);
-        currentBaseLayer = this.value;
+        if (baseLayers[selectedLayer]) {
+            baseLayers[selectedLayer].addTo(kenyaMap);
+            currentBaseLayer = selectedLayer;
+        }
     });
 
     // Level selector
     document.getElementById('level-selector').addEventListener('change', function(e) {
         const level = this.value;
+        console.log('Changing level to:', level);
         loadShapefileLayer(level);
         updateMapTitle(level);
         currentLevel = level;
@@ -1652,6 +1669,7 @@ function loadShapefileLayer(level) {
     showMapLoading(true);
     currentLevel = level;
 
+    // Remove existing layers
     if (currentShapeLayer) {
         kenyaMap.removeLayer(currentShapeLayer);
     }
@@ -1677,20 +1695,13 @@ function loadShapefileLayer(level) {
 
     const params = new URLSearchParams();
     const countySelect = document.getElementById('county-select');
-    const subcountySelect = document.getElementById('subcounty-select');
-    const wardSelect = document.getElementById('ward-select');
     
     if (countySelect && countySelect.value) {
         params.append('county', countySelect.value);
     }
-    if (subcountySelect && subcountySelect.value && level !== 'county') {
-        params.append('subcounty', subcountySelect.value);
-    }
-    if (wardSelect && wardSelect.value && level === 'ward') {
-        params.append('ward', wardSelect.value);
-    }
 
     const url = `${apiUrl}?${params.toString()}`;
+    console.log('Loading shapefile from:', url);
 
     fetch(url)
         .then(response => {
@@ -1698,6 +1709,7 @@ function loadShapefileLayer(level) {
             return response.json();
         })
         .then(data => {
+            console.log('Shapefile data loaded:', data.features.length, 'features');
             createChoroplethLayer(data, level);
             showMapLoading(false);
         })
@@ -1811,6 +1823,8 @@ function createChoroplethLayer(geojsonData, level) {
     if (choroplethLayer.getBounds().isValid()) {
         kenyaMap.fitBounds(choroplethLayer.getBounds());
     }
+    
+    console.log('Choropleth layer created for level:', level);
 }
 
 function getChoroplethStyle(feature, level, maxProjects) {
@@ -1848,20 +1862,12 @@ function getChoroplethStyle(feature, level, maxProjects) {
 function loadProjectMarkers() {
     const params = new URLSearchParams();
     const countySelect = document.getElementById('county-select');
-    const subcountySelect = document.getElementById('subcounty-select');
-    const wardSelect = document.getElementById('ward-select');
     const statusCheckboxes = document.querySelectorAll('input[name="status"]:checked');
     const sectorCheckboxes = document.querySelectorAll('input[name="sector"]:checked');
     const yearSelect = document.getElementById('year-select');
 
     if (countySelect && countySelect.value) {
         params.append('county', countySelect.value);
-    }
-    if (subcountySelect && subcountySelect.value) {
-        params.append('subcounty', subcountySelect.value);
-    }
-    if (wardSelect && wardSelect.value) {
-        params.append('ward', wardSelect.value);
     }
 
     statusCheckboxes.forEach(checkbox => {
@@ -1879,6 +1885,7 @@ function loadProjectMarkers() {
     params.append('page_size', '1000');
 
     const url = `/api/projects/geojson/?${params.toString()}`;
+    console.log('Loading project markers from:', url);
     showMapLoading(true);
 
     fetch(url)
@@ -1887,6 +1894,7 @@ function loadProjectMarkers() {
             return response.json();
         })
         .then(data => {
+            console.log('Project markers loaded:', data.features.length, 'features');
             allProjectMarkers = [];
             projectMarkers.clearLayers();
 
@@ -1921,6 +1929,7 @@ function loadProjectMarkers() {
             
             updateMarkerDensity();
             showMapLoading(false);
+            console.log('Project markers updated:', allProjectMarkers.length, 'markers');
         })
         .catch(error => {
             console.error('Error loading project markers:', error);
@@ -2247,6 +2256,8 @@ function initializeEventListeners() {
 }
 
 function updateVisualizations() {
+    console.log('Updating visualizations...');
+    
     if (kenyaMap) {
         loadShapefileLayer(currentLevel);
         loadProjectMarkers();
