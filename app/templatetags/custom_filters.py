@@ -198,3 +198,36 @@ def divide(value, arg):
         return int(value) // int(arg)
     except (ValueError, ZeroDivisionError, TypeError):
         return 0
+    
+@register.filter
+def abbreviate_number(value):
+    try:
+        value = float(value)
+        if value >= 1_000_000_000:
+            return f"{value / 1_000_000_000:.1f}B".rstrip('0').rstrip('.')
+        elif value >= 1_000_000:
+            return f"{value / 1_000_000:.1f}M".rstrip('0').rstrip('.')
+        elif value >= 1_000:
+            return f"{value / 1_000:.1f}K".rstrip('0').rstrip('.')
+        else:
+            return f"{int(value)}"
+    except:
+        return value
+    
+    
+@register.filter
+def format_large_number(value):
+    """Format numbers like 1200 -> 1.2K, 1,000,000 -> 1M, etc."""
+    try:
+        value = float(value)
+    except (ValueError, TypeError):
+        return value
+
+    if value >= 1_000_000_000:
+        return f"{value / 1_000_000_000:.1f}B"
+    elif value >= 1_000_000:
+        return f"{value / 1_000_000:.1f}M"
+    elif value >= 1_000:
+        return f"{value / 1_000:.1f}K"
+    else:
+        return f"{value:,.0f}"

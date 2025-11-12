@@ -78,7 +78,7 @@
                         <i class="fas fa-money-bill-wave"></i>
                     </div>
                     <div class="stat-content">
-                        <h3>Ksh {{ total_budget|floatformat:0|intcomma }}</h3>
+                        <h3>Ksh {{ total_budget|format_large_number }}</h3>
                         <p>Total Budget</p>
                     </div>
                 </div>
@@ -382,7 +382,7 @@
                                 <div class="project-item">
                                     <div class="project-main">
                                         <h6>{{ project.name|truncatechars:35 }}</h6>
-                                        <span class="budget">Ksh {{ project.budget|floatformat:0|intcomma }}</span>
+                                        <span class="budget">Ksh {{ project.budget|format_large_number }}</span>
                                     </div>
                                     <div class="project-meta">
                                         <span class="location">{{ project.county }}</span>
@@ -488,15 +488,15 @@
                             <div class="budget-stats">
                                 <div class="budget-item">
                                     <span class="label">Average Budget</span>
-                                    <span class="value">Ksh {{ budget_stats.avg_budget|default:0|floatformat:0|intcomma }}</span>
+                                    <span class="value">Ksh {{ budget_stats.avg_budget|default:0|format_large_number }}</span>
                                 </div>
                                 <div class="budget-item">
                                     <span class="label">Min Budget</span>
-                                    <span class="value">Ksh {{ budget_stats.min_budget|default:0|floatformat:0|intcomma }}</span>
+                                    <span class="value">Ksh {{ budget_stats.min_budget|default:0|format_large_number }}</span>
                                 </div>
                                 <div class="budget-item">
                                     <span class="label">Max Budget</span>
-                                    <span class="value">Ksh {{ budget_stats.max_budget|default:0|floatformat:0|intcomma }}</span>
+                                    <span class="value">Ksh {{ budget_stats.max_budget|default:0|format_large_number }}</span>
                                 </div>
                             </div>
                         </div>
@@ -537,6 +537,26 @@
 </div>
 
 <style>
+/* CSS Variables */
+:root {
+    --primary: #4A90E2;
+    --primary-light: #6AA9F4;
+    --secondary: #48c78e;
+    --accent: #FF6B6B;
+    --dark: #2C3E50;
+    --light: #F8F9FA;
+    --muted: #6C757D;
+    --border: #E9ECEF;
+    --border-radius: 8px;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 8px rgba(0,0,0,0.1);
+    --shadow-lg: 0 8px 16px rgba(0,0,0,0.15);
+    --transition: all 0.3s ease;
+    --gradient-primary: linear-gradient(135deg, #4A90E2, #6AA9F4);
+    --gradient-secondary: linear-gradient(135deg, #48c78e, #5dd9a1);
+    --gradient-accent: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+}
+
 /* Dashboard Wrapper */
 .dashboard-wrapper {
     margin-left: 0;
@@ -549,7 +569,7 @@
 .notification-system {
     background: linear-gradient(90deg, var(--primary), var(--primary-light));
     color: white;
-    padding: 8px 0;
+    padding: 6px 0;
     overflow: hidden;
     position: relative;
 }
@@ -575,14 +595,14 @@
     align-items: center;
     margin-right: 40px;
     font-weight: 500;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
 }
 
 .notification-item .badge {
     margin-right: 8px;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 0.7rem;
+    padding: 3px 6px;
+    border-radius: 10px;
+    font-size: 0.65rem;
     font-weight: 600;
 }
 
@@ -595,7 +615,7 @@
 .system-status-bar {
     background: white;
     border-bottom: 1px solid var(--border);
-    padding: 12px 0;
+    padding: 8px 0;
     margin-top: 0;
 }
 
@@ -608,28 +628,29 @@
 .status-left {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     color: var(--muted);
-    font-size: 0.85rem;
+    font-size: 0.75rem;
 }
 
 .status-left i {
     color: var(--primary);
+    font-size: 0.8rem;
 }
 
 .status-badges {
     display: flex;
-    gap: 12px;
+    gap: 10px;
 }
 
 .status-badges .badge {
-    padding: 6px 12px;
-    border-radius: 6px;
-    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
     font-weight: 500;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
 }
 
 .badge.online { background: var(--secondary); color: white; }
@@ -638,26 +659,27 @@
 
 /* Quick Stats Section */
 .quick-stats-section {
-    padding: 24px 0;
+    padding: 16px 0;
     background: white;
 }
 
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
 }
 
 .stat-card {
     background: white;
     border: 1px solid var(--border);
     border-radius: var(--border-radius);
-    padding: 20px;
+    padding: 14px;
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     transition: var(--transition);
     box-shadow: var(--shadow-sm);
+    height: 70px;
 }
 
 .stat-card:hover {
@@ -666,14 +688,15 @@
 }
 
 .stat-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 1.2rem;
+    font-size: 0.9rem;
+    flex-shrink: 0;
 }
 
 .stat-icon.primary { background: var(--gradient-primary); }
@@ -684,46 +707,49 @@
 .stat-icon.secondary { background: linear-gradient(135deg, #6C757D, #495057); }
 
 .stat-content h3 {
-    font-size: 1.5rem;
+    font-size: 1.1rem;
     font-weight: 700;
     margin: 0;
     color: var(--dark);
+    line-height: 1.2;
 }
 
 .stat-content p {
-    margin: 4px 0 0 0;
+    margin: 2px 0 0 0;
     color: var(--muted);
-    font-size: 0.85rem;
+    font-size: 0.7rem;
+    font-weight: 500;
 }
 
 /* Dashboard Controls */
 .dashboard-controls {
     background: white;
     border-bottom: 1px solid var(--border);
-    padding: 20px 0;
+    padding: 16px 0;
 }
 
 .dashboard-navigation {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
 }
 
 .nav-tabs {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     border-bottom: 1px solid var(--border);
-    padding-bottom: 16px;
+    padding-bottom: 12px;
 }
 
 .nav-tab {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding: 12px 20px;
+    gap: 6px;
+    padding: 8px 14px;
     background: none;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     color: var(--muted);
     font-weight: 500;
+    font-size: 0.8rem;
     transition: var(--transition);
     cursor: pointer;
 }
@@ -742,33 +768,43 @@
 .filter-controls {
     background: var(--light);
     border-radius: var(--border-radius);
-    padding: 20px;
+    padding: 16px;
 }
 
 .filter-form {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
     align-items: start;
 }
 
 .location-filters {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    grid-column: 1 / -1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    flex: 1;
+    min-width: 300px;
 }
 
 .filter-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
+    flex: 1;
+    min-width: 150px;
 }
 
 .filter-group label {
     font-weight: 600;
     color: var(--dark);
-    font-size: 0.9rem;
+    font-size: 0.75rem;
+    margin-bottom: 2px;
+}
+
+.form-select {
+    font-size: 0.75rem;
+    padding: 6px 8px;
+    height: 32px;
 }
 
 /* Filter Options */
@@ -776,43 +812,58 @@
 .sector-filters {
     background: white;
     border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 12px;
-    max-height: 150px;
+    border-radius: 4px;
+    padding: 8px;
+    max-height: 120px;
     overflow-y: auto;
+    font-size: 0.75rem;
 }
 
 .sector-search {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    height: 28px;
 }
 
 .sector-options {
-    max-height: 120px;
+    max-height: 100px;
     overflow-y: auto;
 }
 
 .form-check {
-    margin-bottom: 6px;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+}
+
+.form-check-input {
+    width: 12px;
+    height: 12px;
+    margin-right: 6px;
 }
 
 .form-check-label {
-    font-size: 0.85rem;
+    font-size: 0.7rem;
+    line-height: 1.2;
 }
 
 .filter-actions {
     display: flex;
-    gap: 12px;
+    gap: 8px;
     align-items: end;
+    margin-top: 10px;
 }
 
 .filter-actions .btn {
-    padding: 10px 16px;
-    font-size: 0.85rem;
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    height: 32px;
 }
 
 /* Dashboard Content */
 .dashboard-content {
-    padding: 24px 0;
+    padding: 16px 0;
 }
 
 .tab-content {
@@ -829,11 +880,11 @@
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
 }
 
 .map-header {
-    padding: 20px;
+    padding: 14px 16px;
     border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
@@ -844,32 +895,34 @@
 
 .map-header h3 {
     margin: 0;
-    font-size: 1.2rem;
+    font-size: 1rem;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 .map-controls {
     display: flex;
-    gap: 20px;
+    gap: 12px;
     align-items: center;
 }
 
 .control-group {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 .control-group label {
-    font-size: 0.85rem;
+    font-size: 0.7rem;
     font-weight: 500;
 }
 
 .control-group .form-select {
-    font-size: 0.85rem;
-    padding: 6px 12px;
+    font-size: 0.7rem;
+    padding: 4px 6px;
+    height: 26px;
+    width: 120px;
 }
 
 .control-group .form-check {
@@ -878,7 +931,7 @@
 
 .control-group .form-check-label {
     color: white;
-    font-size: 0.85rem;
+    font-size: 0.7rem;
 }
 
 /* Map Wrapper */
@@ -896,24 +949,24 @@
 /* Map Legends */
 .map-legends {
     position: absolute;
-    bottom: 20px;
-    left: 20px;
+    bottom: 12px;
+    left: 12px;
     display: flex;
-    gap: 16px;
+    gap: 12px;
     z-index: 1000;
 }
 
 .legend {
     background: white;
-    padding: 12px;
-    border-radius: 8px;
+    padding: 8px;
+    border-radius: 6px;
     box-shadow: var(--shadow-md);
-    min-width: 150px;
+    min-width: 120px;
 }
 
 .legend h6 {
-    margin: 0 0 8px 0;
-    font-size: 0.85rem;
+    margin: 0 0 6px 0;
+    font-size: 0.7rem;
     font-weight: 600;
     color: var(--dark);
 }
@@ -921,20 +974,21 @@
 .legend-items {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
 }
 
 .legend-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    font-size: 0.65rem;
 }
 
 .legend-item .color {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    border: 2px solid white;
+    border: 1px solid white;
     box-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
@@ -955,8 +1009,8 @@
     left: 50%;
     transform: translate(-50%, -50%);
     background: rgba(255, 255, 255, 0.95);
-    padding: 30px;
-    border-radius: 12px;
+    padding: 20px;
+    border-radius: 8px;
     box-shadow: var(--shadow-lg);
     text-align: center;
     z-index: 1000;
@@ -964,13 +1018,13 @@
 }
 
 .spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid var(--border);
-    border-top: 4px solid var(--primary);
+    width: 30px;
+    height: 30px;
+    border: 3px solid var(--border);
+    border-top: 3px solid var(--primary);
     border-radius: 50%;
     animation: spin 1s linear infinite;
-    margin: 0 auto 16px;
+    margin: 0 auto 10px;
 }
 
 @keyframes spin {
@@ -982,6 +1036,7 @@
     margin: 0;
     color: var(--dark);
     font-weight: 500;
+    font-size: 0.8rem;
 }
 
 /* Area Summary */
@@ -989,11 +1044,11 @@
     background: white;
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-sm);
-    margin-top: 16px;
+    margin-top: 12px;
 }
 
 .summary-header {
-    padding: 16px 20px;
+    padding: 12px 16px;
     border-bottom: 1px solid var(--border);
     display: flex;
     justify-content: space-between;
@@ -1002,10 +1057,10 @@
 
 .summary-header h5 {
     margin: 0;
-    font-size: 1rem;
+    font-size: 0.9rem;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     color: var(--dark);
 }
 
@@ -1013,10 +1068,10 @@
     background: none;
     border: none;
     color: var(--muted);
-    font-size: 0.85rem;
+    font-size: 0.7rem;
     cursor: pointer;
-    padding: 6px 12px;
-    border-radius: 4px;
+    padding: 4px 8px;
+    border-radius: 3px;
     transition: var(--transition);
 }
 
@@ -1026,32 +1081,33 @@
 }
 
 .summary-content {
-    padding: 20px;
-    min-height: 120px;
+    padding: 16px;
+    min-height: 100px;
 }
 
 .placeholder {
     text-align: center;
     color: var(--muted);
+    padding: 10px 0;
 }
 
 .placeholder i {
-    font-size: 2rem;
-    margin-bottom: 12px;
+    font-size: 1.5rem;
+    margin-bottom: 8px;
     opacity: 0.5;
 }
 
 .placeholder p {
     margin: 0;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 /* Project Highlights */
 .project-highlights {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    margin-top: 24px;
+    gap: 16px;
+    margin-top: 16px;
 }
 
 .highlight-card {
@@ -1059,31 +1115,32 @@
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
+    height: 250px;
 }
 
 .highlight-card .card-header {
-    padding: 16px 20px;
+    padding: 12px 16px;
     border-bottom: 1px solid var(--border);
     background: var(--light);
 }
 
 .highlight-card .card-header h5 {
     margin: 0;
-    font-size: 1rem;
+    font-size: 0.9rem;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     color: var(--dark);
 }
 
 .highlight-card .card-body {
     padding: 0;
-    max-height: 300px;
+    height: 200px;
     overflow-y: auto;
 }
 
 .project-item {
-    padding: 16px 20px;
+    padding: 10px 12px;
     border-bottom: 1px solid var(--border);
     transition: var(--transition);
 }
@@ -1100,35 +1157,36 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .project-main h6 {
     margin: 0;
-    font-size: 0.9rem;
+    font-size: 0.75rem;
     font-weight: 600;
     color: var(--dark);
     flex: 1;
-    margin-right: 12px;
+    margin-right: 8px;
+    line-height: 1.2;
 }
 
 .budget, .progress, .date {
     color: var(--primary);
     font-weight: 600;
-    font-size: 0.85rem;
+    font-size: 0.7rem;
     white-space: nowrap;
 }
 
 .project-meta {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     flex-wrap: wrap;
 }
 
 .project-meta span {
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 0.65rem;
     font-weight: 500;
 }
 
@@ -1144,6 +1202,7 @@
 
 .status {
     color: white;
+    font-size: 0.6rem;
 }
 
 .status.completed { background: #28a745; }
@@ -1152,27 +1211,27 @@
 .status.planned { background: #6c757d; }
 
 .no-data {
-    padding: 40px 20px;
+    padding: 30px 16px;
     text-align: center;
     color: var(--muted);
 }
 
 .no-data i {
-    font-size: 2rem;
-    margin-bottom: 12px;
+    font-size: 1.5rem;
+    margin-bottom: 8px;
     opacity: 0.5;
 }
 
 .no-data p {
     margin: 0;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
 }
 
 /* Charts Grid */
 .charts-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
+    gap: 16px;
 }
 
 .chart-card {
@@ -1180,41 +1239,39 @@
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
+    height: 250px;
 }
 
 .chart-card.full-width {
     grid-column: 1 / -1;
+    height: 280px;
 }
 
 .chart-card .card-header {
-    padding: 16px 20px;
+    padding: 12px 16px;
     border-bottom: 1px solid var(--border);
     background: var(--light);
 }
 
 .chart-card .card-header h5 {
     margin: 0;
-    font-size: 1rem;
+    font-size: 0.9rem;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     color: var(--dark);
 }
 
 .chart-card .card-body {
-    padding: 20px;
-    height: 300px;
-}
-
-.chart-card.full-width .card-body {
-    height: 350px;
+    padding: 16px;
+    height: calc(100% - 50px);
 }
 
 /* Analytics Grid */
 .analytics-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px;
+    gap: 16px;
 }
 
 .analytics-card {
@@ -1222,40 +1279,43 @@
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-sm);
     overflow: hidden;
+    height: 200px;
 }
 
 .analytics-card .card-header {
-    padding: 16px 20px;
+    padding: 12px 16px;
     border-bottom: 1px solid var(--border);
     background: var(--light);
 }
 
 .analytics-card .card-header h5 {
     margin: 0;
-    font-size: 1rem;
+    font-size: 0.9rem;
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     color: var(--dark);
 }
 
 .analytics-card .card-body {
-    padding: 20px;
+    padding: 16px;
+    height: calc(100% - 50px);
 }
 
 .budget-stats {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
 }
 
 .budget-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px;
+    padding: 8px;
     background: var(--light);
-    border-radius: 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
 }
 
 .budget-item .label {
@@ -1270,13 +1330,13 @@
 
 .metrics-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 12px;
 }
 
 .metric-item {
     text-align: center;
-    padding: 20px;
+    padding: 12px;
     background: var(--light);
     border-radius: var(--border-radius);
     transition: var(--transition);
@@ -1288,22 +1348,26 @@
 }
 
 .metric-value {
-    font-size: 1.8rem;
+    font-size: 1.2rem;
     font-weight: 700;
     color: var(--primary);
-    margin-bottom: 8px;
+    margin-bottom: 4px;
 }
 
 .metric-label {
     color: var(--muted);
-    font-size: 0.85rem;
+    font-size: 0.7rem;
     font-weight: 500;
 }
 
 /* Responsive Design */
 @media (max-width: 1200px) {
     .filter-form {
-        grid-template-columns: repeat(2, 1fr);
+        flex-direction: column;
+    }
+    
+    .location-filters {
+        min-width: 100%;
     }
     
     .project-highlights {
@@ -1321,30 +1385,30 @@
     }
     
     .filter-form {
-        grid-template-columns: 1fr;
+        flex-direction: column;
     }
     
     .location-filters {
-        grid-template-columns: 1fr;
+        flex-direction: column;
     }
     
     .map-header {
         flex-direction: column;
-        gap: 16px;
+        gap: 12px;
         align-items: flex-start;
     }
     
     .map-controls {
         flex-direction: column;
         align-items: flex-start;
-        gap: 12px;
+        gap: 8px;
     }
     
     .map-legends {
         position: relative;
         bottom: auto;
         left: auto;
-        padding: 16px;
+        padding: 12px;
         flex-direction: column;
     }
     
@@ -1372,31 +1436,35 @@
     
     .status-content {
         flex-direction: column;
-        gap: 12px;
+        gap: 8px;
         align-items: flex-start;
     }
     
     .status-badges {
         flex-wrap: wrap;
     }
+    
+    .project-highlights {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Custom Scrollbars */
 .filter-options::-webkit-scrollbar,
 .highlight-card .card-body::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
 }
 
 .filter-options::-webkit-scrollbar-track,
 .highlight-card .card-body::-webkit-scrollbar-track {
     background: #f1f1f1;
-    border-radius: 3px;
+    border-radius: 2px;
 }
 
 .filter-options::-webkit-scrollbar-thumb,
 .highlight-card .card-body::-webkit-scrollbar-thumb {
     background: #c1c1c1;
-    border-radius: 3px;
+    border-radius: 2px;
 }
 
 .filter-options::-webkit-scrollbar-thumb:hover,
@@ -1408,7 +1476,9 @@
 {% block extra_js %}
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<!-- Leaflet CSS & JS are already included in base.html -->
+<!-- Leaflet CSS & JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
 // Dashboard JavaScript
@@ -1573,58 +1643,80 @@ function updateWardDropdown(county, subcounty) {
 
 function initializeMap() {
     console.log('Initializing Kenya map...');
-    
+
+    // Ensure the map container exists
+    const mapContainer = document.getElementById('kenya-map');
+    if (!mapContainer) {
+        console.error('Map container with id "kenya-map" not found.');
+        showNotification('Map container missing in HTML. Please check your template.', 'error');
+        return;
+    }
+
+    // Clear previous Leaflet instance if any
+    if (kenyaMap) {
+        kenyaMap.remove();
+    }
+
+    // Create the Leaflet map
     kenyaMap = L.map('kenya-map', {
-        center: [-1.286389, 36.817223],
-        zoom: 7,
+        center: [-1.286389, 36.817223], // Nairobi center
+        zoom: 6,
         zoomControl: true,
         maxBounds: [
-            [-4.9, 33.9],
-            [5.0, 42.0]
+            [-4.9, 33.9], // SW Kenya
+            [5.0, 42.0]   // NE Kenya
         ],
         maxBoundsViscosity: 1.0
     });
 
+    console.log('Map instance created.');
+
+    // Initialize base layers
     initializeBaseLayers();
+
+    // Add controls
     initializeMapControls();
+
+    // Load boundaries (default county level)
     loadShapefileLayer('county');
-    
+
+    // Add project layer group
     projectMarkers = L.layerGroup().addTo(kenyaMap);
     loadProjectMarkers();
-    
+
     kenyaMap.on('zoomend', updateMarkerDensity);
-    
+
     console.log('Map initialized successfully');
 }
 
 function initializeBaseLayers() {
-    // OpenStreetMap
-    baseLayers.osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
-        maxZoom: 19
-    });
+    console.log('Initializing base layers...');
 
-    // Satellite
-    baseLayers.satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-        attribution: '© Esri, Earthstar Geographics',
-        maxZoom: 19
-    });
+    // Define base maps
+    baseLayers = {
+        osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        }),
+        satellite: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; <a href="https://www.esri.com/">Esri</a>',
+            maxZoom: 19
+        }),
+        dark: L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://carto.com/">CartoDB</a>',
+            maxZoom: 19
+        }),
+        terrain: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://opentopomap.org/">OpenTopoMap</a>',
+            maxZoom: 17
+        })
+    };
 
-    // Dark Map
-    baseLayers.dark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '© OpenStreetMap, © CartoDB',
-        maxZoom: 19
-    });
-
-    // Terrain
-    baseLayers.terrain = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap, © OpenTopoMap',
-        maxZoom: 17
-    });
-
-    // Add default base layer
+    // Add the default layer (OSM)
     baseLayers.osm.addTo(kenyaMap);
-    console.log('Base layers initialized');
+    currentBaseLayer = 'osm';
+
+    console.log('Base layers added and default set to OSM.');
 }
 
 function initializeMapControls() {
@@ -1946,6 +2038,16 @@ function getMarkerSize(zoom) {
     return 8;
 }
 
+function getStatusColor(status) {
+    const colors = {
+        'completed': '#28a745',
+        'ongoing': '#ffc107',
+        'planned': '#6c757d',
+        'delayed': '#dc3545'
+    };
+    return colors[status] || '#6c757d';
+}
+
 function updateMarkerDensity() {
     if (!document.getElementById('project-markers-toggle').checked) return;
     
@@ -1954,28 +2056,21 @@ function updateMarkerDensity() {
     
     let displayCount = allProjectMarkers.length;
     
+    // Adjust number of markers shown by zoom level
     if (zoom <= 7) displayCount = Math.min(50, allProjectMarkers.length);
     else if (zoom <= 9) displayCount = Math.min(100, allProjectMarkers.length);
     else if (zoom <= 11) displayCount = Math.min(200, allProjectMarkers.length);
+    else displayCount = allProjectMarkers.length;
     
+    // Resize marker radius dynamically
     allProjectMarkers.forEach(marker => {
         marker.setRadius(getMarkerSize(zoom));
     });
-    
-    const markersToShow = allProjectMarkers.slice(0, displayCount);
-    markersToShow.forEach(marker => {
-        projectMarkers.addLayer(marker);
-    });
-}
 
-function getStatusColor(status) {
-    const colors = {
-        'completed': '#28a745',
-        'ongoing': '#ffc107',
-        'delayed': '#dc3545',
-        'planned': '#6c757d'
-    };
-    return colors[status] || '#6c757d';
+    // Randomly pick a subset of markers to display if zoomed out
+    const markersToShow = allProjectMarkers.slice(0, displayCount);
+    
+    markersToShow.forEach(marker => projectMarkers.addLayer(marker));
 }
 
 function showMapLoading(show) {
