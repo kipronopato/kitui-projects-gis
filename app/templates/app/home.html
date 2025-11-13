@@ -47,11 +47,11 @@
                         </span>
                         <span class="badge projects">
                             <i class="fas fa-database"></i>
-                            {{ total_projects|intcomma }} Projects
+                            <span id="total-projects-count">{{ total_projects|intcomma }}</span> Projects
                         </span>
                         <span class="badge alerts">
                             <i class="fas fa-bell"></i>
-                            {{ overdue_projects }} Alerts
+                            <span id="overdue-projects-count">{{ overdue_projects }}</span> Alerts
                         </span>
                     </div>
                 </div>
@@ -59,126 +59,53 @@
         </div>
     </div>
 
-    <!-- Quick Stats Overview -->
-    <div class="quick-stats-section">
-        <div class="container-fluid">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon primary">
-                        <i class="fas fa-project-diagram"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3>{{ total_projects|intcomma }}</h3>
-                        <p>Total Projects</p>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon success">
-                        <i class="fas fa-money-bill-wave"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3>Ksh {{ total_budget|format_large_number }}</h3>
-                        <p>Total Budget</p>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon warning">
-                        <i class="fas fa-check-circle"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3>{{ completion_rate }}%</h3>
-                        <p>Completion Rate</p>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon info">
-                        <i class="fas fa-map-marker-alt"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3>{{ counties|length }}</h3>
-                        <p>Counties Covered</p>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon danger">
-                        <i class="fas fa-exclamation-triangle"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3>{{ overdue_projects }}</h3>
-                        <p>Overdue Projects</p>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon secondary">
-                        <i class="fas fa-clock"></i>
-                    </div>
-                    <div class="stat-content">
-                        <h3>{{ upcoming_deadlines }}</h3>
-                        <p>Upcoming Deadlines</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Dashboard Navigation & Filters -->
-    <div class="dashboard-controls">
-        <div class="container-fluid">
+    <div class="dashboard-layout">
+        <!-- Vertical Navigation Sidebar -->
+        <div class="dashboard-sidebar">
             <!-- Navigation Tabs -->
-            <div class="dashboard-navigation">
-                <div class="nav-tabs">
-                    <button class="nav-tab active" data-tab="map">
-                        <i class="fas fa-map-marked-alt"></i>
-                        <span>Map View</span>
-                    </button>
-                    <button class="nav-tab" data-tab="overview">
-                        <i class="fas fa-chart-pie"></i>
-                        <span>Overview</span>
-                    </button>
-                    <button class="nav-tab" data-tab="analytics">
-                        <i class="fas fa-chart-line"></i>
-                        <span>Analytics</span>
-                    </button>
-                </div>
+            <div class="sidebar-navigation">
+                <button class="nav-tab active" data-tab="map">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <span>Map View</span>
+                </button>
+                <button class="nav-tab" data-tab="overview">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Overview</span>
+                </button>
+                <button class="nav-tab" data-tab="analytics">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </button>
             </div>
 
             <!-- Filter Controls -->
             <div class="filter-controls">
                 <form method="get" id="filter-form" class="filter-form">
                     <!-- Hierarchical Location Filters -->
-                    <div class="location-filters">
-                        <div class="filter-group">
-                            <label>County</label>
-                            <select class="form-select" name="county" id="county-select">
-                                <option value="">All Counties</option>
-                                {% for county in counties %}
-                                <option value="{{ county }}" {% if selected_county == county %}selected{% endif %}>
-                                    {{ county }}
-                                </option>
-                                {% endfor %}
-                            </select>
-                        </div>
+                    <div class="filter-group">
+                        <label>County</label>
+                        <select class="form-select" name="county" id="county-select">
+                            <option value="">All Counties</option>
+                            {% for county in counties %}
+                            <option value="{{ county }}" {% if selected_county == county %}selected{% endif %}>
+                                {{ county }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-                        <div class="filter-group">
-                            <label>Subcounty</label>
-                            <select class="form-select" name="subcounty" id="subcounty-select" disabled>
-                                <option value="">All Subcounties</option>
-                                <!-- Will be populated dynamically -->
-                            </select>
-                        </div>
+                    <div class="filter-group">
+                        <label>Subcounty</label>
+                        <select class="form-select" name="subcounty" id="subcounty-select" disabled>
+                            <option value="">All Subcounties</option>
+                        </select>
+                    </div>
 
-                        <div class="filter-group">
-                            <label>Ward</label>
-                            <select class="form-select" name="ward" id="ward-select" disabled>
-                                <option value="">All Wards</option>
-                                <!-- Will be populated dynamically -->
-                            </select>
-                        </div>
+                    <div class="filter-group">
+                        <label>Ward</label>
+                        <select class="form-select" name="ward" id="ward-select" disabled>
+                            <option value="">All Wards</option>
+                        </select>
                     </div>
 
                     <!-- Status Filter -->
@@ -247,285 +174,351 @@
                 </form>
             </div>
         </div>
-    </div>
 
-    <!-- Main Dashboard Content -->
-    <div class="dashboard-content">
-        <div class="container-fluid">
-            <!-- Map View -->
-            <div class="tab-content active" id="map-tab">
-                <div class="map-container">
-                    <div class="map-header">
-                        <h3>
-                            <i class="fas fa-map"></i>
-                            <span id="map-title">Kenya Projects Distribution</span>
-                        </h3>
-                        <div class="map-controls">
-                            <div class="control-group">
-                                <label>Base Map:</label>
-                                <select class="form-select" id="base-map-selector">
-                                    <option value="osm">OpenStreetMap</option>
-                                    <option value="satellite">Satellite</option>
-                                    <option value="dark">Dark Map</option>
-                                    <option value="terrain">Terrain</option>
-                                </select>
-                            </div>
-                            <div class="control-group">
-                                <label>View Level:</label>
-                                <select class="form-select" id="level-selector">
-                                    <option value="county">County Level</option>
-                                    <option value="subcounty">Subcounty Level</option>
-                                    <option value="ward">Ward Level</option>
-                                </select>
-                            </div>
-                            <div class="control-group">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="project-markers-toggle" checked>
-                                    <label class="form-check-label" for="project-markers-toggle">
-                                        Show Projects
-                                    </label>
-                                </div>
-                            </div>
+        <!-- Main Content Area -->
+        <div class="dashboard-main">
+            <!-- Quick Stats Overview -->
+            <div class="quick-stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon primary">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="filtered-total-projects">{{ total_projects|intcomma }}</h3>
+                            <p>Total Projects</p>
                         </div>
                     </div>
 
-                    <div class="map-wrapper">
-                        <div id="kenya-map"></div>
-                        
-                        <!-- Map Legends -->
-                        <div class="map-legends">
-                            <div class="legend">
-                                <h6>Project Status</h6>
-                                <div class="legend-items">
-                                    <div class="legend-item">
-                                        <span class="color completed"></span>
-                                        <span>Completed</span>
-                                    </div>
-                                    <div class="legend-item">
-                                        <span class="color ongoing"></span>
-                                        <span>Ongoing</span>
-                                    </div>
-                                    <div class="legend-item">
-                                        <span class="color planned"></span>
-                                        <span>Planned</span>
-                                    </div>
-                                    <div class="legend-item">
-                                        <span class="color delayed"></span>
-                                        <span>Delayed</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="legend">
-                                <h6>Project Density</h6>
-                                <div class="legend-items">
-                                    <div class="legend-item">
-                                        <span class="color density-0"></span>
-                                        <span>No Projects</span>
-                                    </div>
-                                    <div class="legend-item">
-                                        <span class="color density-1"></span>
-                                        <span>Low</span>
-                                    </div>
-                                    <div class="legend-item">
-                                        <span class="color density-2"></span>
-                                        <span>Medium</span>
-                                    </div>
-                                    <div class="legend-item">
-                                        <span class="color density-3"></span>
-                                        <span>High</span>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="stat-card">
+                        <div class="stat-icon success">
+                            <i class="fas fa-money-bill-wave"></i>
                         </div>
-
-                        <!-- Loading Indicator -->
-                        <div id="map-loading" class="map-loading">
-                            <div class="spinner"></div>
-                            <p>Loading map data...</p>
+                        <div class="stat-content">
+                            <h3 id="filtered-total-budget">Ksh {{ total_budget|format_large_number }}</h3>
+                            <p>Total Budget</p>
                         </div>
                     </div>
 
-                    <!-- Selected Area Summary -->
-                    <div class="area-summary">
-                        <div class="summary-header">
-                            <h5>
-                                <i class="fas fa-info-circle"></i>
-                                <span id="summary-title">Selected Area Summary</span>
-                            </h5>
-                            <button class="btn-clear" onclick="clearSelection()">
-                                <i class="fas fa-times"></i>
-                                Clear
-                            </button>
+                    <div class="stat-card">
+                        <div class="stat-icon warning">
+                            <i class="fas fa-check-circle"></i>
                         </div>
-                        <div class="summary-content" id="summary-content">
-                            <div class="placeholder">
-                                <i class="fas fa-mouse-pointer"></i>
-                                <p>Select an area on the map to view detailed summary</p>
-                            </div>
+                        <div class="stat-content">
+                            <h3 id="filtered-completion-rate">{{ completion_rate }}%</h3>
+                            <p>Completion Rate</p>
                         </div>
                     </div>
-                </div>
 
-                <!-- Project Highlights -->
-                <div class="project-highlights">
-                    <div class="highlight-column">
-                        <div class="highlight-card">
-                            <div class="card-header">
-                                <h5>
-                                    <i class="fas fa-arrow-up"></i>
-                                    Highest Budget Projects
-                                </h5>
-                            </div>
-                            <div class="card-body">
-                                {% for project in highest_budget_projects %}
-                                <div class="project-item">
-                                    <div class="project-main">
-                                        <h6>{{ project.name|truncatechars:35 }}</h6>
-                                        <span class="budget">Ksh {{ project.budget|format_large_number }}</span>
-                                    </div>
-                                    <div class="project-meta">
-                                        <span class="location">{{ project.county }}</span>
-                                        <span class="sector">{{ project.sector|default:"N/A" }}</span>
-                                        <span class="status {{ project.status }}">{{ project.status }}</span>
-                                    </div>
-                                </div>
-                                {% empty %}
-                                <div class="no-data">
-                                    <i class="fas fa-inbox"></i>
-                                    <p>No projects found</p>
-                                </div>
-                                {% endfor %}
-                            </div>
+                    <div class="stat-card">
+                        <div class="stat-icon info">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="filtered-counties-covered">{{ counties|length }}</h3>
+                            <p>Counties Covered</p>
                         </div>
                     </div>
-                    
-                    <div class="highlight-column">
-                        <div class="highlight-card">
-                            <div class="card-header">
-                                <h5>
-                                    <i class="fas fa-clock"></i>
-                                    Recent Projects
-                                </h5>
-                            </div>
-                            <div class="card-body">
-                                {% for project in recent_projects %}
-                                <div class="project-item">
-                                    <div class="project-main">
-                                        <h6>{{ project.name|truncatechars:35 }}</h6>
-                                        <span class="date">{{ project.start_date|date:"M d, Y" }}</span>
-                                    </div>
-                                    <div class="project-meta">
-                                        <span class="location">{{ project.county }}</span>
-                                        <span class="sector">{{ project.sector|default:"N/A" }}</span>
-                                        <span class="status {{ project.status }}">{{ project.status }}</span>
-                                    </div>
-                                </div>
-                                {% empty %}
-                                <div class="no-data">
-                                    <i class="fas fa-inbox"></i>
-                                    <p>No recent projects</p>
-                                </div>
-                                {% endfor %}
-                            </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon danger">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="filtered-overdue-projects">{{ overdue_projects }}</h3>
+                            <p>Overdue Projects</p>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon secondary">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3 id="filtered-upcoming-deadlines">{{ upcoming_deadlines }}</h3>
+                            <p>Upcoming Deadlines</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Overview Tab -->
-            <div class="tab-content" id="overview-tab">
-                <div class="charts-grid">
-                    <div class="chart-card">
-                        <div class="card-header">
-                            <h5>
-                                <i class="fas fa-chart-pie"></i>
-                                Project Status Distribution
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="statusChart"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="chart-card">
-                        <div class="card-header">
-                            <h5>
-                                <i class="fas fa-industry"></i>
-                                Top Sectors
-                            </h5>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="sectorChart"></canvas>
-                        </div>
-                    </div>
-
-                    <div class="chart-card full-width">
-                        <div class="card-header">
-                            <h5>
+            <!-- Main Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Map View -->
+                <div class="tab-content active" id="map-tab">
+                    <div class="map-container">
+                        <div class="map-header">
+                            <h3>
                                 <i class="fas fa-map"></i>
-                                Projects by County
-                            </h5>
+                                <span id="map-title">Kenya Projects Distribution</span>
+                            </h3>
+                            <div class="map-controls">
+                                <div class="control-group">
+                                    <label>Base Map:</label>
+                                    <select class="form-select" id="base-map-selector">
+                                        <option value="osm">OpenStreetMap</option>
+                                        <option value="satellite">Satellite</option>
+                                        <option value="dark">Dark Map</option>
+                                        <option value="terrain">Terrain</option>
+                                    </select>
+                                </div>
+                                <div class="control-group">
+                                    <label>View Level:</label>
+                                    <select class="form-select" id="level-selector">
+                                        <option value="county">County Level</option>
+                                        <option value="subcounty">Subcounty Level</option>
+                                        <option value="ward">Ward Level</option>
+                                    </select>
+                                </div>
+                                <div class="control-group">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="project-markers-toggle" checked>
+                                        <label class="form-check-label" for="project-markers-toggle">
+                                            Show Projects
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <canvas id="countyChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Analytics Tab -->
-            <div class="tab-content" id="analytics-tab">
-                <div class="analytics-grid">
-                    <div class="analytics-card">
-                        <div class="card-header">
-                            <h5>
-                                <i class="fas fa-chart-bar"></i>
-                                Budget Analytics
-                            </h5>
+                        <div class="map-wrapper">
+                            <div id="kenya-map"></div>
+                            
+                            <!-- Map Legends -->
+                            <div class="map-legends">
+                                <div class="legend">
+                                    <h6>Project Status</h6>
+                                    <div class="legend-items">
+                                        <div class="legend-item">
+                                            <span class="color completed"></span>
+                                            <span>Completed</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <span class="color ongoing"></span>
+                                            <span>Ongoing</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <span class="color planned"></span>
+                                            <span>Planned</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <span class="color delayed"></span>
+                                            <span>Delayed</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="legend">
+                                    <h6>Project Density</h6>
+                                    <div class="legend-items">
+                                        <div class="legend-item">
+                                            <span class="color density-0"></span>
+                                            <span>No Projects</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <span class="color density-1"></span>
+                                            <span>Low</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <span class="color density-2"></span>
+                                            <span>Medium</span>
+                                        </div>
+                                        <div class="legend-item">
+                                            <span class="color density-3"></span>
+                                            <span>High</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Loading Indicator -->
+                            <div id="map-loading" class="map-loading">
+                                <div class="spinner"></div>
+                                <p>Loading map data...</p>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <div class="budget-stats">
-                                <div class="budget-item">
-                                    <span class="label">Average Budget</span>
-                                    <span class="value">Ksh {{ budget_stats.avg_budget|default:0|format_large_number }}</span>
-                                </div>
-                                <div class="budget-item">
-                                    <span class="label">Min Budget</span>
-                                    <span class="value">Ksh {{ budget_stats.min_budget|default:0|format_large_number }}</span>
-                                </div>
-                                <div class="budget-item">
-                                    <span class="label">Max Budget</span>
-                                    <span class="value">Ksh {{ budget_stats.max_budget|default:0|format_large_number }}</span>
+
+                        <!-- Selected Area Summary -->
+                        <div class="area-summary">
+                            <div class="summary-header">
+                                <h5>
+                                    <i class="fas fa-info-circle"></i>
+                                    <span id="summary-title">Selected Area Summary</span>
+                                </h5>
+                                <button class="btn-clear" onclick="clearSelection()">
+                                    <i class="fas fa-times"></i>
+                                    Clear
+                                </button>
+                            </div>
+                            <div class="summary-content" id="summary-content">
+                                <div class="placeholder">
+                                    <i class="fas fa-mouse-pointer"></i>
+                                    <p>Select an area on the map to view detailed summary</p>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="analytics-card">
-                        <div class="card-header">
-                            <h5>
-                                <i class="fas fa-chart-line"></i>
-                                Performance Metrics
-                            </h5>
+                    <!-- Project Highlights -->
+                    <div class="project-highlights">
+                        <div class="highlight-column">
+                            <div class="highlight-card">
+                                <div class="card-header">
+                                    <h5>
+                                        <i class="fas fa-arrow-up"></i>
+                                        Highest Budget Projects
+                                    </h5>
+                                </div>
+                                <div class="card-body" id="highest-budget-projects">
+                                    {% for project in highest_budget_projects %}
+                                    <div class="project-item">
+                                        <div class="project-main">
+                                            <h6>{{ project.name|truncatechars:35 }}</h6>
+                                            <span class="budget">Ksh {{ project.budget|format_large_number }}</span>
+                                        </div>
+                                        <div class="project-meta">
+                                            <span class="location">{{ project.county }}</span>
+                                            <span class="sector">{{ project.sector|default:"N/A" }}</span>
+                                            <span class="status {{ project.status }}">{{ project.status }}</span>
+                                        </div>
+                                    </div>
+                                    {% empty %}
+                                    <div class="no-data">
+                                        <i class="fas fa-inbox"></i>
+                                        <p>No projects found</p>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <div class="metrics-grid">
-                                <div class="metric-item">
-                                    <div class="metric-value">{{ completion_rate }}%</div>
-                                    <div class="metric-label">Completion Rate</div>
+                        
+                        <div class="highlight-column">
+                            <div class="highlight-card">
+                                <div class="card-header">
+                                    <h5>
+                                        <i class="fas fa-clock"></i>
+                                        Recent Projects
+                                    </h5>
                                 </div>
-                                <div class="metric-item">
-                                    <div class="metric-value">{{ ongoing_projects|default:0 }}</div>
-                                    <div class="metric-label">Ongoing Projects</div>
+                                <div class="card-body" id="recent-projects">
+                                    {% for project in recent_projects %}
+                                    <div class="project-item">
+                                        <div class="project-main">
+                                            <h6>{{ project.name|truncatechars:35 }}</h6>
+                                            <span class="date">{{ project.start_date|date:"M d, Y" }}</span>
+                                        </div>
+                                        <div class="project-meta">
+                                            <span class="location">{{ project.county }}</span>
+                                            <span class="sector">{{ project.sector|default:"N/A" }}</span>
+                                            <span class="status {{ project.status }}">{{ project.status }}</span>
+                                        </div>
+                                    </div>
+                                    {% empty %}
+                                    <div class="no-data">
+                                        <i class="fas fa-inbox"></i>
+                                        <p>No recent projects</p>
+                                    </div>
+                                    {% endfor %}
                                 </div>
-                                <div class="metric-item">
-                                    <div class="metric-value">{{ overdue_projects }}</div>
-                                    <div class="metric-label">Overdue Projects</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Overview Tab -->
+                <div class="tab-content" id="overview-tab">
+                    <div class="charts-grid">
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <h5>
+                                    <i class="fas fa-chart-pie"></i>
+                                    Project Status Distribution
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="statusChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="chart-card">
+                            <div class="card-header">
+                                <h5>
+                                    <i class="fas fa-industry"></i>
+                                    Top Sectors
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="sectorChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="chart-card full-width">
+                            <div class="card-header">
+                                <h5>
+                                    <i class="fas fa-map"></i>
+                                    Projects by County
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="countyChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analytics Tab -->
+                <div class="tab-content" id="analytics-tab">
+                    <div class="analytics-grid">
+                        <div class="analytics-card">
+                            <div class="card-header">
+                                <h5>
+                                    <i class="fas fa-chart-bar"></i>
+                                    Budget Analytics
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="budget-stats">
+                                    <div class="budget-item">
+                                        <span class="label">Average Budget</span>
+                                        <span class="value" id="avg-budget">Ksh {{ budget_stats.avg_budget|default:0|format_large_number }}</span>
+                                    </div>
+                                    <div class="budget-item">
+                                        <span class="label">Min Budget</span>
+                                        <span class="value" id="min-budget">Ksh {{ budget_stats.min_budget|default:0|format_large_number }}</span>
+                                    </div>
+                                    <div class="budget-item">
+                                        <span class="label">Max Budget</span>
+                                        <span class="value" id="max-budget">Ksh {{ budget_stats.max_budget|default:0|format_large_number }}</span>
+                                    </div>
                                 </div>
-                                <div class="metric-item">
-                                    <div class="metric-value">{{ upcoming_deadlines }}</div>
-                                    <div class="metric-label">Upcoming Deadlines</div>
+                            </div>
+                        </div>
+
+                        <div class="analytics-card">
+                            <div class="card-header">
+                                <h5>
+                                    <i class="fas fa-chart-line"></i>
+                                    Performance Metrics
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="metrics-grid">
+                                    <div class="metric-item">
+                                        <div class="metric-value" id="analytics-completion-rate">{{ completion_rate }}%</div>
+                                        <div class="metric-label">Completion Rate</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value" id="analytics-ongoing-projects">{{ ongoing_projects|default:0 }}</div>
+                                        <div class="metric-label">Ongoing Projects</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value" id="analytics-overdue-projects">{{ overdue_projects }}</div>
+                                        <div class="metric-label">Overdue Projects</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <div class="metric-value" id="analytics-upcoming-deadlines">{{ upcoming_deadlines }}</div>
+                                        <div class="metric-label">Upcoming Deadlines</div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -557,12 +550,163 @@
     --gradient-accent: linear-gradient(135deg, #FF6B6B, #FF8E8E);
 }
 
-/* Dashboard Wrapper */
+/* Dashboard Layout */
 .dashboard-wrapper {
     margin-left: 0;
     width: 100%;
     background: var(--light);
     min-height: 100vh;
+}
+
+.dashboard-layout {
+    display: flex;
+    min-height: calc(100vh - 120px);
+}
+
+/* Dashboard Sidebar */
+.dashboard-sidebar {
+    width: 300px;
+    background: white;
+    border-right: 1px solid var(--border);
+    padding: 16px;
+    overflow-y: auto;
+    flex-shrink: 0;
+}
+
+.sidebar-navigation {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 16px;
+}
+
+.nav-tab {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+    background: none;
+    border: none;
+    border-radius: 6px;
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 0.85rem;
+    transition: var(--transition);
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+}
+
+.nav-tab:hover {
+    background: var(--light);
+    color: var(--primary);
+}
+
+.nav-tab.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: var(--shadow-sm);
+}
+
+.nav-tab i {
+    width: 16px;
+    text-align: center;
+}
+
+/* Filter Controls in Sidebar */
+.filter-controls {
+    background: var(--light);
+    border-radius: var(--border-radius);
+    padding: 0;
+}
+
+.filter-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.filter-group label {
+    font-weight: 600;
+    color: var(--dark);
+    font-size: 0.8rem;
+    margin-bottom: 2px;
+}
+
+.form-select {
+    font-size: 0.8rem;
+    padding: 8px 10px;
+    height: 36px;
+}
+
+/* Filter Options */
+.status-filters,
+.sector-filters {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px;
+    max-height: 150px;
+    overflow-y: auto;
+    font-size: 0.8rem;
+}
+
+.sector-search {
+    margin-bottom: 8px;
+    font-size: 0.8rem;
+    padding: 6px 10px;
+    height: 32px;
+}
+
+.sector-options {
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.form-check {
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+}
+
+.form-check-input {
+    width: 14px;
+    height: 14px;
+    margin-right: 8px;
+}
+
+.form-check-label {
+    font-size: 0.75rem;
+    line-height: 1.3;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.filter-actions .btn {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+    height: 36px;
+    flex: 1;
+}
+
+/* Dashboard Main Content */
+.dashboard-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
 }
 
 /* Notification System */
@@ -615,7 +759,7 @@
 .system-status-bar {
     background: white;
     border-bottom: 1px solid var(--border);
-    padding: 8px 0;
+    padding: 8px 16px;
     margin-top: 0;
 }
 
@@ -659,7 +803,7 @@
 
 /* Quick Stats Section */
 .quick-stats-section {
-    padding: 16px 0;
+    padding: 16px;
     background: white;
 }
 
@@ -721,149 +865,11 @@
     font-weight: 500;
 }
 
-/* Dashboard Controls */
-.dashboard-controls {
-    background: white;
-    border-bottom: 1px solid var(--border);
-    padding: 16px 0;
-}
-
-.dashboard-navigation {
-    margin-bottom: 16px;
-}
-
-.nav-tabs {
-    display: flex;
-    gap: 6px;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 12px;
-}
-
-.nav-tab {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 14px;
-    background: none;
-    border: none;
-    border-radius: 6px;
-    color: var(--muted);
-    font-weight: 500;
-    font-size: 0.8rem;
-    transition: var(--transition);
-    cursor: pointer;
-}
-
-.nav-tab:hover {
-    background: var(--light);
-    color: var(--primary);
-}
-
-.nav-tab.active {
-    background: var(--primary);
-    color: white;
-    box-shadow: var(--shadow-sm);
-}
-
-.filter-controls {
-    background: var(--light);
-    border-radius: var(--border-radius);
-    padding: 16px;
-}
-
-.filter-form {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    align-items: start;
-}
-
-.location-filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    flex: 1;
-    min-width: 300px;
-}
-
-.filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    flex: 1;
-    min-width: 150px;
-}
-
-.filter-group label {
-    font-weight: 600;
-    color: var(--dark);
-    font-size: 0.75rem;
-    margin-bottom: 2px;
-}
-
-.form-select {
-    font-size: 0.75rem;
-    padding: 6px 8px;
-    height: 32px;
-}
-
-/* Filter Options */
-.status-filters,
-.sector-filters {
-    background: white;
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 8px;
-    max-height: 120px;
-    overflow-y: auto;
-    font-size: 0.75rem;
-}
-
-.sector-search {
-    margin-bottom: 6px;
-    font-size: 0.75rem;
-    padding: 4px 8px;
-    height: 28px;
-}
-
-.sector-options {
-    max-height: 100px;
-    overflow-y: auto;
-}
-
-.form-check {
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-}
-
-.form-check-input {
-    width: 12px;
-    height: 12px;
-    margin-right: 6px;
-}
-
-.form-check-label {
-    font-size: 0.7rem;
-    line-height: 1.2;
-}
-
-.filter-actions {
-    display: flex;
-    gap: 8px;
-    align-items: end;
-    margin-top: 10px;
-}
-
-.filter-actions .btn {
-    padding: 6px 12px;
-    font-size: 0.75rem;
-    height: 32px;
-}
-
 /* Dashboard Content */
 .dashboard-content {
-    padding: 16px 0;
+    padding: 16px;
+    flex: 1;
+    overflow-y: auto;
 }
 
 .tab-content {
@@ -1362,12 +1368,33 @@
 
 /* Responsive Design */
 @media (max-width: 1200px) {
-    .filter-form {
+    .dashboard-layout {
         flex-direction: column;
     }
     
-    .location-filters {
-        min-width: 100%;
+    .dashboard-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+    
+    .sidebar-navigation {
+        flex-direction: row;
+        overflow-x: auto;
+    }
+    
+    .nav-tab {
+        white-space: nowrap;
+    }
+    
+    .filter-form {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .filter-group {
+        flex: 1;
+        min-width: 200px;
     }
     
     .project-highlights {
@@ -1385,10 +1412,6 @@
     }
     
     .filter-form {
-        flex-direction: column;
-    }
-    
-    .location-filters {
         flex-direction: column;
     }
     
@@ -1424,10 +1447,6 @@
 @media (max-width: 576px) {
     .stats-grid {
         grid-template-columns: 1fr;
-    }
-    
-    .nav-tabs {
-        flex-direction: column;
     }
     
     .metrics-grid {
@@ -1954,12 +1973,22 @@ function getChoroplethStyle(feature, level, maxProjects) {
 function loadProjectMarkers() {
     const params = new URLSearchParams();
     const countySelect = document.getElementById('county-select');
+    const subcountySelect = document.getElementById('subcounty-select');
+    const wardSelect = document.getElementById('ward-select');
     const statusCheckboxes = document.querySelectorAll('input[name="status"]:checked');
     const sectorCheckboxes = document.querySelectorAll('input[name="sector"]:checked');
     const yearSelect = document.getElementById('year-select');
 
     if (countySelect && countySelect.value) {
         params.append('county', countySelect.value);
+    }
+    
+    if (subcountySelect && subcountySelect.value) {
+        params.append('subcounty', subcountySelect.value);
+    }
+    
+    if (wardSelect && wardSelect.value) {
+        params.append('ward', wardSelect.value);
     }
 
     statusCheckboxes.forEach(checkbox => {
@@ -2022,12 +2051,138 @@ function loadProjectMarkers() {
             updateMarkerDensity();
             showMapLoading(false);
             console.log('Project markers updated:', allProjectMarkers.length, 'markers');
+            
+            // Update statistics based on filtered projects
+            updateStatistics(data);
         })
         .catch(error => {
             console.error('Error loading project markers:', error);
             showMapLoading(false);
             showNotification('Error loading project markers. Please check your filters.', 'error');
         });
+}
+
+function updateStatistics(projectData) {
+    // Calculate statistics from filtered data
+    const totalProjects = projectData.features.length;
+    const totalBudget = projectData.features.reduce((sum, feature) => sum + (feature.properties.budget || 0), 0);
+    const completedProjects = projectData.features.filter(f => f.properties.status === 'completed').length;
+    const completionRate = totalProjects > 0 ? Math.round((completedProjects / totalProjects) * 100) : 0;
+    const overdueProjects = projectData.features.filter(f => f.properties.status === 'delayed').length;
+    
+    // Count unique counties
+    const counties = new Set(projectData.features.map(f => f.properties.county)).size;
+    
+    // Update statistics cards
+    document.getElementById('filtered-total-projects').textContent = totalProjects.toLocaleString();
+    document.getElementById('filtered-total-budget').textContent = 'Ksh ' + formatLargeNumber(totalBudget);
+    document.getElementById('filtered-completion-rate').textContent = completionRate + '%';
+    document.getElementById('filtered-counties-covered').textContent = counties;
+    document.getElementById('filtered-overdue-projects').textContent = overdueProjects;
+    
+    // Update status bar
+    document.getElementById('total-projects-count').textContent = totalProjects.toLocaleString();
+    document.getElementById('overdue-projects-count').textContent = overdueProjects;
+    
+    // Update analytics tab
+    document.getElementById('analytics-completion-rate').textContent = completionRate + '%';
+    document.getElementById('analytics-ongoing-projects').textContent = projectData.features.filter(f => f.properties.status === 'ongoing').length;
+    document.getElementById('analytics-overdue-projects').textContent = overdueProjects;
+    
+    // Update budget analytics
+    if (totalProjects > 0) {
+        const avgBudget = totalBudget / totalProjects;
+        const minBudget = Math.min(...projectData.features.map(f => f.properties.budget || 0));
+        const maxBudget = Math.max(...projectData.features.map(f => f.properties.budget || 0));
+        
+        document.getElementById('avg-budget').textContent = 'Ksh ' + formatLargeNumber(avgBudget);
+        document.getElementById('min-budget').textContent = 'Ksh ' + formatLargeNumber(minBudget);
+        document.getElementById('max-budget').textContent = 'Ksh ' + formatLargeNumber(maxBudget);
+    }
+    
+    // Update project highlights
+    updateProjectHighlights(projectData);
+}
+
+function updateProjectHighlights(projectData) {
+    // Get highest budget projects
+    const highestBudgetProjects = [...projectData.features]
+        .sort((a, b) => (b.properties.budget || 0) - (a.properties.budget || 0))
+        .slice(0, 5);
+    
+    // Get recent projects (assuming there's a start_date property)
+    const recentProjects = [...projectData.features]
+        .sort((a, b) => new Date(b.properties.start_date || 0) - new Date(a.properties.start_date || 0))
+        .slice(0, 5);
+    
+    // Update highest budget projects
+    const highestBudgetContainer = document.getElementById('highest-budget-projects');
+    if (highestBudgetProjects.length > 0) {
+        highestBudgetContainer.innerHTML = highestBudgetProjects.map(project => `
+            <div class="project-item">
+                <div class="project-main">
+                    <h6>${project.properties.name.length > 35 ? project.properties.name.substring(0, 35) + '...' : project.properties.name}</h6>
+                    <span class="budget">Ksh ${formatLargeNumber(project.properties.budget || 0)}</span>
+                </div>
+                <div class="project-meta">
+                    <span class="location">${project.properties.county}</span>
+                    <span class="sector">${project.properties.sector || 'N/A'}</span>
+                    <span class="status ${project.properties.status}">${project.properties.status}</span>
+                </div>
+            </div>
+        `).join('');
+    } else {
+        highestBudgetContainer.innerHTML = `
+            <div class="no-data">
+                <i class="fas fa-inbox"></i>
+                <p>No projects found</p>
+            </div>
+        `;
+    }
+    
+    // Update recent projects
+    const recentProjectsContainer = document.getElementById('recent-projects');
+    if (recentProjects.length > 0) {
+        recentProjectsContainer.innerHTML = recentProjects.map(project => `
+            <div class="project-item">
+                <div class="project-main">
+                    <h6>${project.properties.name.length > 35 ? project.properties.name.substring(0, 35) + '...' : project.properties.name}</h6>
+                    <span class="date">${formatDate(project.properties.start_date)}</span>
+                </div>
+                <div class="project-meta">
+                    <span class="location">${project.properties.county}</span>
+                    <span class="sector">${project.properties.sector || 'N/A'}</span>
+                    <span class="status ${project.properties.status}">${project.properties.status}</span>
+                </div>
+            </div>
+        `).join('');
+    } else {
+        recentProjectsContainer.innerHTML = `
+            <div class="no-data">
+                <i class="fas fa-inbox"></i>
+                <p>No recent projects</p>
+            </div>
+        `;
+    }
+}
+
+function formatDate(dateString) {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function formatLargeNumber(num) {
+    if (num >= 1000000000) {
+        return (num / 1000000000).toFixed(1) + 'B';
+    }
+    if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + 'M';
+    }
+    if (num >= 1000) {
+        return (num / 1000).toFixed(1) + 'K';
+    }
+    return num.toString();
 }
 
 function getMarkerSize(zoom) {
