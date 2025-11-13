@@ -43,6 +43,7 @@ from django.db.models import Q, Sum, Avg, Min, Max, Count, Case, When, F
 from django.db.models.functions import ExtractYear, TruncMonth
 from django.db.models import DurationField, ExpressionWrapper, FloatField
 from django.contrib.gis.db.models import Union
+from django.contrib.gis.geos import Point
 from django.utils import timezone
 from datetime import timedelta
 from decimal import Decimal
@@ -102,20 +103,47 @@ def home(request):
         for i, project in enumerate(sample_projects):
             print(f"Project {i+1}: {project.name}, County: {project.county}, Status: {project.status}, Budget: {project.budget}")
 
-        # ---------------- Basic Filters ----------------
+        # ---------------- Advanced Filters ----------------
         selected_county = _clean_get(request, "county")
+        selected_subcounty = _clean_get(request, "subcounty")
+        selected_ward = _clean_get(request, "ward")
         selected_year = _clean_get(request, "year")
         selected_statuses = _clean_getlist(request, "status")
         selected_sectors = _clean_getlist(request, "sector")
         search_query = _clean_get(request, "search")
 
-        print(f"Filters - County: {selected_county}, Year: {selected_year}")
-        print(f"Statuses: {selected_statuses}, Sectors: {selected_sectors}")
+        print(f"Filters - County: {selected_county}, Subcounty: {selected_subcounty}, Ward: {selected_ward}")
+        print(f"Year: {selected_year}, Statuses: {selected_statuses}, Sectors: {selected_sectors}")
 
-        # Apply basic filters
+        # Apply hierarchical location filters
         if selected_county:
             projects = projects.filter(county__icontains=selected_county)
             print(f"After county filter: {projects.count()}")
+        
+        if selected_subcounty:
+            # For subcounty filtering, we need to get projects in that subcounty
+            # Since Project model doesn't have subcounty field directly, we'll use spatial query
+            try:
+                subcounty_geom = KenyaSubCounty.objects.filter(
+                    subcounty__icontains=selected_subcounty
+                ).first()
+                if subcounty_geom and subcounty_geom.geom:
+                    projects = projects.filter(location__within=subcounty_geom.geom)
+                    print(f"After subcounty spatial filter: {projects.count()}")
+            except Exception as e:
+                print(f"Subcounty spatial filter error: {e}")
+        
+        if selected_ward:
+            # For ward filtering, use spatial query
+            try:
+                ward_geom = Kenyawards.objects.filter(
+                    ward__icontains=selected_ward
+                ).first()
+                if ward_geom and ward_geom.geom:
+                    projects = projects.filter(location__within=ward_geom.geom)
+                    print(f"After ward spatial filter: {projects.count()}")
+            except Exception as e:
+                print(f"Ward spatial filter error: {e}")
         
         if selected_year:
             try:
@@ -317,11 +345,11 @@ def home(request):
         print(f"Available sectors: {len(sectors)}")
         print(f"Safe status choices: {safe_status_choices}")
 
-        # ---------------- GeoJSON Generation ----------------
+        # ---------------- Enhanced GeoJSON Generation ----------------
         map_projects = projects.filter(
             Q(location__isnull=False) | 
             Q(latitude__isnull=False, longitude__isnull=False)
-        )[:500]
+        )[:1000]  # Increased limit for better visualization
         
         features = []
         for project in map_projects:
@@ -350,9 +378,15 @@ def home(request):
                         "id": project.id,
                         "name": project.name,
                         "county": project.county or "",
+                        "subcounty": getattr(project, 'subcounty', ''),
+                        "ward": getattr(project, 'ward', ''),
                         "status": project.status,
                         "sector": project.sector or "",
                         "budget": float(project.budget) if project.budget else 0,
+                        "start_date": project.start_date.isoformat() if project.start_date else "",
+                        "end_date": project.end_date.isoformat() if project.end_date else "",
+                        "project_manager": project.project_manager or "",
+                        "description": project.description or "",
                     },
                 })
 
@@ -361,7 +395,15 @@ def home(request):
             "features": features,
             "metadata": {
                 "total_projects": len(features),
-                "total_available": total_projects
+                "total_available": total_projects,
+                "filters_applied": {
+                    "county": selected_county,
+                    "subcounty": selected_subcounty,
+                    "ward": selected_ward,
+                    "year": selected_year,
+                    "statuses": selected_statuses,
+                    "sectors": selected_sectors
+                }
             }
         }
 
@@ -391,6 +433,8 @@ def home(request):
             "sectors": sectors,
             "counties": counties,
             "selected_county": selected_county or "",
+            "selected_subcounty": selected_subcounty or "",
+            "selected_ward": selected_ward or "",
             
             # Hierarchical location data
             "subcounties_by_county_json": json.dumps(subcounties_by_county),
@@ -453,9 +497,10 @@ def home(request):
             "error": f"An error occurred while loading the dashboard: {str(e)}"
         })
 
-# Enhanced API endpoints with error handling and CORS support@csrf_exempt
+# Enhanced API endpoints with spatial filtering
+@csrf_exempt
 def counties_geojson(request):
-    """Enhanced counties GeoJSON with proper error handling"""
+    """Enhanced counties GeoJSON with proper error handling and spatial filtering"""
     try:
         print("Loading counties GeoJSON...")
         
@@ -471,17 +516,59 @@ def counties_geojson(request):
             })
             
         counties = KenyaCounty.objects.all()
-        selected_counties = _clean_getlist(request, "county")
         
-        if selected_counties:
-            counties = counties.filter(county__in=selected_counties)
-            print(f"Filtered to {counties.count()} counties")
+        # Apply spatial filters
+        selected_county = _clean_get(request, "county")
+        selected_subcounty = _clean_get(request, "subcounty")
+        selected_ward = _clean_get(request, "ward")
+        
+        if selected_county:
+            counties = counties.filter(county__icontains=selected_county)
+        
+        # If subcounty or ward is selected, filter counties that contain them
+        if selected_subcounty:
+            try:
+                subcounty_geom = KenyaSubCounty.objects.filter(
+                    subcounty__icontains=selected_subcounty
+                ).first()
+                if subcounty_geom and subcounty_geom.geom:
+                    counties = counties.filter(geom__contains=subcounty_geom.geom)
+            except Exception as e:
+                print(f"Subcounty spatial filter error: {e}")
+        
+        if selected_ward:
+            try:
+                ward_geom = Kenyawards.objects.filter(
+                    ward__icontains=selected_ward
+                ).first()
+                if ward_geom and ward_geom.geom:
+                    counties = counties.filter(geom__contains=ward_geom.geom)
+            except Exception as e:
+                print(f"Ward spatial filter error: {e}")
+        
+        print(f"Filtered to {counties.count()} counties")
         
         features = []
         
         for county in counties:
-            # Get projects for this county
+            # Get projects for this county with all current filters
             projects_in_county = Project.objects.filter(county__icontains=county.county)
+            
+            # Apply the same filters as the main view
+            selected_statuses = _clean_getlist(request, "status")
+            selected_sectors = _clean_getlist(request, "sector")
+            selected_year = _clean_get(request, "year")
+            
+            if selected_statuses:
+                projects_in_county = projects_in_county.filter(status__in=selected_statuses)
+            if selected_sectors:
+                projects_in_county = projects_in_county.filter(sector__in=selected_sectors)
+            if selected_year:
+                try:
+                    projects_in_county = projects_in_county.filter(start_date__year=int(selected_year))
+                except (ValueError, TypeError):
+                    pass
+            
             project_count = projects_in_county.count()
             
             # Get comprehensive stats
@@ -534,7 +621,15 @@ def counties_geojson(request):
         
         response_data = {
             "type": "FeatureCollection",
-            "features": features
+            "features": features,
+            "metadata": {
+                "total_counties": len(features),
+                "filters_applied": {
+                    "county": selected_county,
+                    "subcounty": selected_subcounty,
+                    "ward": selected_ward
+                }
+            }
         }
         
         print(f"Returning {len(features)} county features")
@@ -550,11 +645,9 @@ def counties_geojson(request):
             "error": str(e)
         }, status=500)
 
-
-
 @csrf_exempt
 def subcounties_geojson(request):
-    """Enhanced subcounties GeoJSON"""
+    """Enhanced subcounties GeoJSON with spatial filtering"""
     try:
         print("Loading subcounties GeoJSON...")
         
@@ -566,15 +659,57 @@ def subcounties_geojson(request):
             })
             
         subcounties = KenyaSubCounty.objects.all()
-        selected_counties = _clean_getlist(request, "county")
         
-        if selected_counties:
-            subcounties = subcounties.filter(county__in=selected_counties)
+        # Apply spatial filters
+        selected_county = _clean_get(request, "county")
+        selected_subcounty = _clean_get(request, "subcounty")
+        selected_ward = _clean_get(request, "ward")
+        
+        if selected_county:
+            subcounties = subcounties.filter(county__icontains=selected_county)
+        
+        if selected_subcounty:
+            subcounties = subcounties.filter(subcounty__icontains=selected_subcounty)
+        
+        # If ward is selected, filter subcounties that contain it
+        if selected_ward:
+            try:
+                ward_geom = Kenyawards.objects.filter(
+                    ward__icontains=selected_ward
+                ).first()
+                if ward_geom and ward_geom.geom:
+                    subcounties = subcounties.filter(geom__contains=ward_geom.geom)
+            except Exception as e:
+                print(f"Ward spatial filter error: {e}")
         
         features = []
         
         for subcounty in subcounties:
-            projects_in_subcounty = Project.objects.filter(county__icontains=subcounty.county)
+            # Get projects for this subcounty area
+            projects_in_subcounty = Project.objects.all()
+            
+            # Apply spatial filter for subcounty
+            try:
+                if subcounty.geom:
+                    projects_in_subcounty = projects_in_subcounty.filter(location__within=subcounty.geom)
+            except Exception as e:
+                print(f"Subcounty spatial query error: {e}")
+            
+            # Apply other filters
+            selected_statuses = _clean_getlist(request, "status")
+            selected_sectors = _clean_getlist(request, "sector")
+            selected_year = _clean_get(request, "year")
+            
+            if selected_statuses:
+                projects_in_subcounty = projects_in_subcounty.filter(status__in=selected_statuses)
+            if selected_sectors:
+                projects_in_subcounty = projects_in_subcounty.filter(sector__in=selected_sectors)
+            if selected_year:
+                try:
+                    projects_in_subcounty = projects_in_subcounty.filter(start_date__year=int(selected_year))
+                except (ValueError, TypeError):
+                    pass
+            
             project_count = projects_in_subcounty.count()
             
             stats = projects_in_subcounty.aggregate(
@@ -601,13 +736,22 @@ def subcounties_geojson(request):
                     "project_count": project_count,
                     "total_budget": float(stats['total_budget'] or 0),
                     "completed_projects": stats['completed'] or 0,
+                    "completion_rate": round((stats['completed'] / project_count * 100), 1) if project_count else 0,
                 }
             }
             features.append(feature)
         
         response_data = {
             "type": "FeatureCollection",
-            "features": features
+            "features": features,
+            "metadata": {
+                "total_subcounties": len(features),
+                "filters_applied": {
+                    "county": selected_county,
+                    "subcounty": selected_subcounty,
+                    "ward": selected_ward
+                }
+            }
         }
         
         print(f"Returning {len(features)} subcounty features")
@@ -623,7 +767,7 @@ def subcounties_geojson(request):
 
 @csrf_exempt
 def wards_geojson(request):
-    """Enhanced wards GeoJSON"""
+    """Enhanced wards GeoJSON with spatial filtering"""
     try:
         print("Loading wards GeoJSON...")
         
@@ -635,16 +779,55 @@ def wards_geojson(request):
             })
             
         wards = Kenyawards.objects.all()
-        selected_counties = _clean_getlist(request, "county")
         
-        if selected_counties:
-            wards = wards.filter(county__in=selected_counties)
+        # Apply spatial filters
+        selected_county = _clean_get(request, "county")
+        selected_subcounty = _clean_get(request, "subcounty")
+        selected_ward = _clean_get(request, "ward")
+        
+        if selected_county:
+            wards = wards.filter(county__icontains=selected_county)
+        
+        if selected_subcounty:
+            wards = wards.filter(subcounty__icontains=selected_subcounty)
+        
+        if selected_ward:
+            wards = wards.filter(ward__icontains=selected_ward)
         
         features = []
         
         for ward in wards:
-            projects_in_ward = Project.objects.filter(county__icontains=ward.county)
+            # Get projects for this ward area
+            projects_in_ward = Project.objects.all()
+            
+            # Apply spatial filter for ward
+            try:
+                if ward.geom:
+                    projects_in_ward = projects_in_ward.filter(location__within=ward.geom)
+            except Exception as e:
+                print(f"Ward spatial query error: {e}")
+            
+            # Apply other filters
+            selected_statuses = _clean_getlist(request, "status")
+            selected_sectors = _clean_getlist(request, "sector")
+            selected_year = _clean_get(request, "year")
+            
+            if selected_statuses:
+                projects_in_ward = projects_in_ward.filter(status__in=selected_statuses)
+            if selected_sectors:
+                projects_in_ward = projects_in_ward.filter(sector__in=selected_sectors)
+            if selected_year:
+                try:
+                    projects_in_ward = projects_in_ward.filter(start_date__year=int(selected_year))
+                except (ValueError, TypeError):
+                    pass
+            
             project_count = projects_in_ward.count()
+            
+            stats = projects_in_ward.aggregate(
+                total_budget=Sum('budget'),
+                completed=Count('id', filter=Q(status='completed'))
+            )
             
             # Convert geometry safely
             geometry_data = None
@@ -664,13 +847,24 @@ def wards_geojson(request):
                     "subcounty": ward.subcounty,
                     "county": ward.county,
                     "project_count": project_count,
+                    "total_budget": float(stats['total_budget'] or 0),
+                    "completed_projects": stats['completed'] or 0,
+                    "completion_rate": round((stats['completed'] / project_count * 100), 1) if project_count else 0,
                 }
             }
             features.append(feature)
         
         response_data = {
             "type": "FeatureCollection",
-            "features": features
+            "features": features,
+            "metadata": {
+                "total_wards": len(features),
+                "filters_applied": {
+                    "county": selected_county,
+                    "subcounty": selected_subcounty,
+                    "ward": selected_ward
+                }
+            }
         }
         
         print(f"Returning {len(features)} ward features")
@@ -694,18 +888,49 @@ def projects_geojson(request):
         
         # Apply filters
         selected_county = _clean_get(request, "county")
+        selected_subcounty = _clean_get(request, "subcounty")
+        selected_ward = _clean_get(request, "ward")
         selected_statuses = _clean_getlist(request, "status")
         selected_sectors = _clean_getlist(request, "sector")
         selected_year = _clean_get(request, "year")
         
-        print(f"Project filters - County: {selected_county}, Statuses: {selected_statuses}, Sectors: {selected_sectors}, Year: {selected_year}")
+        print(f"Project filters - County: {selected_county}, Subcounty: {selected_subcounty}, Ward: {selected_ward}")
+        print(f"Statuses: {selected_statuses}, Sectors: {selected_sectors}, Year: {selected_year}")
         
+        # Apply hierarchical location filters with spatial queries
         if selected_county:
             projects = projects.filter(county__icontains=selected_county)
+        
+        if selected_subcounty:
+            # For subcounty filtering, use spatial query
+            try:
+                subcounty_geom = KenyaSubCounty.objects.filter(
+                    subcounty__icontains=selected_subcounty
+                ).first()
+                if subcounty_geom and subcounty_geom.geom:
+                    projects = projects.filter(location__within=subcounty_geom.geom)
+                    print(f"After subcounty spatial filter: {projects.count()}")
+            except Exception as e:
+                print(f"Subcounty spatial filter error: {e}")
+        
+        if selected_ward:
+            # For ward filtering, use spatial query
+            try:
+                ward_geom = Kenyawards.objects.filter(
+                    ward__icontains=selected_ward
+                ).first()
+                if ward_geom and ward_geom.geom:
+                    projects = projects.filter(location__within=ward_geom.geom)
+                    print(f"After ward spatial filter: {projects.count()}")
+            except Exception as e:
+                print(f"Ward spatial filter error: {e}")
+        
         if selected_statuses:
             projects = projects.filter(status__in=selected_statuses)
+        
         if selected_sectors:
             projects = projects.filter(sector__in=selected_sectors)
+        
         if selected_year:
             try:
                 projects = projects.filter(start_date__year=int(selected_year))
@@ -812,6 +1037,8 @@ def projects_geojson(request):
                 "total_projects": len(features),
                 "filters_applied": {
                     "county": selected_county,
+                    "subcounty": selected_subcounty,
+                    "ward": selected_ward,
                     "year": selected_year,
                     "statuses": selected_statuses,
                     "sectors": selected_sectors
@@ -929,12 +1156,16 @@ def health_check(request):
         # Check database connectivity
         project_count = Project.objects.count()
         county_count = KenyaCounty.objects.count()
+        subcounty_count = KenyaSubCounty.objects.count()
+        ward_count = Kenyawards.objects.count()
         
         return JsonResponse({
             "status": "healthy",
             "database": "connected",
             "projects_count": project_count,
             "counties_count": county_count,
+            "subcounties_count": subcounty_count,
+            "wards_count": ward_count,
             "timestamp": timezone.now().isoformat()
         })
     except Exception as e:
@@ -943,6 +1174,8 @@ def health_check(request):
             "error": str(e),
             "timestamp": timezone.now().isoformat()
         }, status=500)
+    
+    
         
         
 # ---------------- Dashboard View ---------------- #
