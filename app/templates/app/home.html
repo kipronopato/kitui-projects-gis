@@ -13,23 +13,23 @@
             <div class="marquee-content">
                 <div class="notification-item">
                     <span class="badge live">LIVE</span>
-                    <span>Kenya Projects Dashboard: Tracking {{ total_projects|intcomma }} projects nationwide</span>
+                    <span>Kenya Projects Dashboard: Tracking <span id="notification-total-projects">{{ total_projects|intcomma }}</span> projects nationwide</span>
                 </div>
                 <div class="notification-item">
                     <span class="badge budget">BUDGET</span>
-                    <span>Total Investment: Ksh {{ total_budget|floatformat:0|intcomma }}</span>
+                    <span>Total Investment: Ksh <span id="notification-total-budget">{{ total_budget|floatformat:0|intcomma }}</span></span>
                 </div>
                 <div class="notification-item">
                     <span class="badge progress">PROGRESS</span>
-                    <span>Overall Completion Rate: {{ completion_rate }}%</span>
+                    <span>Overall Completion Rate: <span id="notification-completion-rate">{{ completion_rate }}</span>%</span>
                 </div>
                 <div class="notification-item">
                     <span class="badge alert">ALERT</span>
-                    <span>{{ overdue_projects }} projects require immediate attention</span>
+                    <span><span id="notification-overdue">{{ overdue_projects }}</span> projects require immediate attention</span>
                 </div>
                 <div class="notification-item">
                     <span class="badge info">INFO</span>
-                    <span>{{ upcoming_deadlines }} projects with upcoming deadlines</span>
+                    <span><span id="notification-upcoming">{{ upcoming_deadlines }}</span> projects with upcoming deadlines</span>
                 </div>
             </div>
         </div>
@@ -100,9 +100,9 @@
                         <button type="button" class="btn btn-sm btn-outline-primary" id="apply-filters">
                             <i class="fas fa-filter"></i> Apply
                         </button>
-                        <a href="{% url 'home' %}" class="btn btn-sm btn-outline-secondary">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" id="reset-filters">
                             <i class="fas fa-refresh"></i> Reset
-                        </a>
+                        </button>
                     </div>
                 </div>
 
@@ -113,7 +113,7 @@
                         <div class="search-box">
                             <input type="text" class="form-control" name="search" 
                                    placeholder="Search by name, description, sector..." 
-                                   value="{{ search_query }}">
+                                   value="{{ search_query }}" id="search-input">
                             <i class="fas fa-search"></i>
                         </div>
                     </div>
@@ -232,47 +232,65 @@
                         </select>
                     </div>
 
+                    <!-- Budget Range Filter -->
+                    <div class="filter-group">
+                        <label class="filter-section-label">
+                            <i class="fas fa-money-bill-wave"></i>
+                            Budget Range (Ksh)
+                        </label>
+                        <div class="budget-range">
+                            <div class="range-inputs">
+                                <input type="number" class="form-control" id="min-budget-input" placeholder="Min" min="0">
+                                <span class="range-separator">to</span>
+                                <input type="number" class="form-control" id="max-budget-input" placeholder="Max" min="0">
+                            </div>
+                            <div class="range-slider">
+                                <div id="budget-range-slider"></div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Active Filters Display -->
                     <div class="active-filters" id="active-filters">
                         <div class="active-filters-header">
                             <span>Active Filters:</span>
-                            <span class="clear-all" onclick="clearAllFilters()">Clear All</span>
+                            <span class="clear-all" id="clear-all-filters">Clear All</span>
                         </div>
                         <div class="active-filters-list" id="active-filters-list">
                             {% if selected_county %}
                             <span class="active-filter">
                                 County: {{ selected_county }}
-                                <span class="remove-filter" onclick="removeFilter('county')">×</span>
+                                <span class="remove-filter" data-filter="county">×</span>
                             </span>
                             {% endif %}
                             {% if selected_subcounty %}
                             <span class="active-filter">
                                 Subcounty: {{ selected_subcounty }}
-                                <span class="remove-filter" onclick="removeFilter('subcounty')">×</span>
+                                <span class="remove-filter" data-filter="subcounty">×</span>
                             </span>
                             {% endif %}
                             {% if selected_ward %}
                             <span class="active-filter">
                                 Ward: {{ selected_ward }}
-                                <span class="remove-filter" onclick="removeFilter('ward')">×</span>
+                                <span class="remove-filter" data-filter="ward">×</span>
                             </span>
                             {% endif %}
                             {% if selected_year %}
                             <span class="active-filter">
                                 Year: {{ selected_year }}
-                                <span class="remove-filter" onclick="removeFilter('year')">×</span>
+                                <span class="remove-filter" data-filter="year">×</span>
                             </span>
                             {% endif %}
                             {% for status in selected_statuses %}
                             <span class="active-filter">
                                 Status: {{ status_labels|get_item:status }}
-                                <span class="remove-filter" onclick="removeStatusFilter('{{ status }}')">×</span>
+                                <span class="remove-filter" data-filter="status" data-value="{{ status }}">×</span>
                             </span>
                             {% endfor %}
                             {% for sector in selected_sectors %}
                             <span class="active-filter">
                                 Sector: {{ sector }}
-                                <span class="remove-filter" onclick="removeSectorFilter('{{ sector }}')">×</span>
+                                <span class="remove-filter" data-filter="sector" data-value="{{ sector }}">×</span>
                             </span>
                             {% endfor %}
                         </div>
@@ -288,10 +306,10 @@
                 <div class="stats-header">
                     <h4><i class="fas fa-tachometer-alt"></i> Dashboard Overview</h4>
                     <div class="stats-actions">
-                        <button class="btn btn-sm btn-outline-primary" onclick="exportDashboardData()">
+                        <button class="btn btn-sm btn-outline-primary" id="export-data-btn">
                             <i class="fas fa-download"></i> Export Data
                         </button>
-                        <button class="btn btn-sm btn-outline-secondary" onclick="refreshDashboard()">
+                        <button class="btn btn-sm btn-outline-secondary" id="refresh-dashboard-btn">
                             <i class="fas fa-sync-alt"></i> Refresh
                         </button>
                     </div>
@@ -414,7 +432,7 @@
                                     </div>
                                 </div>
                                 <div class="control-group">
-                                    <button class="btn btn-sm btn-outline-primary" onclick="fitToBounds()">
+                                    <button class="btn btn-sm btn-outline-primary" id="fit-to-bounds-btn">
                                         <i class="fas fa-expand"></i> Fit View
                                     </button>
                                 </div>
@@ -431,19 +449,19 @@
                                     <div class="legend-items">
                                         <div class="legend-item">
                                             <span class="color completed"></span>
-                                            <span>Completed ({{ completed_projects }})</span>
+                                            <span>Completed (<span id="legend-completed">{{ completed_projects }}</span>)</span>
                                         </div>
                                         <div class="legend-item">
                                             <span class="color ongoing"></span>
-                                            <span>Ongoing ({{ ongoing_projects }})</span>
+                                            <span>Ongoing (<span id="legend-ongoing">{{ ongoing_projects }}</span>)</span>
                                         </div>
                                         <div class="legend-item">
                                             <span class="color planned"></span>
-                                            <span>Planned ({{ planned_projects }})</span>
+                                            <span>Planned (<span id="legend-planned">{{ planned_projects }}</span>)</span>
                                         </div>
                                         <div class="legend-item">
                                             <span class="color delayed"></span>
-                                            <span>Delayed ({{ delayed_projects }})</span>
+                                            <span>Delayed (<span id="legend-delayed">{{ delayed_projects }}</span>)</span>
                                         </div>
                                     </div>
                                 </div>
@@ -515,10 +533,10 @@
                                     <span id="summary-title">Selected Area Summary</span>
                                 </h5>
                                 <div class="summary-actions">
-                                    <button class="btn btn-sm btn-outline-primary" onclick="zoomToSelection()">
+                                    <button class="btn btn-sm btn-outline-primary" id="zoom-to-selection-btn">
                                         <i class="fas fa-search"></i> Zoom
                                     </button>
-                                    <button class="btn btn-sm btn-outline-secondary" onclick="clearSelection()">
+                                    <button class="btn btn-sm btn-outline-secondary" id="clear-selection-btn">
                                         <i class="fas fa-times"></i> Clear
                                     </button>
                                 </div>
@@ -541,10 +559,10 @@
                                     <h5>
                                         <i class="fas fa-arrow-up text-success"></i>
                                         Highest Budget Projects
-                                        <span class="badge bg-success">{{ highest_budget_projects|length }}</span>
+                                        <span class="badge bg-success" id="high-budget-count">{{ highest_budget_projects|length }}</span>
                                     </h5>
                                     <div class="card-actions">
-                                        <button class="btn btn-sm btn-outline-primary" onclick="showAllHighBudget()">
+                                        <button class="btn btn-sm btn-outline-primary" id="show-all-high-budget-btn">
                                             View All
                                         </button>
                                     </div>
@@ -562,10 +580,10 @@
                                             <span class="status {{ project.status }}">{{ project.status|title }}</span>
                                         </div>
                                         <div class="project-actions">
-                                            <button class="btn btn-sm btn-outline-primary" onclick="zoomToProject({{ project.id }})">
+                                            <button class="btn btn-sm btn-outline-primary zoom-to-project-btn" data-project-id="{{ project.id }}">
                                                 <i class="fas fa-search"></i>
                                             </button>
-                                            <button class="btn btn-sm btn-outline-info" onclick="showProjectDetails({{ project.id }})">
+                                            <button class="btn btn-sm btn-outline-info show-project-details-btn" data-project-id="{{ project.id }}">
                                                 <i class="fas fa-info"></i>
                                             </button>
                                         </div>
@@ -586,10 +604,10 @@
                                     <h5>
                                         <i class="fas fa-clock text-info"></i>
                                         Recent Projects
-                                        <span class="badge bg-info">{{ recent_projects|length }}</span>
+                                        <span class="badge bg-info" id="recent-projects-count">{{ recent_projects|length }}</span>
                                     </h5>
                                     <div class="card-actions">
-                                        <button class="btn btn-sm btn-outline-primary" onclick="showAllRecent()">
+                                        <button class="btn btn-sm btn-outline-primary" id="show-all-recent-btn">
                                             View All
                                         </button>
                                     </div>
@@ -607,10 +625,10 @@
                                             <span class="status {{ project.status }}">{{ project.status|title }}</span>
                                         </div>
                                         <div class="project-actions">
-                                            <button class="btn btn-sm btn-outline-primary" onclick="zoomToProject({{ project.id }})">
+                                            <button class="btn btn-sm btn-outline-primary zoom-to-project-btn" data-project-id="{{ project.id }}">
                                                 <i class="fas fa-search"></i>
                                             </button>
-                                            <button class="btn btn-sm btn-outline-info" onclick="showProjectDetails({{ project.id }})">
+                                            <button class="btn btn-sm btn-outline-info show-project-details-btn" data-project-id="{{ project.id }}">
                                                 <i class="fas fa-info"></i>
                                             </button>
                                         </div>
@@ -631,15 +649,15 @@
                                     <h5>
                                         <i class="fas fa-exclamation-triangle text-danger"></i>
                                         Overdue Projects
-                                        <span class="badge bg-danger">{{ overdue_projects }}</span>
+                                        <span class="badge bg-danger" id="overdue-projects-count">{{ overdue_projects }}</span>
                                     </h5>
                                     <div class="card-actions">
-                                        <button class="btn btn-sm btn-outline-primary" onclick="showAllOverdue()">
+                                        <button class="btn btn-sm btn-outline-primary" id="show-all-overdue-btn">
                                             View All
                                         </button>
                                     </div>
                                 </div>
-                                <div class="card-body" id="overdue-projects">
+                                <div class="card-body" id="overdue-projects-list">
                                     {% for project in projects %}
                                         {% if project.status in "ongoing,planned" and project.end_date < current_date %}
                                         <div class="project-item" data-project-id="{{ project.id }}">
@@ -653,10 +671,10 @@
                                                 <span class="status delayed">Overdue</span>
                                             </div>
                                             <div class="project-actions">
-                                                <button class="btn btn-sm btn-outline-primary" onclick="zoomToProject({{ project.id }})">
+                                                <button class="btn btn-sm btn-outline-primary zoom-to-project-btn" data-project-id="{{ project.id }}">
                                                     <i class="fas fa-search"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-outline-warning" onclick="flagProject({{ project.id }})">
+                                                <button class="btn btn-sm btn-outline-warning flag-project-btn" data-project-id="{{ project.id }}">
                                                     <i class="fas fa-flag"></i>
                                                 </button>
                                             </div>
@@ -684,7 +702,7 @@
                                     Project Status Distribution
                                 </h5>
                                 <div class="chart-actions">
-                                    <button class="btn btn-sm btn-outline-primary" onclick="downloadChart('statusChart')">
+                                    <button class="btn btn-sm btn-outline-primary" id="download-status-chart-btn">
                                         <i class="fas fa-download"></i>
                                     </button>
                                 </div>
@@ -694,11 +712,11 @@
                                 <div class="chart-summary">
                                     <div class="summary-item">
                                         <span class="label">Total Projects:</span>
-                                        <span class="value">{{ total_projects }}</span>
+                                        <span class="value" id="status-chart-total">{{ total_projects }}</span>
                                     </div>
                                     <div class="summary-item">
                                         <span class="label">Completion Rate:</span>
-                                        <span class="value">{{ completion_rate }}%</span>
+                                        <span class="value" id="status-chart-completion-rate">{{ completion_rate }}%</span>
                                     </div>
                                 </div>
                             </div>
@@ -711,7 +729,7 @@
                                     Top Sectors by Project Count
                                 </h5>
                                 <div class="chart-actions">
-                                    <button class="btn btn-sm btn-outline-primary" onclick="downloadChart('sectorChart')">
+                                    <button class="btn btn-sm btn-outline-primary" id="download-sector-chart-btn">
                                         <i class="fas fa-download"></i>
                                     </button>
                                 </div>
@@ -721,11 +739,11 @@
                                 <div class="chart-summary">
                                     <div class="summary-item">
                                         <span class="label">Total Sectors:</span>
-                                        <span class="value">{{ sectors|length }}</span>
+                                        <span class="value" id="sector-chart-total">{{ sectors|length }}</span>
                                     </div>
                                     <div class="summary-item">
                                         <span class="label">Top Sector:</span>
-                                        <span class="value">{{ sector_data_chart.0.sector|default:"N/A" }}</span>
+                                        <span class="value" id="sector-chart-top">{{ sector_data_chart.0.sector|default:"N/A" }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -738,10 +756,10 @@
                                     Projects Distribution by County
                                 </h5>
                                 <div class="chart-actions">
-                                    <button class="btn btn-sm btn-outline-primary" onclick="downloadChart('countyChart')">
+                                    <button class="btn btn-sm btn-outline-primary" id="download-county-chart-btn">
                                         <i class="fas fa-download"></i>
                                     </button>
-                                    <button class="btn btn-sm btn-outline-secondary" onclick="toggleChartView()">
+                                    <button class="btn btn-sm btn-outline-secondary" id="toggle-chart-view-btn">
                                         <i class="fas fa-exchange-alt"></i>
                                     </button>
                                 </div>
@@ -751,11 +769,11 @@
                                 <div class="chart-summary">
                                     <div class="summary-item">
                                         <span class="label">Counties with Projects:</span>
-                                        <span class="value">{{ counties|length }}</span>
+                                        <span class="value" id="county-chart-total">{{ counties|length }}</span>
                                     </div>
                                     <div class="summary-item">
                                         <span class="label">Top County:</span>
-                                        <span class="value">{{ county_stats.0.county|default:"N/A" }}</span>
+                                        <span class="value" id="county-chart-top">{{ county_stats.0.county|default:"N/A" }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -894,19 +912,19 @@
                             <div class="card-body">
                                 <div class="spatial-stats">
                                     <div class="spatial-item">
-                                        <div class="spatial-value">{{ counties|length }}</div>
+                                        <div class="spatial-value" id="spatial-counties">{{ counties|length }}</div>
                                         <div class="spatial-label">Counties</div>
                                     </div>
                                     <div class="spatial-item">
-                                        <div class="spatial-value">{{ subcounties_by_county_json|length }}</div>
+                                        <div class="spatial-value" id="spatial-subcounties">{{ subcounties_by_county_json|length }}</div>
                                         <div class="spatial-label">Subcounties</div>
                                     </div>
                                     <div class="spatial-item">
-                                        <div class="spatial-value">{{ wards_by_subcounty_json|length }}</div>
+                                        <div class="spatial-value" id="spatial-wards">{{ wards_by_subcounty_json|length }}</div>
                                         <div class="spatial-label">Wards</div>
                                     </div>
                                     <div class="spatial-item">
-                                        <div class="spatial-value">{{ total_projects }}</div>
+                                        <div class="spatial-value" id="spatial-projects">{{ total_projects }}</div>
                                         <div class="spatial-label">Projects</div>
                                     </div>
                                 </div>
@@ -927,15 +945,15 @@
                             </div>
                             <div class="card-body">
                                 <div class="report-options">
-                                    <button class="btn btn-primary" onclick="generateSummaryReport()">
+                                    <button class="btn btn-primary" id="generate-summary-report-btn">
                                         <i class="fas fa-download"></i>
                                         Summary Report
                                     </button>
-                                    <button class="btn btn-success" onclick="generateSpatialReport()">
+                                    <button class="btn btn-success" id="generate-spatial-report-btn">
                                         <i class="fas fa-map"></i>
                                         Spatial Report
                                     </button>
-                                    <button class="btn btn-warning" onclick="generatePerformanceReport()">
+                                    <button class="btn btn-warning" id="generate-performance-report-btn">
                                         <i class="fas fa-chart-line"></i>
                                         Performance Report
                                     </button>
@@ -959,6 +977,52 @@
             </div>
             <div class="modal-body" id="projectModalBody">
                 <!-- Project details will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Export Options Modal -->
+<div class="modal fade" id="exportModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Export Dashboard Data</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="export-options">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="export-current-filters" checked>
+                        <label class="form-check-label" for="export-current-filters">
+                            Apply current filters
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="export-charts" checked>
+                        <label class="form-check-label" for="export-charts">
+                            Include charts
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="export-map" checked>
+                        <label class="form-check-label" for="export-map">
+                            Include map overview
+                        </label>
+                    </div>
+                    <div class="mt-3">
+                        <label for="export-format" class="form-label">Format:</label>
+                        <select class="form-select" id="export-format">
+                            <option value="pdf">PDF Document</option>
+                            <option value="excel">Excel Spreadsheet</option>
+                            <option value="csv">CSV Data</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirm-export-btn">Export</button>
             </div>
         </div>
     </div>
@@ -1234,6 +1298,36 @@
 .status-indicator.ongoing { background: var(--warning); }
 .status-indicator.planned { background: var(--muted); }
 .status-indicator.delayed { background: var(--danger); }
+
+/* Budget Range Filter */
+.budget-range {
+    margin-top: 8px;
+}
+
+.range-inputs {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.range-inputs .form-control {
+    flex: 1;
+}
+
+.range-separator {
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.range-slider {
+    padding: 0 8px;
+}
+
+#budget-range-slider {
+    margin: 10px 0;
+}
 
 /* Active Filters */
 .active-filters {
@@ -2317,6 +2411,13 @@
     gap: 8px;
 }
 
+/* Export Modal */
+.export-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
 /* Responsive Design */
 @media (max-width: 1400px) {
     .dashboard-sidebar {
@@ -2522,6 +2623,9 @@
 <!-- Leaflet CSS & JS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!-- NoUiSlider for range inputs -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js"></script>
 
 <script>
 // Enhanced Dashboard JavaScript
@@ -2538,6 +2642,7 @@ let choroplethLayers = {
 };
 let allProjectMarkers = [];
 let selectedArea = null;
+let budgetRangeSlider;
 
 // Chart instances
 let statusChart, sectorChart, countyChart, budgetChart, timelineChart;
@@ -2560,6 +2665,9 @@ function initializeDashboard() {
     
     // Initialize hierarchical dropdowns
     initializeHierarchicalDropdowns();
+    
+    // Initialize budget range slider
+    initializeBudgetRangeSlider();
     
     // Initialize map if map tab is active
     if (document.getElementById('kenya-map')) {
@@ -2641,6 +2749,51 @@ function initializeHierarchicalDropdowns() {
     // Ward selection change
     wardSelect.addEventListener('change', function() {
         updateActiveFiltersDisplay();
+    });
+}
+
+function initializeBudgetRangeSlider() {
+    const slider = document.getElementById('budget-range-slider');
+    const minInput = document.getElementById('min-budget-input');
+    const maxInput = document.getElementById('max-budget-input');
+    
+    if (!slider) return;
+    
+    // Get budget range from data
+    const minBudget = {{ budget_stats.min_budget|default:0 }};
+    const maxBudget = {{ budget_stats.max_budget|default:10000000 }};
+    
+    budgetRangeSlider = noUiSlider.create(slider, {
+        start: [minBudget, maxBudget],
+        connect: true,
+        range: {
+            'min': minBudget,
+            'max': maxBudget
+        },
+        step: 1000,
+        format: {
+            to: function(value) {
+                return Math.round(value);
+            },
+            from: function(value) {
+                return Number(value);
+            }
+        }
+    });
+    
+    // Update input fields when slider changes
+    budgetRangeSlider.on('update', function(values) {
+        minInput.value = Math.round(values[0]);
+        maxInput.value = Math.round(values[1]);
+    });
+    
+    // Update slider when input fields change
+    minInput.addEventListener('change', function() {
+        budgetRangeSlider.set([this.value, null]);
+    });
+    
+    maxInput.addEventListener('change', function() {
+        budgetRangeSlider.set([null, this.value]);
     });
 }
 
@@ -2855,6 +3008,7 @@ function loadShapefileLayer(level) {
     const statusCheckboxes = document.querySelectorAll('input[name="status"]:checked');
     const sectorCheckboxes = document.querySelectorAll('input[name="sector"]:checked');
     const yearSelect = document.getElementById('year-select');
+    const searchInput = document.getElementById('search-input');
     
     if (countySelect && countySelect.value) {
         params.append('county', countySelect.value);
@@ -2876,6 +3030,17 @@ function loadShapefileLayer(level) {
 
     if (yearSelect && yearSelect.value) {
         params.append('year', yearSelect.value);
+    }
+
+    if (searchInput && searchInput.value) {
+        params.append('search', searchInput.value);
+    }
+
+    // Add budget range if set
+    if (budgetRangeSlider) {
+        const budgetValues = budgetRangeSlider.get();
+        params.append('min_budget', budgetValues[0]);
+        params.append('max_budget', budgetValues[1]);
     }
 
     const url = `${apiUrl}?${params.toString()}`;
@@ -3051,6 +3216,7 @@ function loadProjectMarkers() {
     const statusCheckboxes = document.querySelectorAll('input[name="status"]:checked');
     const sectorCheckboxes = document.querySelectorAll('input[name="sector"]:checked');
     const yearSelect = document.getElementById('year-select');
+    const searchInput = document.getElementById('search-input');
 
     if (countySelect && countySelect.value) {
         params.append('county', countySelect.value);
@@ -3074,6 +3240,17 @@ function loadProjectMarkers() {
 
     if (yearSelect && yearSelect.value) {
         params.append('year', yearSelect.value);
+    }
+
+    if (searchInput && searchInput.value) {
+        params.append('search', searchInput.value);
+    }
+
+    // Add budget range if set
+    if (budgetRangeSlider) {
+        const budgetValues = budgetRangeSlider.get();
+        params.append('min_budget', budgetValues[0]);
+        params.append('max_budget', budgetValues[1]);
     }
 
     params.append('page_size', '2000');
@@ -3119,8 +3296,8 @@ function loadProjectMarkers() {
                                 ${feature.properties.is_overdue ? '<p class="text-danger"><strong>⚠️ OVERDUE</strong></p>' : ''}
                             </div>
                             <div class="popup-actions">
-                                <button class="btn btn-sm btn-primary" onclick="zoomToProject(${feature.properties.id})">Zoom To</button>
-                                <button class="btn btn-sm btn-info" onclick="showProjectDetails(${feature.properties.id})">Details</button>
+                                <button class="btn btn-sm btn-primary zoom-to-project-btn" data-project-id="${feature.properties.id}">Zoom To</button>
+                                <button class="btn btn-sm btn-info show-project-details-btn" data-project-id="${feature.properties.id}">Details</button>
                             </div>
                         </div>
                     `;
@@ -3163,6 +3340,12 @@ function updateStatistics(projectData) {
     document.getElementById('filtered-counties-covered').textContent = counties;
     document.getElementById('filtered-overdue-projects').textContent = overdueProjects + delayedProjects;
     
+    // Update notification system
+    document.getElementById('notification-total-projects').textContent = totalProjects.toLocaleString();
+    document.getElementById('notification-total-budget').textContent = formatLargeNumber(totalBudget);
+    document.getElementById('notification-completion-rate').textContent = completionRate;
+    document.getElementById('notification-overdue').textContent = overdueProjects + delayedProjects;
+    
     // Update status bar
     document.getElementById('total-projects-count').textContent = totalProjects.toLocaleString();
     document.getElementById('overdue-projects-count').textContent = overdueProjects + delayedProjects;
@@ -3183,8 +3366,17 @@ function updateStatistics(projectData) {
         document.getElementById('max-budget').textContent = 'Ksh ' + formatLargeNumber(maxBudget);
     }
     
+    // Update map legend counts
+    document.getElementById('legend-completed').textContent = completedProjects;
+    document.getElementById('legend-ongoing').textContent = projectData.features.filter(f => f.properties.status === 'ongoing').length;
+    document.getElementById('legend-planned').textContent = projectData.features.filter(f => f.properties.status === 'planned').length;
+    document.getElementById('legend-delayed').textContent = delayedProjects;
+    
     // Update project highlights
     updateProjectHighlights(projectData);
+    
+    // Update charts with filtered data
+    updateCharts(projectData);
 }
 
 function updateProjectHighlights(projectData) {
@@ -3205,6 +3397,8 @@ function updateProjectHighlights(projectData) {
     
     // Update highest budget projects
     const highestBudgetContainer = document.getElementById('highest-budget-projects');
+    document.getElementById('high-budget-count').textContent = highestBudgetProjects.length;
+    
     if (highestBudgetProjects.length > 0) {
         highestBudgetContainer.innerHTML = highestBudgetProjects.map(project => `
             <div class="project-item" data-project-id="${project.properties.id}">
@@ -3218,10 +3412,10 @@ function updateProjectHighlights(projectData) {
                     <span class="status ${project.properties.status}">${project.properties.status}</span>
                 </div>
                 <div class="project-actions">
-                    <button class="btn btn-sm btn-outline-primary" onclick="zoomToProject(${project.properties.id})">
+                    <button class="btn btn-sm btn-outline-primary zoom-to-project-btn" data-project-id="${project.properties.id}">
                         <i class="fas fa-search"></i>
                     </button>
-                    <button class="btn btn-sm btn-outline-info" onclick="showProjectDetails(${project.properties.id})">
+                    <button class="btn btn-sm btn-outline-info show-project-details-btn" data-project-id="${project.properties.id}">
                         <i class="fas fa-info"></i>
                     </button>
                 </div>
@@ -3238,6 +3432,8 @@ function updateProjectHighlights(projectData) {
     
     // Update recent projects
     const recentProjectsContainer = document.getElementById('recent-projects');
+    document.getElementById('recent-projects-count').textContent = recentProjects.length;
+    
     if (recentProjects.length > 0) {
         recentProjectsContainer.innerHTML = recentProjects.map(project => `
             <div class="project-item" data-project-id="${project.properties.id}">
@@ -3251,10 +3447,10 @@ function updateProjectHighlights(projectData) {
                     <span class="status ${project.properties.status}">${project.properties.status}</span>
                 </div>
                 <div class="project-actions">
-                    <button class="btn btn-sm btn-outline-primary" onclick="zoomToProject(${project.properties.id})">
+                    <button class="btn btn-sm btn-outline-primary zoom-to-project-btn" data-project-id="${project.properties.id}">
                         <i class="fas fa-search"></i>
                     </button>
-                    <button class="btn btn-sm btn-outline-info" onclick="showProjectDetails(${project.properties.id})">
+                    <button class="btn btn-sm btn-outline-info show-project-details-btn" data-project-id="${project.properties.id}">
                         <i class="fas fa-info"></i>
                     </button>
                 </div>
@@ -3270,7 +3466,9 @@ function updateProjectHighlights(projectData) {
     }
     
     // Update overdue projects
-    const overdueContainer = document.getElementById('overdue-projects');
+    const overdueContainer = document.getElementById('overdue-projects-list');
+    document.getElementById('overdue-projects-count').textContent = overdueProjects.length;
+    
     if (overdueProjects.length > 0) {
         overdueContainer.innerHTML = overdueProjects.map(project => `
             <div class="project-item" data-project-id="${project.properties.id}">
@@ -3284,10 +3482,10 @@ function updateProjectHighlights(projectData) {
                     <span class="status delayed">Overdue</span>
                 </div>
                 <div class="project-actions">
-                    <button class="btn btn-sm btn-outline-primary" onclick="zoomToProject(${project.properties.id})">
+                    <button class="btn btn-sm btn-outline-primary zoom-to-project-btn" data-project-id="${project.properties.id}">
                         <i class="fas fa-search"></i>
                     </button>
-                    <button class="btn btn-sm btn-outline-warning" onclick="flagProject(${project.properties.id})">
+                    <button class="btn btn-sm btn-outline-warning flag-project-btn" data-project-id="${project.properties.id}">
                         <i class="fas fa-flag"></i>
                     </button>
                 </div>
@@ -3300,6 +3498,99 @@ function updateProjectHighlights(projectData) {
                 <p>No overdue projects</p>
             </div>
         `;
+    }
+}
+
+function updateCharts(projectData) {
+    // Update status chart
+    if (statusChart) {
+        const statusCounts = {
+            'completed': 0,
+            'ongoing': 0,
+            'planned': 0,
+            'delayed': 0
+        };
+        
+        projectData.features.forEach(feature => {
+            const status = feature.properties.status;
+            if (statusCounts.hasOwnProperty(status)) {
+                statusCounts[status]++;
+            }
+        });
+        
+        statusChart.data.datasets[0].data = Object.values(statusCounts);
+        statusChart.update();
+        
+        // Update chart summary
+        document.getElementById('status-chart-total').textContent = projectData.features.length;
+        document.getElementById('status-chart-completion-rate').textContent = 
+            projectData.features.length > 0 ? 
+            Math.round((statusCounts.completed / projectData.features.length) * 100) + '%' : '0%';
+    }
+    
+    // Update sector chart
+    if (sectorChart) {
+        const sectorCounts = {};
+        
+        projectData.features.forEach(feature => {
+            const sector = feature.properties.sector || 'Uncategorized';
+            sectorCounts[sector] = (sectorCounts[sector] || 0) + 1;
+        });
+        
+        const sortedSectors = Object.entries(sectorCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 10);
+        
+        sectorChart.data.labels = sortedSectors.map(item => item[0]);
+        sectorChart.data.datasets[0].data = sortedSectors.map(item => item[1]);
+        sectorChart.update();
+        
+        // Update chart summary
+        document.getElementById('sector-chart-total').textContent = Object.keys(sectorCounts).length;
+        document.getElementById('sector-chart-top').textContent = sortedSectors.length > 0 ? sortedSectors[0][0] : 'N/A';
+    }
+    
+    // Update county chart
+    if (countyChart) {
+        const countyCounts = {};
+        
+        projectData.features.forEach(feature => {
+            const county = feature.properties.county;
+            if (county) {
+                countyCounts[county] = (countyCounts[county] || 0) + 1;
+            }
+        });
+        
+        const sortedCounties = Object.entries(countyCounts)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 15);
+        
+        countyChart.data.labels = sortedCounties.map(item => item[0]);
+        countyChart.data.datasets[0].data = sortedCounties.map(item => item[1]);
+        countyChart.update();
+        
+        // Update chart summary
+        document.getElementById('county-chart-total').textContent = Object.keys(countyCounts).length;
+        document.getElementById('county-chart-top').textContent = sortedCounties.length > 0 ? sortedCounties[0][0] : 'N/A';
+    }
+    
+    // Update budget chart
+    if (budgetChart) {
+        const sectorBudgets = {};
+        
+        projectData.features.forEach(feature => {
+            const sector = feature.properties.sector || 'Uncategorized';
+            const budget = feature.properties.budget || 0;
+            sectorBudgets[sector] = (sectorBudgets[sector] || 0) + budget;
+        });
+        
+        const sortedSectorBudgets = Object.entries(sectorBudgets)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 8);
+        
+        budgetChart.data.labels = sortedSectorBudgets.map(item => item[0]);
+        budgetChart.data.datasets[0].data = sortedSectorBudgets.map(item => item[1]);
+        budgetChart.update();
     }
 }
 
@@ -3459,10 +3750,10 @@ function showAreaSummary(properties, level) {
                 ` : ''}
             </div>
             <div class="summary-actions">
-                <button class="btn btn-primary" onclick="zoomToSelectedArea()">
+                <button class="btn btn-primary" id="zoom-to-selected-area-btn">
                     <i class="fas fa-search"></i> Zoom to Area
                 </button>
-                <button class="btn btn-outline-primary" onclick="exportAreaData('${areaName}', '${level}')">
+                <button class="btn btn-outline-primary" id="export-area-data-btn" data-area="${areaName}" data-level="${level}">
                     <i class="fas fa-download"></i> Export Data
                 </button>
             </div>
@@ -3771,6 +4062,15 @@ function initializeEventListeners() {
         });
     }
 
+    // Reset filters
+    const resetFiltersBtn = document.getElementById('reset-filters');
+    if (resetFiltersBtn) {
+        resetFiltersBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            clearAllFilters();
+        });
+    }
+
     // Sector search
     const sectorSearch = document.getElementById('sector-search');
     if (sectorSearch) {
@@ -3792,6 +4092,86 @@ function initializeEventListeners() {
 
     // Year selection change
     document.getElementById('year-select').addEventListener('change', updateActiveFiltersDisplay);
+    
+    // Search input with debounce
+    let searchTimeout;
+    document.getElementById('search-input').addEventListener('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            updateActiveFiltersDisplay();
+        }, 500);
+    });
+
+    // Clear all filters
+    document.getElementById('clear-all-filters').addEventListener('click', clearAllFilters);
+    
+    // Remove filter buttons
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('remove-filter')) {
+            const filterType = e.target.getAttribute('data-filter');
+            const filterValue = e.target.getAttribute('data-value');
+            removeFilter(filterType, filterValue);
+        }
+    });
+
+    // Map controls
+    document.getElementById('fit-to-bounds-btn').addEventListener('click', fitToBounds);
+    document.getElementById('zoom-to-selection-btn').addEventListener('click', zoomToSelectedArea);
+    document.getElementById('clear-selection-btn').addEventListener('click', clearSelection);
+    
+    // Project actions
+    document.addEventListener('click', function(e) {
+        if (e.target.classList.contains('zoom-to-project-btn') || e.target.closest('.zoom-to-project-btn')) {
+            const btn = e.target.classList.contains('zoom-to-project-btn') ? e.target : e.target.closest('.zoom-to-project-btn');
+            const projectId = btn.getAttribute('data-project-id');
+            zoomToProject(projectId);
+        }
+        
+        if (e.target.classList.contains('show-project-details-btn') || e.target.closest('.show-project-details-btn')) {
+            const btn = e.target.classList.contains('show-project-details-btn') ? e.target : e.target.closest('.show-project-details-btn');
+            const projectId = btn.getAttribute('data-project-id');
+            showProjectDetails(projectId);
+        }
+        
+        if (e.target.classList.contains('flag-project-btn') || e.target.closest('.flag-project-btn')) {
+            const btn = e.target.classList.contains('flag-project-btn') ? e.target : e.target.closest('.flag-project-btn');
+            const projectId = btn.getAttribute('data-project-id');
+            flagProject(projectId);
+        }
+    });
+
+    // Dashboard actions
+    document.getElementById('export-data-btn').addEventListener('click', exportDashboardData);
+    document.getElementById('refresh-dashboard-btn').addEventListener('click', refreshDashboard);
+    
+    // Chart actions
+    document.getElementById('download-status-chart-btn').addEventListener('click', function() {
+        downloadChart('statusChart');
+    });
+    document.getElementById('download-sector-chart-btn').addEventListener('click', function() {
+        downloadChart('sectorChart');
+    });
+    document.getElementById('download-county-chart-btn').addEventListener('click', function() {
+        downloadChart('countyChart');
+    });
+    document.getElementById('toggle-chart-view-btn').addEventListener('click', toggleChartView);
+    
+    // Report actions
+    document.getElementById('generate-summary-report-btn').addEventListener('click', generateSummaryReport);
+    document.getElementById('generate-spatial-report-btn').addEventListener('click', generateSpatialReport);
+    document.getElementById('generate-performance-report-btn').addEventListener('click', generatePerformanceReport);
+    
+    // Highlight actions
+    document.getElementById('show-all-high-budget-btn').addEventListener('click', showAllHighBudget);
+    document.getElementById('show-all-recent-btn').addEventListener('click', showAllRecent);
+    document.getElementById('show-all-overdue-btn').addEventListener('click', showAllOverdue);
+    
+    // Export modal
+    document.getElementById('confirm-export-btn').addEventListener('click', function() {
+        const exportModal = bootstrap.Modal.getInstance(document.getElementById('exportModal'));
+        exportModal.hide();
+        showNotification('Export started. You will receive a notification when it is ready.', 'info');
+    });
 }
 
 function updateActiveFiltersDisplay() {
@@ -3807,6 +4187,9 @@ function updateActiveFiltersDisplay() {
     const yearSelect = document.getElementById('year-select');
     const statusCheckboxes = document.querySelectorAll('input[name="status"]:checked');
     const sectorCheckboxes = document.querySelectorAll('input[name="sector"]:checked');
+    const searchInput = document.getElementById('search-input');
+    const minBudget = document.getElementById('min-budget-input').value;
+    const maxBudget = document.getElementById('max-budget-input').value;
     
     let filtersHtml = '';
     
@@ -3815,7 +4198,7 @@ function updateActiveFiltersDisplay() {
         filtersHtml += `
             <span class="active-filter">
                 County: ${countySelect.value}
-                <span class="remove-filter" onclick="removeFilter('county')">×</span>
+                <span class="remove-filter" data-filter="county">×</span>
             </span>
         `;
     }
@@ -3825,7 +4208,7 @@ function updateActiveFiltersDisplay() {
         filtersHtml += `
             <span class="active-filter">
                 Subcounty: ${subcountySelect.value}
-                <span class="remove-filter" onclick="removeFilter('subcounty')">×</span>
+                <span class="remove-filter" data-filter="subcounty">×</span>
             </span>
         `;
     }
@@ -3835,7 +4218,7 @@ function updateActiveFiltersDisplay() {
         filtersHtml += `
             <span class="active-filter">
                 Ward: ${wardSelect.value}
-                <span class="remove-filter" onclick="removeFilter('ward')">×</span>
+                <span class="remove-filter" data-filter="ward">×</span>
             </span>
         `;
     }
@@ -3845,7 +4228,7 @@ function updateActiveFiltersDisplay() {
         filtersHtml += `
             <span class="active-filter">
                 Year: ${yearSelect.value}
-                <span class="remove-filter" onclick="removeFilter('year')">×</span>
+                <span class="remove-filter" data-filter="year">×</span>
             </span>
         `;
     }
@@ -3856,7 +4239,7 @@ function updateActiveFiltersDisplay() {
         filtersHtml += `
             <span class="active-filter">
                 Status: ${statusLabel}
-                <span class="remove-filter" onclick="removeStatusFilter('${checkbox.value}')">×</span>
+                <span class="remove-filter" data-filter="status" data-value="${checkbox.value}">×</span>
             </span>
         `;
     });
@@ -3867,10 +4250,39 @@ function updateActiveFiltersDisplay() {
         filtersHtml += `
             <span class="active-filter">
                 Sector: ${sectorValue}
-                <span class="remove-filter" onclick="removeSectorFilter('${sectorValue}')">×</span>
+                <span class="remove-filter" data-filter="sector" data-value="${sectorValue}">×</span>
             </span>
         `;
     });
+    
+    // Search filter
+    if (searchInput && searchInput.value) {
+        filtersHtml += `
+            <span class="active-filter">
+                Search: "${searchInput.value}"
+                <span class="remove-filter" data-filter="search">×</span>
+            </span>
+        `;
+    }
+    
+    // Budget range filter
+    if (minBudget || maxBudget) {
+        let budgetText = 'Budget: ';
+        if (minBudget && maxBudget) {
+            budgetText += `Ksh ${formatLargeNumber(minBudget)} - ${formatLargeNumber(maxBudget)}`;
+        } else if (minBudget) {
+            budgetText += `Min Ksh ${formatLargeNumber(minBudget)}`;
+        } else if (maxBudget) {
+            budgetText += `Max Ksh ${formatLargeNumber(maxBudget)}`;
+        }
+        
+        filtersHtml += `
+            <span class="active-filter">
+                ${budgetText}
+                <span class="remove-filter" data-filter="budget">×</span>
+            </span>
+        `;
+    }
     
     activeFiltersList.innerHTML = filtersHtml;
     
@@ -3882,7 +4294,7 @@ function updateActiveFiltersDisplay() {
     }
 }
 
-function removeFilter(type) {
+function removeFilter(type, value = null) {
     switch(type) {
         case 'county':
             document.getElementById('county-select').value = '';
@@ -3898,22 +4310,30 @@ function removeFilter(type) {
         case 'year':
             document.getElementById('year-select').value = '';
             break;
-    }
-    updateActiveFiltersDisplay();
-}
-
-function removeStatusFilter(statusValue) {
-    const checkbox = document.querySelector(`input[name="status"][value="${statusValue}"]`);
-    if (checkbox) {
-        checkbox.checked = false;
-    }
-    updateActiveFiltersDisplay();
-}
-
-function removeSectorFilter(sectorValue) {
-    const checkbox = document.querySelector(`input[name="sector"][value="${sectorValue}"]`);
-    if (checkbox) {
-        checkbox.checked = false;
+        case 'status':
+            const statusCheckbox = document.querySelector(`input[name="status"][value="${value}"]`);
+            if (statusCheckbox) {
+                statusCheckbox.checked = false;
+            }
+            break;
+        case 'sector':
+            const sectorCheckbox = document.querySelector(`input[name="sector"][value="${value}"]`);
+            if (sectorCheckbox) {
+                sectorCheckbox.checked = false;
+            }
+            break;
+        case 'search':
+            document.getElementById('search-input').value = '';
+            break;
+        case 'budget':
+            document.getElementById('min-budget-input').value = '';
+            document.getElementById('max-budget-input').value = '';
+            if (budgetRangeSlider) {
+                const minBudget = {{ budget_stats.min_budget|default:0 }};
+                const maxBudget = {{ budget_stats.max_budget|default:10000000 }};
+                budgetRangeSlider.set([minBudget, maxBudget]);
+            }
+            break;
     }
     updateActiveFiltersDisplay();
 }
@@ -3925,6 +4345,13 @@ function clearAllFilters() {
     // Reset hierarchical dropdowns
     updateSubcountyDropdown('');
     updateWardDropdown('', '');
+    
+    // Reset budget range slider
+    if (budgetRangeSlider) {
+        const minBudget = {{ budget_stats.min_budget|default:0 }};
+        const maxBudget = {{ budget_stats.max_budget|default:10000000 }};
+        budgetRangeSlider.set([minBudget, maxBudget]);
+    }
     
     // Update active filters display
     updateActiveFiltersDisplay();
@@ -3939,14 +4366,10 @@ function updateVisualizations() {
     if (kenyaMap) {
         loadShapefileLayer(currentLevel);
         loadProjectMarkers();
+    } else {
+        // If map isn't initialized yet, update charts with current filter data
+        loadProjectMarkers();
     }
-    
-    // Update charts if they exist
-    if (statusChart) statusChart.update();
-    if (sectorChart) sectorChart.update();
-    if (countyChart) countyChart.update();
-    if (budgetChart) budgetChart.update();
-    if (timelineChart) timelineChart.update();
     
     // Update active filters
     updateActiveFiltersDisplay();
@@ -3980,7 +4403,7 @@ function zoomToProject(projectId) {
     // Find the project marker and zoom to it
     const projectMarker = allProjectMarkers.find(marker => {
         const popup = marker.getPopup();
-        return popup && popup.getContent().includes(`project-id="${projectId}"`);
+        return popup && popup.getContent().includes(`data-project-id="${projectId}"`);
     });
     
     if (projectMarker) {
@@ -4024,8 +4447,8 @@ function flagProject(projectId) {
 }
 
 function exportDashboardData() {
-    showNotification('Exporting dashboard data...', 'info');
-    // In a real implementation, this would generate and download a report
+    const exportModal = new bootstrap.Modal(document.getElementById('exportModal'));
+    exportModal.show();
 }
 
 function refreshDashboard() {
@@ -4088,8 +4511,6 @@ window.showAllHighBudget = showAllHighBudget;
 window.showAllRecent = showAllRecent;
 window.showAllOverdue = showAllOverdue;
 window.removeFilter = removeFilter;
-window.removeStatusFilter = removeStatusFilter;
-window.removeSectorFilter = removeSectorFilter;
 window.clearAllFilters = clearAllFilters;
 </script>
 {% endblock %}
